@@ -1,0 +1,14 @@
+name: Docs Integrity
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  validate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bootstrap check
+        run: test -f AGENTS.md && test -f CURRENT_BASELINE.md
