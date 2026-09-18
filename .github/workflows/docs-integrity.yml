@@ -1,4 +1,4 @@
-name: Documentation Integrity
+name: Repository Baseline Integrity
 
 on:
   push:
@@ -6,11 +6,15 @@ on:
   pull_request:
 
 jobs:
-  validate-docs:
+  integrity:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Validate baseline documents
         run: python3 tools/validate_docs.py
-      - name: Rebuild convenience master
+      - name: Validate solution layout
+        run: python3 tools/validate_solution_layout.py
+      - name: Build convenience master
         run: python3 tools/build_master.py
+      - name: Audit historical technology references
+        run: python3 tools/version_baseline_audit.py

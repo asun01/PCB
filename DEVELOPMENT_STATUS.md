@@ -2,17 +2,23 @@
 
 ## Phase 0 — Repository baseline
 Status: COMPLETED.
-- Repository write access verified.
-- Governance/agent rules installed.
-- 220 authoritative baseline documents installed individually.
-- Contract candidates, FunctionSpecs, PageContracts and reference baselines installed.
-- Baseline fixed to VS2026 / .NET 10 / WPF / DevExpress 25.2.3 / HALCON 25.11.
-- AsunImage removed from implementation baseline.
-- Hardware-vendor SDK implementation deferred behind interfaces/adapters.
 
 ## Phase 1 — Automated implementation
 Status: ACTIVE.
-Development proceeds through the FunctionSpec dependency graph without waiting for external questions. Unavoidable environment issues are recorded as External Gates and the independent work queue continues.
 
-## First implementation target
-Start from FS-001 (Identity Resolution) and its governing platform/identity documents, unless dependency audit proves a prerequisite must be implemented first.
+Completed:
+- VS2026 / .NET 10 / WPF solution architecture scaffolded.
+- SDK-style projects created according to the repository project/namespace blueprint.
+- WPF application boundary created as a bootstrap shell.
+- Open external/contract gates recorded in docs/00-baseline/OPEN-GATES.md and GitHub issue #4.
+- No AsunImage dependency introduced.
+- Hardware-vendor SDK implementation intentionally deferred behind ports/adapters.
+
+Current gate:
+- FS-001 production implementation is waiting for concrete GATE-001 and approved C-01 schema/validator artifacts. This does not block project/scaffold/tooling work.
+
+Next automated work:
+1. Complete repository automation and deterministic layout checks.
+2. Continue all non-blocked platform/tooling work.
+3. Resolve or continue around Contract/Environment gates as evidence becomes available.
+4. Start production FunctionSpec implementation only when its required authority chain is verified.
