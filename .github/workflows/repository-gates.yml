@@ -1,0 +1,34 @@
+name: Repository Deterministic Gates
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python syntax check
+        run: python3 -m py_compile tools/*.py
+
+      - name: Validate baseline documents
+        run: python3 tools/validate_docs.py
+
+      - name: Validate solution layout
+        run: python3 tools/validate_solution_layout.py
+
+      - name: Validate implementation policy
+        run: python3 tools/validate_repository_policy.py
+
+      - name: Build convenience master
+        run: python3 tools/build_master.py
+
+      - name: Audit historical technology references
+        run: python3 tools/version_baseline_audit.py
