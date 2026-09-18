@@ -1,0 +1,21 @@
+<Solution>
+  <Project Path="src/Asun.Platform.Contracts/Asun.Platform.Contracts.csproj" />
+  <Project Path="src/Asun.Platform.Core/Asun.Platform.Core.csproj" />
+  <Project Path="src/Asun.Platform.Evidence/Asun.Platform.Evidence.csproj" />
+  <Project Path="src/Asun.Vision.Contracts/Asun.Vision.Contracts.csproj" />
+  <Project Path="src/Asun.Vision.Halcon/Asun.Vision.Halcon.csproj" />
+  <Project Path="src/Asun.Metrology.Core/Asun.Metrology.Core.csproj" />
+  <Project Path="src/Asun.Device.Contracts/Asun.Device.Contracts.csproj" />
+  <Project Path="src/Asun.Device.Impl/Asun.Device.Impl.csproj" />
+  <Project Path="src/Asun.UI.DesignSystem/Asun.UI.DesignSystem.csproj" />
+  <Project Path="src/Asun.UI.Viewports/Asun.UI.Viewports.csproj" />
+  <Project Path="src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
+  <Project Path="src/Asun.Domain.Hdi/Asun.Domain.Hdi.csproj" />
+  <Project Path="src/Asun.Domain.Fpc/Asun.Domain.Fpc.csproj" />
+  <Project Path="src/Asun.Domain.RigidFlex/Asun.Domain.RigidFlex.csproj" />
+  <Project Path="src/Asun.Domain.Stencil/Asun.Domain.Stencil.csproj" />
+  <Project Path="src/Asun.Domain.Spi/Asun.Domain.Spi.csproj" />
+  <Project Path="src/Asun.Domain.Aoi/Asun.Domain.Aoi.csproj" />
+  <Project Path="src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
+  <Project Path="src/Asun.App.Shell/Asun.App.Shell.csproj" />
+</Solution>

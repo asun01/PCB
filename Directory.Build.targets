@@ -1,0 +1,5 @@
+<Project>
+  <Target Name="AsunRepositoryBuildInfo" BeforeTargets="CoreCompile" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Message Importance="Low" Text="Asun Vision Platform baseline: VS2026 / .NET10 / WPF / DevExpress25.2.3 / HALCON25.11" />
+  </Target>
+</Project>
