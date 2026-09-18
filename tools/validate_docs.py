@@ -1,7 +1,7 @@
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / 'docs'
-AUX = {'README.md','MASTER_ALL_DOCUMENTS.md','REPOSITORY-TECHNICAL-BASELINE.md'}
+AUX = {'README.md','MASTER_ALL_DOCUMENTS.md','REPOSITORY-TECHNICAL-BASELINE.md','OPEN-GATES.md','TASK-FS-001-BOOTSTRAP.md','PHASE1_BOOTSTRAP.md','PHASE1_PROGRESS.md'}
 
 def main():
     docs=[p for p in DOCS.rglob('*.md') if p.name not in AUX]
