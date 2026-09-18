@@ -1,4 +1,4 @@
-name: Docs Integrity
+name: Documentation Integrity
 
 on:
   push:
@@ -10,5 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Bootstrap check
-        run: test -f AGENTS.md && test -f CURRENT_BASELINE.md
+      - name: Validate baseline documents
+        run: python3 tools/validate_docs.py
+      - name: Rebuild convenience master
+        run: python3 tools/build_master.py
