@@ -1,0 +1,224 @@
+# 开发指导文档地图与唯一入口
+
+- 文档 ID：`DEV-PLAN-000`
+- 版本：`1.4.0`
+- 状态：`Normative`
+- 直接依赖：`DEV-GOV-002`, `DEV-GOV-014`, `DEV-GOV-015`, `DEV-PLAN-014`, `DEV-PLAN-015`, `GATE-001`
+
+当前有效 Markdown 文档：`220` 个；唯一 Document ID：`220` 个。
+
+> 本文是导航视图，不是第二套规范。具体实施以单文件权威文档、Contract/Schema、PageContract、FS、以及当前独立审计为准。`98-history/` 和 `MASTER_ALL_DOCUMENTS.md` 不参与当前语义权威。
+
+## `//`
+- `ARCH-PCBA-VISION-001` — `00-baseline/ARCH-PCBA-VISION-001_v0.5.3_source.md`
+- `ARCH-REVIEW-001` — `00-baseline/architecture_review/ARCH-REVIEW-001_v0.5.3_实施前评审结论.md`
+- `ARCH-REVIEW-002` — `00-baseline/architecture_review/ARCH-REVIEW-002_v0.5.4候选修订片段.md`
+- `ARCH-REVIEW-003` — `00-baseline/architecture_review/ARCH-REVIEW-003_BoardModel与ManufacturingGeometrySnapshot权威收口.md`
+- `ARCH-REVIEW-004` — `00-baseline/architecture_review/ARCH-REVIEW-004_实施基线与P1收口绑定.md`
+- `GATE-001` — `00-baseline/REQUIRED-REPOSITORY-AUTHORITIES.md`
+- `DEV-GOV-001` — `01-governance/DEV-GOV-001_开发指导体系总则.md`
+- `DEV-GOV-002` — `01-governance/DEV-GOV-002_文档权威与变更控制.md`
+- `DEV-GOV-003` — `01-governance/DEV-GOV-003_术语命名与标识体系.md`
+- `DEV-GOV-004` — `01-governance/DEV-GOV-004_Contract_Schema_Validator开发标准.md`
+- `DEV-GOV-005` — `01-governance/DEV-GOV-005_模块独立性与复用标准.md`
+- `DEV-GOV-006` — `01-governance/DEV-GOV-006_外部实现与GitHub研究标准.md`
+- `DEV-GOV-007` — `01-governance/DEV-GOV-007_AI编码与自动化开发标准.md`
+- `DEV-GOV-008` — `01-governance/DEV-GOV-008_质量门禁与Acceptance标准.md`
+- `DEV-GOV-009` — `01-governance/DEV-GOV-009_术语与文档自动审计规则.md`
+- `DEV-GOV-010` — `01-governance/DEV-GOV-010_实施级规格唯一标准.md`
+- `DEV-GOV-011` — `01-governance/DEV-GOV-011_质疑式反向审计与无已知缺口标准.md`
+- `DEV-GOV-012` — `01-governance/DEV-GOV-012_规范性语言与禁止推断标准.md`
+- `DEV-GOV-013` — `01-governance/DEV-GOV-013_变更影响分析与追踪标准.md`
+- `DEV-GOV-014` — `01-governance/DEV-GOV-014_活动基线与历史文档使用规则.md`
+- `DEV-GOV-015` — `01-governance/DEV-GOV-015_AI确定性实施与来源锁定标准.md`
+- `DEV-PLT-010` — `02-platform/DEV-PLT-010_BoardIdentity与BoardRun开发指导.md`
+- `DEV-PLT-011` — `02-platform/DEV-PLT-011_Inspection Pipeline与Attempt开发指导.md`
+- `DEV-PLT-012` — `02-platform/DEV-PLT-012_Evidence Graph与Result Commit开发指导.md`
+- `DEV-PLT-013` — `02-platform/DEV-PLT-013_跨模块事件与外部互联开发指导.md`
+- `DEV-PLT-014` — `02-platform/DEV-PLT-014_性能预算与并发流水线开发指导.md`
+- `DEV-PLT-015` — `02-platform/DEV-PLT-015_设备、相机、光源、运动与采集开发指导.md`
+- `DEV-PLT-016` — `02-platform/DEV-PLT-016_部署、Supervisor与本机隔离开发指导.md`
+- `DEV-PLT-017` — `02-platform/DEV-PLT-017_插件SDK与扩展点开发指导.md`
+- `DEV-PLT-018` — `02-platform/DEV-PLT-018_数据、报告、归档与数据主权开发指导.md`
+- `DEV-VIS-020` — `03-vision/DEV-VIS-020_Vision Contract与AsunImage边界开发指导.md`
+- `DEV-VIS-021` — `03-vision/DEV-VIS-021_HALCON算子选择与算法决策矩阵开发指导.md`
+- `DEV-VIS-022` — `03-vision/DEV-VIS-022_图像帧、Tile/Pyramid与Viewport开发指导.md`
+- `DEV-VIS-022A` — `03-vision/DEV-VIS-022A_HALCON版本验证与算法Benchmark开发指导.md`
+- `DEV-VIS-023` — `03-vision/DEV-VIS-023_定位、注册与Alignment开发指导.md`
+- `DEV-VIS-024` — `03-vision/DEV-VIS-024_ROI与Inspection Target Selection开发指导.md`
+- `DEV-VIS-025` — `03-vision/DEV-VIS-025_2D边缘、轮廓与几何特征开发指导.md`
+- `DEV-VIS-026` — `03-vision/DEV-VIS-026_2D分割、Blob与缺陷候选开发指导.md`
+- `DEV-VIS-027` — `03-vision/DEV-VIS-027_3D HeightField与重建开发指导.md`
+- `DEV-VIS-028` — `03-vision/DEV-VIS-028_3D对象模型、配准与表面分析开发指导.md`
+- `DEV-VIS-029` — `03-vision/DEV-VIS-029_多FOV拼接与全局坐标开发指导.md`
+- `DEV-VIS-030` — `03-vision/HALCON-Operator-Decision-Matrix_v1.0.md`
+- `DEV-MET-030` — `04-metrology/DEV-MET-030_Calibration与标定资格开发指导.md`
+- `DEV-MET-031` — `04-metrology/DEV-MET-031_通用计量引擎开发指导.md`
+- `DEV-MET-032` — `04-metrology/DEV-MET-032_PCBMetrology专业计量开发指导.md`
+- `DEV-MET-033` — `04-metrology/DEV-MET-033_MSA、GR&R与计量资格开发指导.md`
+- `DEV-MET-034` — `04-metrology/DEV-MET-034_Coverage与Sampling开发指导.md`
+- `DEV-UI-040` — `05-ui/DEV-UI-040_WPF+DevExpress Design System开发指导.md`
+- `DEV-UI-041` — `05-ui/DEV-UI-041_高保真PageContract与工作台开发指导.md`
+- `DEV-UI-042` — `05-ui/DEV-UI-042_视觉/3D工作区与ROI交互开发指导.md`
+- `DEV-UI-043` — `05-ui/DEV-UI-043_Program/Recipe编程工作台开发指导.md`
+- `DEV-UI-044` — `05-ui/DEV-UI-044_Review/Rework/Quality工作区开发指导.md`
+- `DEV-UI-045` — `05-ui/DEV-UI-045_操作员工作流简化与人因开发指导.md`
+- `DEV-UI-046` — `05-ui/DEV-UI-046_DevExpress高阶能力使用矩阵.md`
+- `DEV-DOM-050` — `06-domains/DEV-DOM-050_PCB Inspection领域开发指导.md`
+- `DEV-DOM-050A` — `06-domains/DEV-DOM-050A_PCB Pattern与Surface Inspection开发指导.md`
+- `DEV-DOM-050B` — `06-domains/DEV-DOM-050B_PCB Drill Inspection开发指导.md`
+- `DEV-DOM-050C` — `06-domains/DEV-DOM-050C_PCB Laser Via Inspection开发指导.md`
+- `DEV-DOM-050D` — `06-domains/DEV-DOM-050D_PCB LayerRegistration SolderMask FinalAVI开发指导.md`
+- `DEV-DOM-051` — `06-domains/DEV-DOM-051_HDI Inspection领域开发指导.md`
+- `DEV-DOM-051A` — `06-domains/DEV-DOM-051A_HDI BuildUp与LayerStack开发指导.md`
+- `DEV-DOM-051B` — `06-domains/DEV-DOM-051B_HDI LaserVia与FinePattern开发指导.md`
+- `DEV-DOM-052` — `06-domains/DEV-DOM-052_FPC与R2R领域开发指导.md`
+- `DEV-DOM-052A` — `06-domains/DEV-DOM-052A_FPC R2R NonRigid变形与WebCoordinate开发指导.md`
+- `DEV-DOM-052B` — `06-domains/DEV-DOM-052B_FPC Coverlay Stiffener BendRegion开发指导.md`
+- `DEV-DOM-053` — `06-domains/DEV-DOM-053_Rigid-Flex领域开发指导.md`
+- `DEV-DOM-054` — `06-domains/DEV-DOM-054_Stencil Inspection领域开发指导.md`
+- `DEV-DOM-054A` — `06-domains/DEV-DOM-054A_Stencil 3D Geometry与Aperture Inspection开发指导.md`
+- `DEV-DOM-054B` — `06-domains/DEV-DOM-054B_Stencil Aperture堵孔污染与维护建议开发指导.md`
+- `DEV-DOM-055` — `06-domains/DEV-DOM-055_SPI产品开发指导.md`
+- `DEV-DOM-055A` — `06-domains/DEV-DOM-055A_SPI 3D Acquisition与HeightField质量开发指导.md`
+- `DEV-DOM-055B` — `06-domains/DEV-DOM-055B_SPI Reference Plane与Pad_Stencils Target开发指导.md`
+- `DEV-DOM-055C` — `06-domains/DEV-DOM-055C_SPI Paste Segmentation与Metrology开发指导.md`
+- `DEV-DOM-055D` — `06-domains/DEV-DOM-055D_SPI Rule SPC与Printer Feedback开发指导.md`
+- `DEV-DOM-056` — `06-domains/DEV-DOM-056_SPI实现级算法鲁棒性开发指导.md`
+- `DEV-DOM-057` — `06-domains/DEV-DOM-057_AOI炉前炉后领域开发指导.md`
+- `DEV-DOM-057A` — `06-domains/DEV-DOM-057A_AOI CAD PnP与Target自动生成开发指导.md`
+- `DEV-DOM-057B` — `06-domains/DEV-DOM-057B_AOI Component Pin Lead Polarity OCR开发指导.md`
+- `DEV-DOM-057C` — `06-domains/DEV-DOM-057C_AOI Solder Joint与Pre_Post Reflow开发指导.md`
+- `DEV-DOM-057D` — `06-domains/DEV-DOM-057D_AOI Review Rework与Disposition开发指导.md`
+- `DEV-DOM-058` — `06-domains/DEV-DOM-058_QualityControl全流程质量管控开发指导.md`
+- `DEV-DOM-058A` — `06-domains/DEV-DOM-058A_QualityControl SPC与分母定义开发指导.md`
+- `DEV-DOM-058B` — `06-domains/DEV-DOM-058B_Cross-Process Correlation与Disposition闭环开发指导.md`
+- `DEV-AI-060` — `07-ai/DEV-AI-060_AI运行治理开发指导.md`
+- `DEV-AI-061` — `07-ai/DEV-AI-061_AI辅助复判开发指导.md`
+- `DEV-AI-062` — `07-ai/DEV-AI-062_自动编程与ProgramSynthesis开发指导.md`
+- `DEV-AI-063` — `07-ai/DEV-AI-063_数据集、GroundTruth与统计验证开发指导.md`
+- `DEV-QLF-070` — `08-qualification/DEV-QLF-070_Golden Sample与Replay开发指导.md`
+- `DEV-QLF-071` — `08-qualification/DEV-QLF-071_Performance Benchmark与容量资格开发指导.md`
+- `DEV-QLF-072` — `08-qualification/DEV-QLF-072_HIL、故障恢复与长稳开发指导.md`
+- `DEV-QLF-073` — `08-qualification/DEV-QLF-073_视觉/计量Qualification与GR&R开发指导.md`
+- `DEV-QLF-074` — `08-qualification/DEV-QLF-074_产品Acceptance与Production Gate开发指导.md`
+- `DEV-PLAN-000` — `09-development-plan/DEV-PLAN-000_开发指导文档地图.md`
+- `DEV-PLAN-001` — `09-development-plan/DEV-PLAN-001_研发实施步骤与并行开发计划.md`
+- `DEV-PLAN-002` — `09-development-plan/DEV-PLAN-002_功能与模块并行度矩阵.md`
+- `DEV-PLAN-003` — `09-development-plan/DEV-PLAN-003_研发任务切片与AI任务模板.md`
+- `DEV-PLAN-004` — `09-development-plan/DEV-PLAN-004_开发启动前置检查与启动门槛.md`
+- `DEV-PLAN-005` — `09-development-plan/DEV-PLAN-005_69项功能实现蓝图.md`
+- `DEV-PLAN-006` — `09-development-plan/DEV-PLAN-006_Repository_Project_Namespace_Blueprint.md`
+- `DEV-PLAN-007` — `09-development-plan/DEV-PLAN-007_AI_Code_Task_Traceability.md`
+- `DEV-PLAN-008` — `09-development-plan/DEV-PLAN-008_全量功能代码落点注册表.md`
+- `DEV-PLAN-009` — `09-development-plan/DEV-PLAN-009_AI代码任务协议与停止条件.md`
+- `DEV-PLAN-010` — `09-development-plan/DEV-PLAN-010_开放门禁与禁止推断登记册.md`
+- `DEV-PLAN-011` — `09-development-plan/DEV-PLAN-011_全量功能确定性实施矩阵.md`
+- `DEV-PLAN-012` — `09-development-plan/DEV-PLAN-012_全量PerformanceProfile绑定矩阵.md`
+- `DEV-PLAN-013` — `09-development-plan/DEV-PLAN-013_从零到生产的不可跳步开发主序列.md`
+- `DEV-PLAN-014` — `09-development-plan/DEV-PLAN-014_全量研发工作包与并行依赖DAG.md`
+- `DEV-PLAN-015` — `09-development-plan/DEV-PLAN-015_从仓库零点启动第一条可运行纵向切片.md`
+- `AUD-060` — `10-audit/AUD-060_最终全量对抗式审计总报告.md`
+- `AUD-061` — `10-audit/AUD-061_权威链与语义碰撞对抗审计.md`
+- `AUD-062` — `10-audit/AUD-062_AI确定性实施与反幻想审计.md`
+- `AUD-063` — `10-audit/AUD-063_全量研发步骤DAG与并行反例审计.md`
+- `AUD-064` — `10-audit/AUD-064_全量功能与PageContract一致性审计.md`
+- `AUD-065` — `10-audit/AUD-065_HALCON与外部资料反幻觉审计.md`
+- `AUD-066` — `10-audit/AUD-066_最终全量发布门禁与未知项审计.md`
+- `AUD-067` — `10-audit/AUD-067_审计系统自身与发布包可复现性审计.md`
+- `FS-001` — `12-function-specs/FS-001_Identity_Resolution.md`
+- `FS-002` — `12-function-specs/FS-002_Effective_Runtime_Manifest.md`
+- `FS-003` — `12-function-specs/FS-003_Pipeline_execution.md`
+- `FS-004` — `12-function-specs/FS-004_Evidence_commit.md`
+- `FS-005` — `12-function-specs/FS-005_Cross_module_event.md`
+- `FS-006` — `12-function-specs/FS-006_Board_flow.md`
+- `FS-007` — `12-function-specs/FS-007_Shape_localization.md`
+- `FS-008` — `12-function-specs/FS-008_Subpixel_edge_extraction.md`
+- `FS-009` — `12-function-specs/FS-009_Ellipse_circle_fit.md`
+- `FS-010` — `12-function-specs/FS-010_Local_segmentation.md`
+- `FS-011` — `12-function-specs/FS-011_2D_candidate_scoring.md`
+- `FS-012` — `12-function-specs/FS-012_3D_HeightField_build.md`
+- `FS-013` — `12-function-specs/FS-013_Stereo_surface_reconstruction.md`
+- `FS-014` — `12-function-specs/FS-014_3D_registration.md`
+- `FS-015` — `12-function-specs/FS-015_Multi_FOV_stitch.md`
+- `FS-016` — `12-function-specs/FS-016_Calibration.md`
+- `FS-017` — `12-function-specs/FS-017_Feature_measurement.md`
+- `FS-018` — `12-function-specs/FS-018_Uncertainty_budget.md`
+- `FS-019` — `12-function-specs/FS-019_Coverage_calculation.md`
+- `FS-020` — `12-function-specs/FS-020_Pattern_width_space.md`
+- `FS-021` — `12-function-specs/FS-021_Pad_geometry.md`
+- `FS-022` — `12-function-specs/FS-022_Surface_defect_candidate.md`
+- `FS-023` — `12-function-specs/FS-023_Drill_diameter.md`
+- `FS-024` — `12-function-specs/FS-024_Drill_position.md`
+- `FS-025` — `12-function-specs/FS-025_Laser_via_opening.md`
+- `FS-026` — `12-function-specs/FS-026_Layer_registration.md`
+- `FS-027` — `12-function-specs/FS-027_Solder_mask_defect.md`
+- `FS-028` — `12-function-specs/FS-028_Final_AVI.md`
+- `FS-029` — `12-function-specs/FS-029_Layer_stack_validation.md`
+- `FS-030` — `12-function-specs/FS-030_Build_up_layer_target.md`
+- `FS-031` — `12-function-specs/FS-031_Laser_via_metrology.md`
+- `FS-032` — `12-function-specs/FS-032_Fine_line_space.md`
+- `FS-033` — `12-function-specs/FS-033_HDI_metrology.md`
+- `FS-034` — `12-function-specs/FS-034_R2R_coordinate.md`
+- `FS-035` — `12-function-specs/FS-035_NonRigid_local_transform.md`
+- `FS-036` — `12-function-specs/FS-036_Coverlay_inspection.md`
+- `FS-037` — `12-function-specs/FS-037_Stiffener_inspection.md`
+- `FS-038` — `12-function-specs/FS-038_Bend_region.md`
+- `FS-039` — `12-function-specs/FS-039_Aperture_geometry.md`
+- `FS-040` — `12-function-specs/FS-040_Stencil_thickness.md`
+- `FS-041` — `12-function-specs/FS-041_Wall_condition.md`
+- `FS-042` — `12-function-specs/FS-042_Blocked_aperture.md`
+- `FS-043` — `12-function-specs/FS-043_Maintenance_advice.md`
+- `FS-044` — `12-function-specs/FS-044_3D_acquisition_quality.md`
+- `FS-045` — `12-function-specs/FS-045_Reference_plane.md`
+- `FS-046` — `12-function-specs/FS-046_Pad_target_generation.md`
+- `FS-047` — `12-function-specs/FS-047_Paste_segmentation.md`
+- `FS-048` — `12-function-specs/FS-048_Paste_volume.md`
+- `FS-049` — `12-function-specs/FS-049_Paste_area.md`
+- `FS-050` — `12-function-specs/FS-050_Paste_height.md`
+- `FS-051` — `12-function-specs/FS-051_Paste_offset.md`
+- `FS-052` — `12-function-specs/FS-052_Paste_shape.md`
+- `FS-053` — `12-function-specs/FS-053_SPI_rule_evaluation.md`
+- `FS-054` — `12-function-specs/FS-054_SPC.md`
+- `FS-055` — `12-function-specs/FS-055_Printer_feedback.md`
+- `FS-056` — `12-function-specs/FS-056_CAD_PnP_target_generation.md`
+- `FS-057` — `12-function-specs/FS-057_Component_presence.md`
+- `FS-058` — `12-function-specs/FS-058_Component_identity.md`
+- `FS-059` — `12-function-specs/FS-059_Polarity_orientation.md`
+- `FS-060` — `12-function-specs/FS-060_Pin_lead_inspection.md`
+- `FS-061` — `12-function-specs/FS-061_OCR_marking.md`
+- `FS-062` — `12-function-specs/FS-062_Solder_joint_post_reflow.md`
+- `FS-063` — `12-function-specs/FS-063_Review_rework.md`
+- `FS-064` — `12-function-specs/FS-064_SPC_chart.md`
+- `FS-065` — `12-function-specs/FS-065_Cross_process_correlation.md`
+- `FS-066` — `12-function-specs/FS-066_Disposition_projection.md`
+- `FS-067` — `12-function-specs/FS-067_AI_assisted_review.md`
+- `FS-068` — `12-function-specs/FS-068_Program_synthesis.md`
+- `FS-069` — `12-function-specs/FS-069_AI_validation.md`
+- `DEV-CONTRACT-BASE-001` — `13-contract-candidates/CONTRACT-CANDIDATES.md`
+- `UI-PCS-001` — `14-page-contracts/UI-PCS-001_Production_Overview.md`
+- `UI-PCS-002` — `14-page-contracts/UI-PCS-002_Vision_Workspace.md`
+- `UI-PCS-003` — `14-page-contracts/UI-PCS-003_Program_Editor.md`
+- `UI-PCS-004` — `14-page-contracts/UI-PCS-004_Recipe_Editor.md`
+- `UI-PCS-005` — `14-page-contracts/UI-PCS-005_Review_Workspace.md`
+- `UI-PCS-006` — `14-page-contracts/UI-PCS-006_Metrology_Workspace.md`
+- `UI-PCS-007` — `14-page-contracts/UI-PCS-007_Calibration_Workspace.md`
+- `UI-PCS-008` — `14-page-contracts/UI-PCS-008_SPC_Workspace.md`
+- `UI-PCS-009` — `14-page-contracts/UI-PCS-009_Manifest_Inspector.md`
+- `UI-PCS-010` — `14-page-contracts/UI-PCS-010_Device_Station.md`
+- `UI-PCS-011` — `14-page-contracts/UI-PCS-011_Quality_Hub.md`
+- `UI-PCS-012` — `14-page-contracts/UI-PCS-012_NPI_Auto_Program.md`
+- `UI-PCS-013` — `14-page-contracts/UI-PCS-013_Evidence_Viewer.md`
+- `UI-PCS-014` — `14-page-contracts/UI-PCS-014_Engineering_Diagnostics.md`
+- `UI-PCS-015` — `14-page-contracts/UI-PCS-015_PCB_Inspection_Workbench.md`
+- `UI-PCS-016` — `14-page-contracts/UI-PCS-016_HDI_FPC_RigidFlex_Workbench.md`
+- `UI-PCS-017` — `14-page-contracts/UI-PCS-017_Stencil_Inspection_Workbench.md`
+- `UI-PCS-018` — `14-page-contracts/UI-PCS-018_SPI_Production_Workbench.md`
+- `UI-PCS-019` — `14-page-contracts/UI-PCS-019_SPI_Programming_Workbench.md`
+- `UI-PCS-020` — `14-page-contracts/UI-PCS-020_AOI_Programming_and_Production_Workbench.md`
+- `UI-PCS-021` — `14-page-contracts/UI-PCS-021_Quality_Control_Workbench.md`
+- `REF-001` — `references/REF-001_外部实现研究与官方资料基线.md`
+- `REF-002` — `references/REF-002_GitHub_DevExpress与OpenSource研究基线.md`
+- `REF-003` — `references/REF-003_HALCON_24.11_Operator_Verification.md`
+- `REF-004` — `references/REF-004_DevExpress与UI工作台官方研究基线.md`
+- `REF-005` — `references/REF-005_GitHub_PCB_AOI_研究基线.md`
