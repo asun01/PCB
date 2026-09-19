@@ -439,6 +439,14 @@ public readonly record struct ViewportTransform(
         return this with { Translation = translation };
     }
 
+    private static double ValidatePositiveFinite(double value, string parameterName)
+    {
+        if (!double.IsFinite(value) || value <= 0)
+            throw new ArgumentOutOfRangeException(parameterName, value);
+
+        return value;
+    }
+
     private static Vector2 ValidateAndReturnDelta(Vector2 delta)
     {
         if (!IsFinite(delta))
