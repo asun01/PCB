@@ -9,6 +9,17 @@ public readonly record struct VisibleTileRange(
     TileIndex Minimum,
     TileIndex Maximum)
 {
+    public bool Contains(TileIndex tile) =>
+        !IsEmpty &&
+        tile.X >= Minimum.X &&
+        tile.X <= Maximum.X &&
+        tile.Y >= Minimum.Y &&
+        tile.Y <= Maximum.Y;
+
+    public bool Contains(VisibleTileRange other) =>
+        !other.IsEmpty &&
+        Contains(other.Minimum) &&
+        Contains(other.Maximum);
     public bool IsEmpty =>
         Maximum.X < Minimum.X || Maximum.Y < Minimum.Y;
 
