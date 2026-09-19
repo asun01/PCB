@@ -20,6 +20,23 @@ Assert(
     "Percentile interpolation should be deterministic.",
     failures);
 
+var imageSize = new Asun.Vision.Contracts.ImageSize(1920, 1080);
+Assert(imageSize.Center.X == 960 && imageSize.Center.Y == 540, "Image center should be deterministic.", failures);
+
+var findingSet = new Asun.Domain.Quality.InspectionFindingSet(new[]
+{
+    new Asun.Domain.Quality.InspectionFinding("B", "sim", 0.8, 20, 30),
+    new Asun.Domain.Quality.InspectionFinding("A", "sim", 0.9, 10, 20)
+});
+Assert(findingSet.Count == 2, "Finding set should retain all unique findings.", failures);
+Assert(findingSet.Items[0].FindingId == "A", "Findings should have deterministic identifier ordering.", failures);
+
+var boardRegion = new Asun.Domain.Pcb.BoardRegion(
+    "board",
+    new Asun.Domain.Pcb.BoardPoint(0, 0),
+    new Asun.Domain.Pcb.BoardSize(100, 50));
+Assert(boardRegion.Center == new Asun.Domain.Pcb.BoardPoint(50, 25), "Board region center should be deterministic.", failures);
+
 var latency = new LatencyStatistics(new[] { 10d, 20d, 30d, 40d, 50d });
 Assert(latency.Count == 5, "Latency count should be preserved.", failures);
 Assert(Math.Abs(latency.P50 - 30) < 1e-9, "Latency P50 should be deterministic.", failures);
