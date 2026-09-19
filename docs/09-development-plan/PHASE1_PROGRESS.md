@@ -976,3 +976,41 @@ Current continuous execution position:
 - completed through Stage 13500 in the active 4501–104500 window;
 - next natural stage: 13501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 13501→14000 Evidence integrity-chain hardening — 2026-09-19
+
+Completed stages 13501–14000.
+
+Implemented:
+- EvidenceCatalogSnapshotIntegrityReport plus deterministic validation;
+- EvidenceCatalogSnapshotChange with previous/current descriptor fingerprints;
+- EvidenceCatalogSnapshotWindowIntegritySummary with deterministic window fingerprint;
+- EvidenceCatalogSnapshotWindowTransition with previous/current window fingerprint binding and diff;
+- five dedicated exact 100-round Smokes covering report, descriptor change, window summary, transition, and end-to-end chain integration.
+
+Real hardening:
+- transition validation recomputes expected previous/current window fingerprints and the expected diff;
+- descriptor change projection rejects unchanged fingerprint pairs and duplicate handles;
+- window summary validation checks cardinality, first/last sequence, lowercase hexadecimal fingerprint syntax, and recomputed fingerprint;
+- all helper Smokes remain isolated from the main Evidence Smoke counter.
+
+Closed acceptance asset:
+- PHASE1_13501_14000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_13501-13600_STAGE_LEDGER_20260919.md
+- PHASE1_13601-13700_STAGE_LEDGER_20260919.md
+- PHASE1_13701-13800_STAGE_LEDGER_20260919.md
+- PHASE1_13801-13900_STAGE_LEDGER_20260919.md
+- PHASE1_13901-14000_STAGE_LEDGER_20260919.md
+
+Verification:
+- static source audits confirm balanced delimiters and no TODO/NotImplementedException in the changed Evidence assets;
+- all five new 100-round Smokes contain 10 loop groups and explicit round == 100 assertions;
+- workflow lookup for checkpoint commit bb5564f854e902eb5da39917a97fb680978b79fd returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 14000 in the active 4501–104500 window;
+- next natural stage: 14001;
+- global one-million-stage horizon remains 2501–1002500.
