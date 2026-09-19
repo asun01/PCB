@@ -1014,3 +1014,40 @@ Current continuous execution position:
 - completed through Stage 14000 in the active 4501–104500 window;
 - next natural stage: 14001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 14001→14500 Evidence catalog query chain — 2026-09-19
+
+Completed stages 14001–14500.
+
+Implemented:
+- EvidenceDescriptorQuery and validation;
+- deterministic EvidenceCatalogQueryRuntime;
+- EvidenceCatalogQueryResult;
+- query-result validation against source snapshot/query;
+- deterministic query-result SHA-256 fingerprint and validation;
+- five dedicated exact 100-round Smokes covering query contract, query runtime, query result, result fingerprint, and end-to-end integration.
+
+Boundary:
+- query semantics remain observational and vendor-neutral;
+- no persistence provider, transport, serialization, HALCON, DevExpress, renderer, or hardware authority introduced.
+
+Closed acceptance asset:
+- PHASE1_14001_14500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_14001-14100_STAGE_LEDGER_20260919.md
+- PHASE1_14101-14200_STAGE_LEDGER_20260919.md
+- PHASE1_14201-14300_STAGE_LEDGER_20260919.md
+- PHASE1_14301-14400_STAGE_LEDGER_20260919.md
+- PHASE1_14401-14500_STAGE_LEDGER_20260919.md
+
+Verification:
+- static delimiter and placeholder audits are clean on the changed query assets;
+- all five new 100-round Smokes use 10 loop groups and explicit round == 100 assertions;
+- workflow lookup for checkpoint commit a2b1d4d5c2dafab6fdc55fcd2a706d1b31747a74 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 14500 in the active 4501–104500 window;
+- next natural stage: 14501;
+- global one-million-stage horizon remains 2501–1002500.
