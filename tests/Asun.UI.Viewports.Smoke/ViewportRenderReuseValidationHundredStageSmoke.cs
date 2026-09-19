@@ -184,6 +184,84 @@ public static class ViewportRenderReuseValidationHundredStageSmoke
                 $"pipeline generation {i + 1} should support reuse validation.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            using var pipeline = CreatePipeline();
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            var frame =
+                pipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(1))
+                    .GetAwaiter()
+                    .GetResult();
+
+            pipeline.MarkPresented(frame!);
+            var reuse = pipeline.Reuse;
+            var old = frame!.Composite.Generation;
+
+            pipeline.Composite.PanBy(new Vector2(4, 3));
+
+            Check(
+                !reuse.TryReuse(old + 1, out _) &&
+                reuse.LatestGeneration == old,
+                $"future generation lookup {i + 1} should not falsely reuse.");
+
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            using var pipeline = CreatePipeline();
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            var frame =
+                pipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(1))
+                    .GetAwaiter()
+                    .GetResult();
+
+            pipeline.MarkPresented(frame!);
+            pipeline.Composite.PanBy(new Vector2(2, 1));
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            Check(
+                ViewportRenderReuseValidationRuntime.IsValid(
+                    pipeline.Reuse,
+                    pipeline.Composite.Generation),
+                $"reuse validator after invalidation {i + 1} should remain clean.");
+
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            using var pipeline = CreatePipeline();
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            var frame =
+                pipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(1))
+                    .GetAwaiter()
+                    .GetResult();
+
+            pipeline.MarkPresented(frame!);
+            pipeline.Reuse.Clear();
+
+            Check(
+                ViewportRenderReuseValidationRuntime.IsValid(
+                    pipeline.Reuse,
+                    frame!.Composite.Generation) &&
+                pipeline.Reuse.LatestGeneration is null,
+                $"reuse post-clear validation {i + 1} should remain clean.");
+
+        }
+
         assert(
             round == 100,
             $"Render reuse validation smoke should execute exactly 100 numbered rounds; actual {round}.");
