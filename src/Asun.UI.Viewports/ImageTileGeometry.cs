@@ -242,6 +242,39 @@ public static class ImageTileGeometry
             last.Bottom - first.Y);
     }
 
+    public static TileIndex GetCenterTileIndex(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        Vector2 imagePoint) =>
+        GetTileIndexAtImagePoint(imageSize, tileSize, imagePoint);
+
+    public static Vector2 GetTileCenter(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        TileIndex tileIndex)
+    {
+        var rectangle = GetTileRectangle(imageSize, tileSize, tileIndex);
+
+        return new Vector2(
+            rectangle.X + rectangle.Width / 2f,
+            rectangle.Y + rectangle.Height / 2f);
+    }
+
+    public static TileIndex ClampTileIndex(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        TileIndex tileIndex)
+    {
+        ValidatePositiveFinite(imageSize, nameof(imageSize));
+        ValidatePositiveFinite(tileSize, nameof(tileSize));
+
+        var gridSize = CalculateGridSize(imageSize, tileSize);
+
+        return new TileIndex(
+            Math.Clamp(tileIndex.X, 0, gridSize.X - 1),
+            Math.Clamp(tileIndex.Y, 0, gridSize.Y - 1));
+    }
+
     public static RectangleF GetTileRectangle(
         Vector2 imageSize,
         Vector2 tileSize,
