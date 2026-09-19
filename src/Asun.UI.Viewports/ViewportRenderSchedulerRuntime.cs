@@ -67,6 +67,12 @@ public sealed class ViewportRenderSchedulerRuntime
 
         lock (_sync)
         {
+            if (generation < _latestGeneration)
+            {
+                Interlocked.Increment(ref _staleRejected);
+                return;
+            }
+
             Interlocked.Increment(ref _submissions);
 
             var wasIdle = _pendingFlags == ViewportDirtyFlags.None;
