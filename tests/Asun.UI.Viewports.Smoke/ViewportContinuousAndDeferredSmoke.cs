@@ -32,7 +32,10 @@ public static class ViewportContinuousAndDeferredSmoke
 
         assert(
             frame is not null &&
-            frame.WorkPlan.Items.Count >= 2,
+            frame.WorkPlan.Items.Count >= 2 &&
+            frame.Batch.TileCount >= 2 &&
+            frame.Batch.FullSurfaceCount == 1 &&
+            frame.Batch.InvalidationCount == 0,
             "Partial deferred delivery should create a frame with multiple work items.");
 
         if (frame is null)
