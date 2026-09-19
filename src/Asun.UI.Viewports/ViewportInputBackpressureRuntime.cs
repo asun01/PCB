@@ -78,9 +78,10 @@ public sealed class ViewportInputBackpressureRuntime
                         break;
 
                     case ViewportInputDropPolicy.CoalesceMoves:
-                        if (kind == ViewportInputEventKind.PointerMove)
+                        if (kind == ViewportInputEventKind.PointerMove &&
+                            input.TryReplaceLatestMove(position))
                         {
-                            input.TryReplaceLatestMove(position);
+                            _coalesced++;
                             return true;
                         }
 
