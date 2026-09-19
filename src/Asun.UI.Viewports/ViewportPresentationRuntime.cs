@@ -173,6 +173,25 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
         _input.Cancel();
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        if (Volatile.Read(ref _disposed) != 0)
+            return;
+
+        _lifecycle.RequestStop();
+
+        try
+        {
+            await _lifecycle
+                .WaitForStopAsync()
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            Dispose();
+        }
+    }
+
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
