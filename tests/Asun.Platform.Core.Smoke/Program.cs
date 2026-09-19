@@ -1096,6 +1096,10 @@ Assert(
     "Active lease state should remain consistent before final disposal.",
     failures);
 
+resources.Dispose();
+Assert(resources.IsDisposed, "Disposed resource pools should report their lifecycle state.", failures);
+Assert(!resources.TryGetCapacity("camera", out _), "Disposed resource pools should reject metadata reads safely.", failures);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
