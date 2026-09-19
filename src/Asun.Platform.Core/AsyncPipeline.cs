@@ -64,9 +64,6 @@ public sealed class AsyncPipeline<TContext>
         return !string.IsNullOrWhiteSpace(id) &&
                _nodes.Any(node => string.Equals(node.Id, id, StringComparison.Ordinal));
     }
-        ArgumentException.ThrowIfNullOrWhiteSpace(id);
-        return _nodes.Any(node => string.Equals(node.Id, id, StringComparison.Ordinal));
-    }
 
     public IReadOnlyList<string> GetDependencyClosure(string id)
     {
