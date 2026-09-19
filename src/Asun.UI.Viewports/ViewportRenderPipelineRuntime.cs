@@ -109,11 +109,37 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     {
         ThrowIfDisposed();
 
-        var composite = await _composite
-            .RefreshAsync(includePrefetch, cancellationToken)
-            .ConfigureAwait(false);
+        ViewportCompositeFrame<TTile>? deferredComposite = null;
 
-        var dirtyFlags = _composite.ConsumeDirtyFlags();
+        lock (_sync)
+        {
+            var generation = _composite.Generation;
+
+            if (!includePrefetch &&
+                _deferredComposite is not null &&
+                _deferredGeneration == generation &&
+                _composite.DirtyRuntime.Flags == ViewportDirtyFlags.None)
+            {
+                deferredComposite = _deferredComposite;
+            }
+        }
+
+        ViewportCompositeFrame<TTile> composite;
+        ViewportDirtyFlags dirtyFlags;
+
+        if (deferredComposite is not null)
+        {
+            composite = deferredComposite;
+            dirtyFlags = ViewportDirtyFlags.None;
+        }
+        else
+        {
+            composite = await _composite
+                .RefreshAsync(includePrefetch, cancellationToken)
+                .ConfigureAwait(false);
+
+            dirtyFlags = _composite.ConsumeDirtyFlags();
+        }
 
         _scheduler.Submit(
             dirtyFlags,
@@ -163,11 +189,13 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                     budgeted);
 
                 _deferredWork = remaining;
+                _deferredComposite = composite;
                 _deferredGeneration = composite.Generation;
             }
             else
             {
                 _deferredWork = null;
+                _deferredComposite = null;
                 _deferredGeneration = -1;
             }
         }
@@ -289,11 +317,13 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                 _deferredWork = GetRemainingWork(
                     prioritized,
                     budgeted);
+                _deferredComposite = composite;
                 _deferredGeneration = composite.Generation;
             }
             else
             {
                 _deferredWork = null;
+                _deferredComposite = null;
                 _deferredGeneration = -1;
             }
         }
@@ -326,6 +356,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         lock (_sync)
         {
             _deferredWork = null;
+            _deferredComposite = null;
             _deferredGeneration = -1;
         }
     }
