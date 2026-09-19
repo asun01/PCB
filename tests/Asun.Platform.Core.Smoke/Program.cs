@@ -774,6 +774,12 @@ Assert(
     "Pixel rectangle point distance should be zero on axes inside the rectangle and positive outside.",
     failures);
 
+Assert(
+    roi.Intersects(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100)) &&
+    !roi.Intersects(new Asun.Vision.Contracts.PixelRect(500, 500, 20, 20)),
+    "Pixel rectangle intersection predicate should agree with geometric overlap.",
+    failures);
+
 var disjointIntersection = roi.TryIntersect(
     new Asun.Vision.Contracts.PixelRect(500, 500, 20, 20),
     out _);
