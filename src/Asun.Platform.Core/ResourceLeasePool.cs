@@ -204,6 +204,8 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
 
         public TKey Resource { get; }
 
+        public bool IsDisposed => Volatile.Read(ref _entry) is null;
+
         public void Dispose()
         {
             var entry = Interlocked.Exchange(ref _entry, null);
