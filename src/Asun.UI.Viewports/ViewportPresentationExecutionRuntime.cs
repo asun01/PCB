@@ -141,6 +141,34 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
         }
     }
 
+    public async ValueTask RunAsync(
+        IViewportRenderSink<TTile> sink,
+        Func<ViewportPresentationExecutionResult<TTile>, ValueTask> onCompleted,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(sink);
+        ArgumentNullException.ThrowIfNull(onCompleted);
+
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                var result = await WaitAndExecuteAsync(
+                    sink,
+                    cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (result.Executed)
+                    await onCompleted(result).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (
+                cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+        }
+    }
+
     public async ValueTask<ViewportPresentationExecutionResult<TTile>> WaitAndExecuteAsync(
         IViewportRenderSink<TTile> sink,
         CancellationToken cancellationToken = default)
