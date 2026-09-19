@@ -668,6 +668,17 @@ Assert(
     "Pipeline dependency collections should be snapshotted at construction.",
     failures);
 
+var emptyExpandedRange = Asun.UI.Viewports.ImageTileGeometry.ExpandTileRange(
+    viewport.ImageSize,
+    new System.Numerics.Vector2(256, 256),
+    emptyTileRange,
+    marginTiles: 3);
+
+Assert(
+    emptyExpandedRange.IsEmpty && emptyExpandedRange.Count == 0,
+    "Expanding an empty tile range should remain empty.",
+    failures);
+
 var invalidMarginRejected = false;
 try
 {
