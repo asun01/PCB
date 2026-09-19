@@ -190,6 +190,20 @@ Assert(
     "Pipeline should propagate cancellation while a node is executing.",
     failures);
 
+var taskTimeoutObserved = false;
+try
+{
+    await OperationTimeout.ExecuteAsync(
+        async token => await Task.Delay(TimeSpan.FromSeconds(5), token),
+        TimeSpan.FromMilliseconds(10));
+}
+catch (TimeoutException)
+{
+    taskTimeoutObserved = true;
+}
+
+Assert(taskTimeoutObserved, "Task-returning timeout overload should surface TimeoutException.", failures);
+
 var timeoutObserved = false;
 try
 {
