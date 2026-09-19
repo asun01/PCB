@@ -131,6 +131,8 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
                 _coalesced++;
             }
 
+            var wasEmpty = _queue.Count == 0;
+
             _queue.AddLast(
                 new ViewportInputEvent(
                     sequence,
@@ -139,7 +141,9 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
                     wheelDelta,
                     button));
 
-            _signal.Release();
+            if (wasEmpty)
+                _signal.Release();
+
             return sequence;
         }
     }
@@ -185,8 +189,21 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
                 _queue.RemoveFirst();
             }
 
+            if (_queue.Count == 0)
+                _signal.Wait(0);
+
             return events;
         }
+    }
+
+    public async ValueTask WaitForActivityAsync(
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _signal
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async ValueTask<IReadOnlyList<ViewportInputEvent>> WaitAndDrainAsync(
@@ -236,7 +253,10 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
     public void Clear()
     {
         lock (_sync)
+        {
             _queue.Clear();
+            _signal.Wait(0);
+        }
     }
 
     public void Complete(bool cancelPending = false)
