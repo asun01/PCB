@@ -30,10 +30,11 @@ public static class ViewportPresentationQueueSmoke
             firstPacket.CommandStream.Generation == first.Composite.Generation,
             "Presentation queue should enqueue the pipeline frame and expose its command stream.");
 
-        var moved = pipeline.Composite.PanBy(new Vector2(5, 0));
+        var initialGeneration = pipeline.Composite.Generation;
+        pipeline.Composite.PanBy(new Vector2(5, 0));
 
         assert(
-            moved,
+            pipeline.Composite.Generation > initialGeneration,
             "Queue smoke should create a newer generation through real navigation.");
 
         var second = await pipeline.RefreshAsync(
@@ -55,8 +56,9 @@ public static class ViewportPresentationQueueSmoke
         assert(
             queue.TryTakeLatest(out var latest) &&
             latest.Token == secondPacket.Token &&
-            queue.Statistics.Dropped == 1,
-            "Latest-take should coalesce an older pending frame before the render boundary.");
+            queue.Statistics.Dropped == 1 &&
+            !queue.TryTakeLatest(out _),
+            "Latest-take should coalesce an older pending frame and keep at most one in-flight presentation.");
 
         assert(
             queue.TryAcknowledgePresented(latest.Token) &&
@@ -93,7 +95,9 @@ public static class ViewportPresentationQueueSmoke
             queue.TryAcknowledgePresented(postResetLatest.Token),
             "Reset must not allow an old presentation token to alias a new post-reset submission.");
 
-        pipeline.Composite.Invalidate(ViewportDirtyFlags.Overlay);
+        pipeline.Invalidate(
+            ViewportDirtyFlags.Overlay,
+            pipeline.Composite.Generation);
 
         var overlay = await pipeline.RefreshAsync(
             DateTimeOffset.UtcNow.AddSeconds(12));
