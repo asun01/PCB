@@ -36,26 +36,37 @@ public static class ViewportRenderBudgetRuntime
 
         AddUpTo(
             selected,
-            plan.Items.Where(item => item.Kind == ViewportRenderWorkKind.Tile),
-            budget.MaxTileWork);
-
-        AddUpTo(
-            selected,
-            plan.Items.Where(item => item.Kind == ViewportRenderWorkKind.Roi),
+            plan.Items.Where(item => item.IsInvalidation),
             budget.MaxRoiWork);
+
+        var remaining = Math.Max(
+            0,
+            budget.MaxTotalWork - selected.Count);
 
         AddUpTo(
             selected,
             plan.Items.Where(item =>
+                !item.IsInvalidation &&
+                item.Kind == ViewportRenderWorkKind.Tile),
+            Math.Min(budget.MaxTileWork, remaining));
+
+        remaining = Math.Max(0, budget.MaxTotalWork - selected.Count);
+        AddUpTo(
+            selected,
+            plan.Items.Where(item =>
+                !item.IsInvalidation &&
+                item.Kind == ViewportRenderWorkKind.Roi),
+            Math.Min(budget.MaxRoiWork, remaining));
+
+        remaining = Math.Max(0, budget.MaxTotalWork - selected.Count);
+        AddUpTo(
+            selected,
+            plan.Items.Where(item =>
+                !item.IsInvalidation &&
                 item.Kind is ViewportRenderWorkKind.Overlay
                     or ViewportRenderWorkKind.Selection
                     or ViewportRenderWorkKind.FullSurface),
-            budget.MaxOverlayWork);
-
-        if (selected.Count > budget.MaxTotalWork)
-            selected = selected
-                .Take(budget.MaxTotalWork)
-                .ToList();
+            Math.Min(budget.MaxOverlayWork, remaining));
 
         return new ViewportRenderWorkPlan(
             selected,
