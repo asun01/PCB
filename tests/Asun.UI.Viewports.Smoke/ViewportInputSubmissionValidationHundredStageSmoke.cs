@@ -17,11 +17,9 @@ public static class ViewportInputSubmissionValidationHundredStageSmoke
         input.Submit(
             ViewportInputEventKind.PointerDown,
             new Vector2(1, 1));
-
         input.Submit(
             ViewportInputEventKind.PointerMove,
             new Vector2(2, 2));
-
         input.Submit(
             ViewportInputEventKind.PointerMove,
             new Vector2(3, 3));
@@ -31,7 +29,7 @@ public static class ViewportInputSubmissionValidationHundredStageSmoke
         for (var i = 0; i < 10; i++)
             Check(
                 ViewportInputSubmissionValidationRuntime.IsValid(active),
-                $"active submission round {i + 1} should satisfy accounting.");
+                $"active accounting round {i + 1} should be valid.");
 
         var drained = await input.WaitAndDrainAsync();
 
@@ -40,46 +38,57 @@ public static class ViewportInputSubmissionValidationHundredStageSmoke
                 drained.Count == 2 &&
                 drained[0].Kind == ViewportInputEventKind.PointerDown &&
                 drained[1].Position == new Vector2(3, 3),
-                $"move coalescing round {i + 1} should preserve FIFO and latest move.");
+                $"coalescing round {i + 1} should preserve the latest move.");
 
         input.Complete();
-
         var completed = input.Snapshot();
 
         for (var i = 0; i < 10; i++)
             Check(
                 completed.IsCompleted &&
-                ViewportInputSubmissionValidationRuntime.IsValid(completed),
-                $"completed state round {i + 1} should remain valid.");
+                ViewportInputSubmissionValidationRuntime.IsTerminal(completed),
+                $"completion round {i + 1} should be terminal.");
 
         input.ResetLifecycle();
+        var reset = input.Snapshot();
 
         for (var i = 0; i < 10; i++)
             Check(
-                !input.IsCompleted &&
-                !input.IsCancelled &&
-                ViewportInputSubmissionValidationRuntime.IsValid(input.Snapshot()),
-                $"reset lifecycle round {i + 1} should reopen the submission runtime.");
+                !reset.IsCompleted &&
+                !reset.IsCancelled &&
+                ViewportInputSubmissionValidationRuntime.IsValid(reset),
+                $"reset round {i + 1} should reopen the runtime.");
 
         input.Cancel();
+        var cancelled = input.Snapshot();
 
         for (var i = 0; i < 10; i++)
             Check(
-                input.IsCancelled &&
-                input.IsCompleted &&
-                input.PendingCount == 0 &&
-                ViewportInputSubmissionValidationRuntime.IsValid(input.Snapshot()),
-                $"cancel lifecycle round {i + 1} should become terminal.");
+                cancelled.IsCancelled &&
+                cancelled.IsCompleted &&
+                cancelled.Pending == 0 &&
+                ViewportInputSubmissionValidationRuntime.IsTerminal(cancelled),
+                $"cancel round {i + 1} should be terminal.");
 
         input.ResetLifecycle();
 
-        Check(
-            input.TrySubmit(
-                ViewportInputEventKind.PointerUp,
-                new Vector2(4, 4)),
-            "post-reset submission should be accepted.");
+        for (var i = 0; i < 10; i++)
+            Check(
+                input.TrySubmit(
+                    ViewportInputEventKind.PointerUp,
+                    new Vector2(4, 4)) &&
+                input.PendingCount == 1,
+                $"post-reset submission round {i + 1} should be accepted.");
 
-        Check(
+        input.Drain();
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                input.PendingCount == 0 &&
+                ViewportInputSubmissionValidationRuntime.IsValid(input.Snapshot()),
+                $"post-drain round {i + 1} should close the queue cleanly.");
+
+        assert(
             round == 100,
             $"Input submission validation smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
