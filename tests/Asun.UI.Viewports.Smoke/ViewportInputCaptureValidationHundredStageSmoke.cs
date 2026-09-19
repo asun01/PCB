@@ -87,11 +87,6 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
                 capture.Owner == ViewportInputOwner.Overlay,
                 $"foreign pointer-up round {i + 1} should not release the overlay owner.");
 
-        Check(
-            !blockedRouter.Escape(new Vector2(20, 20)) &&
-            capture.Owner == ViewportInputOwner.Overlay,
-            "foreign Escape should not release the overlay owner.");
-
         for (var i = 0; i < 10; i++)
             Check(
                 !blockedRouter.Escape(new Vector2(20, 20)) &&
