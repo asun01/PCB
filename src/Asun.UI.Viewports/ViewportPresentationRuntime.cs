@@ -83,6 +83,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 var beforeGeneration = _pipeline.Composite.Generation;
                 var beforeSurface = _continuous.Surface.Snapshot;
                 var beforeBuffer = _continuous.PresentationBuffers.Snapshot;
+                var beforeQueue = _continuous.PresentationQueue.Statistics;
 
                 var snapshot = _lifecycle.Capture(
                     beforeGeneration,
@@ -91,17 +92,20 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     _backpressure.Capture(_input),
                     _pipeline.Scheduler.Statistics,
                     _continuous.Delivery.Statistics,
+                    beforeQueue,
                     _continuous.Statistics,
                     _continuous.LastDelivery?.FrameState,
                     beforeSurface,
                     beforeBuffer,
                     isGenerationStable: false,
                     isSurfaceStable: false,
-                    isBufferStable: false);
+                    isBufferStable: false,
+                    isQueueStable: false);
 
                 var afterGeneration = _pipeline.Composite.Generation;
                 var afterSurface = _continuous.Surface.Snapshot;
                 var afterBuffer = _continuous.PresentationBuffers.Snapshot;
+                var afterQueue = _continuous.PresentationQueue.Statistics;
 
                 var surfaceStable =
                     beforeSurface.State == afterSurface.State &&
@@ -126,15 +130,30 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     beforeBuffer.PresentedSequence ==
                     afterBuffer.PresentedSequence;
 
+                var queueStable =
+                    beforeQueue.Pending == afterQueue.Pending &&
+                    beforeQueue.LatestGeneration ==
+                    afterQueue.LatestGeneration &&
+                    beforeQueue.PresentedGeneration ==
+                    afterQueue.PresentedGeneration &&
+                    beforeQueue.PresentedSequence ==
+                    afterQueue.PresentedSequence &&
+                    beforeQueue.InFlightGeneration ==
+                    afterQueue.InFlightGeneration &&
+                    beforeQueue.InFlightSequence ==
+                    afterQueue.InFlightSequence;
+
                 if (beforeGeneration == afterGeneration &&
                     surfaceStable &&
-                    bufferStable)
+                    bufferStable &&
+                    queueStable)
                 {
                     return snapshot with
                     {
                         IsGenerationStable = true,
                         IsSurfaceStable = true,
-                        IsBufferStable = true
+                        IsBufferStable = true,
+                        IsQueueStable = true
                     };
                 }
             }
@@ -148,13 +167,15 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 _backpressure.Capture(_input),
                 _pipeline.Scheduler.Statistics,
                 _continuous.Delivery.Statistics,
+                _continuous.PresentationQueue.Statistics,
                 _continuous.Statistics,
                 _continuous.LastDelivery?.FrameState,
                 _continuous.Surface.Snapshot,
                 _continuous.PresentationBuffers.Snapshot,
                 isGenerationStable: false,
                 isSurfaceStable: false,
-                isBufferStable: false);
+                isBufferStable: false,
+                isQueueStable: false);
         }
     }
 
