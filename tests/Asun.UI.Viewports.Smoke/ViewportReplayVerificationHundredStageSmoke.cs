@@ -202,7 +202,7 @@ public static class ViewportReplayVerificationHundredStageSmoke
                 var bundle = CreateBundle(events);
 
                 var verification =
-                    ViewportReplayVerificationRuntime.VerifyAgainstBundle(
+                    ViewportReplayVerificationRuntime.VerifyInputAgainstBundle(
                         bundle,
                         actual);
 
@@ -238,7 +238,7 @@ public static class ViewportReplayVerificationHundredStageSmoke
 
                 try
                 {
-                    ViewportReplayVerificationRuntime.VerifyAgainstBundle(
+                    ViewportReplayVerificationRuntime.VerifyInputAgainstBundle(
                         bundle,
                         actual);
                 }
@@ -276,7 +276,7 @@ public static class ViewportReplayVerificationHundredStageSmoke
                         }).ToArray());
 
                 var verification =
-                    ViewportReplayVerificationRuntime.VerifyAgainstBundle(
+                    ViewportReplayVerificationRuntime.VerifyInputAgainstBundle(
                         bundle,
                         actual);
 
