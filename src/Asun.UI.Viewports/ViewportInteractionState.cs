@@ -47,6 +47,25 @@ public readonly record struct ViewportInteractionState(
     public ViewportInteractionState CancelPan() =>
         this with { IsPanning = false };
 
+    public ViewportInteractionState ApplyZoomFactor(
+        double zoomFactor,
+        double minScale,
+        double maxScale,
+        Vector2 viewportAnchor)
+    {
+        Validate(viewportAnchor, nameof(viewportAnchor));
+
+        var requestedScale = Transform.Scale * zoomFactor;
+        return this with
+        {
+            Transform = Transform.WithScaleAroundClamped(
+                requestedScale,
+                minScale,
+                maxScale,
+                viewportAnchor)
+        };
+    }
+
     public ViewportInteractionState ApplyZoom(
         double requestedScale,
         double minScale,
