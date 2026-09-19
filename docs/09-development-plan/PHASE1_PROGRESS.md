@@ -176,3 +176,21 @@ Verification note:
 Verification boundary:
 - Static source verification confirms the new C# files are structurally balanced and the five smoke matrices each use 10 loops × 10 Check calls with an explicit `round == 100` assertion.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+### 1501→2000 continuous diagnostic runtime hardening — 2026-09-19
+
+- Completed stages 1501–2000 as five contiguous 100-stage blocks.
+- Added `ViewportReplayDiagnosticSnapshotRuntime` to unify Execution, Bundle, Checkpoint and cross-layer hash consistency.
+- Added bounded `ViewportReplayDiagnosticSnapshotStore`.
+- Added portable `ViewportReplayDiagnosticManifestRuntime` with internal format versioning and malformed JSON validation.
+- Added `ViewportPresentationReplayDiagnosticRuntime` plus `ViewportPresentationRuntime.CreateReplayDiagnosticSnapshot()`.
+- Added five exact 100-round smoke matrices covering snapshot, bounded history, portable manifest, presentation facade, and continuous integration.
+- Registered all five new smokes in the primary viewport smoke entry.
+- Added independent stage ledgers for 1501–1600, 1601–1700, 1701–1800, 1801–1900, and 1901–2000.
+- Corrected malformed JSON string literals in the diagnostic manifest smoke and normalized the presentation smoke to exactly 100 rounds.
+- No HALCON, DevExpress, hardware SDK, or renderer-specific contracts were introduced.
+
+Verification note:
+- Each of the five new smoke matrices is structurally 10 loops × 10 Check calls with an explicit `round == 100` assertion.
+- The five ledgers contain exactly 100 consecutive stage entries each.
+- Static source checks were used; no build/test/CI success is asserted without authoritative execution evidence.
