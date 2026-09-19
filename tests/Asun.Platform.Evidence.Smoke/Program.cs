@@ -81,6 +81,31 @@ EvidenceCatalogSnapshotDiffHundredStageSmoke.Run((condition,message)=>
     if(!condition)
         failures.Add(message);
 });
+EvidenceCatalogSnapshotFingerprintHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotEnvelopeHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotWindowHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotWindowDiffHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotIntegrationHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
 
 if(failures.Count>0)
 {
