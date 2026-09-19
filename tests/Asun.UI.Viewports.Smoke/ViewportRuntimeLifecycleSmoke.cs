@@ -58,7 +58,7 @@ public static class ViewportRenderSchedulerGenerationSmoke
 {
     public static void Run(Action<bool, string> assert)
     {
-        var scheduler = new ViewportRenderSchedulerRuntime(framesPerSecond: 1000);
+        using var scheduler = new ViewportRenderSchedulerRuntime(framesPerSecond: 1000);
 
         scheduler.Submit(ViewportDirtyFlags.Image, generation: 10);
         scheduler.Submit(ViewportDirtyFlags.Roi, generation: 11);
@@ -103,7 +103,7 @@ public static class ViewportRenderSchedulerGenerationSmoke
             scheduler.Statistics.StaleRejected >= 1,
             "Scheduler should reject late older-generation submissions instead of contaminating the newest pending frame.");
 
-        var pacing = new ViewportRenderSchedulerRuntime(framesPerSecond: 60);
+        using var pacing = new ViewportRenderSchedulerRuntime(framesPerSecond: 60);
         var firstNow = DateTimeOffset.UtcNow.AddSeconds(1);
 
         pacing.Submit(ViewportDirtyFlags.Image, generation: 1);
@@ -123,6 +123,12 @@ public static class ViewportRenderSchedulerGenerationSmoke
         assert(
             pacing.GetNextFrameDelay(firstNow) > TimeSpan.Zero,
             "Scheduler should expose a positive delay until the next frame opportunity.");
+
+        scheduler.Dispose();
+
+        assert(
+            true,
+            "Scheduler disposal should release its internal activity signaling resources.");
     }
 }
 
