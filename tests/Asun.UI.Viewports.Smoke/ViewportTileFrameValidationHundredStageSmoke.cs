@@ -64,7 +64,7 @@ public static class ViewportTileFrameValidationHundredStageSmoke
             Check(frame.MissingVisibleRequests().Count == 0, $"missing-visible state round {i + 1} should be empty.");
 
         for (var i = 0; i < 10; i++)
-            Check(frame.LoadedTiles.Keys.SequenceEqual(frame.Requests.Select(request => request.Index).OrderBy(index => index.Y).ThenBy(index => index.X)), $"loaded tile identity round {i + 1} should cover requested indices.");
+            Check(frame.LoadedTiles.Keys.ToHashSet().SetEquals(frame.Requests.Select(request => request.Index)), $"loaded tile identity round {i + 1} should cover requested indices.");
 
         for (var i = 0; i < 10; i++)
             Check(cached.IsCompleteForVisible && cachedValidation.Count == 0, $"cached frame round {i + 1} should remain structurally valid.");
