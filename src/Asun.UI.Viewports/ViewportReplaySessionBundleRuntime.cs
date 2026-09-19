@@ -248,6 +248,12 @@ public static class ViewportReplaySessionBundleRuntime
 
         CompareValue(
             differences,
+            "FormatVersion",
+            expected.FormatVersion,
+            actual.FormatVersion);
+
+        CompareValue(
+            differences,
             "Manifest.SessionId",
             expected.Manifest.SessionId,
             actual.Manifest.SessionId);
