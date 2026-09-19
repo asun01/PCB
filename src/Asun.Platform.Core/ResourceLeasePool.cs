@@ -163,7 +163,7 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
     {
         ThrowIfDisposed();
 
-        if (timeout <= TimeSpan.Zero && timeout != Timeout.InfiniteTimeSpan)
+        if (timeout < TimeSpan.Zero && timeout != Timeout.InfiniteTimeSpan)
             throw new ArgumentOutOfRangeException(nameof(timeout));
 
         var entry = GetEntry(resource);
