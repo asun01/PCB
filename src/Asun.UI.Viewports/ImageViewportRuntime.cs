@@ -226,6 +226,15 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
             GetCurrentRequests().Count);
     }
 
+    public void CancelPendingRefresh()
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+            CancelRefreshUnsafe();
+        }
+    }
+
     public ValueTask<ViewportTileFrame<TTile>> RefreshAsync(
         CancellationToken cancellationToken = default) =>
         RefreshCoreAsync(
