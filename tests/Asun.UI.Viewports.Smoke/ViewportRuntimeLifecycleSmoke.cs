@@ -89,6 +89,20 @@ public static class ViewportRenderSchedulerGenerationSmoke
             scheduler.PendingFlags.HasFlag(ViewportDirtyFlags.Overlay),
             "Rejected stale scheduling should preserve pending dirty work.");
 
+        scheduler.Submit(
+            ViewportDirtyFlags.Overlay,
+            generation: 20);
+
+        scheduler.Submit(
+            ViewportDirtyFlags.Image,
+            generation: 19);
+
+        assert(
+            scheduler.PendingFlags == ViewportDirtyFlags.Overlay &&
+            scheduler.LatestSubmission?.Generation == 20 &&
+            scheduler.Statistics.StaleRejected >= 1,
+            "Scheduler should reject late older-generation submissions instead of contaminating the newest pending frame.");
+
         var pacing = new ViewportRenderSchedulerRuntime(framesPerSecond: 60);
         var firstNow = DateTimeOffset.UtcNow.AddSeconds(1);
 
