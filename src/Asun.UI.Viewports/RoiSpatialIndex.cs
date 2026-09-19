@@ -57,12 +57,12 @@ public sealed class RoiSpatialIndex
 
         foreach (var pair in _cells.ToArray())
         {
+            var beforeCount = pair.Value.Count;
             pair.Value.RemoveAll(item => item.Id == id);
+            removed |= pair.Value.Count != beforeCount;
 
             if (pair.Value.Count == 0)
                 _cells.Remove(pair.Key);
-
-            removed = removed || pair.Value.Any(item => item.Id == id);
         }
 
         return removed;
