@@ -1190,6 +1190,13 @@ Assert(
     "ROI clamping should keep the rectangle inside image bounds.",
     failures);
 
+var expandedRectangle = roi.ExpandToInclude(
+    new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
+Assert(
+    expandedRectangle == new Asun.Vision.Contracts.PixelRect(100, 50, 350, 150),
+    "Pixel rectangle expansion by rectangle should cover both rectangles.",
+    failures);
+
 var union = roi.Union(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
 Assert(
     union == new Asun.Vision.Contracts.PixelRect(100, 50, 350, 150),
