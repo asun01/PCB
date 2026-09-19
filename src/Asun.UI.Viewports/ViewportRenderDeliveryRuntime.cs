@@ -134,7 +134,8 @@ public static class ViewportRenderDeliveryRuntime
                 {
                     surface.Discard(frame.Composite.Generation);
 
-                    await sink.DiscardFrameAsync(
+                    await TryDiscardAsync(
+                        sink,
                         new ViewportRenderDiscardContext(
                             frame.Composite.Generation,
                             exception is OperationCanceledException
@@ -164,7 +165,8 @@ public static class ViewportRenderDeliveryRuntime
             if (surface is not null)
             {
                 surface.Discard(frame.Composite.Generation);
-                await sink.DiscardFrameAsync(
+                await TryDiscardAsync(
+                    sink,
                     new ViewportRenderDiscardContext(
                         frame.Composite.Generation,
                         ViewportRenderDeliveryStatus.Cancelled,
@@ -191,7 +193,8 @@ public static class ViewportRenderDeliveryRuntime
             if (surface is not null)
             {
                 surface.Discard(frame.Composite.Generation);
-                await sink.DiscardFrameAsync(
+                await TryDiscardAsync(
+                    sink,
                     new ViewportRenderDiscardContext(
                         frame.Composite.Generation,
                         ViewportRenderDeliveryStatus.Deferred,
@@ -218,7 +221,8 @@ public static class ViewportRenderDeliveryRuntime
             if (surface is not null)
             {
                 surface.Discard(frame.Composite.Generation);
-                await sink.DiscardFrameAsync(
+                await TryDiscardAsync(
+                    sink,
                     new ViewportRenderDiscardContext(
                         frame.Composite.Generation,
                         ViewportRenderDeliveryStatus.Failed,
@@ -246,5 +250,21 @@ public static class ViewportRenderDeliveryRuntime
             System.Diagnostics.Stopwatch.GetElapsedTime(started));
 
         return result;
+    }
+
+    private static async ValueTask TryDiscardAsync<TTile>(
+        IViewportRenderSink<TTile> sink,
+        ViewportRenderDiscardContext context)
+    {
+        try
+        {
+            await sink
+                .DiscardFrameAsync(context)
+                .ConfigureAwait(false);
+        }
+        catch
+        {
+            // The original delivery status/error is authoritative. Discard is best effort.
+        }
     }
 }
