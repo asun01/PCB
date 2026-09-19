@@ -30,6 +30,13 @@ public static class ViewportPresentationFacadeSmoke
 
             presentation.Composite.SelectRoi(roiId);
 
+            var initialSnapshot = presentation.Snapshot;
+
+            assert(
+                initialSnapshot.IsGenerationStable &&
+                initialSnapshot.Generation == presentation.Composite.Generation,
+                $"Presentation facade {i + 1} should expose a stable diagnostic snapshot when the generation is idle.");
+
             presentation.Submit(
                 ViewportInputEventKind.PointerMove,
                 new Vector2(100, 100));
