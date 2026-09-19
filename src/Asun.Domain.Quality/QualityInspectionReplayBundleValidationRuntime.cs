@@ -9,6 +9,18 @@ public static class QualityInspectionReplayBundleValidationRuntime
 
         var errors = new List<string>();
 
+        if (bundle.Current is null)
+        {
+            errors.Add("Replay bundle current projection cannot be null.");
+            return errors;
+        }
+
+        if (bundle.Diff is null)
+        {
+            errors.Add("Replay bundle diff cannot be null.");
+            return errors;
+        }
+
         errors.AddRange(
             QualityInspectionReplayProjectionValidationRuntime.Validate(
                 bundle.Current));
@@ -30,11 +42,10 @@ public static class QualityInspectionReplayBundleValidationRuntime
                         "Replay bundle diff does not match its projection pair.");
             }
         }
-        else
+        else if (!bundle.Diff.IsEmpty)
         {
-            if (!bundle.Diff.IsEmpty)
-                errors.Add(
-                    "A replay bundle without a previous projection must have an empty diff.");
+            errors.Add(
+                "A replay bundle without a previous projection must have an empty diff.");
         }
 
         return errors;
