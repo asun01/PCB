@@ -43,7 +43,7 @@ public sealed class ViewportRenderDeliveryTracker
     {
         Interlocked.Increment(ref _attempts);
         Interlocked.Add(ref _totalDurationTicks, duration.Ticks);
-        Interlocked.Exchange(ref _lastGeneration, result.Generation);
+        UpdateLastGeneration(result.Generation);
         Interlocked.Add(ref _renderedUnits, result.RenderedUnits);
 
         if (result.Cancelled)
@@ -59,6 +59,23 @@ public sealed class ViewportRenderDeliveryTracker
             Interlocked.Increment(ref _succeeded);
         else
             Interlocked.Increment(ref _failed);
+    }
+
+    private void UpdateLastGeneration(long generation)
+    {
+        while (true)
+        {
+            var current = Interlocked.Read(ref _lastGeneration);
+
+            if (generation <= current)
+                return;
+
+            if (Interlocked.CompareExchange(
+                    ref _lastGeneration,
+                    generation,
+                    current) == current)
+                return;
+        }
     }
 
     public void Reset()
