@@ -10,11 +10,13 @@ public sealed class ViewportTileFrame<TTile>
 {
     internal ViewportTileFrame(
         ViewportTransform transform,
+        Vector2 tileSize,
         IReadOnlyList<TileRequest> requests,
         IReadOnlyDictionary<TileIndex, TTile> loadedTiles,
         IReadOnlyList<TileLoadFailure<TTile>> failures)
     {
         Transform = transform;
+        TileSize = tileSize;
         Requests = Array.AsReadOnly(requests.ToArray());
         LoadedTiles = new ReadOnlyDictionary<TileIndex, TTile>(
             new Dictionary<TileIndex, TTile>(loadedTiles));
@@ -22,6 +24,8 @@ public sealed class ViewportTileFrame<TTile>
     }
 
     public ViewportTransform Transform { get; }
+
+    public Vector2 TileSize { get; }
 
     public IReadOnlyList<TileRequest> Requests { get; }
 
