@@ -549,6 +549,17 @@ Assert(
 var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
 Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
 
+Assert(
+    !singular.TryInvert(out _),
+    "Singular affine transforms should fail the non-throwing inversion path.",
+    failures);
+
+Assert(
+    transform.TryInvert(out var transformInverse) &&
+    transformInverse.ApproximatelyEquals(transform.Inverse),
+    "Affine TryInvert should match the throwing inverse path.",
+    failures);
+
 var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
 Assert(
     imageBounds.EnsureValid() == imageBounds,
