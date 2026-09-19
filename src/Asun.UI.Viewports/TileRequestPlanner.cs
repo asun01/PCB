@@ -23,6 +23,21 @@ public static class TileRequestPlanner
     {
         ArgumentNullException.ThrowIfNull(transform);
 
+        return PlanForViewport(
+            transform,
+            tileSize,
+            marginTiles,
+            marginTiles);
+    }
+
+    public static IReadOnlyList<TileRequest> PlanForViewport(
+        ViewportTransform transform,
+        Vector2 tileSize,
+        int marginX,
+        int marginY)
+    {
+        ArgumentNullException.ThrowIfNull(transform);
+
         var visibleRange = transform.GetVisibleTileRange(tileSize);
         var prefetchRange = transform.GetPrefetchTileRange(tileSize, marginTiles);
 
