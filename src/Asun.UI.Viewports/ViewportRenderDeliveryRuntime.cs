@@ -11,13 +11,38 @@ public enum ViewportRenderDeliveryStatus
 public sealed class ViewportRenderWorkUnavailableException : Exception
 {
     public ViewportRenderWorkUnavailableException(
-        ViewportRenderWorkItem workItem)
-        : base($"Render work is not currently available: {workItem.Kind}.")
+        ViewportRenderWorkItem workItem,
+        int renderedUnits = 0)
+        : this(
+            new[] { workItem },
+            renderedUnits)
     {
-        WorkItem = workItem;
     }
 
-    public ViewportRenderWorkItem WorkItem { get; }
+    public ViewportRenderWorkUnavailableException(
+        IReadOnlyList<ViewportRenderWorkItem> workItems,
+        int renderedUnits = 0)
+        : base($"{workItems.Count} render work item(s) are not currently available.")
+    {
+        ArgumentNullException.ThrowIfNull(workItems);
+
+        if (workItems.Count == 0)
+            throw new ArgumentException(
+                "At least one deferred work item is required.",
+                nameof(workItems));
+
+        if (renderedUnits < 0)
+            throw new ArgumentOutOfRangeException(nameof(renderedUnits));
+
+        WorkItems = workItems.ToArray();
+        RenderedUnits = renderedUnits;
+    }
+
+    public IReadOnlyList<ViewportRenderWorkItem> WorkItems { get; }
+
+    public ViewportRenderWorkItem WorkItem => WorkItems[0];
+
+    public int RenderedUnits { get; }
 }
 
 public readonly record struct ViewportRenderDeliveryResult(
@@ -27,6 +52,7 @@ public readonly record struct ViewportRenderDeliveryResult(
     long Generation,
     int RenderedUnits,
     int DeferredUnits,
+    IReadOnlyList<ViewportRenderWorkItem> DeferredWorkItems,
     Exception? Error)
 {
     public ViewportRenderDeliveryStatus Status =>
