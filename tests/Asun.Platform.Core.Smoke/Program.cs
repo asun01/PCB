@@ -856,6 +856,55 @@ Assert(
     "Affine linear scale metadata and self-equality should be deterministic.",
     failures);
 
+var oriented = new Asun.Vision.Contracts.OrientedRectangle2D(
+    new System.Numerics.Vector2(100, 50),
+    new System.Numerics.Vector2(40, 20),
+    0);
+
+Assert(
+    oriented.IsValid &&
+    Math.Abs(oriented.Area - 800) < 1e-6,
+    "Oriented rectangle validity and area should be deterministic.",
+    failures);
+
+Assert(
+    oriented.Contains(new System.Numerics.Vector2(100, 50)) &&
+    !oriented.Contains(new System.Numerics.Vector2(130, 50)),
+    "Oriented rectangle point containment should use local axes.",
+    failures);
+
+var orientedCorners = oriented.GetCorners();
+Assert(
+    orientedCorners.Length == 4 &&
+    orientedCorners[0] == new System.Numerics.Vector2(80, 40) &&
+    orientedCorners[2] == new System.Numerics.Vector2(120, 60),
+    "Oriented rectangle corners should be deterministic.",
+    failures);
+
+var orientedBounds = oriented.GetAxisAlignedBounds();
+Assert(
+    orientedBounds == new RectangleF(80, 40, 40, 20),
+    "Axis-aligned bounds should contain the oriented rectangle.",
+    failures);
+
+var rotatedOriented = oriented.Rotate(Math.PI / 2);
+Assert(
+    Math.Abs(rotatedOriented.AngleRadians - Math.PI / 2) < 1e-12,
+    "Oriented rectangle rotation should accumulate angle.",
+    failures);
+
+var translatedOriented = oriented.Translate(new System.Numerics.Vector2(5, -10));
+Assert(
+    translatedOriented.Center == new System.Numerics.Vector2(105, 40),
+    "Oriented rectangle translation should move its center.",
+    failures);
+
+var orientedTransform = oriented.ToAffineTransform();
+Assert(
+    orientedTransform.IsInvertible,
+    "A positive-size oriented rectangle should produce an invertible affine transform.",
+    failures);
+
 var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
 Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
 
