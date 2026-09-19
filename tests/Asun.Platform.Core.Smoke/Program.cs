@@ -841,6 +841,12 @@ Assert(
     "Viewport zoom should respect the configured upper bound.",
     failures);
 
+var fitRelative = viewport.WithFitScale(2);
+Assert(
+    Math.Abs(fitRelative.Scale - viewport.FitScale * 2) < 1e-9,
+    "Fit-relative scaling should derive from the canonical fit scale.",
+    failures);
+
 var clampedTranslation = viewport.WithTranslationClamped(
     new System.Numerics.Vector2(-5000, 5000));
 Assert(
