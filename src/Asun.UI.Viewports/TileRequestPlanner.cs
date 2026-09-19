@@ -124,6 +124,15 @@ public static class TileRequestPlanner
             dx * dx + dy * dy);
     }
 
+    public static RectangleF GetRequestRectangle(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        TileRequest request) =>
+        ImageTileGeometry.GetTileRectangle(
+            imageSize,
+            tileSize,
+            request.Index);
+
     private static void ValidateRange(
         Vector2 imageSize,
         Vector2 tileSize,
