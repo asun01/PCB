@@ -108,6 +108,29 @@ Assert(
     "Zoom should preserve the viewport anchor.",
     failures);
 
+var parallelStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+var secondStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+var parallelPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("A", async (_, token) =>
+    {
+        parallelStarted.SetResult(true);
+        await secondStarted.Task.WaitAsync(token);
+    }),
+    new AsyncPipeline<object>.Node("B", (_, _) =>
+    {
+        secondStarted.SetResult(true);
+        return ValueTask.CompletedTask;
+    })
+});
+
+await parallelPipeline.ExecuteAsync(new object());
+Assert(
+    parallelStarted.Task.IsCompletedSuccessfully &&
+    secondStarted.Task.IsCompletedSuccessfully,
+    "Independent pipeline nodes should be schedulable in parallel.",
+    failures);
+
 var queue = new BoundedWorkQueue<int>(2);
 Assert(queue.TryEnqueue(1), "First enqueue should succeed.", failures);
 Assert(queue.TryEnqueue(2), "Second enqueue should succeed.", failures);
