@@ -1091,6 +1091,13 @@ Assert(
     failures);
 
 Assert(
+    polyline.TryPointAtDistance(5, out var tryDistancePoint) &&
+    tryDistancePoint == new System.Numerics.Vector2(4, 4) &&
+    !polyline.TryPointAtDistance(9, out _),
+    "Polyline non-throwing distance lookup should validate its input range.",
+    failures);
+
+Assert(
     polyline.ClosestPoint(new System.Numerics.Vector2(3, 0)) ==
         new System.Numerics.Vector2(1.08f, 1.44f),
     "Polyline closest-point calculation should minimize distance over all segments.",
