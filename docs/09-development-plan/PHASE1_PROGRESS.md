@@ -333,3 +333,38 @@ Stage ledgers closed:
 Verification status:
 - Static structure audits passed for the five new Smokes: 10 loop groups, 100 numbered rounds, balanced delimiters, no placeholder markers.
 - No local build/test/CI success is claimed; the latest checked branch commit has no workflow run/status evidence.
+
+
+### 5501→6000 simulation, tile-range, frame and observability hardening — 2026-09-19
+
+Completed the third 500-stage batch inside the active 100,000-stage execution window.
+
+Implemented:
+- reusable `SimulatedTileSource<TTile>` over the existing `ITileSource<TTile>` boundary;
+- deterministic delay/failure/cancellation/concurrency simulation;
+- `TileRangeValidationRuntime`;
+- `ViewportTileFrameValidationRuntime`;
+- `TileViewportDiagnosticsValidationRuntime`;
+- `TileLoadHealthValidationRuntime`;
+- `SimulatedTileSourceValidationRuntime`.
+
+Added and registered five 100-round validation Smokes:
+- tile range;
+- viewport tile frame;
+- tile viewport diagnostics;
+- tile load health;
+- simulated tile source.
+
+Defect hardening during acceptance:
+- fixed missing `System.Numerics` dependency in tile-range validator;
+- removed an invalid invariant that treated cumulative cache evictions as current cache occupancy;
+- tightened tile-frame coverage to use order-independent set equality;
+- removed a tautological cache-health assertion.
+
+Closed acceptance assets:
+- stage ledgers 5501–5600, 5601–5700, 5701–5800, 5801–5900, 5901–6000;
+- integration checkpoint `PHASE1_5501_6000_INTEGRATION_CHECKPOINT_20260919.md`.
+
+Verification status:
+- static structure audits passed for the five new 100-round Smokes: 10 loop groups, exact `round == 100`, balanced delimiters, no placeholder markers;
+- no local build/test/CI success is claimed without authoritative execution evidence.
