@@ -132,6 +132,8 @@ public readonly record struct ViewportTransform(
 
     public bool ContainsViewportPoint(Vector2 viewportPoint)
     {
+        if (!IsFinite(viewportPoint))
+            return false;
         var imagePoint = ViewportToImage(viewportPoint);
 
         return imagePoint.X >= 0 &&
