@@ -126,6 +126,12 @@ public static class ViewportRenderAdapterRuntime
                 continue;
             }
 
+            if (work.Kind == ViewportRenderWorkKind.Tile &&
+                work.Tile is TileIndex unavailableTile)
+            {
+                throw new ViewportRenderWorkUnavailableException(work);
+            }
+
             if (work.Kind != ViewportRenderWorkKind.Roi ||
                 work.RoiId == Guid.Empty ||
                 !renderedRoiIds.Add(work.RoiId) ||
