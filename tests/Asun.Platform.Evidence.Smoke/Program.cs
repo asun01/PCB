@@ -106,6 +106,31 @@ EvidenceCatalogSnapshotIntegrationHundredStageSmoke.Run((condition,message)=>
     if(!condition)
         failures.Add(message);
 });
+EvidenceCatalogSnapshotIntegrityReportHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotChangeHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotWindowIntegritySummaryHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotWindowTransitionHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceSnapshotChainHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
 
 if(failures.Count>0)
 {
