@@ -33,6 +33,28 @@ public readonly record struct ImageSize
         point.Y >= 0 &&
         point.X <= Width &&
         point.Y <= Height;
+
+    public PixelPoint Clamp(PixelPoint point)
+    {
+        if (!point.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        return new PixelPoint(
+            Math.Clamp(point.X, 0, Width),
+            Math.Clamp(point.Y, 0, Height));
+    }
+
+    public bool TryClamp(PixelPoint point, out PixelPoint clamped)
+    {
+        if (!point.IsFinite)
+        {
+            clamped = default;
+            return false;
+        }
+
+        clamped = Clamp(point);
+        return true;
+    }
 }
 
 public readonly record struct PixelPoint(double X, double Y)
