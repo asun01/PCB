@@ -127,6 +127,7 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 trackedSuccess.Succeeded &&
                 trackedStats.Attempts == 1 &&
                 trackedStats.Succeeded == 1 &&
+                trackedStats.Partial == 0 &&
                 trackedStats.Failed == 0 &&
                 trackedStats.Deferred == 0 &&
                 trackedStats.Cancelled == 0 &&
