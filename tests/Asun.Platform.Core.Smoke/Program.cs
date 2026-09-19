@@ -406,6 +406,16 @@ Assert(
     "Viewport zoom should respect the configured upper bound.",
     failures);
 
+var clampedTranslation = viewport.WithTranslationClamped(
+    new System.Numerics.Vector2(-5000, 5000));
+Assert(
+    clampedTranslation.Translation.X <= 0 &&
+    clampedTranslation.Translation.Y <= 0 &&
+    clampedTranslation.RenderedImageRectangle.Right >= clampedTranslation.ViewportSize.X &&
+    clampedTranslation.RenderedImageRectangle.Bottom >= clampedTranslation.ViewportSize.Y,
+    "Clamped translation should prevent blank viewport gaps.",
+    failures);
+
 var clampedMinimumZoom = viewport.WithScaleAroundClamped(
     requestedScale: 0.01,
     minScale: 0.5,
