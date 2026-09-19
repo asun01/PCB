@@ -13,8 +13,29 @@ public readonly record struct ViewportPresentationAuditEvent(
 public sealed class ViewportPresentationAuditTrace
 {
     private readonly object _sync = new();
+    private readonly int _capacity;
     private readonly List<ViewportPresentationAuditEvent> _events = new();
     private long _sequence;
+    private long _dropped;
+
+    public ViewportPresentationAuditTrace(int capacity = 1024)
+    {
+        if (capacity <= 0)
+            throw new ArgumentOutOfRangeException(nameof(capacity));
+
+        _capacity = capacity;
+    }
+
+    public int Capacity => _capacity;
+
+    public long DroppedCount
+    {
+        get
+        {
+            lock (_sync)
+                return _dropped;
+        }
+    }
 
     public int Count
     {
@@ -56,6 +77,12 @@ public sealed class ViewportPresentationAuditTrace
 
         lock (_sync)
         {
+            if (_events.Count >= _capacity)
+            {
+                _events.RemoveAt(0);
+                _dropped++;
+            }
+
             _events.Add(
                 new ViewportPresentationAuditEvent(
                     ++_sequence,
@@ -75,6 +102,7 @@ public sealed class ViewportPresentationAuditTrace
         {
             _events.Clear();
             _sequence = 0;
+            _dropped = 0;
         }
     }
 
