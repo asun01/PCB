@@ -47,6 +47,25 @@ public static class ViewportRenderReuseSmoke
                 ReferenceEquals(reused, first),
                 $"Reuse chain {i + 1} should return the same frame only after presentation.");
 
+            var newerGeneration = first.Composite.Generation + 1;
+            var newerFrame = runtime.Composite.CreateCachedFrame();
+            var newerPipelineFrame = runtime.BuildFromFrame(
+                newerFrame,
+                DateTimeOffset.UtcNow.AddSeconds(3));
+
+            if (newerPipelineFrame.Accepted &&
+                !newerPipelineFrame.HasDeferredWork)
+                runtime.Reuse.Store(newerPipelineFrame);
+
+            var cachedBeforeOlderStore = runtime.Reuse.LatestGeneration;
+
+            runtime.Reuse.Store(first);
+
+            assert(
+                runtime.Reuse.LatestGeneration == cachedBeforeOlderStore &&
+                runtime.Reuse.LatestGeneration != first.Composite.Generation,
+                $"Reuse chain {i + 1} should not allow an older generation to overwrite a newer cached frame.");
+
             assert(
                 runtime.Reuse.LatestGeneration == first.Composite.Generation,
                 $"Reuse chain {i + 1} should expose the cached generation.");
