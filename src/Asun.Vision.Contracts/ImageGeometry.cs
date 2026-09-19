@@ -15,6 +15,13 @@ public readonly record struct ImageSize
 
     public int Width { get; }
     public int Height { get; }
+
+    public long PixelCount => (long)Width * Height;
+
+    public double AspectRatio => (double)Width / Height;
+
+    public Vector2 Vector => new(Width, Height);
+
     public Vector2 Center => new(Width / 2f, Height / 2f);
 }
 
