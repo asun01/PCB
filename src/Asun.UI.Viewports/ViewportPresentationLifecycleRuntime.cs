@@ -17,7 +17,8 @@ public readonly record struct ViewportPresentationSnapshot(
     ViewportInputBackpressureSnapshot Backpressure,
     ViewportRenderSchedulerStatistics Scheduler,
     ViewportRenderDeliveryStatistics Delivery,
-    ViewportContinuousFrameStatistics Frames);
+    ViewportContinuousFrameStatistics Frames,
+    bool IsGenerationStable);
 
 public sealed class ViewportPresentationLifecycleRuntime : IDisposable
 {
@@ -39,8 +40,18 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         ViewportInputBackpressureSnapshot backpressure,
         ViewportRenderSchedulerStatistics scheduler,
         ViewportRenderDeliveryStatistics delivery,
-        ViewportContinuousFrameStatistics frames) =>
-        new(State, generation, pendingInput, pendingDirtyFlags, backpressure, scheduler, delivery, frames);
+        ViewportContinuousFrameStatistics frames,
+        bool isGenerationStable) =>
+        new(
+            State,
+            generation,
+            pendingInput,
+            pendingDirtyFlags,
+            backpressure,
+            scheduler,
+            delivery,
+            frames,
+            isGenerationStable);
 
     public bool TryStart(out CancellationToken token)
     {
