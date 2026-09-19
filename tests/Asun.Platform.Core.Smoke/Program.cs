@@ -269,6 +269,18 @@ Assert(
     "Edge tile rectangles should be clipped to the image bounds.",
     failures);
 
+Assert(
+    Asun.UI.Viewports.ImageTileGeometry.ContainsTile(
+        new System.Numerics.Vector2(1000, 500),
+        new System.Numerics.Vector2(256, 256),
+        new Asun.UI.Viewports.TileIndex(3, 1)) &&
+    !Asun.UI.Viewports.ImageTileGeometry.ContainsTile(
+        new System.Numerics.Vector2(1000, 500),
+        new System.Numerics.Vector2(256, 256),
+        new Asun.UI.Viewports.TileIndex(4, 1)),
+    "Tile grid membership should reject indexes outside the image grid.",
+    failures);
+
 var exactTile = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     new System.Numerics.Vector2(1024, 512),
     new System.Numerics.Vector2(256, 256),
