@@ -6,6 +6,7 @@ public readonly record struct ViewportRenderFrameMetrics(
     int VisibleTiles,
     int RoiCommands,
     int SceneCommands,
+    int SceneDiffs,
     bool Complete,
     long Generation);
 
@@ -22,6 +23,7 @@ public static class ViewportRenderFrameRuntime
             frame.Tiles.RequestedVisibleCount,
             frame.RoiCommands.Count,
             frame.SceneCommands.Count,
+            frame.SceneDiff.Count,
             frame.IsReady,
             frame.Generation);
     }
