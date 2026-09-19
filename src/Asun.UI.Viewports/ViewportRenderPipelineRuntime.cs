@@ -436,6 +436,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             return;
 
         _composite.Dispose();
+        _scheduler.Dispose();
     }
 
     private void ThrowIfDisposed() =>
