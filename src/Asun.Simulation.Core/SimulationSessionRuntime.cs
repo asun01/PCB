@@ -19,7 +19,7 @@ public static class SimulationSessionRuntime
                 scenario,
                 sequence);
 
-            if(!SimulationObservationValidationRuntime.IsValid(observation))
+            if(!SimulationObservationIntegrityRuntime.IsValid(scenario,observation))
                 throw new InvalidOperationException("Simulation produced an invalid observation.");
 
             observations.Add(observation);
