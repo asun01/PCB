@@ -2392,3 +2392,13 @@ Current completed boundary: **31,000**
 Next executable stage: **31,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 31500 — 2026-09-20
+
+Closed PCB Assembly → Production → Quality provenance integration. The board identity is now part of an independently validated provenance bundle alongside source-frame provenance and Quality run identity.
+
+Current completed boundary: **31,500**
+Next executable stage: **31,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
