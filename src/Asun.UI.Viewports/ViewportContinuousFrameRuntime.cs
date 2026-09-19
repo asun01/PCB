@@ -81,65 +81,58 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
             ViewportDirtyFlags.All,
             _pipeline.Composite.Generation);
 
-        try
+        while (!cancellationToken.IsCancellationRequested)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            Interlocked.Increment(ref _loopCount);
+
+            var processed = ProcessInputs();
+            Interlocked.Add(ref _processedInputs, processed);
+
+            if (_pipeline.Scheduler.PendingFlags != ViewportDirtyFlags.None)
             {
-                Interlocked.Increment(ref _loopCount);
-
-                var processed = ProcessInputs();
-                Interlocked.Add(ref _processedInputs, processed);
-
-                if (_pipeline.Scheduler.PendingFlags != ViewportDirtyFlags.None)
+                try
                 {
-                    try
+                    var frame = await _pipeline
+                        .RefreshAsync(
+                            DateTimeOffset.UtcNow,
+                            includePrefetch: false,
+                            cancellationToken)
+                        .ConfigureAwait(false);
+
+                    if (frame is not null && frame.Accepted)
                     {
-                        var frame = await _pipeline
-                            .RefreshAsync(
-                                DateTimeOffset.UtcNow,
-                                includePrefetch: false,
+                        var delivery = await ViewportRenderDeliveryRuntime
+                            .TryDeliverAsync(
+                                frame,
+                                sink,
+                                _delivery,
                                 cancellationToken)
                             .ConfigureAwait(false);
 
-                        if (frame is not null && frame.Accepted)
-                        {
-                            var delivery = await ViewportRenderDeliveryRuntime
-                                .TryDeliverAsync(
-                                    frame,
-                                    sink,
-                                    _delivery,
-                                    cancellationToken)
-                                .ConfigureAwait(false);
-
-                            if (delivery.Succeeded)
-                                Interlocked.Increment(ref _renderedFrames);
-                            else
-                                Interlocked.Increment(ref _skippedLoops);
-                        }
+                        if (delivery.Succeeded)
+                            Interlocked.Increment(ref _renderedFrames);
                         else
-                        {
                             Interlocked.Increment(ref _skippedLoops);
-                        }
                     }
-                    catch (OperationCanceledException) when (
-                        !cancellationToken.IsCancellationRequested)
+                    else
                     {
                         Interlocked.Increment(ref _skippedLoops);
                     }
                 }
-                else
+                catch (OperationCanceledException) when (
+                    !cancellationToken.IsCancellationRequested)
                 {
                     Interlocked.Increment(ref _skippedLoops);
-                    await Task.Delay(
-                        _idleDelay,
-                        cancellationToken)
-                        .ConfigureAwait(false);
                 }
             }
-        }
-        finally
-        {
-            _input.Complete(cancelPending: true);
+            else
+            {
+                Interlocked.Increment(ref _skippedLoops);
+                await Task.Delay(
+                    _idleDelay,
+                    cancellationToken)
+                    .ConfigureAwait(false);
+            }
         }
     }
 
