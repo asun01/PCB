@@ -173,6 +173,16 @@ Assert(
     failures);
 
 var visible = panned.GetVisibleImageRectangle();
+var outsideTileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
+    viewport.ImageSize,
+    new System.Numerics.Vector2(256, 256),
+    new RectangleF(2000, 2000, 100, 100));
+
+Assert(
+    outsideTileRange.Count == 0,
+    "A viewport region outside the image should request no tiles.",
+    failures);
+
 var tileRange = panned.GetVisibleTileRange(
     new System.Numerics.Vector2(256, 256));
 
@@ -368,6 +378,21 @@ catch (ArgumentException)
 Assert(
     duplicateDependencyRejected,
     "Pipeline nodes should reject duplicate dependency edges.",
+    failures);
+
+var nullNodeRejected = false;
+try
+{
+    _ = new AsyncPipeline<object>(new AsyncPipeline<object>.Node[] { null! });
+}
+catch (ArgumentNullException)
+{
+    nullNodeRejected = true;
+}
+
+Assert(
+    nullNodeRejected,
+    "Pipeline should reject null nodes during construction.",
     failures);
 
 var nullDependenciesRejected = false;

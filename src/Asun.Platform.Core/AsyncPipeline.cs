@@ -15,11 +15,7 @@ public sealed class AsyncPipeline<TContext>
         ArgumentNullException.ThrowIfNull(nodes);
 
         _nodes = nodes
-            .Select(node => node with
-            {
-                Dependencies = node.Dependencies?.ToArray()
-                    ?? throw new ArgumentNullException(nameof(node.Dependencies))
-            })
+            .Select(SnapshotNode)
             .ToArray();
 
         if (_nodes.Count == 0)
@@ -115,6 +111,17 @@ public sealed class AsyncPipeline<TContext>
 
         if (completedCount != _nodes.Count)
             throw new InvalidOperationException("Pipeline graph cannot make progress.");
+    }
+
+    private static Node SnapshotNode(Node node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+
+        return node with
+        {
+            Dependencies = node.Dependencies?.ToArray()
+                ?? throw new ArgumentNullException(nameof(node.Dependencies))
+        };
     }
 
     private static void ValidateGraph(IReadOnlyList<Node> nodes)

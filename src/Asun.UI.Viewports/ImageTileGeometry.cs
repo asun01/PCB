@@ -56,17 +56,26 @@ public static class ImageTileGeometry
                 nameof(visibleImageRectangle),
                 "Visible rectangle dimensions cannot be negative.");
 
-        var left = Math.Clamp(visibleImageRectangle.Left, 0f, imageSize.X);
-        var top = Math.Clamp(visibleImageRectangle.Top, 0f, imageSize.Y);
-        var right = Math.Clamp(visibleImageRectangle.Right, 0f, imageSize.X);
-        var bottom = Math.Clamp(visibleImageRectangle.Bottom, 0f, imageSize.Y);
+        var rawLeft = visibleImageRectangle.Left;
+        var rawTop = visibleImageRectangle.Top;
+        var rawRight = visibleImageRectangle.Right;
+        var rawBottom = visibleImageRectangle.Bottom;
 
-        if (right < left || bottom < top)
+        if (rawRight <= 0 ||
+            rawBottom <= 0 ||
+            rawLeft >= imageSize.X ||
+            rawTop >= imageSize.Y)
         {
-            return new VisibleTileRange(
-                new TileIndex(0, 0),
-                new TileIndex(-1, -1));
+            return EmptyRange();
         }
+
+        var left = Math.Clamp(rawLeft, 0f, imageSize.X);
+        var top = Math.Clamp(rawTop, 0f, imageSize.Y);
+        var right = Math.Clamp(rawRight, 0f, imageSize.X);
+        var bottom = Math.Clamp(rawBottom, 0f, imageSize.Y);
+
+        if (right <= left || bottom <= top)
+            return EmptyRange();
 
         var tileCountX = Math.Max(1, (int)Math.Ceiling(imageSize.X / tileSize.X));
         var tileCountY = Math.Max(1, (int)Math.Ceiling(imageSize.Y / tileSize.Y));
@@ -120,6 +129,9 @@ public static class ImageTileGeometry
             Math.Max(0, right - left),
             Math.Max(0, bottom - top));
     }
+
+    private static VisibleTileRange EmptyRange() =>
+        new(new TileIndex(0, 0), new TileIndex(-1, -1));
 
     private static void ValidatePositiveFinite(Vector2 value, string parameterName)
     {
