@@ -137,7 +137,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
 
-            if (_pending.Count == 0)
+            if (_inFlight is not null ||
+                _pending.Count == 0)
             {
                 packet = default!;
                 return false;
