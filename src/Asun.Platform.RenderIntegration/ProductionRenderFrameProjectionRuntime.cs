@@ -55,7 +55,7 @@ public static class ProductionRenderFrameProjectionRuntime
             fingerprint);
     }
 
-    internal static string CreateFingerprint(
+    private static bool IsValidSummaryCounts(\n        ViewportRenderFrameSummary summary)=>\n        summary.Generation>=0 &&\n        summary.CommandCount>=0 &&\n        summary.RegionCount>=0 &&\n        summary.TileCount>=0 &&\n        summary.RoiCount>=0 &&\n        summary.OverlayCount>=0 &&\n        summary.InvalidationCount>=0 &&\n        summary.FullSurfaceCount>=0 &&\n        summary.TileCount+\n        summary.RoiCount+\n        summary.OverlayCount+\n        summary.InvalidationCount+\n        summary.FullSurfaceCount<=summary.CommandCount;\n\n    internal static string CreateFingerprint(
         Guid productionSessionId,
         string productionFingerprint,
         IReadOnlyList<ProductionRenderFrameEntry> frames)
