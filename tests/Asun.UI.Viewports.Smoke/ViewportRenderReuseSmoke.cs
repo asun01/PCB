@@ -61,8 +61,9 @@ public static class ViewportRenderReuseSmoke
                 second.Composite.Generation != first.Composite.Generation &&
                 !runtime.Reuse.TryReuse(
                     second.Composite.Generation,
-                    out _),
-                $"Reuse chain {i + 1} should invalidate reuse after navigation.");
+                    out _) &&
+                runtime.Reuse.LatestGeneration is null,
+                $"Reuse chain {i + 1} should evict the old cached frame as soon as a newer generation is refreshed.");
 
             if (second is not null)
             {
