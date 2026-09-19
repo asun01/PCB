@@ -38,7 +38,15 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         var right = Math.Max(first.X, second.X);
         var bottom = Math.Max(first.Y, second.Y);
 
-        return new PixelRect(left, top, right - left, bottom - top);
+        var width = right - left;
+        var height = bottom - top;
+
+        if (!double.IsFinite(width) || !double.IsFinite(height))
+            throw new ArgumentOutOfRangeException(
+                nameof(first),
+                "The point pair produces non-finite rectangle dimensions.");
+
+        return new PixelRect(left, top, width, height);
     }
 
     public bool IsFinite =>
