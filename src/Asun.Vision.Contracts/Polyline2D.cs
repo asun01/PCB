@@ -211,6 +211,9 @@ public sealed class Polyline2D
         return bestPoint;
     }
 
+    public double DistanceTo(Vector2 point) =>
+        Math.Sqrt(DistanceSquaredTo(point));
+
     public double DistanceSquaredTo(Vector2 point)
     {
         var closest = ClosestPoint(point);
