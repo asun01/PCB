@@ -134,6 +134,17 @@ public static class ViewportRenderDeliveryRuntime
                 {
                     surface.Discard(frame.Composite.Generation);
 
+                    await sink.DiscardFrameAsync(
+                        new ViewportRenderDiscardContext(
+                            frame.Composite.Generation,
+                            exception is OperationCanceledException
+                                ? ViewportRenderDeliveryStatus.Cancelled
+                                : ViewportRenderDeliveryStatus.Failed,
+                            frame.Batch.ItemCount,
+                            units,
+                            0,
+                            exception)).ConfigureAwait(false);
+
                     result = new ViewportRenderDeliveryResult(
                         false,
                         exception is OperationCanceledException,
