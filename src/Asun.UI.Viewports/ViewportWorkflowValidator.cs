@@ -48,9 +48,12 @@ public static class ViewportWorkflowValidator
                 case ViewportWorkflowOperation.Zoom:
                     if (!double.IsFinite(command.Value) ||
                         command.Value <= 0 ||
-                        !double.IsFinite(command.SecondaryValue))
+                        !double.IsFinite(command.SecondaryValue) ||
+                        command.SecondaryValue <= 0 ||
+                        !double.IsFinite(command.TertiaryValue) ||
+                        command.TertiaryValue < command.SecondaryValue)
                     {
-                        errors.Add($"Command {count} contains an invalid zoom factor or scale.");
+                        errors.Add($"Command {count} contains an invalid zoom factor or scale range.");
                     }
 
                     break;
