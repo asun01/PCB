@@ -111,6 +111,37 @@ public sealed class Polygon2D
             _points.Max(point => point.X),
             _points.Max(point => point.Y));
 
+    public bool ContainsInclusive(
+        Vector2 point,
+        double boundaryTolerance = 0)
+    {
+        if (!float.IsFinite(point.X) ||
+            !float.IsFinite(point.Y))
+        {
+            return false;
+        }
+
+        if (!double.IsFinite(boundaryTolerance) || boundaryTolerance < 0)
+            throw new ArgumentOutOfRangeException(nameof(boundaryTolerance));
+
+        if (Contains(point))
+            return true;
+
+        var squaredTolerance = boundaryTolerance * boundaryTolerance;
+
+        for (var index = 1; index < _points.Length; index++)
+        {
+            var segment = new LineSegment2D(
+                _points[index - 1],
+                _points[index]);
+
+            if (segment.DistanceSquaredTo(point) <= squaredTolerance)
+                return true;
+        }
+
+        return false;
+    }
+
     public bool Contains(Vector2 point)
     {
         if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
