@@ -94,9 +94,11 @@ public sealed class ViewportInputSubmissionRuntime
             var events = new List<ViewportInputEvent>(count);
 
             for (var i = 0; i < count; i++)
+            {
                 var node = _queue.First!;
                 events.Add(node.Value);
                 _queue.RemoveFirst();
+            }
 
             return events;
         }
