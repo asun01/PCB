@@ -44,6 +44,26 @@ public sealed class BoundedWorkQueue<T>
     public bool TryDequeue(out T? item) =>
         _channel.Reader.TryRead(out item);
 
+    /// <summary>
+    /// Removes up to <paramref name="destination"/>.Length currently available
+    /// items without waiting for additional work.
+    /// </summary>
+    public int TryDequeueBatch(Span<T> destination)
+    {
+        if (destination.Length == 0)
+            throw new ArgumentException("Destination must contain at least one element.", nameof(destination));
+
+        var count = 0;
+
+        while (count < destination.Length &&
+               _channel.Reader.TryRead(out var item))
+        {
+            destination[count++] = item!;
+        }
+
+        return count;
+    }
+
     public bool TryComplete(Exception? error = null) =>
         _channel.Writer.TryComplete(error);
 
