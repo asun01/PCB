@@ -41,7 +41,7 @@ public static class OperationTimeout
         }
     }
 
-    public static ValueTask ExecuteAsync(
+    public static async ValueTask ExecuteAsync(
         Func<CancellationToken, ValueTask> operation,
         TimeSpan timeout,
         CancellationToken cancellationToken = default)
