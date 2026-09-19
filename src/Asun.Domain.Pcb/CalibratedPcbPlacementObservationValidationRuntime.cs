@@ -28,6 +28,9 @@ public static class CalibratedPcbPlacementObservationValidationRuntime
         errors.AddRange(
             AffineCalibrationValidationRuntime.Validate(points,calibration));
 
+        if(errors.Count>0)
+            return errors;
+
         if(observation.SourceMeasuredPosition!=sourceMeasuredPosition)
             errors.Add("Calibrated observation source position must match the supplied point.");
 
