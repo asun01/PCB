@@ -11,6 +11,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly ViewportRenderPipelineRuntime<TTile> _pipeline;
     private readonly ViewportInputSubmissionRuntime _input;
     private readonly TimeSpan _idleDelay;
+    private readonly ViewportCompositeInputRuntime<TTile> _interaction;
     private long _loopCount;
     private long _renderedFrames;
     private long _skippedLoops;
@@ -25,6 +26,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
         _pipeline = pipeline;
         _input = input ?? new ViewportInputSubmissionRuntime();
+        _interaction = new ViewportCompositeInputRuntime<TTile>(_pipeline.Composite);
 
         _idleDelay = idleDelay ?? TimeSpan.FromMilliseconds(4);
 
@@ -105,24 +107,14 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         {
             processed++;
 
-            _pipeline.Invalidate(
-                input.Kind switch
-                {
-                    ViewportInputEventKind.PointerMove =>
-                        ViewportDirtyFlags.Roi | ViewportDirtyFlags.Selection,
-                    ViewportInputEventKind.PointerDown =>
-                        ViewportDirtyFlags.Roi | ViewportDirtyFlags.Selection,
-                    ViewportInputEventKind.PointerUp =>
-                        ViewportDirtyFlags.Roi | ViewportDirtyFlags.Selection,
-                    ViewportInputEventKind.Wheel =>
-                        ViewportDirtyFlags.Image | ViewportDirtyFlags.Transform | ViewportDirtyFlags.Roi,
-                    ViewportInputEventKind.DoubleClick =>
-                        ViewportDirtyFlags.Image | ViewportDirtyFlags.Transform | ViewportDirtyFlags.Roi,
-                    ViewportInputEventKind.Escape =>
-                        ViewportDirtyFlags.Roi | ViewportDirtyFlags.Selection,
-                    _ => ViewportDirtyFlags.Overlay
-                },
-                _pipeline.Composite.Generation);
+            var result = _interaction.Apply(input);
+
+            if (result.DirtyFlags != ViewportDirtyFlags.None)
+            {
+                _pipeline.Invalidate(
+                    result.DirtyFlags,
+                    _pipeline.Composite.Generation);
+            }
         }
 
         return processed;
