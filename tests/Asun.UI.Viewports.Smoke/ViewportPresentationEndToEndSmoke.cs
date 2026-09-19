@@ -220,6 +220,26 @@ public static class ViewportPresentationEndToEndSmoke
             "Queue, double buffer, surface, and frame runtime must converge on the committed presentation path.");
 
         assert(
+            runtime.EvidenceHistory.Count >= 3 &&
+            runtime.EvidenceHistory.Validate().Count == 0 &&
+            runtime.EvidenceHistory.Latest is not null,
+            "Continuous presentation should retain bounded render evidence history for committed execution.");
+
+        assert(
+            runtime.AuditTrace.Count >= 3 &&
+            runtime.AuditTrace.IsStrictlyOrdered() &&
+            runtime.AuditTrace.Validate().Count == 0,
+            "Continuous presentation should retain an ordered audit trace for executed frames.");
+
+        var latestEvidence = runtime.EvidenceHistory.Latest;
+
+        assert(
+            latestEvidence is not null &&
+            latestEvidence.Value.Generation == runtime.Composite.Generation &&
+            latestEvidence.Value.FrameHash.Length == 64,
+            "Latest continuous evidence should reconcile to the current composite generation.");
+
+        assert(
             snapshot.IsPresentationStable &&
             snapshot.LastFrameState?.IsComplete == true &&
             snapshot.LastFrameState?.Status == ViewportRenderDeliveryStatus.Succeeded,
