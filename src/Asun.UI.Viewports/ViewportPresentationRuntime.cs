@@ -64,6 +64,9 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     public ViewportPresentationQueueRuntime<TTile> PresentationQueue =>
         _continuous.PresentationQueue;
 
+    public ViewportPresentationBufferRuntime PresentationBuffers =>
+        _continuous.PresentationBuffers;
+
     public ViewportRenderFrameState? LastFrameState =>
         _continuous.LastDelivery?.FrameState;
 
@@ -279,6 +282,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
         _input.Dispose();
         _pipeline.Dispose();
         _continuous.PresentationQueue.Dispose();
+        _continuous.PresentationBuffers.Dispose();
         _continuous.Surface.Dispose();
         _lifecycle.Dispose();
     }
