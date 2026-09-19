@@ -286,6 +286,26 @@ EvidenceCatalogWindowDiagnosticIntegrationHundredStageSmoke.Run((condition,messa
     if(!condition)
         failures.Add(message);
 });
+EvidenceWindowReferenceResolutionHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceWindowReferenceResolutionValidationHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceWindowReferenceResolutionFingerprintHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceWindowReferenceClosureIntegrationHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
 
 if(failures.Count>0)
 {
