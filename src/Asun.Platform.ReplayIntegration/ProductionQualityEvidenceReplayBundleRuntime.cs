@@ -24,17 +24,18 @@ public static class ProductionQualityEvidenceReplayBundleRuntime
         if(!QualityInspectionRunValidationRuntime.IsValid(qualityRun))
             throw new ArgumentException("Quality inspection run is invalid.",nameof(qualityRun));
 
+        var qualityProjection=ProductionQualityInspectionProjectionRuntime.Create(
+            productionReport,
+            qualityRun);
+
         if(!ProductionQualityInspectionProjectionValidationRuntime.IsValid(
             productionReport,
             qualityRun,
-            new ProductionQualityInspectionProjection(
-                productionReport.SessionId,
-                productionReport.Fingerprint,
-                qualityRun.RunId,
-                Array.Empty<ProductionQualityFrameLink>(),
-                string.Empty)))
+            qualityProjection))
         {
-            // The dedicated projection is reconstructed below; this guard is not used as the primary validator.
+            throw new ArgumentException(
+                "Production-quality projection is invalid.",
+                nameof(qualityRun));
         }
 
         if(!ProductionEvidenceReferenceProjectionValidationRuntime.IsValid(
