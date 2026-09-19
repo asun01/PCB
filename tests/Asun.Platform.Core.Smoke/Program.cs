@@ -126,6 +126,21 @@ Assert(
     "Pipeline dependencies should be honored.",
     failures);
 
+var parallelLayerPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("A", (_, _) => ValueTask.CompletedTask),
+    new AsyncPipeline<object>.Node("B", (_, _) => ValueTask.CompletedTask),
+    new AsyncPipeline<object>.Node("C", new[] { "A", "B" }, (_, _) => ValueTask.CompletedTask)
+});
+
+var parallelLayers = parallelLayerPipeline.GetExecutionLayers();
+Assert(
+    parallelLayers.Count == 2 &&
+    parallelLayers[0].SequenceEqual(new[] { "A", "B" }) &&
+    parallelLayers[1].SequenceEqual(new[] { "C" }),
+    "Independent pipeline roots should share an execution layer deterministically.",
+    failures);
+
 var metricPipeline = new AsyncPipeline<object>(new[]
 {
     new AsyncPipeline<object>.Node("Timed", async (_, token) =>
