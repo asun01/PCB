@@ -500,6 +500,12 @@ Assert(
 
 Assert(transform.IsInvertible, "A non-singular affine transform should be invertible.", failures);
 
+Assert(
+    transform.TranslationVector == new System.Numerics.Vector2(10, 20) &&
+    Math.Abs(transform.LinearDeterminant - 4) < 1e-6,
+    "Affine transform metadata should expose translation and linear determinant.",
+    failures);
+
 var expectedComposedPoint = new System.Numerics.Vector2(20, 34);
 var actualComposedPoint = transform.TransformPoint(new System.Numerics.Vector2(5, 7));
 Assert(
