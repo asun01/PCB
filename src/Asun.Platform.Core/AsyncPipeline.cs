@@ -178,29 +178,40 @@ public sealed class AsyncPipeline<TContext>
             node => node.Dependencies.Count,
             StringComparer.Ordinal);
 
-        while (remaining.Count > 0)
+        var dependents = nodes.ToDictionary(
+            node => node.Id,
+            _ => new List<string>(),
+            StringComparer.Ordinal);
+
+        foreach (var node in nodes)
         {
-            var roots = remaining
+            foreach (var dependency in node.Dependencies)
+                dependents[dependency].Add(node.Id);
+        }
+
+        var ready = new Queue<string>(
+            remaining
                 .Where(pair => pair.Value == 0)
-                .Select(pair => pair.Key)
-                .ToArray();
+                .Select(pair => pair.Key));
 
-            if (roots.Length == 0)
+        while (ready.TryDequeue(out var root))
+        {
+            if (!remaining.Remove(root))
+                continue;
+
+            foreach (var dependent in dependents[root])
             {
-                throw new ArgumentException("Pipeline graph contains a dependency cycle.", nameof(nodes));
-            }
+                var unresolved = --remaining[dependent];
 
-            foreach (var root in roots)
-            {
-                remaining.Remove(root);
-
-                foreach (var dependent in nodes.Where(
-                    node => node.Dependencies.Contains(root, StringComparer.Ordinal)))
-                {
-                    remaining[dependent.Id]--;
-                }
+                if (unresolved == 0)
+                    ready.Enqueue(dependent);
             }
         }
+
+        if (remaining.Count != 0)
+            throw new ArgumentException(
+                "Pipeline graph contains a dependency cycle.",
+                nameof(nodes));
     }
 
     public sealed record Node(
