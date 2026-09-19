@@ -21,16 +21,44 @@ Assert(
     "Angle degree/radian conversion should be deterministic.",
     failures);
 
+Assert(
+    Asun.Vision.Contracts.Angle2D.FromVector(new System.Numerics.Vector2(0, 1)) ==
+        new Asun.Vision.Contracts.Angle2D(Math.PI / 2),
+    "Angle construction from a direction vector should be deterministic.",
+    failures);
+
 var shortestDelta = new Asun.Vision.Contracts.Angle2D(Math.PI - 0.1)
     .ShortestDeltaTo(new Asun.Vision.Contracts.Angle2D(-Math.PI + 0.1));
+
+Assert(
+    Math.Abs(new Asun.Vision.Contracts.Angle2D(0).Opposite.NormalizedRadians - Math.PI) < 1e-12 &&
+    new Asun.Vision.Contracts.Angle2D(1).ApproximatelyEquals(new Asun.Vision.Contracts.Angle2D(1.0001), 0.001),
+    "Angle opposite and approximate-equality helpers should be deterministic.",
+    failures);
 Assert(
     Math.Abs(shortestDelta - 0.2) < 1e-12,
     "Angle shortest-delta calculation should cross the ±PI boundary correctly.",
     failures);
 
 Assert(
-    angle.Add(Math.PI).NormalizedRadians == 0,
-    "Angle addition should compose and normalize deterministically.",
+    angle.Add(Math.PI).NormalizedRadians == 0 &&
+    angle.Subtract(Math.PI).NormalizedRadians == 0,
+    "Angle addition and subtraction should compose and normalize deterministically.",
+    failures);
+
+Assert(
+    (new Asun.Vision.Contracts.Angle2D(Math.PI / 2) +
+        new Asun.Vision.Contracts.Angle2D(Math.PI / 2)).NormalizedRadians == Math.PI &&
+    (new Asun.Vision.Contracts.Angle2D(Math.PI) -
+        new Asun.Vision.Contracts.Angle2D(Math.PI)).NormalizedRadians == 0,
+    "Angle arithmetic operators should follow deterministic radians semantics.",
+    failures);
+
+var unitDirection = new Asun.Vision.Contracts.Angle2D(Math.PI / 4).ToUnitVector();
+Assert(
+    Math.Abs(unitDirection.X - MathF.Sqrt(0.5f)) < 1e-6f &&
+    Math.Abs(unitDirection.Y - MathF.Sqrt(0.5f)) < 1e-6f,
+    "Angle unit vector conversion should be deterministic.",
     failures);
 
 var tolerance = new Asun.Vision.Contracts.NumericTolerance(1e-6, 1e-6);
