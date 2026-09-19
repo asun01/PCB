@@ -2241,3 +2241,11 @@ The one-million-stage plan is an active execution program rather than a planning
 - Next natural stage: 15,001.
 - Evidence platform now supports deterministic single-query and batch-query integrity chains over validated snapshots.
 - The one-million-stage horizon remains 2501–1,002,500.
+
+
+### Execution checkpoint: Stage 16000 — 2026-09-19
+
+- Completed live non-blocked execution through stage 16,000.
+- Next natural stage: 16,001.
+- Evidence now has an opaque reference-closure layer that can validate externally supplied handles without importing Quality or storage semantics.
+- The one-million-stage horizon remains 2501–1,002,500.
