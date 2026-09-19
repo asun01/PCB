@@ -12,8 +12,7 @@ public sealed class ViewportCompositeFrame<TTile>
         IReadOnlyList<ViewportSceneCommand> sceneCommands,
         ViewportDirtyFlags dirtyFlags,
         long generation,
-        IReadOnlyList<ViewportSceneDiff> sceneDiff,
-        long generation)
+        IReadOnlyList<ViewportSceneDiff> sceneDiff)
     {
         Tiles = tiles;
         Roi = roi;
