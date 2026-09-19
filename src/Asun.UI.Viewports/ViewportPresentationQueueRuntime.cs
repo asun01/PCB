@@ -109,17 +109,17 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                 var generation = frame.Composite.Generation;
 
                 if (_latestGeneration is long latest &&
-                generation < latest)
-            {
-                _staleRejected++;
-                packet = default!;
-                return false;
-            }
+                    generation < latest)
+                {
+                    _staleRejected++;
+                    packet = default!;
+                    return false;
+                }
 
                 _latestGeneration = generation;
 
                 while (_pending.Count != 0 &&
-                   _pending.Peek().Frame.Composite.Generation < generation)
+                       _pending.Peek().Frame.Composite.Generation < generation)
                 {
                     _pending.Dequeue();
                     _dropped++;
@@ -132,10 +132,10 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                 }
 
                 packet = new ViewportPresentationPacket<TTile>(
-                new ViewportPresentationSubmissionToken(
-                    generation,
-                    ++_submissionSequence),
-                frame);
+                    new ViewportPresentationSubmissionToken(
+                        generation,
+                        ++_submissionSequence),
+                    frame);
 
                 _latestSubmissionSequence = packet.Token.Sequence;
 
