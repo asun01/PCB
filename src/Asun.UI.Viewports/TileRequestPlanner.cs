@@ -37,8 +37,6 @@ public static class TileRequestPlanner
         int marginX,
         int marginY)
     {
-        ArgumentNullException.ThrowIfNull(transform);
-
         var visibleRange = transform.GetVisibleTileRange(tileSize);
         var prefetchRange = ImageTileGeometry.ExpandTileRange(
             transform.ImageSize,
