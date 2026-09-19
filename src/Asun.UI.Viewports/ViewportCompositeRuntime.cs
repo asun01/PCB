@@ -348,7 +348,8 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
             return BuildFrameUnsafe(
                 _image.CreateCachedFrame(),
                 _roi.CreateSnapshot(),
-                _dirty.Flags);
+                _dirty.Flags,
+                Generation);
         }
     }
 
@@ -412,7 +413,8 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
             return BuildFrameUnsafe(
                 tileFrame,
                 roiSnapshot,
-                dirtyFlags);
+                dirtyFlags,
+                Generation);
         }
     }
 
