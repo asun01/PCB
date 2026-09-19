@@ -54,9 +54,35 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
         }
 
         ViewportPresentationBufferTransaction? bufferTransaction = null;
+        using var supersedeCancellation =
+            CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                _queue.GetInFlightCancellationToken(packet.Token));
 
         try
         {
+            if (!_queue.IsCurrent(packet.Token))
+            {
+                _queue.TryCancel(packet.Token);
+
+                return new(
+                    true,
+                    false,
+                    true,
+                    packet,
+                    new ViewportRenderDeliveryResult(
+                        false,
+                        true,
+                        false,
+                        packet.Frame.Composite.Generation,
+                        0,
+                        0,
+                        Array.Empty<ViewportRenderWorkItem>(),
+                        new ViewportPresentationFenceRejectedException(),
+                        packet.Frame.Batch.ItemCount,
+                        packet.Frame.Batch.RegionCount));
+            }
+
             var frame = packet.Frame;
 
             bufferTransaction = _buffers.Begin(
@@ -69,16 +95,33 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                     frame,
                     sink,
                     _delivery,
-                    cancellationToken,
-                    _surface)
+                    supersedeCancellation.Token,
+                    _surface,
+                    () => _queue.IsCurrent(packet.Token))
                 .ConfigureAwait(false);
 
             if (delivery.Succeeded)
             {
+                if (!_queue.IsCurrent(packet.Token))
+                {
+                    if (bufferTransaction is ViewportPresentationBufferTransaction staleBuffer)
+                        _buffers.Discard(staleBuffer);
+
+                    _queue.TryCancel(packet.Token);
+
+                    return new(
+                        true,
+                        false,
+                        true,
+                        packet,
+                        delivery);
+                }
+
                 _buffers.Commit(
                     bufferTransaction.Value,
                     delivery.RenderedUnits,
-                    frame.CommandStream.Regions);
+                    frame.CommandStream.Regions,
+                    () => _queue.IsCurrent(packet.Token));
 
                 if (_queue.TryAcknowledgePresented(packet.Token))
                 {
@@ -103,12 +146,16 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
             if (bufferTransaction is ViewportPresentationBufferTransaction activeBuffer)
                 _buffers.Discard(activeBuffer);
 
+            var superseded =
+                delivery.Cancelled &&
+                !_queue.IsCurrent(packet.Token);
+
             _queue.TryCancel(packet.Token);
 
             return new(
                 true,
                 false,
-                false,
+                superseded,
                 packet,
                 delivery);
         }
