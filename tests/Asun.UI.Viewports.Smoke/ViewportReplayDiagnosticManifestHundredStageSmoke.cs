@@ -195,13 +195,13 @@ public static class ViewportReplayDiagnosticManifestHundredStageSmoke
 
             Check(
                 json.Contains(
-                    ""formatVersion"",
+                    "\"formatVersion\"",
                     StringComparison.Ordinal) &&
                 json.Contains(
-                    ""bundleJson"",
+                    "\"bundleJson\"",
                     StringComparison.Ordinal) &&
                 json.Contains(
-                    ""diagnosticHash"",
+                    "\"diagnosticHash\"",
                     StringComparison.Ordinal),
                 $"manifest schema {i + 1} should expose stable fields.");
         }
@@ -214,7 +214,7 @@ public static class ViewportReplayDiagnosticManifestHundredStageSmoke
                     snapshot);
 
             var malformedJson =
-                "{"formatVersion":1,"bundleJson":"{"}";
+                "{\"formatVersion\":1,\"bundleJson\":\"{\"}";
 
             var rejected = false;
 
@@ -264,7 +264,7 @@ public static class ViewportReplayDiagnosticManifestHundredStageSmoke
 
             Check(
                 manifest.BundleJson.Contains(
-                    ""inputEventCount":1",
+                    "\"inputEventCount\":1",
                     StringComparison.Ordinal),
                 $"prefix manifest {i + 1} should preserve bundle count.");
         }
