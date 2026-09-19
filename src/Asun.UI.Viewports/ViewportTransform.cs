@@ -108,6 +108,22 @@ public readonly record struct ViewportTransform(
     public ViewportTransform ResetToFit() =>
         Fit(ImageSize, ViewportSize);
 
+    public ViewportTransform WithZoomFactorClamped(
+        double zoomFactor,
+        double minScale,
+        double maxScale,
+        Vector2 viewportAnchor)
+    {
+        if (!double.IsFinite(zoomFactor) || zoomFactor <= 0)
+            throw new ArgumentOutOfRangeException(nameof(zoomFactor));
+
+        return WithScaleAroundClamped(
+            Scale * zoomFactor,
+            minScale,
+            maxScale,
+            viewportAnchor);
+    }
+
     public ViewportTransform WithZoomFactor(
         double zoomFactor,
         Vector2 viewportAnchor)
