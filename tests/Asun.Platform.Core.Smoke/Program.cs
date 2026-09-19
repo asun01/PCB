@@ -2082,6 +2082,20 @@ Assert(queue.TryDequeue(out var first) && first == 1, "FIFO dequeue should prese
 Assert(queue.TryDequeue(out var second) && second == 2, "FIFO dequeue should preserve order.", failures);
 Assert(!queue.TryDequeue(out _), "An empty queue should not produce a value.", failures);
 
+var drainQueue = new BoundedWorkQueue<int>(4);
+Assert(drainQueue.TryEnqueue(1), "Drain queue should accept the first item.", failures);
+Assert(drainQueue.TryEnqueue(2), "Drain queue should accept the second item.", failures);
+Assert(drainQueue.TryEnqueue(3), "Drain queue should accept the third item.", failures);
+
+var drained = new List<int>();
+var drainedCount = drainQueue.DrainTo(drained, 2);
+
+Assert(
+    drainedCount == 2 &&
+    drained.SequenceEqual(new[] { 1, 2 }),
+    "Non-blocking queue drain should preserve FIFO order and requested count.",
+    failures);
+
 var batchQueue = new BoundedWorkQueue<int>(4);
 Assert(batchQueue.TryEnqueue(10), "Batch queue should accept the first item.", failures);
 Assert(batchQueue.TryEnqueue(20), "Batch queue should accept the second item.", failures);
