@@ -50,6 +50,21 @@ Assert(
     "Pipeline dependencies should be honored.",
     failures);
 
+var metricPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("Timed", async (_, token) =>
+    {
+        await Task.Delay(1, token);
+    })
+});
+
+var pipelineMetrics = await metricPipeline.ExecuteWithMetricsAsync(new object());
+Assert(
+    pipelineMetrics.ContainsKey("Timed") &&
+    pipelineMetrics["Timed"] > TimeSpan.Zero,
+    "Pipeline metrics should record node execution duration.",
+    failures);
+
 using var cancelled = new CancellationTokenSource();
 cancelled.Cancel();
 

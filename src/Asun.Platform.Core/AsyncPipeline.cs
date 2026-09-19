@@ -23,9 +23,24 @@ public sealed class AsyncPipeline<TContext>
         ValidateGraph(_nodes);
     }
 
-    public async ValueTask ExecuteAsync(
+    public ValueTask ExecuteAsync(
+        TContext context,
+        CancellationToken cancellationToken = default) =>
+        ExecuteCoreAsync(context, cancellationToken, null);
+
+    public async ValueTask<IReadOnlyDictionary<string, TimeSpan>> ExecuteWithMetricsAsync(
         TContext context,
         CancellationToken cancellationToken = default)
+    {
+        var timings = new Dictionary<string, TimeSpan>(StringComparer.Ordinal);
+        await ExecuteCoreAsync(context, cancellationToken, timings);
+        return timings;
+    }
+
+    private async ValueTask ExecuteCoreAsync(
+        TContext context,
+        CancellationToken cancellationToken,
+        Dictionary<string, TimeSpan>? timings)
     {
         var remaining = _nodes.ToDictionary(node => node.Id, node => node);
         var completed = new HashSet<string>(StringComparer.Ordinal);
@@ -44,7 +59,13 @@ public sealed class AsyncPipeline<TContext>
             }
 
             await Task.WhenAll(
-                ready.Select(node => node.ExecuteAsync(context, cancellationToken).AsTask()));
+                ready.Select(async node =>
+                {
+                    var start = System.Diagnostics.Stopwatch.GetTimestamp();
+                    await node.ExecuteAsync(context, cancellationToken);
+                    if (timings is not null)
+                        timings[node.Id] = System.Diagnostics.Stopwatch.GetElapsedTime(start);
+                }));
 
             foreach (var node in ready)
             {
