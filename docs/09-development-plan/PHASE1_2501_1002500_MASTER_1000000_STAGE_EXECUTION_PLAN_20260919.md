@@ -2249,3 +2249,11 @@ The one-million-stage plan is an active execution program rather than a planning
 - Next natural stage: 16,001.
 - Evidence now has an opaque reference-closure layer that can validate externally supplied handles without importing Quality or storage semantics.
 - The one-million-stage horizon remains 2501–1,002,500.
+
+
+### Execution checkpoint: Stage 16500 — 2026-09-19
+
+- Completed live non-blocked execution through stage 16,500.
+- Next natural stage: 16,501.
+- Evidence now has factual catalog statistics and a consistency report over snapshot, statistics, and opaque reference closure.
+- The one-million-stage horizon remains 2501–1,002,500.
