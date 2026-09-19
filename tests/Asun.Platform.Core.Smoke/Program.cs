@@ -270,21 +270,21 @@ Assert(
     "A tile-aligned visible rectangle should resolve to exactly one tile.",
     failures);
 
-var tileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
+var visibleTileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     viewport.ImageSize,
     new System.Numerics.Vector2(256, 256),
     visible);
 
 Assert(
-    tileRange.Minimum.X >= 0 &&
+    visibleTileRange.Minimum.X >= 0 &&
     tileRange.Minimum.Y >= 0 &&
-    tileRange.Maximum.X >= tileRange.Minimum.X &&
-    tileRange.Maximum.Y >= tileRange.Minimum.Y,
+    visibleTileRange.Maximum.X >= visibleTileRange.Minimum.X &&
+    visibleTileRange.Maximum.Y >= visibleTileRange.Minimum.Y,
     "Visible tile range should stay inside the image tile grid.",
     failures);
 
 Assert(
-    tileRange.Count == tileRange.Enumerate().Count(),
+    visibleTileRange.Count == visibleTileRange.Enumerate().Count(),
     "Visible tile range count should match enumeration.",
     failures);
 
