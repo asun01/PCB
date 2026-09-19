@@ -29,6 +29,9 @@ jobs:
       - name: Python syntax check
         run: python3 -m py_compile tools/*.py
 
+      - name: C# source structure check
+        run: python3 tools/validate_csharp_structure.py .
+
       - name: Validate baseline documents
         run: python3 tools/validate_docs.py
 
