@@ -44,6 +44,16 @@ public readonly record struct Angle2D(double Radians)
     public double ShortestDeltaTo(Angle2D target) =>
         Normalize(target.Radians - Radians);
 
+    public bool ApproximatelyEquals(
+        Angle2D other,
+        double toleranceRadians)
+    {
+        if (!double.IsFinite(toleranceRadians) || toleranceRadians < 0)
+            throw new ArgumentOutOfRangeException(nameof(toleranceRadians));
+
+        return Math.Abs(ShortestDeltaTo(other)) <= toleranceRadians;
+    }
+
     public Angle2D Add(double radians)
     {
         if (!double.IsFinite(radians))
