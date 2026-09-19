@@ -12,113 +12,140 @@ public static class ViewportPresentationBufferLifecycleHundredStageSmoke
             assert(condition, $"Round {round}: {message}");
         }
 
+        using var buffers = new ViewportPresentationBufferRuntime();
+
+        var first = buffers.Begin(
+            new ViewportPresentationSubmissionToken(10, 1),
+            3);
+        var initial = buffers.Snapshot;
+
+        var doubleBeginRejected = false;
+        try
+        {
+            buffers.Begin(
+                new ViewportPresentationSubmissionToken(10, 2),
+                1);
+        }
+        catch (InvalidOperationException)
+        {
+            doubleBeginRejected = true;
+        }
+
+        buffers.Commit(first, 3);
+        var committed = buffers.Snapshot;
+
+        var second = buffers.Begin(
+            new ViewportPresentationSubmissionToken(20, 2),
+            2);
+
+        var overBudgetRejected = false;
+        try
+        {
+            buffers.Commit(second, 3);
+        }
+        catch (ArgumentOutOfRangeException)
+        {
+            overBudgetRejected = true;
+            buffers.Discard(second);
+        }
+
+        var afterOverBudget = buffers.Snapshot;
+
+        buffers.Reset();
+        var reset = buffers.Snapshot;
+
+        var staleAfterResetRejected = false;
+        try
+        {
+            buffers.Begin(
+                new ViewportPresentationSubmissionToken(20, 1),
+                1);
+        }
+        catch (InvalidOperationException)
+        {
+            staleAfterResetRejected = true;
+        }
+
+        var postReset = buffers.Begin(
+            new ViewportPresentationSubmissionToken(30, 7),
+            1);
+        buffers.Commit(postReset, 1);
+        var postResetSnapshot = buffers.Snapshot;
+
+        buffers.Dispose();
+        var disposed = buffers.Snapshot;
+
         for (var i = 0; i < 10; i++)
         {
-            using var buffers = new ViewportPresentationBufferRuntime();
-
-            var first = buffers.Begin(
-                new ViewportPresentationSubmissionToken(10 + i, 1),
-                3);
-
             Check(
-                ViewportPresentationBufferValidationRuntime.IsValid(buffers.Snapshot),
-                $"initial buffer state {i + 1} should satisfy the validator.");
+                ViewportPresentationBufferValidationRuntime.IsValid(initial),
+                $"initial validator round {i + 1} should pass.");
+        }
 
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                buffers.Snapshot.RenderingSlot == first.SlotIndex &&
-                buffers.Snapshot.RenderingSequence == 1,
-                $"initial rendering fence {i + 1} should be visible.");
+                doubleBeginRejected &&
+                initial.RenderingSlot == first.SlotIndex &&
+                initial.RenderingSequence == 1,
+                $"initial rendering fence round {i + 1} should be coherent.");
+        }
 
-            var doubleBeginRejected = false;
-            try
-            {
-                buffers.Begin(
-                    new ViewportPresentationSubmissionToken(10 + i, 2),
-                    1);
-            }
-            catch (InvalidOperationException)
-            {
-                doubleBeginRejected = true;
-            }
-
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                doubleBeginRejected,
-                $"concurrent backbuffer acquisition {i + 1} should be rejected.");
+                ViewportPresentationBufferValidationRuntime.IsValid(committed) &&
+                committed.PresentedSequence == 1,
+                $"committed state round {i + 1} should preserve the published fence.");
+        }
 
-            buffers.Commit(first, 3);
-
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                ViewportPresentationBufferValidationRuntime.IsValid(buffers.Snapshot),
-                $"committed buffer state {i + 1} should remain valid.");
+                overBudgetRejected,
+                $"rendered-unit budget round {i + 1} should reject impossible commits.");
+        }
 
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                buffers.Snapshot.PresentedSlot == first.SlotIndex &&
-                buffers.Snapshot.PresentedSequence == 1,
-                $"presented fence {i + 1} should match the committed token.");
+                ViewportPresentationBufferValidationRuntime.IsValid(afterOverBudget) &&
+                afterOverBudget.PresentedSequence == 1,
+                $"post-rejection state round {i + 1} should preserve the previous presentation.");
+        }
 
-            var overBudgetRejected = false;
-            var second = buffers.Begin(
-                new ViewportPresentationSubmissionToken(20 + i, 2),
-                2);
-
-            try
-            {
-                buffers.Commit(second, 3);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                overBudgetRejected = true;
-                buffers.Discard(second);
-            }
-
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                overBudgetRejected &&
-                ViewportPresentationBufferValidationRuntime.IsValid(buffers.Snapshot),
-                $"rendered-unit budget {i + 1} should reject impossible commits.");
+                ViewportPresentationBufferValidationRuntime.IsValid(reset) &&
+                reset.PresentedSlot is null &&
+                reset.RenderingSlot is null &&
+                buffers.Statistics.Acquired == 0,
+                $"reset state round {i + 1} should clear lifecycle counters.");
+        }
 
-            buffers.Reset();
-
-            Check(
-                ViewportPresentationBufferValidationRuntime.IsValid(buffers.Snapshot) &&
-                buffers.Statistics.Acquired == 0 &&
-                buffers.Statistics.Committed == 0,
-                $"reset state {i + 1} should clear counters and slots.");
-
-            var staleAfterResetRejected = false;
-            try
-            {
-                buffers.Begin(
-                    new ViewportPresentationSubmissionToken(20 + i, 1),
-                    1);
-            }
-            catch (InvalidOperationException)
-            {
-                staleAfterResetRejected = true;
-            }
-
+        for (var i = 0; i < 10; i++)
+        {
             Check(
                 staleAfterResetRejected,
-                $"pre-reset submission fence {i + 1} should remain invalid.");
+                $"pre-reset submission round {i + 1} should remain invalid.");
+        }
 
-            var postReset = buffers.Begin(
-                new ViewportPresentationSubmissionToken(30 + i, 7),
-                1);
-            buffers.Commit(postReset, 1);
-
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                ViewportPresentationBufferValidationRuntime.IsValid(buffers.Snapshot) &&
-                buffers.Snapshot.PresentedSequence == 7,
-                $"post-reset presentation fence {i + 1} should commit cleanly.");
+                ViewportPresentationBufferValidationRuntime.IsValid(postResetSnapshot) &&
+                postResetSnapshot.PresentedSequence == 7,
+                $"post-reset submission round {i + 1} should commit cleanly.");
+        }
 
-            buffers.Dispose();
-
+        for (var i = 0; i < 10; i++)
+        {
             Check(
-                ViewportPresentationBufferValidationRuntime.IsValid(buffers.Snapshot) &&
-                buffers.Snapshot.FirstState ==
-                    ViewportPresentationBufferState.Disposed &&
-                buffers.Snapshot.SecondState ==
-                    ViewportPresentationBufferState.Disposed,
-                $"disposed buffer state {i + 1} should remain structurally valid.");
+                ViewportPresentationBufferValidationRuntime.IsValid(disposed) &&
+                disposed.FirstState == ViewportPresentationBufferState.Disposed &&
+                disposed.SecondState == ViewportPresentationBufferState.Disposed,
+                $"disposed state round {i + 1} should remain structurally valid.");
         }
 
         assert(
