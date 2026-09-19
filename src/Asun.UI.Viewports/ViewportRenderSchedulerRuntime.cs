@@ -12,6 +12,7 @@ public sealed class ViewportRenderSchedulerRuntime
     private readonly ViewportPointerCoalescer _pointerCoalescer;
     private ViewportDirtyFlags _pendingFlags;
     private long _sequence;
+    private long _latestGeneration;
     private ViewportRenderSubmission? _latest;
 
     public ViewportRenderSchedulerRuntime(
@@ -49,10 +50,13 @@ public sealed class ViewportRenderSchedulerRuntime
         lock (_sync)
         {
             _pendingFlags |= flags;
+            if (generation >= _latestGeneration)
+                _latestGeneration = generation;
+
             _latest = new ViewportRenderSubmission(
                 ++_sequence,
                 _pendingFlags,
-                generation);
+                _latestGeneration);
         }
     }
 
@@ -64,11 +68,13 @@ public sealed class ViewportRenderSchedulerRuntime
 
     public bool TryTakeFrame(
         DateTimeOffset now,
-        out ViewportRenderSubmission submission)
+        out ViewportRenderSubmission submission,
+        long minimumGeneration = 0)
     {
         lock (_sync)
         {
             if (_pendingFlags == ViewportDirtyFlags.None ||
+                _latestGeneration < minimumGeneration ||
                 !_rateGate.TryEnter(now))
             {
                 submission = default;
@@ -96,6 +102,7 @@ public sealed class ViewportRenderSchedulerRuntime
         {
             _pendingFlags = ViewportDirtyFlags.None;
             _latest = null;
+            _latestGeneration = 0;
             _rateGate.Reset();
             _pointerCoalescer.Clear();
         }
