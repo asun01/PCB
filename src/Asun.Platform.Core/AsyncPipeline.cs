@@ -73,6 +73,31 @@ public sealed class AsyncPipeline<TContext>
         return node!.Dependencies.ToArray();
     }
 
+    public IReadOnlyList<string> GetDependentClosure(string id)
+    {
+        if (!_dependents.ContainsKey(id))
+            throw new KeyNotFoundException($"Pipeline node '{id}' is not configured.");
+
+        var visited = new HashSet<string>(StringComparer.Ordinal);
+        var queue = new Queue<string>();
+        queue.Enqueue(id);
+
+        while (queue.TryDequeue(out var current))
+        {
+            foreach (var dependent in _dependents[current])
+            {
+                if (!visited.Add(dependent.Id))
+                    continue;
+
+                queue.Enqueue(dependent.Id);
+            }
+        }
+
+        return visited
+            .OrderBy(item => item, StringComparer.Ordinal)
+            .ToArray();
+    }
+
     public IReadOnlyList<string> GetDependents(string id)
     {
         if (!_dependents.TryGetValue(id, out var dependents))
