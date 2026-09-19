@@ -106,6 +106,28 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         return true;
     }
 
+    public bool TryAcquire(
+        TKey resource,
+        TimeSpan timeout,
+        out Lease? lease)
+    {
+        ThrowIfDisposed();
+
+        if (timeout < TimeSpan.Zero && timeout != Timeout.InfiniteTimeSpan)
+            throw new ArgumentOutOfRangeException(nameof(timeout));
+
+        var entry = GetEntry(resource);
+
+        if (!entry.Semaphore.Wait(timeout))
+        {
+            lease = null;
+            return false;
+        }
+
+        lease = new Lease(resource, entry);
+        return true;
+    }
+
     public bool TryAcquire(TKey resource, out Lease? lease)
     {
         ThrowIfDisposed();
