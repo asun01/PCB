@@ -4,6 +4,7 @@ public readonly record struct ViewportRenderDeliveryStatistics(
     long Attempts,
     long Succeeded,
     long Failed,
+    long Deferred,
     long Cancelled,
     long RenderedUnits,
     long LastGeneration,
@@ -18,6 +19,7 @@ public sealed class ViewportRenderDeliveryTracker
     private long _attempts;
     private long _succeeded;
     private long _failed;
+    private long _deferred;
     private long _cancelled;
     private long _renderedUnits;
     private long _lastGeneration;
@@ -28,6 +30,7 @@ public sealed class ViewportRenderDeliveryTracker
             Interlocked.Read(ref _attempts),
             Interlocked.Read(ref _succeeded),
             Interlocked.Read(ref _failed),
+            Interlocked.Read(ref _deferred),
             Interlocked.Read(ref _cancelled),
             Interlocked.Read(ref _renderedUnits),
             Interlocked.Read(ref _lastGeneration),
@@ -42,6 +45,8 @@ public sealed class ViewportRenderDeliveryTracker
 
         if (result.Cancelled)
             Interlocked.Increment(ref _cancelled);
+        else if (result.Deferred)
+            Interlocked.Increment(ref _deferred);
         else if (result.Succeeded)
             Interlocked.Increment(ref _succeeded);
         else
@@ -53,6 +58,7 @@ public sealed class ViewportRenderDeliveryTracker
         Interlocked.Exchange(ref _attempts, 0);
         Interlocked.Exchange(ref _succeeded, 0);
         Interlocked.Exchange(ref _failed, 0);
+        Interlocked.Exchange(ref _deferred, 0);
         Interlocked.Exchange(ref _cancelled, 0);
         Interlocked.Exchange(ref _renderedUnits, 0);
         Interlocked.Exchange(ref _lastGeneration, 0);
