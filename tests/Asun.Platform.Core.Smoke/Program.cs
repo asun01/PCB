@@ -42,6 +42,10 @@ Assert(
 Assert(Math.Abs(latency.P50 - 30) < 1e-9, "Latency P50 should be deterministic.", failures);
 Assert(Math.Abs(latency.P95 - 48) < 1e-9, "Latency P95 should use interpolation.", failures);
 Assert(Math.Abs(latency.P99 - 49.6) < 1e-9, "Latency P99 should use interpolation.", failures);
+Assert(
+    Math.Abs(latency.Percentile(25) - 20) < 1e-9,
+    "Arbitrary latency percentile should use the same interpolation rule.",
+    failures);
 
 var execution = new List<string>();
 var pipeline = new AsyncPipeline<List<string>>(new[]
