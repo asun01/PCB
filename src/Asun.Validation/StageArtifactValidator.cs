@@ -32,7 +32,12 @@ public static class StageArtifactValidator
 
         var loops = LoopPattern.Matches(sanitized).Count;
         var checks = Math.Max(0, CheckPattern.Matches(sanitized).Count - 1);
-        var rounds = RoundPattern.Matches(sanitized).Count;
+        var roundPattern =
+            new Regex(
+                $@"\bround\s*==\s*{Regex.Escape(expectedRounds.ToString())}\b",
+                RegexOptions.Compiled);
+
+        var rounds = roundPattern.Matches(sanitized).Count;
         var balanced = HasBalancedDelimiters(sanitized);
         var placeholders = PlaceholderPattern.IsMatch(sanitized);
 
