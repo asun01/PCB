@@ -26,13 +26,15 @@ public readonly record struct ViewportPresentationSnapshot(
     bool IsGenerationStable,
     bool IsSurfaceStable,
     bool IsBufferStable,
-    bool IsQueueStable)
+    bool IsQueueStable,
+    bool IsExecutionStable)
 {
     public bool IsPresentationStable =>
         IsGenerationStable &&
         IsSurfaceStable &&
         IsBufferStable &&
-        IsQueueStable;
+        IsQueueStable &&
+        IsExecutionStable;
 }
 
 public sealed class ViewportPresentationLifecycleRuntime : IDisposable
@@ -64,7 +66,8 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         bool isGenerationStable,
         bool isSurfaceStable,
         bool isBufferStable,
-        bool isQueueStable) =>
+        bool isQueueStable,
+        bool isExecutionStable) =>
         new(
             State,
             generation,
@@ -82,7 +85,8 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
             isGenerationStable,
             isSurfaceStable,
             isBufferStable,
-            isQueueStable);
+            isQueueStable,
+            isExecutionStable);
 
     public bool TryStart(out CancellationToken token)
     {
