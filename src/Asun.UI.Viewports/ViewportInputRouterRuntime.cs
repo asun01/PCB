@@ -56,35 +56,34 @@ public sealed class ViewportInputRouterRuntime
 
     public ViewportGestureEvent PointerMove(Vector2 point)
     {
-        if (_capturedOwner == ViewportInputOwner.None)
-            return _gestures.PointerMove(point);
+        if (_capturedOwner == ViewportInputOwner.None &&
+            _gestures.IsPointerDown)
+        {
+            return default;
+        }
 
         return _gestures.PointerMove(point);
     }
 
     public ViewportGestureEvent PointerUp(Vector2 point)
     {
+        if (_capturedOwner == ViewportInputOwner.None)
+            return default;
+
         var result = _gestures.PointerUp(point);
-
-        if (_capturedOwner != ViewportInputOwner.None)
-        {
-            _capture.Release(_capturedOwner);
-            _capturedOwner = ViewportInputOwner.None;
-        }
-
+        _capture.Release(_capturedOwner);
+        _capturedOwner = ViewportInputOwner.None;
         return result;
     }
 
     public bool Escape(Vector2 point)
     {
+        if (_capturedOwner == ViewportInputOwner.None)
+            return false;
+
         var result = _gestures.KeyDown(ViewportKey.Escape, point);
-
-        if (_capturedOwner != ViewportInputOwner.None)
-        {
-            _capture.Release(_capturedOwner);
-            _capturedOwner = ViewportInputOwner.None;
-        }
-
+        _capture.Release(_capturedOwner);
+        _capturedOwner = ViewportInputOwner.None;
         return result;
     }
 
