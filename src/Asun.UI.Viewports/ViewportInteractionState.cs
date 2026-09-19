@@ -106,6 +106,15 @@ public readonly record struct ViewportInteractionState(
         };
     }
 
+    public ViewportInteractionState ClampPan()
+    {
+        return this with
+        {
+            Transform = Transform.WithTranslationClamped(
+                Transform.Translation)
+        };
+    }
+
     private static void Validate(Vector2 point, string parameterName)
     {
         if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
