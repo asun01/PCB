@@ -100,8 +100,23 @@ public static class ViewportRenderBudgetSmoke
                 constrained.Items.Any(item =>
                     item.Kind == ViewportRenderWorkKind.Roi &&
                     !item.IsInvalidation) &&
-                constrained.Items.Count <= 2,
+                constrained.Items.Count <= 2 &&
+                constrained.RoiWorkCount <= 1 &&
+                constrained.InvalidationWorkCount >= 1,
                 $"Budget chain {i + 1} should preserve invalidation before normal ROI work.");
+
+            var invalidationOnly = ViewportRenderBudgetRuntime.Apply(
+                incrementalPlan,
+                new ViewportRenderBudget(
+                    MaxTileWork: 0,
+                    MaxRoiWork: 0,
+                    MaxOverlayWork: 0,
+                    MaxTotalWork: 1));
+
+            assert(
+                invalidationOnly.InvalidationWorkCount == 1 &&
+                invalidationOnly.RoiWorkCount == 0,
+                $"Budget chain {i + 1} should preserve one invalidation even when ROI draw budget is zero.");
         }
     }
 
