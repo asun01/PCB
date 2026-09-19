@@ -161,6 +161,20 @@ Assert(
     failures);
 
 var visible = panned.GetVisibleImageRectangle();
+var tileRange = panned.GetVisibleTileRange(
+    new System.Numerics.Vector2(256, 256));
+
+var exactTile = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
+    new System.Numerics.Vector2(1024, 512),
+    new System.Numerics.Vector2(256, 256),
+    new RectangleF(256, 0, 256, 256));
+
+Assert(
+    exactTile.Minimum == new Asun.UI.Viewports.TileIndex(1, 0) &&
+    exactTile.Maximum == new Asun.UI.Viewports.TileIndex(1, 0),
+    "A tile-aligned visible rectangle should resolve to exactly one tile.",
+    failures);
+
 var tileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     viewport.ImageSize,
     new System.Numerics.Vector2(256, 256),

@@ -173,6 +173,12 @@ public readonly record struct ViewportTransform(
         };
     }
 
+    public VisibleTileRange GetVisibleTileRange(Vector2 tileSize) =>
+        ImageTileGeometry.CalculateVisibleTiles(
+            ImageSize,
+            tileSize,
+            GetVisibleImageRectangle());
+
     public RectangleF GetVisibleImageRectangle()
     {
         var topLeft = ViewportToImage(Vector2.Zero);
