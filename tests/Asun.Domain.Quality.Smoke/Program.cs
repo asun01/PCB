@@ -16,6 +16,11 @@ QualityFindingEvidenceLinkValidationHundredStageSmoke.Run(Assert);
 QualityFindingEvidenceSetValidationHundredStageSmoke.Run(Assert);
 QualityFindingEvidenceIndexValidationHundredStageSmoke.Run(Assert);
 QualityFindingEvidenceCrossReferenceValidationHundredStageSmoke.Run(Assert);
+QualityInspectionSnapshotValidationHundredStageSmoke.Run(Assert);
+QualityInspectionDiffValidationHundredStageSmoke.Run(Assert);
+QualityInspectionDiffRuntimeHundredStageSmoke.Run(Assert);
+QualityInspectionSequenceValidationHundredStageSmoke.Run(Assert);
+QualityInspectionDeterminismHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
