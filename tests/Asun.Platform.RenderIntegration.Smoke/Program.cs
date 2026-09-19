@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 await ProductionRenderFrameProjectionHundredStageSmoke.RunAsync(Check);
+await ProductionRenderReplayFrameIntegrityHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
