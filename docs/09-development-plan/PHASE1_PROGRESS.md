@@ -898,3 +898,38 @@ Verification:
 Current continuous execution position:
 - completed through Stage 12500 in the active 4501–104500 window;
 - next natural stage: 12501.
+
+
+### 12501→13000 vendor-neutral Evidence platform foundation — 2026-09-19
+
+Completed stages 12501–13000.
+
+Implemented:
+- opaque EvidenceHandle;
+- neutral EvidenceKind;
+- EvidenceDescriptor and validation;
+- IEvidenceCatalog and validated lookup runtime;
+- deterministic EvidenceDescriptor fingerprint;
+- EvidenceCatalogSnapshot;
+- EvidenceCatalogSnapshotDiff and validation;
+- dedicated Asun.Platform.Evidence.Smoke project registered in AsunVision.slnx.
+
+Boundary:
+- no database/filesystem/object-store provider was introduced;
+- no serialization or transport protocol was fixed;
+- Quality remains independent of the Evidence platform contract.
+
+Smoke/verification:
+- exact 100-round dedicated Smokes for catalog lookup, descriptor fingerprint, catalog snapshot, and snapshot diff;
+- main Evidence Smoke counter isolated from helper Smoke counters;
+- static delimiter audits balanced and no TODO/NotImplementedException placeholder in new assets.
+
+Closed acceptance asset:
+- PHASE1_12501_13000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Workflow boundary:
+- workflow lookup for checkpoint commit 12116be7ddf4fba47b683e78cc0b29dd993c52c5 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 13000 in the active 4501–104500 window;
+- next natural stage: 13001.
