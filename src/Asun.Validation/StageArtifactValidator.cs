@@ -11,8 +11,8 @@ public static class StageArtifactValidator
     private static readonly Regex CheckPattern =
         new(@"\bCheck\s*\(", RegexOptions.Compiled);
 
-    private static readonly Regex RoundPattern =
-        new(@"\bround\s*==\s*100\b", RegexOptions.Compiled);
+    private static readonly Regex CheckDefinitionPattern =
+        new(@"\b(?:void|static\s+void)\s+Check\s*\(", RegexOptions.Compiled);
 
     private static readonly Regex PlaceholderPattern =
         new(@"\b(?:TODO|NotImplementedException)\b", RegexOptions.Compiled);
@@ -30,8 +30,17 @@ public static class StageArtifactValidator
         var errors = new List<string>();
         var sanitized = StripCommentsAndStrings(source);
 
+        if (expectedRounds <= 0 || expectedRounds % 10 != 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(expectedRounds),
+                "Expected rounds must be a positive multiple of 10.");
+        }
+
         var loops = LoopPattern.Matches(sanitized).Count;
-        var checks = Math.Max(0, CheckPattern.Matches(sanitized).Count - 1);
+        var totalChecks = CheckPattern.Matches(sanitized).Count;
+        var checkDefinitions = CheckDefinitionPattern.Matches(sanitized).Count;
+        var checks = Math.Max(0, totalChecks - checkDefinitions);
         var roundPattern =
             new Regex(
                 $@"\bround\s*==\s*{Regex.Escape(expectedRounds.ToString())}\b",
