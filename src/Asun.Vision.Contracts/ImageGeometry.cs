@@ -97,6 +97,27 @@ public readonly record struct PixelPoint(double X, double Y)
 
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
 {
+    public static PixelRect FromCenter(
+        PixelPoint center,
+        double width,
+        double height)
+    {
+        if (!center.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(center));
+
+        if (!double.IsFinite(width) || width < 0)
+            throw new ArgumentOutOfRangeException(nameof(width));
+
+        if (!double.IsFinite(height) || height < 0)
+            throw new ArgumentOutOfRangeException(nameof(height));
+
+        return new PixelRect(
+            center.X - width / 2d,
+            center.Y - height / 2d,
+            width,
+            height);
+    }
+
     public static PixelRect FromPoints(PixelPoint first, PixelPoint second)
     {
         if (!first.IsFinite)
