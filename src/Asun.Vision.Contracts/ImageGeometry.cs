@@ -204,6 +204,8 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
 
     public PixelPoint Center => new(X + Width / 2d, Y + Height / 2d);
 
+    public PixelPoint SizePoint => new(Width, Height);
+
     public bool Contains(PixelPoint point) =>
         IsValid &&
         point.IsFinite &&
