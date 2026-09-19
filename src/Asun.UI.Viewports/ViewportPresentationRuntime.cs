@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Asun.UI.Viewports;
 
-public sealed class ViewportPresentationRuntime<TTile> : IDisposable
+public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisposable
 {
     private readonly ViewportRenderPipelineRuntime<TTile> _pipeline;
     private readonly ViewportInputSubmissionRuntime _input;
