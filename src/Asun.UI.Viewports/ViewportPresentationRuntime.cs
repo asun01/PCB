@@ -54,6 +54,12 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
 
     public ViewportRenderDeliveryTracker Delivery => _continuous.Delivery;
 
+    public ViewportRenderDeliveryResult? LastDelivery =>
+        _continuous.LastDelivery;
+
+    public ViewportRenderFrameState? LastFrameState =>
+        _continuous.LastDelivery?.FrameState;
+
     public ViewportInputBackpressureRuntime Backpressure => _backpressure;
 
     public ViewportPresentationState State => _lifecycle.State;
