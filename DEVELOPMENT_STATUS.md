@@ -251,3 +251,18 @@ Verification note:
 - These are repository edits and smoke wiring. No local C# build/test result is asserted from this environment.
 - The latest branch commit checked through the available GitHub Actions/status interfaces has no associated workflow run/status, so CI/build success remains unverified.
 - Existing HALCON 25.11, DevExpress 25.2.3 and hardware-vendor environment/authority gates remain recorded and were not bypassed.
+
+### Latest 300-round continuous non-blocked development — 2026-09-19
+Completed and wired:
+- 300 numbered deterministic verification work units spanning Transform, Zoom, ROI, Polygon, MiniMap, Input Replay, Workflow validation, Evidence hashing, Zoom Profiles, and Scene/Visibility.
+- Render Evidence Manifest: stable generation/submission identity plus Batch/Command/Frame/Replay hashes and compact JSON export.
+- Presentation Audit Trace: ordered transaction-stage records with structural validation and reset semantics.
+- Deterministic Input Replay Runtime: record/snapshot/replay/evidence/reset.
+- Replay Session Runtime: binds input, render evidence, and audit traces into one session manifest and JSON evidence bundle.
+- Centralized invariant validation remains the structural validation boundary for framework-neutral rendering/presentation state.
+- The 300-round verification matrix is registered in tests/Asun.UI.Viewports.Smoke/Program.cs.
+
+Verification note:
+- This round includes repository implementation and deterministic smoke wiring; no local dotnet build/test success is asserted.
+- The available GitHub Actions/status interfaces must return an associated run/status before CI success is recorded.
+- HALCON, DevExpress, and hardware-vendor authority/environment gates remain unchanged and were not bypassed.
