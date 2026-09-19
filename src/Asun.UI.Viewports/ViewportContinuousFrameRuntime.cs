@@ -197,11 +197,42 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
             else
             {
                 Interlocked.Increment(ref _skippedLoops);
-                await Task.Delay(
-                    _idleDelay,
-                    cancellationToken)
+                await WaitForActivityAsync(cancellationToken)
                     .ConfigureAwait(false);
             }
+        }
+    }
+
+    private async ValueTask WaitForActivityAsync(
+        CancellationToken cancellationToken)
+    {
+        using var wakeCancellation = CancellationTokenSource
+            .CreateLinkedTokenSource(cancellationToken);
+
+        var inputTask = _input
+            .WaitForActivityAsync(wakeCancellation.Token)
+            .AsTask();
+
+        var renderTask = _pipeline.Scheduler
+            .WaitForActivityAsync(wakeCancellation.Token)
+            .AsTask();
+
+        var completed = await Task
+            .WhenAny(inputTask, renderTask)
+            .ConfigureAwait(false);
+
+        wakeCancellation.Cancel();
+
+        try
+        {
+            await completed.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (
+            cancellationToken.IsCancellationRequested)
+        {
+        }
+        catch (OperationCanceledException)
+        {
         }
     }
 
