@@ -108,6 +108,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _surface.Reset();
         _presentationQueue.Reset();
         _presentationBuffers.Reset();
+        _presentationExecution.Reset();
 
         lock (_deliveryStateSync)
             _lastDelivery = null;
