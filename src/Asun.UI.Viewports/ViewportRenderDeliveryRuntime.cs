@@ -23,8 +23,10 @@ public sealed class ViewportRenderWorkUnavailableException : Exception
 public readonly record struct ViewportRenderDeliveryResult(
     bool Succeeded,
     bool Cancelled,
+    bool Deferred,
     long Generation,
     int RenderedUnits,
+    int DeferredUnits,
     Exception? Error)
 {
     public ViewportRenderDeliveryStatus Status =>
