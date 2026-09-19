@@ -32,14 +32,18 @@ public static class ViewportPresentationChainSmoke
             if (frame is null)
                 continue;
 
-            var visibility = ViewportTileRoiVisibilityRuntime.Build(frame.Composite);
+            var visibility = ViewportTileRoiVisibilityRuntime.Build(
+                frame.Composite);
 
             assert(
                 visibility.TileCount > 0 &&
-                visibility.VisibleRoiIds.Contains(roiId),
+                visibility.VisibleRoiIds.Contains(roiId) &&
+                visibility.Tiles.Any(tile =>
+                    tile.IntersectingRoiIds.Contains(roiId)),
                 $"Presentation chain {i + 1} should join visible tiles and ROI state.");
 
             var sink = new RecordingSink();
+
             var rendered = await ViewportRenderAdapterRuntime.RenderAsync(
                 frame,
                 sink);
@@ -53,40 +57,90 @@ public static class ViewportPresentationChainSmoke
                 $"Presentation chain {i + 1} should adapt the framework-neutral frame to a sink.");
 
             var input = new ViewportInputSubmissionRuntime();
+            var roiViewportPoint = pipeline.Composite.Transform.ImageToViewport(
+                new Vector2(300 + i % 11 * 12, 230 + i % 7 * 10));
+
             input.Submit(
                 ViewportInputEventKind.PointerMove,
                 new Vector2(100, 100));
+
             input.Submit(
                 ViewportInputEventKind.PointerMove,
                 new Vector2(105, 103));
+
+            input.Submit(
+                ViewportInputEventKind.PointerDown,
+                roiViewportPoint);
+
+            input.Submit(
+                ViewportInputEventKind.PointerMove,
+                roiViewportPoint + new Vector2(12, 8));
+
+            input.Submit(
+                ViewportInputEventKind.PointerUp,
+                roiViewportPoint + new Vector2(12, 8));
+
             input.Submit(
                 ViewportInputEventKind.Wheel,
-                new Vector2(300, 220),
+                roiViewportPoint,
                 wheelDelta: 120);
 
             var events = input.Drain();
+
             assert(
-                events.Count == 2 &&
+                events.Count == 6 &&
                 events[0].Kind == ViewportInputEventKind.PointerMove &&
                 events[0].Position == new Vector2(105, 103) &&
-                events[1].Kind == ViewportInputEventKind.Wheel,
-                $"Presentation chain {i + 1} should coalesce pointer move submissions.");
+                events[^1].Kind == ViewportInputEventKind.Wheel,
+                $"Presentation chain {i + 1} should coalesce pointer move submissions while preserving ordering.");
 
-            var processed = new ViewportContinuousFrameRuntime<string>(pipeline, input);
-            var processedCount = processed.ProcessInputs();
+            var continuous = new ViewportContinuousFrameRuntime<string>(
+                pipeline,
+                input);
 
-            assert(
-                processedCount == 0,
-                $"Presentation chain {i + 1} should observe an empty queue after manual input drain.");
-
-            var stats = processed.Statistics;
+            var generationBeforeInput = pipeline.Composite.Generation;
+            var processedCount = continuous.ProcessInputs();
 
             assert(
-                stats.ProcessedInputs == 0 &&
-                pipeline.Scheduler.PendingFlags != ViewportDirtyFlags.None,
-                $"Presentation chain {i + 1} should preserve scheduler invalidation state.");
+                processedCount == 5 &&
+                pipeline.Composite.Generation > generationBeforeInput,
+                $"Presentation chain {i + 1} should apply submitted interaction events to the composite runtime.");
+
+            var pendingAfterInput = pipeline.Scheduler.PendingFlags;
+
+            assert(
+                pendingAfterInput != ViewportDirtyFlags.None,
+                $"Presentation chain {i + 1} should schedule rendering after input changes.");
+
+            var cts = new CancellationTokenSource();
+            var continuousSink = new CancellingSink(cts);
+
+            try
+            {
+                await continuous.RunAsync(
+                    continuousSink,
+                    cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // External cancellation is the normal completion path of this smoke.
+            }
+
+            var continuousStats = continuous.Statistics;
+
+            assert(
+                continuousStats.RenderedFrames >= 1 &&
+                continuousStats.ProcessedInputs == 0 &&
+                continuousSink.BeginCount >= 1 &&
+                continuousSink.EndCount >= 1,
+                $"Presentation chain {i + 1} should execute a continuous frame and deliver it to the sink.");
+
+            assert(
+                continuousStats.LoopCount >= continuousStats.RenderedFrames,
+                $"Presentation chain {i + 1} should maintain valid continuous-loop accounting.");
 
             pipeline.Reset();
+
             assert(
                 pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None,
                 $"Presentation chain {i + 1} should reset presentation scheduling.");
@@ -139,6 +193,46 @@ public static class ViewportPresentationChainSmoke
             CancellationToken cancellationToken = default)
         {
             EndCount++;
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class CancellingSink : IViewportRenderSink<string>
+    {
+        private readonly CancellationTokenSource _source;
+
+        public CancellingSink(CancellationTokenSource source)
+        {
+            _source = source;
+        }
+
+        public int BeginCount { get; private set; }
+        public int EndCount { get; private set; }
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            BeginCount++;
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            EndCount++;
+            _source.Cancel();
             return ValueTask.CompletedTask;
         }
     }
