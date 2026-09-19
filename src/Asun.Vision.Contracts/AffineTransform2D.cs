@@ -128,9 +128,14 @@ public readonly record struct AffineTransform2D
         }
     }
 
-    public double Determinant =>
+    public Vector2 TranslationVector =>
+        new(_matrix.M31, _matrix.M32);
+
+    public double LinearDeterminant =>
         (double)_matrix.M11 * _matrix.M22 -
         (double)_matrix.M12 * _matrix.M21;
+
+    public double Determinant => LinearDeterminant;
 
     public bool IsInvertible => Math.Abs(Determinant) > 1e-12;
 
