@@ -22,6 +22,8 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly ViewportPresentationQueueRuntime<TTile> _presentationQueue;
     private readonly ViewportPresentationBufferRuntime _presentationBuffers;
     private readonly ViewportPresentationExecutionRuntime<TTile> _presentationExecution;
+    private readonly ViewportRenderEvidenceStore _evidenceHistory = new();
+    private readonly ViewportPresentationAuditTrace _auditTrace = new();
     private readonly object _deliveryStateSync = new();
     private ViewportRenderDeliveryResult? _lastDelivery;
     private long _loopCount;
@@ -73,6 +75,12 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     public ViewportPresentationExecutionRuntime<TTile> PresentationExecution =>
         _presentationExecution;
 
+    public ViewportRenderEvidenceStore EvidenceHistory =>
+        _evidenceHistory;
+
+    public ViewportPresentationAuditTrace AuditTrace =>
+        _auditTrace;
+
     public ViewportRenderDeliveryResult? LastDelivery
     {
         get
@@ -109,6 +117,8 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _presentationQueue.Reset();
         _presentationBuffers.Reset();
         _presentationExecution.Reset();
+        _evidenceHistory.Clear();
+        _auditTrace.Reset();
 
         lock (_deliveryStateSync)
             _lastDelivery = null;
@@ -265,6 +275,40 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
             _lastDelivery = execution.Delivery;
 
         var frame = execution.Packet?.Frame;
+
+        if (frame is not null)
+        {
+            var manifest = ViewportRenderDiagnosticsRuntime.BuildManifest(
+                frame,
+                execution.Delivery.FrameState);
+
+            _evidenceHistory.Add(manifest);
+
+            var stage =
+                execution.Presented
+                    ? "Presented"
+                    : execution.Superseded
+                        ? "Superseded"
+                        : execution.Delivery.Status switch
+                        {
+                            ViewportRenderDeliveryStatus.Deferred =>
+                                "Deferred",
+                            ViewportRenderDeliveryStatus.Cancelled =>
+                                "Cancelled",
+                            ViewportRenderDeliveryStatus.Failed =>
+                                "Failed",
+                            _ => "Completed"
+                        };
+
+            _auditTrace.Record(
+                stage,
+                execution.Generation,
+                execution.Packet?.Token.Sequence ?? 0,
+                execution.Delivery.Status,
+                execution.Delivery.RenderedUnits,
+                execution.Delivery.DeferredUnits,
+                manifest.StableKey);
+        }
 
         if (execution.Presented && frame is not null)
         {
