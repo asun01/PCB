@@ -61,6 +61,10 @@ public static class ViewportPresentationEndToEndSmoke
             sink);
 
         var replay = sink.Snapshot;
+        var commandHash = ViewportRenderEvidenceRuntime
+            .ComputeCommandStreamHash(frame.CommandStream);
+        var frameHash = ViewportRenderEvidenceRuntime
+            .ComputePipelineFrameHash(frame);
 
         assert(
             delivery.Succeeded &&
@@ -77,6 +81,33 @@ public static class ViewportPresentationEndToEndSmoke
                     operation.Kind == ViewportRenderReplayOperationKind.DrawRoi)
                 .All(operation => operation.RoiId == visibleRoi),
             "Replay delivery must never draw an off-viewport ROI.");
+
+        assert(
+            commandHash.Length == 64 &&
+            frameHash.Length == 64 &&
+            replay.EvidenceHash.Length == 64,
+            "Render evidence fingerprints must use fixed-length SHA-256 representations.");
+
+        var secondSink = new ViewportRenderReplaySink<string>();
+        var secondDelivery = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+            frame,
+            secondSink);
+
+        assert(
+            secondDelivery.Succeeded &&
+            secondSink.Snapshot.EvidenceHash == replay.EvidenceHash &&
+            ViewportRenderEvidenceRuntime.ComputeCommandStreamHash(frame.CommandStream) == commandHash &&
+            ViewportRenderEvidenceRuntime.ComputePipelineFrameHash(frame) == frameHash,
+            "Replaying the same immutable frame must produce deterministic evidence.");
+
+        secondSink.Reset();
+
+        assert(
+            secondSink.Snapshot.OperationCount == 0 &&
+            secondSink.Snapshot.EvidenceHash ==
+            ViewportRenderEvidenceRuntime.ComputeReplayHash(
+                Array.Empty<ViewportRenderReplayOperation>()),
+            "Replay sink reset must clear evidence operations deterministically.");
     }
 
     private static async ValueTask VerifyContinuousPresentationAsync(
