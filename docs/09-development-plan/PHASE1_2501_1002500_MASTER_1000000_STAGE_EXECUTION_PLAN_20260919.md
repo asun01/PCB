@@ -2273,3 +2273,11 @@ The one-million-stage plan is an active execution program rather than a planning
 - Next natural stage: 17,501.
 - Evidence now has a window-level diagnostic bundle binding window identity and per-snapshot query integrity.
 - The one-million-stage horizon remains 2501–1,002,500.
+
+
+### Execution checkpoint: Stage 18000 — 2026-09-19
+
+- Completed live non-blocked execution through stage 18,000.
+- Next natural stage: 18,001.
+- Evidence now supports window-wide opaque reference closure across multiple snapshots.
+- The one-million-stage horizon remains 2501–1,002,500.
