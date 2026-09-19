@@ -83,7 +83,7 @@ public static class ViewportGestureRuntimeSmoke
 
         var focusedTransform = viewport.Transform;
         assert(
-            focusedTransform.GetVisibleImageRectangle().Intersects(roiBoundsBeforeFocus),
+            focusedTransform.GetVisibleImageRectangle().IntersectsWith(roiBoundsBeforeFocus),
             "ROI focus should leave the target ROI inside the visible image region.");
 
         gestures.ResetGestureState();
