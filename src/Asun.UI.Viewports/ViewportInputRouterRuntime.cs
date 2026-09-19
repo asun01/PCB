@@ -57,7 +57,8 @@ public sealed class ViewportInputRouterRuntime
     public ViewportGestureEvent PointerMove(Vector2 point)
     {
         if (_capturedOwner == ViewportInputOwner.None &&
-            _gestures.IsPointerDown)
+            (_capture.Owner != ViewportInputOwner.None ||
+             _gestures.IsPointerDown))
         {
             return default;
         }
