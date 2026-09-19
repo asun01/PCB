@@ -50,3 +50,14 @@ Verification note:
 Verification note:
 - No local C# build/test result is asserted.
 - No GitHub Actions success is inferred without an associated workflow run/status.
+
+### Post-300-round hardening — 2026-09-19
+- Continuous presentation runtime now retains bounded Render Evidence Manifest history and ordered Presentation Audit Trace for every executed frame outcome.
+- Presentation facade exposes EvidenceHistory and AuditTrace for engineering diagnostics and future UI tooling.
+- Added bounded EvidenceStore and bounded AuditTrace semantics to avoid unbounded long-running diagnostic memory.
+- Added dependency-free C# source-structure validator plus regression fixtures; repository CI invokes the validator before the deterministic repository/document gates.
+- Validator specifically guards against delimiter imbalance and high-confidence class-scope executable statements, complementing—not replacing—the C# compiler.
+
+Verification note:
+- The current environment cannot resolve github.com, so a fresh local repository checkout could not be obtained for real dotnet execution.
+- No build/test/CI success is inferred from that limitation.
