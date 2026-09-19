@@ -19,6 +19,8 @@
 - HALCON 25.11: target version fixed by repository baseline; actual local operator/API verification remains an environment gate.
 - AsunImage: excluded.
 - Hardware SDKs: adapter/port boundary only.
+- Renderer boundary: deterministic vendor-neutral render replay sink added; Skia/WPF host integration remains outside the core contract.
+- Presentation chain: input submission → composite generation → Tile/ROI visibility → render command delivery → latest-wins queue → double buffer → surface commit is covered by a new end-to-end smoke.
 - FS-001: production implementation remains blocked until GATE-001 and approved C-01 schema authority are concrete.
 - Test framework: still unverified; test-project selection is not invented.
 - GitHub Actions runner execution is currently not providing actionable job-step evidence; repository CI failures are not treated as business-code failures without logs.
