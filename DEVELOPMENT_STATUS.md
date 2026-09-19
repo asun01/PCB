@@ -62,3 +62,10 @@ Verification note:
 Verification note:
 - No local build/test execution result is asserted from this environment.
 - Latest commit has no associated GitHub Actions run or commit status at the time of this update.
+
+
+### Latest viewport runtime hardening — 2026-09-19
+- Begin-frame failures now still enter the adapter finalization path so EndFrame is guaranteed by the render contract.
+- Deferred delivery keeps the concrete unavailable-work exception for diagnostics instead of returning a reasonless deferred result.
+- Explicit frame requeue now deduplicates WorkItems before rebuilding the deferred queue.
+- Smoke coverage extends to begin-frame failure finalization, deferred error preservation, and repeated explicit requeue.
