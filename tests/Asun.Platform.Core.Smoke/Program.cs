@@ -305,6 +305,16 @@ Assert(
     failures);
 
 var resized = panned.WithViewportSize(new System.Numerics.Vector2(1600, 1000));
+
+var fittedInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(panned)
+    .BeginPan(new System.Numerics.Vector2(50, 50))
+    .FitToViewport();
+
+Assert(
+    !fittedInteraction.IsPanning &&
+    fittedInteraction.Transform.IsImageFullyVisible,
+    "FitToViewport should reset interaction state to a fully visible image.",
+    failures);
 var centeredImagePointBeforeResize = panned.ViewportToImage(panned.ViewportCenter);
 var centeredImagePointAfterResize = resized.ViewportToImage(resized.ViewportCenter);
 
