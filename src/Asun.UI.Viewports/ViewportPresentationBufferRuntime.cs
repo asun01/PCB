@@ -130,13 +130,26 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
                 throw new InvalidOperationException(
                     "A presentation buffer is already rendering.");
 
-            if (_presentedSlot is int currentPresented &&
-                _slots[currentPresented].Generation is long presentedGeneration &&
-                submission.Generation < presentedGeneration)
+            if (_presentedSlot is int currentPresented)
             {
-                _rejected++;
-                throw new InvalidOperationException(
-                    "A stale presentation cannot acquire a backbuffer.");
+                var presentedSlot = _slots[currentPresented];
+
+                if (presentedSlot.Generation is long presentedGeneration &&
+                    submission.Generation < presentedGeneration)
+                {
+                    _rejected++;
+                    throw new InvalidOperationException(
+                        "A stale presentation cannot acquire a backbuffer.");
+                }
+
+                if (presentedSlot.Sequence is long presentedSequence &&
+                    submission.Generation == presentedSlot.Generation &&
+                    submission.Sequence <= presentedSequence)
+                {
+                    _rejected++;
+                    throw new InvalidOperationException(
+                        "An older presentation sequence cannot acquire a backbuffer.");
+                }
             }
 
             var slotIndex = _presentedSlot is 0 ? 1 : 0;
