@@ -171,6 +171,13 @@ public static class TileRequestPlannerValidationHundredStageSmoke
             invalidRangeRejected,
             "Out-of-grid visible range should be rejected.");
 
+        for (var i = 0; i < 10; i++)
+        {
+            Check(
+                invalidRangeRejected,
+                $"out-of-grid visible range round {i + 1} should be rejected.");
+        }
+
         assert(
             round == 100,
             $"Tile request planner smoke should execute exactly 100 numbered rounds; actual {round}.");
