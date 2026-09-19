@@ -62,6 +62,7 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
     private long _discarded;
     private long _rejected;
     private long _regionCommits;
+    private long _lastSubmissionSequence;
     private int _disposed;
 
     public ViewportPresentationBufferSnapshot Snapshot
@@ -130,6 +131,13 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
                 throw new InvalidOperationException(
                     "A presentation buffer is already rendering.");
 
+            if (submission.Sequence <= _lastSubmissionSequence)
+            {
+                _rejected++;
+                throw new InvalidOperationException(
+                    "An old presentation fence cannot acquire a backbuffer.");
+            }
+
             if (_presentedSlot is int currentPresented)
             {
                 var presentedSlot = _slots[currentPresented];
@@ -172,6 +180,7 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
                 ? Array.Empty<RectangleF>()
                 : regions.ToArray();
 
+            _lastSubmissionSequence = submission.Sequence;
             _renderingSlot = slotIndex;
             _acquired++;
 
