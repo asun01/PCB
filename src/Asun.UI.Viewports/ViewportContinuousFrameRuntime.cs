@@ -160,7 +160,11 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                                 ViewportRenderDeliveryStatus.Failed or
                                 ViewportRenderDeliveryStatus.Deferred)
                             {
-                                _pipeline.RequeueFrame(frame);
+                                _pipeline.RequeueFrame(
+                                    frame,
+                                    delivery.Deferred
+                                        ? delivery.DeferredWorkItems
+                                        : null);
                                 _pipeline.Invalidate(
                                     frame.Submission.DirtyFlags,
                                     frame.Composite.Generation);
