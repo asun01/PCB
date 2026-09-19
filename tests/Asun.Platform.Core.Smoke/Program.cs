@@ -262,6 +262,26 @@ Assert(
     failures);
 
 Assert(
+    pipeline.GetExecutionLevel("Acquire") == 0 &&
+    pipeline.GetExecutionLevel("Inspect") == 1 &&
+    pipeline.GetExecutionLevel("Report") == 2,
+    "Pipeline execution depth should match dependency layers.",
+    failures);
+
+Assert(
+    pipeline.GetDependencyClosure("Report").SequenceEqual(new[] { "Acquire", "Inspect" }) &&
+    pipeline.GetDependentClosure("Acquire").SequenceEqual(new[] { "Inspect", "Report" }),
+    "Pipeline dependency and dependent closures should include all transitive nodes.",
+    failures);
+
+Assert(
+    pipeline.TryGetExecutionLevel("Inspect", out var safeLevel) &&
+    safeLevel == 1 &&
+    !pipeline.TryGetExecutionLevel("Missing", out _),
+    "Pipeline execution depth safe lookup should distinguish known and unknown nodes.",
+    failures);
+
+Assert(
     execution.SequenceEqual(new[] { "Acquire", "Inspect", "Report" }),
     "Pipeline dependencies should be honored.",
     failures);
