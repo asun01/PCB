@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -18,7 +19,7 @@ public static class StableSimulationSeedRuntime
         var hash=SHA256.HashData(
             Encoding.UTF8.GetBytes(canonical));
 
-        var value=BitConverter.ToInt32(hash,0);
+        var value=BinaryPrimitives.ReadInt32BigEndian(hash.AsSpan(0,4));
         return value;
     }
 }
