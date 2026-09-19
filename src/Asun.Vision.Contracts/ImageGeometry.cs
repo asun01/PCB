@@ -22,6 +22,9 @@ public readonly record struct ImageSize
 
     public Vector2 Vector => new(Width, Height);
 
+    public double DiagonalLength =>
+        Math.Sqrt((double)Width * Width + (double)Height * Height);
+
     public PixelRect Bounds =>
         new(0, 0, Width, Height);
 
