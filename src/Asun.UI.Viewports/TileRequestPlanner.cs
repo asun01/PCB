@@ -9,7 +9,10 @@ using System.Numerics;
 public readonly record struct TileRequest(
     TileIndex Index,
     bool IsVisible,
-    double DistanceSquaredToViewportCenter);
+    double DistanceSquaredToViewportCenter)
+{
+    public bool IsPrefetch => !IsVisible;
+}
 
 public static class TileRequestPlanner
 {
