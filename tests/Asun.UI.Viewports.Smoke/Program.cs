@@ -222,6 +222,8 @@ RoiDocumentRuntimeSmoke.Run(Assert);
 
 RoiViewportRuntimeSmoke.Run(Assert);
 
+ViewportGestureRuntimeSmoke.Run(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
