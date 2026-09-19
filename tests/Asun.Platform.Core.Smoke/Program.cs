@@ -1111,6 +1111,19 @@ Assert(
     failures);
 
 Assert(
+    polygon.ContainsInclusive(new System.Numerics.Vector2(0, 5)) &&
+    !polygon.ContainsInclusive(new System.Numerics.Vector2(15, 5)),
+    "Inclusive polygon containment should include boundary points.",
+    failures);
+
+Assert(
+    polygon.ClosestPoint(new System.Numerics.Vector2(15, 5)) ==
+        new System.Numerics.Vector2(10, 5) &&
+    Math.Abs(polygon.DistanceSquaredTo(new System.Numerics.Vector2(15, 5)) - 25) < 1e-12,
+    "Polygon closest point and distance should be deterministic.",
+    failures);
+
+Assert(
     polygon.Bounds == new RectangleF(0, 0, 10, 10) &&
     !polygon.IsClockwise,
     "Polygon bounds and winding should be deterministic.",
