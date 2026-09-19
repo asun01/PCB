@@ -74,6 +74,22 @@ catch (OperationCanceledException)
 
 Assert(cancellationObserved, "Pipeline should honor cancellation before scheduling work.", failures);
 
+var timeoutObserved = false;
+try
+{
+    await OperationTimeout.ExecuteAsync(
+        async token =>
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5), token);
+        },
+        TimeSpan.FromMilliseconds(10));
+}
+catch (TimeoutException)
+{
+    timeoutObserved = true;
+}
+Assert(timeoutObserved, "Operation timeout should surface as TimeoutException.", failures);
+
 var queue = new BoundedWorkQueue<int>(2);
 Assert(queue.TryEnqueue(1), "First enqueue should succeed.", failures);
 Assert(queue.TryEnqueue(2), "Second enqueue should succeed.", failures);
