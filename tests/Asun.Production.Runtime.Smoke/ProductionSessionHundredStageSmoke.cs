@@ -65,7 +65,8 @@ public static class ProductionSessionHundredStageSmoke
             definition,
             new SimulatedFrameSource(8,8));
 
-        var tampered=report with {FrameCount=2};
+        var tamperedCount=report with {FrameCount=2};
+        var tamperedFingerprint=report with {Fingerprint=new string('a',64)};
 
         for(var i=0;i<10;i++) Check(report.SessionId==definition.SessionId,"Production report should retain session identity.");
         for(var i=0;i<10;i++) Check(report.ProgramFingerprint==plan.Fingerprint,"Production report should bind the program plan.");
@@ -75,7 +76,10 @@ public static class ProductionSessionHundredStageSmoke
         for(var i=0;i<10;i++) Check(report.Frames.All(frame=>frame.InputFingerprint.Length==64),"Every input frame should retain a SHA-256 payload fingerprint.");
         for(var i=0;i<10;i++) Check(report.Frames.All(frame=>frame.PipelineReport.StageCount==3),"Every frame should execute all three pipeline stages.");
         for(var i=0;i<10;i++) Check(ProductionSessionValidationRuntime.IsValid(definition,report),"Production session report should validate.");
-        for(var i=0;i<10;i++) Check(!ProductionSessionValidationRuntime.IsValid(definition,tampered),"Tampered production report should be rejected.");
+        for(var i=0;i<10;i++) Check(
+            !ProductionSessionValidationRuntime.IsValid(definition,tamperedCount) &&
+            !ProductionSessionValidationRuntime.IsValid(definition,tamperedFingerprint),
+            "Tampered production report count/fingerprint should be rejected.");
         for(var i=0;i<10;i++) Check(report.Fingerprint.Length==64,"Production report fingerprint should be fixed width.");
 
         assert(round==100,$"Production session smoke should execute exactly 100 numbered rounds; actual {round}.");
