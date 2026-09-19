@@ -71,9 +71,8 @@ public static class QualityInspectionReplayBundleHundredStageSmoke
         for(var i=0;i<10;i++) Check(bundle.Previous is not null,$"two-result previous projection round {i+1} should exist.");
         for(var i=0;i<10;i++) Check(bundle.Diff.AddedFindingIds.Single()==nextFinding.Id,$"bundle finding diff round {i+1} should identify F-002.");
         for(var i=0;i<10;i++) Check(bundle.Diff.AddedEvidenceLinks.Single().FindingId==nextFinding.Id,$"bundle evidence diff round {i+1} should identify F-002.");
-        for(var i=0;i<10;i++) Check(QualityInspectionReplayBundleValidationRuntime.Validate(bundle).Count==0,$"bundle diagnostics round {i+1} should remain empty.");
+        for(var i=0;i<10;i++) Check(QualityInspectionReplayBundleValidationRuntime.Validate(bundle).Count==0 && !QualityInspectionReplayBundleValidationRuntime.IsValid(nullCurrent) && !QualityInspectionReplayBundleValidationRuntime.IsValid(nullDiff),$"bundle diagnostics and null-boundary round {i+1} should remain deterministic.");
         for(var i=0;i<10;i++) Check(!QualityInspectionReplayBundleValidationRuntime.IsValid(invalid),$"tampered bundle round {i+1} should be rejected.");
-        for(var i=0;i<10;i++) Check(!QualityInspectionReplayBundleValidationRuntime.IsValid(nullCurrent) && !QualityInspectionReplayBundleValidationRuntime.IsValid(nullDiff),$"null bundle boundaries round {i+1} should be rejected.");
         for(var i=0;i<10;i++) Check(QualityInspectionReplayProjectionDiffRuntime.Diff(bundle.Previous!,bundle.Current).Equals(bundle.Diff),$"bundle diff determinism round {i+1} should remain stable.");
 
         assert(round==100,$"Quality inspection replay bundle smoke should execute exactly 100 numbered rounds; actual {round}.");
