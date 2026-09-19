@@ -215,6 +215,14 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         rectangle.Right <= Right &&
         rectangle.Bottom <= Bottom;
 
+    public bool Intersects(PixelRect rectangle) =>
+        IsValid &&
+        rectangle.IsValid &&
+        Left <= rectangle.Right &&
+        Right >= rectangle.Left &&
+        Top <= rectangle.Bottom &&
+        Bottom >= rectangle.Top;
+
     public PixelRect Normalize()
     {
         if (!IsFinite)
