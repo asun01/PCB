@@ -105,6 +105,50 @@ public static class ViewportRenderPipelineSmoke
             assert(
                 pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None,
                 $"Pipeline chain {i + 1} reset should clear pending scheduler work.");
+
+            using var paged = new ViewportRenderPipelineRuntime<string>(
+                new Vector2(1800, 1200),
+                new Vector2(500, 350),
+                new Vector2(100, 100),
+                1,
+                64,
+                2,
+                new LocalTileSource(),
+                new ViewportRenderBudget(1, 8, 1, 1),
+                1000);
+
+            paged.Invalidate(
+                ViewportDirtyFlags.All,
+                paged.Composite.Generation);
+
+            var page1 = await paged.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1));
+
+            var page2 = await paged.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(2));
+
+            var page3 = await paged.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(3));
+
+            assert(
+                page1 is not null &&
+                page1.HasDeferredWork &&
+                page1.WorkPlan.Items.Any(item =>
+                    item.Kind == ViewportRenderWorkKind.FullSurface),
+                $"Pipeline chain {i + 1} should emit a one-time full-surface page.");
+
+            assert(
+                page2 is not null &&
+                page2.WorkPlan.Items.All(item =>
+                    item.Kind != ViewportRenderWorkKind.FullSurface) &&
+                page2.WorkPlan.Items.Count == 1,
+                $"Pipeline chain {i + 1} should consume the next deferred work page without repeating the clear.");
+
+            assert(
+                page3 is not null &&
+                page3.WorkPlan.Items.Count == 1 &&
+                page2.WorkPlan.Items[0] != page3.WorkPlan.Items[0],
+                $"Pipeline chain {i + 1} should advance the deferred cursor instead of replaying work.");
         }
     }
 
