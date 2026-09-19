@@ -8,6 +8,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
     private readonly ViewportInputSubmissionRuntime _input;
     private readonly ViewportContinuousFrameRuntime<TTile> _continuous;
     private readonly ViewportPresentationLifecycleRuntime _lifecycle = new();
+    private readonly ViewportInputBackpressureRuntime _backpressure;
     private int _disposed;
 
     public ViewportPresentationRuntime(
@@ -36,6 +37,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
             roiMode);
 
         _input = new ViewportInputSubmissionRuntime();
+        _backpressure = new ViewportInputBackpressureRuntime();
         _continuous = new ViewportContinuousFrameRuntime<TTile>(
             _pipeline,
             _input,
@@ -51,6 +53,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
     public ViewportCompositeRuntime<TTile> Composite => _pipeline.Composite;
 
     public ViewportRenderDeliveryTracker Delivery => _continuous.Delivery;
+
+    public ViewportInputBackpressureRuntime Backpressure => _backpressure;
 
     public ViewportPresentationState State => _lifecycle.State;
 
@@ -86,6 +90,22 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
         ThrowIfDisposed();
 
         return _input.TrySubmit(
+            kind,
+            position,
+            wheelDelta,
+            button);
+    }
+
+    public bool TrySubmitWithBackpressure(
+        ViewportInputEventKind kind,
+        Vector2 position,
+        int wheelDelta = 0,
+        ViewportMouseButton button = ViewportMouseButton.Left)
+    {
+        ThrowIfDisposed();
+
+        return _backpressure.TrySubmit(
+            _input,
             kind,
             position,
             wheelDelta,
