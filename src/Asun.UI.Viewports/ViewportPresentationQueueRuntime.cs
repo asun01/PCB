@@ -302,7 +302,6 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             _presentedGeneration = token.Generation;
             _presentedSequence = token.Sequence;
             _committingToken = null;
-            _committingToken = null;
             _inFlight = null;
             _inFlightCancellation?.Dispose();
             _inFlightCancellation = null;
