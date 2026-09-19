@@ -49,6 +49,14 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
 
     public bool IsEmpty => IsValid && (Width == 0 || Height == 0);
 
+    public double Area =>
+        IsValid ? Width * Height : throw new InvalidOperationException("The rectangle is invalid.");
+
+    public bool AreBoundsFinite =>
+        IsFinite &&
+        double.IsFinite(Right) &&
+        double.IsFinite(Bottom);
+
     public double Left => X;
     public double Top => Y;
     public double Right => X + Width;
