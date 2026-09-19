@@ -209,6 +209,47 @@ Assert(!queue.TryDequeue(out _), "An empty queue should not produce a value.", f
 queue.Complete();
 Assert(queue.IsCompleted, "Completed queue should report completion after draining.", failures);
 
+using var resources = new ResourceLeasePool<string>(new[]
+{
+    new KeyValuePair<string, int>("camera", 1),
+    new KeyValuePair<string, int>("gpu", 2)
+});
+
+Assert(resources.Capacity("camera") == 1, "Configured resource capacity should be exposed.", failures);
+Assert(resources.Available("gpu") == 2, "Independent resource capacity should start available.", failures);
+
+Assert(resources.TryAcquire("camera", out var cameraLease), "The first lease should be granted.", failures);
+Assert(!resources.TryAcquire("camera", out _), "A saturated resource should reject a non-blocking lease.", failures);
+
+var waitingLeaseTask = resources.AcquireAsync("camera").AsTask();
+await Task.Delay(10);
+Assert(!waitingLeaseTask.IsCompleted, "A saturated resource should apply bounded waiting.", failures);
+
+cameraLease!.Dispose();
+using var secondCameraLease = await waitingLeaseTask;
+Assert(resources.Available("camera") == 0, "Acquired lease should consume the available slot.", failures);
+
+using var gpuLease1 = await resources.AcquireAsync("gpu");
+using var gpuLease2 = await resources.AcquireAsync("gpu");
+Assert(resources.Available("gpu") == 0, "Independent resource leases should be bounded by capacity.", failures);
+
+var cancelledLease = false;
+using (var leaseCancellation = new CancellationTokenSource())
+{
+    leaseCancellation.Cancel();
+
+    try
+    {
+        _ = await resources.AcquireAsync("gpu", leaseCancellation.Token);
+    }
+    catch (OperationCanceledException)
+    {
+        cancelledLease = true;
+    }
+}
+
+Assert(cancelledLease, "Resource acquisition should honor cancellation.", failures);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
