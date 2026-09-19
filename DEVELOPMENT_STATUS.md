@@ -165,3 +165,17 @@ Verification note:
 - Repository implementation and smoke wiring are complete for this round.
 - No local build/test execution result is asserted from this environment.
 - GitHub status/workflow results remain unavailable for the current branch and are not being inferred as successful.
+### Latest render command stream / presentation queue hardening — 2026-09-19
+- Added framework-neutral `ViewportRenderCommandStream` so Pipeline Frames now carry an immutable ordered render command sequence derived from the already-budgeted Render Batch.
+- Render Adapter now executes the command stream rather than interpreting the WorkPlan directly, establishing a stable backend-facing render command boundary without Skia/WPF/DevExpress dependencies.
+- Added bounded latest-wins `ViewportPresentationQueueRuntime` with explicit pending, single-in-flight, presented, cancel, stale-reject, drop, and monotonic submission-token semantics.
+- Continuous presentation now uses `Pipeline Frame -> Presentation Queue -> InFlight -> Render Sink -> Acknowledge/Cancel`, while the existing Surface Transaction remains the backend presentation transaction fence.
+- Queue token sequence remains monotonic across reset so an old token cannot alias a post-reset submission.
+- Queue state is exposed through `ViewportPresentationRuntime.PresentationQueue` and queue resources are disposed with the presentation runtime.
+- Added `ViewportPresentationQueueSmoke` and wired it into the main smoke entry. The smoke covers command-stream/batch alignment, latest-wins coalescing, single in-flight protection, stale generation rejection, cancel, reset token monotonicity, and overlay-only command execution.
+- Extended continuous presentation smoke to verify that successful frames travel through the queue to Presented state and that reset clears queue presentation state.
+- Verified that the active branch contains all new command-stream/queue files. Accidental copies produced on the default branch during initial file creation were removed from `main`.
+
+Verification note:
+- No local build/test execution result is asserted from this environment.
+- GitHub commit status and workflow runs for the active HEAD are currently empty; no CI success is inferred.
