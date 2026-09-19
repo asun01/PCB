@@ -763,6 +763,23 @@ catch (ArgumentOutOfRangeException)
 
 Assert(invalidMarginRejected, "Negative tile prefetch margins should be rejected.", failures);
 
+var graphValidated = false;
+try
+{
+    AsyncPipeline<object>.Validate(new[]
+    {
+        new AsyncPipeline<object>.Node("A", (_, _) => ValueTask.CompletedTask),
+        new AsyncPipeline<object>.Node("B", new[] { "A" }, (_, _) => ValueTask.CompletedTask)
+    });
+    graphValidated = true;
+}
+catch
+{
+    graphValidated = false;
+}
+
+Assert(graphValidated, "Standalone pipeline graph validation should accept a valid graph.", failures);
+
 var invalidGraphRejected = false;
 try
 {
