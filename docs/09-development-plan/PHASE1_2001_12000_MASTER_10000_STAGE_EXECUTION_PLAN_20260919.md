@@ -729,3 +729,13 @@
 ## Completion definition
 
 Stage 12000 is complete only when the repository contains 100 completed 100-stage ledgers covering 2001–12000 with unique consecutive numbering and every block independently passing its declared structural/Smoke gate.
+
+## Current completion ledger
+
+- [x] Stages 2001–2500 completed as five 100-stage acceptance blocks.
+- [x] 2001–2100: checkpoint sequence correctness.
+- [x] 2101–2200: replay bundle integrity.
+- [x] 2201–2300: JSON serialization boundary.
+- [x] 2301–2400: checkpoint store generation ordering.
+- [x] 2401–2500: replay diagnostic integration.
+- [ ] Stages 2501–12000 remain planned and are not represented as completed work.
