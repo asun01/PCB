@@ -105,14 +105,26 @@ public readonly record struct AffineTransform2D
         return new AffineTransform2D(combined);
     }
 
+    public bool TryInvert(out AffineTransform2D inverse)
+    {
+        if (!Matrix3x2.Invert(_matrix, out var matrix))
+        {
+            inverse = default;
+            return false;
+        }
+
+        inverse = new AffineTransform2D(matrix);
+        return true;
+    }
+
     public AffineTransform2D Inverse
     {
         get
         {
-            if (!Matrix3x2.Invert(_matrix, out var inverse))
+            if (!TryInvert(out var inverse))
                 throw new InvalidOperationException("The transform is not invertible.");
 
-            return new AffineTransform2D(inverse);
+            return inverse;
         }
     }
 
