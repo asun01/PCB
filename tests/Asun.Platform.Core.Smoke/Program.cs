@@ -8,6 +8,35 @@ static void Assert(bool condition, string message, List<string> failures)
         failures.Add(message);
 }
 
+var tolerance = new Asun.Vision.Contracts.NumericTolerance(1e-6, 1e-6);
+Assert(tolerance.IsValid, "Default numeric tolerance values should be valid.", failures);
+
+Assert(
+    tolerance.AreEqual(1, 1 + 5e-7) &&
+    !tolerance.AreEqual(1, 1 + 1e-3),
+    "Numeric tolerance should combine absolute and relative comparisons deterministically.",
+    failures);
+
+Assert(
+    tolerance.IsNearlyZero(5e-7) &&
+    !tolerance.IsNearlyZero(1e-3) &&
+    tolerance.ClampNearZero(5e-7) == 0,
+    "Numeric tolerance should support near-zero normalization.",
+    failures);
+
+var relativeOnlyTolerance = tolerance.WithAbsolute(0).WithRelative(1e-3);
+Assert(
+    relativeOnlyTolerance.AreEqual(100, 100.09) &&
+    !relativeOnlyTolerance.AreEqual(100, 100.2),
+    "Numeric tolerance should support independent relative configuration.",
+    failures);
+
+Assert(
+    !tolerance.AreEqual(double.NaN, 0) &&
+    !tolerance.AreEqual(double.PositiveInfinity, 0),
+    "Numeric tolerance should reject non-finite comparison operands.",
+    failures);
+
 Assert(
     Math.Abs(Percentiles.Calculate(new[] { 10d, 20d, 30d, 40d, 50d }, 50) - 30) < 1e-9,
     "P50 should be the median.",
