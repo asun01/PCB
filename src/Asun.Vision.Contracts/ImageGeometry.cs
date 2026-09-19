@@ -118,6 +118,27 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
             height);
     }
 
+    public static PixelRect FromLTRB(
+        double left,
+        double top,
+        double right,
+        double bottom)
+    {
+        if (!double.IsFinite(left) ||
+            !double.IsFinite(top) ||
+            !double.IsFinite(right) ||
+            !double.IsFinite(bottom))
+        {
+            throw new ArgumentOutOfRangeException(nameof(left));
+        }
+
+        return new PixelRect(
+            Math.Min(left, right),
+            Math.Min(top, bottom),
+            Math.Abs(right - left),
+            Math.Abs(bottom - top));
+    }
+
     public static PixelRect FromPoints(PixelPoint first, PixelPoint second)
     {
         if (!first.IsFinite)
