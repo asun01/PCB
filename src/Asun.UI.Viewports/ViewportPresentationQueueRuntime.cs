@@ -96,11 +96,15 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
     {
         ArgumentNullException.ThrowIfNull(frame);
 
-        lock (_sync)
-        {
-            ThrowIfDisposed();
+        CancellationTokenSource? supersededCancellation = null;
 
-            var generation = frame.Composite.Generation;
+        try
+        {
+            lock (_sync)
+            {
+                ThrowIfDisposed();
+
+                var generation = frame.Composite.Generation;
 
             if (_latestGeneration is long latest &&
                 generation < latest)
@@ -133,20 +137,35 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
             _latestSubmissionSequence = packet.Token.Sequence;
 
-            if (_inFlight is not null &&
-                packet.Token.Sequence > _inFlight.Token.Sequence)
-            {
-                _inFlightCancellation?.Cancel();
-            }
+                if (_inFlight is not null &&
+                    packet.Token.Sequence > _inFlight.Token.Sequence)
+                {
+                    supersededCancellation = _inFlightCancellation;
+                }
 
             var wasEmpty = _pending.Count == 0;
             _pending.Enqueue(packet);
             _enqueued++;
 
-            if (wasEmpty)
-                _activitySignal.Release();
+                if (wasEmpty)
+                    _activitySignal.Release();
 
-            return true;
+                return true;
+            }
+        }
+        finally
+        {
+            if (supersededCancellation is not null)
+            {
+                try
+                {
+                    supersededCancellation.Cancel();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // A concurrent cancel/ack/reset may have already disposed it.
+                }
+            }
         }
     }
 
