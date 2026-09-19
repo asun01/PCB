@@ -125,13 +125,29 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     {
         ArgumentNullException.ThrowIfNull(sink);
 
-        _pipeline.Invalidate(
-            ViewportDirtyFlags.All,
-            _pipeline.Composite.Generation);
+        using var executionCancellation =
+            CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken);
 
-        while (!cancellationToken.IsCancellationRequested)
+        var executionTask = _presentationExecution
+            .RunAsync(
+                sink,
+                HandlePresentationExecutionAsync,
+                executionCancellation.Token)
+            .AsTask();
+
+        try
         {
-            Interlocked.Increment(ref _loopCount);
+            _pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                _pipeline.Composite.Generation);
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                if (executionTask.IsFaulted)
+                    await executionTask.ConfigureAwait(false);
+
+                Interlocked.Increment(ref _loopCount);
 
             var processed = ProcessInputs();
             Interlocked.Add(ref _processedInputs, processed);
@@ -191,64 +207,6 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                             Interlocked.Increment(ref _skippedLoops);
                             continue;
                         }
-
-                        try
-                        {
-                            var execution = await _presentationExecution
-                                .ExecuteNextAsync(
-                                    sink,
-                                    cancellationToken)
-                                .ConfigureAwait(false);
-
-                            if (!execution.Executed)
-                            {
-                                Interlocked.Increment(ref _skippedLoops);
-                                continue;
-                            }
-
-                            var delivery = execution.Delivery;
-                            var presentedFrame = execution.Packet?.Frame;
-
-                            lock (_deliveryStateSync)
-                                _lastDelivery = delivery;
-
-                            if (execution.Presented &&
-                                presentedFrame is not null)
-                            {
-                                _pipeline.MarkPresented(presentedFrame);
-                                Interlocked.Increment(ref _renderedFrames);
-                            }
-                            else if (execution.Superseded &&
-                                     presentedFrame is not null)
-                            {
-                                Interlocked.Increment(ref _supersededFrames);
-                                _pipeline.Invalidate(
-                                    presentedFrame.Submission.DirtyFlags,
-                                    _pipeline.Composite.Generation);
-                            }
-                            else if (presentedFrame is not null)
-                            {
-                                if (delivery.Status is
-                                    ViewportRenderDeliveryStatus.Failed or
-                                    ViewportRenderDeliveryStatus.Deferred)
-                                {
-                                    _pipeline.RequeueFrame(
-                                        presentedFrame,
-                                        delivery.Deferred
-                                            ? delivery.DeferredWorkItems
-                                            : null);
-                                    _pipeline.Invalidate(
-                                        presentedFrame.Submission.DirtyFlags,
-                                        presentedFrame.Composite.Generation);
-                                }
-
-                                Interlocked.Increment(ref _skippedLoops);
-                            }
-                        }
-                        catch (Exception) when (!cancellationToken.IsCancellationRequested)
-                        {
-                            Interlocked.Increment(ref _skippedLoops);
-                        }
                     }
                     else
                     {
@@ -278,6 +236,65 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                     .ConfigureAwait(false);
             }
         }
+        }
+        finally
+        {
+            executionCancellation.Cancel();
+
+            try
+            {
+                await executionTask.ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (
+                cancellationToken.IsCancellationRequested)
+            {
+            }
+        }
+    }
+
+    private async ValueTask HandlePresentationExecutionAsync(
+        ViewportPresentationExecutionResult<TTile> execution)
+    {
+        if (!execution.Executed)
+            return;
+
+        lock (_deliveryStateSync)
+            _lastDelivery = execution.Delivery;
+
+        var frame = execution.Packet?.Frame;
+
+        if (execution.Presented && frame is not null)
+        {
+            _pipeline.MarkPresented(frame);
+            Interlocked.Increment(ref _renderedFrames);
+            return;
+        }
+
+        if (execution.Superseded && frame is not null)
+        {
+            Interlocked.Increment(ref _supersededFrames);
+            _pipeline.Invalidate(
+                frame.Submission.DirtyFlags,
+                _pipeline.Composite.Generation);
+            return;
+        }
+
+        if (frame is not null &&
+            execution.Delivery.Status is
+                ViewportRenderDeliveryStatus.Failed or
+                ViewportRenderDeliveryStatus.Deferred)
+        {
+            _pipeline.RequeueFrame(
+                frame,
+                execution.Delivery.Deferred
+                    ? execution.Delivery.DeferredWorkItems
+                    : null);
+            _pipeline.Invalidate(
+                frame.Submission.DirtyFlags,
+                frame.Composite.Generation);
+        }
+
+        Interlocked.Increment(ref _skippedLoops);
     }
 
     private async ValueTask WaitForActivityAsync(
