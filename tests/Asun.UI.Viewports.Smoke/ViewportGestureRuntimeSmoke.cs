@@ -26,6 +26,13 @@ public static class ViewportGestureRuntimeSmoke
         var centerViewport = viewport.Transform.ImageToViewport(
             new Vector2(500, 250));
 
+        var hoverEvent = gestures.PointerMove(centerViewport);
+        assert(
+            hoverEvent.Kind == ViewportGestureKind.Idle &&
+            viewport.Hover.Id == roiId &&
+            viewport.Hover.Hit.Hit,
+            "Idle pointer movement should update ROI hover without starting a gesture.");
+
         var roiDown = gestures.PointerDown(centerViewport);
         assert(
             roiDown.Kind == ViewportGestureKind.RoiEditing &&
