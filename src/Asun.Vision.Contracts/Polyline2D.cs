@@ -125,6 +125,17 @@ public sealed class Polyline2D
             (float)fraction);
     }
 
+    public Polyline2D Reverse() =>
+        new(_points.Reverse());
+
+    public bool IsClosedWithin(double tolerance)
+    {
+        if (!double.IsFinite(tolerance) || tolerance < 0)
+            throw new ArgumentOutOfRangeException(nameof(tolerance));
+
+        return Vector2.DistanceSquared(_points[0], _points[^1]) <= tolerance * tolerance;
+    }
+
     public Vector2 ClosestPoint(Vector2 point)
     {
         if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
