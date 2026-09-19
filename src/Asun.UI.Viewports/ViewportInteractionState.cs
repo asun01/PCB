@@ -94,6 +94,12 @@ public readonly record struct ViewportInteractionState(
         };
     }
 
+    public ViewportInteractionState WithViewportSize(Vector2 viewportSize) =>
+        this with
+        {
+            Transform = Transform.WithViewportSize(viewportSize)
+        };
+
     public ViewportInteractionState FitToViewport()
     {
         return this with
