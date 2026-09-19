@@ -122,6 +122,22 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
             Math.Max(0, bottom - top));
     }
 
+    public PixelRect Union(PixelRect other)
+    {
+        if (!IsValid)
+            throw new InvalidOperationException("The current rectangle is invalid.");
+
+        if (!other.IsValid)
+            throw new ArgumentException("The other rectangle is invalid.", nameof(other));
+
+        var left = Math.Min(Left, other.Left);
+        var top = Math.Min(Top, other.Top);
+        var right = Math.Max(Right, other.Right);
+        var bottom = Math.Max(Bottom, other.Bottom);
+
+        return new PixelRect(left, top, right - left, bottom - top);
+    }
+
     public PixelRect Intersect(PixelRect other)
     {
         if (!IsValid)

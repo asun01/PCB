@@ -262,6 +262,12 @@ Assert(
     "ROI clamping should keep the rectangle inside image bounds.",
     failures);
 
+var union = roi.Union(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
+Assert(
+    union == new Asun.Vision.Contracts.PixelRect(100, 50, 350, 150),
+    "Pixel rectangle union should contain both input rectangles.",
+    failures);
+
 var overlap = roi.Intersect(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
 Assert(
     overlap == new Asun.Vision.Contracts.PixelRect(250, 100, 50, 50),
