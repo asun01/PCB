@@ -11,6 +11,8 @@ public sealed record ViewportReplayExecutionReport(
     int SelectionChanges,
     int DirtyEvents)
 {
+    public long LastInputSequence { get; init; }
+
     public int Count => Results.Count;
 
     public bool IsEmpty => Results.Count == 0;
@@ -56,7 +58,13 @@ public static class ViewportReplayExecutionRuntime
             results.Count(item => item.TransformChanged),
             results.Count(item => item.DocumentChanged),
             results.Count(item => item.SelectionChanged),
-            results.Count(item => item.DirtyFlags != ViewportDirtyFlags.None));
+            results.Count(item => item.DirtyFlags != ViewportDirtyFlags.None))
+        {
+            LastInputSequence =
+                events.Count == 0
+                    ? 0
+                    : events[^1].Sequence
+        };
     }
 
     public static ViewportReplayExecutionReport Execute<TTile>(
