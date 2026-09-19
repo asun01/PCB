@@ -249,6 +249,18 @@ Assert(
     "Zoom-to-rectangle should center the selected image region.",
     failures);
 
+var factorZoomInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
+    .ApplyZoomFactor(
+        zoomFactor: 10,
+        minScale: 0.5,
+        maxScale: 4,
+        viewportAnchor: new System.Numerics.Vector2(600, 400));
+
+Assert(
+    Math.Abs(factorZoomInteraction.Transform.Scale - 4) < 1e-9,
+    "Viewport interaction zoom factor should respect scale bounds.",
+    failures);
+
 var zoomInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
     .ApplyZoom(
         requestedScale: 10,
