@@ -119,7 +119,7 @@ public static class ViewportRenderSurfaceSmoke
             "Deferred delivery should discard the incomplete rendering transaction.");
 
 
-        var secondSurface = new ViewportRenderSurfaceRuntime();
+        using var secondSurface = new ViewportRenderSurfaceRuntime();
         var discardFailureSink = new DiscardFailureSink();
 
         var secondResult = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
@@ -131,7 +131,8 @@ public static class ViewportRenderSurfaceSmoke
             secondResult.Status == ViewportRenderDeliveryStatus.Deferred &&
             secondSurface.Snapshot.State == ViewportRenderSurfaceState.Discarded &&
             discardFailureSink.DiscardCount == 1,
-            "A failing discard callback must not replace the original deferred delivery result.");    }
+            "A failing discard callback must not replace the original deferred delivery result.");
+    }
 
     private static ViewportRenderPipelineRuntime<string> CreatePipeline(
         ITileSource<string> source) =>
