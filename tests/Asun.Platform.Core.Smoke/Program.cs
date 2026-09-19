@@ -13,6 +13,18 @@ Assert(
     "P50 should be the median.",
     failures);
 
+var manyPercentiles = Percentiles.CalculateMany(
+    new[] { 10d, 20d, 30d, 40d, 50d },
+    new[] { 0d, 50d, 95d });
+
+Assert(
+    manyPercentiles.Count == 3 &&
+    Math.Abs(manyPercentiles[0] - 10) < 1e-9 &&
+    Math.Abs(manyPercentiles[1] - 30) < 1e-9 &&
+    Math.Abs(manyPercentiles[2] - 48) < 1e-9,
+    "Multiple percentile calculation should reuse one deterministic ordering.",
+    failures);
+
 Assert(
     Math.Abs(Percentiles.Calculate(new[] { 10d, 20d, 30d, 40d }, 25) - 17.5) < 1e-9,
     "Percentile interpolation should be deterministic.",
