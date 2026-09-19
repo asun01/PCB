@@ -24,6 +24,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly ViewportPresentationExecutionRuntime<TTile> _presentationExecution;
     private readonly ViewportRenderEvidenceStore _evidenceHistory = new();
     private readonly ViewportPresentationAuditTrace _auditTrace = new();
+    private readonly ViewportInputReplayRuntime _inputReplay = new();
     private readonly object _deliveryStateSync = new();
     private ViewportRenderDeliveryResult? _lastDelivery;
     private long _loopCount;
@@ -81,6 +82,46 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     public ViewportPresentationAuditTrace AuditTrace =>
         _auditTrace;
 
+    public ViewportInputReplayRuntime InputReplay =>
+        _inputReplay;
+
+    public ViewportReplaySessionBundle ReplayBundle
+    {
+        get
+        {
+            var evidence = _evidenceHistory.Snapshot();
+
+            var evidenceKeys = evidence
+                .Select(item => item.StableKey)
+                .ToHashSet(StringComparer.Ordinal);
+
+            var audit = _auditTrace.Snapshot()
+                .Where(item =>
+                    string.IsNullOrEmpty(item.EvidenceKey) ||
+                    evidenceKeys.Contains(item.EvidenceKey))
+                .ToArray();
+
+            var inputs = _inputReplay.Snapshot();
+
+            var manifest =
+                ViewportReplaySessionBundleRuntime.CreateManifest(
+                    "continuous-viewport",
+                    DateTimeOffset.UnixEpoch,
+                    inputs,
+                    evidence,
+                    audit);
+
+            return ViewportReplaySessionBundleRuntime.Capture(
+                manifest,
+                inputs,
+                evidence,
+                audit);
+        }
+    }
+
+    public IReadOnlyList<string> ValidateReplayBundle() =>
+        ViewportReplaySessionBundleRuntime.Validate(ReplayBundle);
+
     public ViewportRenderDeliveryResult? LastDelivery
     {
         get
@@ -119,6 +160,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _presentationExecution.Reset();
         _evidenceHistory.Clear();
         _auditTrace.Reset();
+        _inputReplay.Reset();
 
         lock (_deliveryStateSync)
             _lastDelivery = null;
@@ -392,6 +434,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         foreach (var input in events)
         {
             processed++;
+            _inputReplay.Record(input);
 
             var result = _interaction.Apply(input);
 
