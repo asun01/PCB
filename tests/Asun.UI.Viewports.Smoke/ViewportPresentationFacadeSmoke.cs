@@ -35,6 +35,7 @@ public static class ViewportPresentationFacadeSmoke
             assert(
                 initialSnapshot.IsGenerationStable &&
                 initialSnapshot.IsSurfaceStable &&
+                initialSnapshot.IsBufferStable &&
                 initialSnapshot.IsPresentationStable &&
                 initialSnapshot.Surface.PresentationSequence == 0 &&
                 initialSnapshot.IsPresentationStable &&
