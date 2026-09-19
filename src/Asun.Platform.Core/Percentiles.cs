@@ -33,7 +33,7 @@ public static class Percentiles
         for (var index = 0; index < requested.Length; index++)
             results[index] = CalculateSorted(values, requested[index]);
 
-        return results;
+        return Array.AsReadOnly(results);
     }
 
     public static double Calculate(IEnumerable<double> samples, double percentile)
@@ -58,20 +58,22 @@ public static class Percentiles
         }
 
         Array.Sort(values);
+        return CalculateSorted(values, percentile);
+    }
 
-        if (values.Length == 1)
-        {
+    private static double CalculateSorted(
+        IReadOnlyList<double> values,
+        double percentile)
+    {
+        if (values.Count == 1)
             return values[0];
-        }
 
-        var position = percentile / 100d * (values.Length - 1);
+        var position = percentile / 100d * (values.Count - 1);
         var lower = (int)Math.Floor(position);
         var upper = (int)Math.Ceiling(position);
 
         if (lower == upper)
-        {
             return values[lower];
-        }
 
         var fraction = position - lower;
         return values[lower] + (values[upper] - values[lower]) * fraction;
