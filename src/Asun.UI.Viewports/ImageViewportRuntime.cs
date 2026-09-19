@@ -311,7 +311,7 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
                 {
                     var rectangle = TileRequestPlanner.GetRequestRectangle(
                         operation.Transform.ImageSize,
-                        _viewport.Transform.TileSize,
+                        _viewport.TileSize,
                         request);
 
                     try
@@ -395,7 +395,7 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
 
     private readonly record struct TileLoadResult(
         TileRequest Request,
-        TTile? Tile,
+        TTile Tile,
         TileLoadFailure<TTile>? Failure,
         bool HasValue)
     {
@@ -409,7 +409,7 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
             Exception exception) =>
             new(
                 request,
-                default,
+                default!,
                 new TileLoadFailure<T>(request, exception),
                 false);
     }
