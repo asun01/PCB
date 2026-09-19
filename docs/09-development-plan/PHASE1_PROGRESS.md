@@ -131,3 +131,18 @@ Verification note:
 Verification note:
 - Exact replay execution matrix is 10 loop groups × 10 iterations × 1 Check = 100 numbered rounds; final round-count assertion is outside the Check counter.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+### 800→900 deterministic replay state fingerprint — 2026-09-19
+
+- Completed stages 801–900 and recorded them in `PHASE1_800_900_STAGE_LEDGER_20260919.md`.
+- Added `ViewportReplayStateFingerprintRuntime` for deterministic viewport/ROI/generation state capture and structured comparison.
+- Added `ViewportReplayExecutionStateRuntime` to pair the existing replay execution report with initial/final state fingerprints without duplicating input execution logic.
+- State comparison reports field paths for transform, generation, selection, ROI count, geometry, and state hash differences.
+- Added exact 100-round smoke coverage for deterministic replay state, mutation detection, empty replay preservation, stable ROI identity, direct-vs-bundle convergence, and final-state consistency.
+- Registered the state fingerprint smoke in the primary viewport smoke entry.
+- Deterministic tests use an explicit stable ROI Guid because auto-generated identities are session-specific and cannot form a reproducible cross-session fingerprint.
+
+Verification note:
+- State fingerprint smoke is 10 loop groups × 10 iterations × 1 Check = 100 numbered rounds, with the final `round == 100` assertion outside the Check counter.
+- New C# sources have balanced delimiters and no placeholder implementation.
+- No local build/test/CI success is asserted without authoritative execution evidence.
