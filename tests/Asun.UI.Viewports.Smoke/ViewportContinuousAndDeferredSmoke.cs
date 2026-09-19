@@ -27,6 +27,11 @@ public static class ViewportContinuousAndDeferredSmoke
             new ViewportRenderBudget(8, 8, 4, 16),
             1000);
 
+        var roiId = pipeline.Composite.AddRoi(
+            RoiGeometry.CreateRectangle(
+                new Vector2(100, 50),
+                new Vector2(120, 60)));
+
         var frame = await pipeline.RefreshAsync(
             DateTimeOffset.UtcNow.AddSeconds(1));
 
@@ -40,6 +45,27 @@ public static class ViewportContinuousAndDeferredSmoke
 
         if (frame is null)
             return;
+
+        var visibility = ViewportTileRoiVisibilityRuntime.Build(
+            frame.Composite);
+
+        var visibleTilesForRoi = visibility.Tiles
+            .Where(tile => tile.IntersectingRoiIds.Contains(roiId))
+            .Select(tile => tile.Index)
+            .ToArray();
+
+        assert(
+            visibility.VisibleRoiIds.Contains(roiId) &&
+            visibleTilesForRoi.Length == 2 &&
+            visibility.TryGetTile(
+                new TileIndex(0, 0),
+                out var firstVisibleTile) &&
+            firstVisibleTile.IntersectingRoiIds.Contains(roiId) &&
+            visibility.TryGetTile(
+                new TileIndex(1, 0),
+                out var secondVisibleTile) &&
+            secondVisibleTile.IntersectingRoiIds.Contains(roiId),
+            "Joint visibility should associate a cross-boundary ROI with every intersecting visible tile.");
 
         var firstSink = new RecordingSink();
         var first = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
