@@ -67,6 +67,9 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     public ViewportPresentationBufferRuntime PresentationBuffers =>
         _continuous.PresentationBuffers;
 
+    public ViewportPresentationExecutionRuntime<TTile> PresentationExecution =>
+        _continuous.PresentationExecution;
+
     public ViewportRenderFrameState? LastFrameState =>
         _continuous.LastDelivery?.FrameState;
 
