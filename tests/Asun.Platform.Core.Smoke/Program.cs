@@ -817,6 +817,19 @@ Assert(
     "Affine transform composition should apply transforms in declared order.",
     failures);
 
+Assert(
+    Math.Abs(Asun.UI.Viewports.ViewportTransform.ClampScale(100, 0.5, 4) - 4) < 1e-9 &&
+    Asun.UI.Viewports.ViewportTransform.ClampScale(0.1, 0.5, 4) == 0.5,
+    "Static scale clamping should enforce both lower and upper bounds.",
+    failures);
+
+var unclamped = viewport.WithScaleClamped(2, 0.5, 4);
+Assert(
+    Math.Abs(unclamped.Scale - 2) < 1e-9 &&
+    unclamped.IsScaleWithin(0.5, 4),
+    "Viewport scale clamping should preserve an in-range scale.",
+    failures);
+
 var clampedZoom = viewport.WithScaleAroundClamped(
     requestedScale: 100,
     minScale: 0.5,
