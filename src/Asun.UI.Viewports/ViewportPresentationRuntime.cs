@@ -49,6 +49,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
 
     public ViewportCompositeRuntime<TTile> Composite => _pipeline.Composite;
 
+    public ViewportRenderDeliveryTracker Delivery => _continuous.Delivery;
+
     public long Submit(
         ViewportInputEventKind kind,
         Vector2 position,
@@ -58,6 +60,21 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
         ThrowIfDisposed();
 
         return _input.Submit(
+            kind,
+            position,
+            wheelDelta,
+            button);
+    }
+
+    public bool TrySubmit(
+        ViewportInputEventKind kind,
+        Vector2 position,
+        int wheelDelta = 0,
+        ViewportMouseButton button = ViewportMouseButton.Left)
+    {
+        ThrowIfDisposed();
+
+        return _input.TrySubmit(
             kind,
             position,
             wheelDelta,
@@ -78,6 +95,9 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
     public ViewportContinuousFrameStatistics Statistics =>
         _continuous.Statistics;
 
+    public ViewportRenderDeliveryStatistics DeliveryStatistics =>
+        _continuous.Delivery.Statistics;
+
     public void Reset()
     {
         ThrowIfDisposed();
@@ -85,11 +105,18 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
         _pipeline.Reset();
     }
 
+    public void CancelInput()
+    {
+        ThrowIfDisposed();
+        _input.Cancel();
+    }
+
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
 
+        _input.Dispose();
         _pipeline.Dispose();
     }
 
