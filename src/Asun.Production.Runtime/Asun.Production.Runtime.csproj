@@ -9,5 +9,6 @@
     <ProjectReference Include="../../src/Asun.Program.Core/Asun.Program.Core.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.Pipeline/Asun.Platform.Pipeline.csproj" />
     <ProjectReference Include="../../src/Asun.Device.Contracts/Asun.Device.Contracts.csproj" />
+    <ProjectReference Include="../../src/Asun.Release.Core/Asun.Release.Core.csproj" />
   </ItemGroup>
 </Project>
