@@ -1663,3 +1663,19 @@ Current continuous execution position:
 - completed through Stage 30500;
 - next natural stage: 30501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 30501→31000 acquisition provenance hardening — 2026-09-20
+
+Completed stages 30501–31000.
+
+Implemented:
+- RecordingFrameSource for real IFrameSource capture retention;
+- ProductionFrameProvenance factual metadata contract;
+- provenance creation/validation bound to ProductionSessionReport sequence and payload SHA-256;
+- dedicated exact 100-round Smoke covering real simulated capture, provenance retention, tamper rejection, and sequence mismatch rejection.
+
+Current continuous execution position:
+- completed through Stage 31000;
+- next natural stage: 31001;
+- global one-million-stage horizon remains 2501–1002500.
