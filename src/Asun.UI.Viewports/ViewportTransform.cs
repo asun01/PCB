@@ -252,6 +252,35 @@ public readonly record struct ViewportTransform(
         return CenterOnImagePoint(center);
     }
 
+    public static double ClampScale(
+        double requestedScale,
+        double minScale,
+        double maxScale)
+    {
+        if (!double.IsFinite(minScale) || minScale <= 0)
+            throw new ArgumentOutOfRangeException(nameof(minScale));
+
+        if (!double.IsFinite(maxScale) || maxScale < minScale)
+            throw new ArgumentOutOfRangeException(nameof(maxScale));
+
+        if (!double.IsFinite(requestedScale) || requestedScale <= 0)
+            throw new ArgumentOutOfRangeException(nameof(requestedScale));
+
+        return Math.Clamp(requestedScale, minScale, maxScale);
+    }
+
+    public bool IsScaleWithin(double minScale, double maxScale)
+    {
+        return Scale >= minScale &&
+               Scale <= maxScale;
+    }
+
+    public ViewportTransform WithScaleClamped(
+        double requestedScale,
+        double minScale,
+        double maxScale) =>
+        this with { Scale = ClampScale(requestedScale, minScale, maxScale) };
+
     public ViewportTransform WithScaleAroundClamped(
         double requestedScale,
         double minScale,
