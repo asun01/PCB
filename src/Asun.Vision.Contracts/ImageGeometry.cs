@@ -187,6 +187,11 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         return this;
     }
 
+    public PixelPoint TopLeft => new(Left, Top);
+    public PixelPoint TopRight => new(Right, Top);
+    public PixelPoint BottomLeft => new(Left, Bottom);
+    public PixelPoint BottomRight => new(Right, Bottom);
+
     public double Left => X;
     public double Top => Y;
     public double Right => X + Width;
