@@ -6,26 +6,13 @@ var round=0;
 void Check(bool condition,string message)
 {
     round++;
-
     if(!condition)
         failures.Add($"Round {round}: {message}");
 }
 
 var handle=EvidenceHandle.Create("frame://001");
-var descriptor=new EvidenceDescriptor(
-    handle,
-    EvidenceKind.Image,
-    "image/raw",
-    1024,
-    "frame-001");
-
-var invalidHandle=new EvidenceDescriptor(
-    new EvidenceHandle(""),
-    EvidenceKind.Image,
-    "image/raw",
-    1024,
-    "invalid");
-
+var descriptor=new EvidenceDescriptor(handle,EvidenceKind.Image,"image/raw",1024,"frame-001");
+var invalidHandle=new EvidenceDescriptor(new EvidenceHandle(""),EvidenceKind.Image,"image/raw",1024,"invalid");
 var invalidLength=descriptor with {ByteLength=-1};
 var invalidKind=descriptor with {Kind=(EvidenceKind)99};
 
@@ -41,7 +28,34 @@ for(var i=0;i<10;i++) Check(!EvidenceDescriptorValidationRuntime.IsValid(invalid
 for(var i=0;i<10;i++) Check(EvidenceHandle.Create(" frame://001 ").Value=="frame://001","Handle normalization should remain deterministic.");
 
 if(round!=100)
-    failures.Add($"Evidence smoke should execute exactly 100 numbered rounds; actual {round}.");
+    failures.Add($"Evidence descriptor smoke should execute exactly 100 numbered rounds; actual {round}.");
+
+var missing=await EvidenceCatalogRuntime.GetValidatedAsync(
+    new StubEvidenceCatalog(descriptor),
+    EvidenceHandle.Create("frame://missing"));
+Check(missing is null,"Missing evidence lookup should remain empty.");
+
+var found=await EvidenceCatalogRuntime.GetValidatedAsync(
+    new StubEvidenceCatalog(descriptor),
+    handle);
+Check(found==descriptor,"Validated evidence lookup should return the descriptor.");
+
+using var cancellation=new CancellationTokenSource();
+cancellation.Cancel();
+var cancelledObserved=false;
+try
+{
+    await EvidenceCatalogRuntime.GetValidatedAsync(
+        new BlockingEvidenceCatalog(),
+        handle,
+        cancellation.Token);
+}
+catch(OperationCanceledException)
+{
+    cancelledObserved=true;
+}
+
+Check(cancelledObserved,"Evidence catalog lookup should honor cancellation.");
 
 if(failures.Count>0)
 {
@@ -52,4 +66,28 @@ if(failures.Count>0)
 }
 
 Console.WriteLine("Asun.Platform.Evidence smoke tests passed.");
-return 0;
+
+file sealed class StubEvidenceCatalog : IEvidenceCatalog
+{
+    private readonly EvidenceDescriptor _descriptor;
+
+    public StubEvidenceCatalog(EvidenceDescriptor descriptor)=>
+        _descriptor=descriptor;
+
+    public ValueTask<EvidenceDescriptor?> GetAsync(
+        EvidenceHandle handle,
+        CancellationToken cancellationToken=default)=>
+        ValueTask.FromResult<EvidenceDescriptor?>(
+            handle==_descriptor.Handle ? _descriptor : null);
+}
+
+file sealed class BlockingEvidenceCatalog : IEvidenceCatalog
+{
+    public async ValueTask<EvidenceDescriptor?> GetAsync(
+        EvidenceHandle handle,
+        CancellationToken cancellationToken=default)
+    {
+        await Task.Delay(Timeout.InfiniteTimeSpan,cancellationToken);
+        return null;
+    }
+}
