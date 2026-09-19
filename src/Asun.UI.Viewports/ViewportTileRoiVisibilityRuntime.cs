@@ -10,11 +10,14 @@ public readonly record struct ViewportTileVisibility(
 
 public sealed class ViewportTileRoiVisibilitySnapshot
 {
+    private readonly IReadOnlyDictionary<TileIndex, ViewportTileVisibility> _tilesByIndex;
+
     internal ViewportTileRoiVisibilitySnapshot(
         IReadOnlyList<ViewportTileVisibility> tiles,
         IReadOnlySet<Guid> visibleRoiIds)
     {
         Tiles = tiles.ToArray();
+        _tilesByIndex = Tiles.ToDictionary(tile => tile.Index);
         VisibleRoiIds = visibleRoiIds.ToHashSet();
     }
 
@@ -26,20 +29,8 @@ public sealed class ViewportTileRoiVisibilitySnapshot
 
     public bool TryGetTile(
         TileIndex index,
-        out ViewportTileVisibility visibility)
-    {
-        foreach (var tile in Tiles)
-        {
-            if (tile.Index != index)
-                continue;
-
-            visibility = tile;
-            return true;
-        }
-
-        visibility = default;
-        return false;
-    }
+        out ViewportTileVisibility visibility) =>
+        _tilesByIndex.TryGetValue(index, out visibility);
 
     public int LoadedTileCount =>
         Tiles.Count(tile => tile.IsLoaded);
