@@ -531,6 +531,11 @@ var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
 Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
 
 var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
+Assert(
+    imageBounds.AreBoundsFinite &&
+    imageBounds.Area == 500000,
+    "Valid pixel rectangles should expose finite bounds and area.",
+    failures);
 var dragRoi = Asun.Vision.Contracts.PixelRect.FromPoints(
     new Asun.Vision.Contracts.PixelPoint(300, 200),
     new Asun.Vision.Contracts.PixelPoint(100, 50));
