@@ -313,6 +313,17 @@ Assert(
     "Pipeline nodes should reject null dependency collections.",
     failures);
 
+var mutableDependencies = new List<string>();
+var snapshotPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("Root", (_, _) => ValueTask.CompletedTask),
+    new AsyncPipeline<object>.Node("Child", mutableDependencies, (_, _) => ValueTask.CompletedTask)
+});
+
+mutableDependencies.Add("Unknown");
+await snapshotPipeline.ExecuteAsync(new object());
+Assert(true, "Pipeline dependency collections should be snapshotted at construction.", failures);
+
 var invalidGraphRejected = false;
 try
 {

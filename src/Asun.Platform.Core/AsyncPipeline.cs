@@ -14,7 +14,13 @@ public sealed class AsyncPipeline<TContext>
     {
         ArgumentNullException.ThrowIfNull(nodes);
 
-        _nodes = nodes.ToArray();
+        _nodes = nodes
+            .Select(node => node with
+            {
+                Dependencies = node.Dependencies?.ToArray()
+                    ?? throw new ArgumentNullException(nameof(node.Dependencies))
+            })
+            .ToArray();
 
         if (_nodes.Count == 0)
         {
