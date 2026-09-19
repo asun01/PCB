@@ -154,3 +154,72 @@ public static class ViewportInputLifecycleSmoke
             "ResetLifecycle should restore a reusable input runtime.");
     }
 }
+
+
+public static class ViewportPresentationDisposeSmoke
+{
+    public static async ValueTask RunAsync(Action<bool, string> assert)
+    {
+        using var presentation = new ViewportPresentationRuntime<string>(
+            new System.Numerics.Vector2(1200, 900),
+            new System.Numerics.Vector2(400, 300),
+            new System.Numerics.Vector2(100, 100),
+            1,
+            32,
+            2,
+            new LocalTileSource(),
+            new ViewportRenderBudget(8, 8, 2, 16),
+            120);
+
+        var runTask = presentation
+            .RunAsync(new PassiveSink())
+            .AsTask();
+
+        while (presentation.State == ViewportPresentationState.Created)
+            await Task.Yield();
+
+        assert(
+            presentation.State == ViewportPresentationState.Running,
+            "Presentation should enter Running before synchronous disposal.");
+
+        presentation.Dispose();
+
+        await runTask;
+
+        assert(
+            presentation.State == ViewportPresentationState.Disposed,
+            "Synchronous disposal during a running frame loop should complete after the loop exits.");
+    }
+
+    private sealed class LocalTileSource : ITileSource<string>
+    {
+        public ValueTask<string> LoadAsync(
+            TileRequest request,
+            System.Drawing.RectangleF imageRectangle,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.FromResult($"tile:{request.Index.X},{request.Index.Y}");
+    }
+
+    private sealed class PassiveSink : IViewportRenderSink<string>
+    {
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+    }
+}
