@@ -123,7 +123,12 @@ public static class ViewportRenderDeliveryRuntime
                             frame.Batch.ItemCount,
                             units,
                             frame.Batch.RegionCount,
-                            frame.Batch.Regions),
+                            frame.Batch.Regions,
+                            frame.Batch.TileCount,
+                            frame.Batch.RoiCount,
+                            frame.Batch.OverlayCount,
+                            frame.Batch.InvalidationCount,
+                            frame.Batch.FullSurfaceCount),
                         cancellationToken).ConfigureAwait(false);
 
                     surface.Commit(
