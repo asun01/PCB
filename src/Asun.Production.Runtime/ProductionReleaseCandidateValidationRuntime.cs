@@ -21,20 +21,23 @@ public static class ProductionReleaseCandidateValidationRuntime
                 definition,
                 report));
 
-        if(!errors.Any())
+        if(errors.Count>0)
+            return errors;
+
+        if(manifest.Artifacts.Count!=1)
         {
-            if(manifest.Artifacts.Count!=1)
-                errors.Add("Production release candidate must contain exactly one logical artifact.");
-
-            var expected=ProductionReleaseCandidateRuntime.Create(
-                manifest.Identity,
-                definition,
-                report,
-                manifest.Artifacts.Single().Path);
-
-            if(expected.Fingerprint!=manifest.Fingerprint)
-                errors.Add("Production release candidate manifest fingerprint does not match the production session.");
+            errors.Add("Production release candidate must contain exactly one logical artifact.");
+            return errors;
         }
+
+        var expected=ProductionReleaseCandidateRuntime.Create(
+            manifest.Identity,
+            definition,
+            report,
+            manifest.Artifacts[0].Path);
+
+        if(expected.Fingerprint!=manifest.Fingerprint)
+            errors.Add("Production release candidate manifest fingerprint does not match the production session.");
 
         return errors;
     }
