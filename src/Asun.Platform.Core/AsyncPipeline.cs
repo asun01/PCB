@@ -152,6 +152,26 @@ public sealed class AsyncPipeline<TContext>
         return node is not null;
     }
 
+    public bool TryGetExecutionLevel(string id, out int level)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            level = -1;
+            return false;
+        }
+
+        try
+        {
+            level = GetExecutionLevel(id);
+            return true;
+        }
+        catch (KeyNotFoundException)
+        {
+            level = -1;
+            return false;
+        }
+    }
+
     public int GetExecutionLevel(string id)
     {
         var layers = GetExecutionLayers();
