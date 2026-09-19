@@ -226,6 +226,8 @@ ViewportGestureRuntimeSmoke.Run(Assert);
 
 ViewportTenChainSmoke.Run(Assert);
 
+await ViewportFiftyChainSmoke.RunAsync(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
