@@ -64,8 +64,11 @@ public static class ViewportDeliveryAndBackpressureSmoke
             {
                 backpressure.TrySubmit(
                     input,
-                    ViewportInputEventKind.PointerMove,
-                    new Vector2(n, n));
+                    n % 2 == 0
+                        ? ViewportInputEventKind.PointerMove
+                        : ViewportInputEventKind.Wheel,
+                    new Vector2(n, n),
+                    wheelDelta: n % 2 == 0 ? 0 : 120);
             }
 
             var snapshot = backpressure.Capture(input);
