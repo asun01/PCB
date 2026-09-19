@@ -110,3 +110,16 @@ Verification note:
 - Implementation, integration, and smoke wiring were completed through the repository workflow.
 - No local build/test execution result is asserted from this environment.
 - The latest branch commits still require actual local/CI build and test execution for authoritative verification.
+
+### Latest viewport surface transaction closure — 2026-09-19
+- Render delivery now owns an explicit surface transaction: Begin → Render/EndFrame → Commit on complete success, or Discard on failure/cancellation/deferred delivery.
+- Surface snapshots retain the exact Presented Regions for the last successful presentation, so incremental presentation can expose the concrete committed area rather than only a count.
+- Commit context now carries exact batch layer counts for Tile, ROI, Overlay, Invalidation, and FullSurface work, allowing framework-specific sinks to consume layer facts without reparsing the WorkPlan.
+- Surface discard diagnostics now retain the discarded Generation and delivery status while preserving the last successfully Presented Generation.
+- Continuous Frame Runtime connects delivery to the surface transaction and only marks the render frame reusable after successful presentation.
+- Smoke coverage now exercises FullSurface initial presentation, ROI incremental presentation, Overlay-only presentation, commit ordering, exact presented regions, commit-layer metrics, and commit failure/discard diagnostics.
+
+Verification note:
+- Repository edits and smoke wiring are completed.
+- No local build/test execution result is asserted from this environment.
+- The current GitHub branch state must still be validated by an actual external build/test run when CI execution is available.
