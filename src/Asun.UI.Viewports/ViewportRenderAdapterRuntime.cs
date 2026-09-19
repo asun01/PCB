@@ -48,6 +48,28 @@ public static class ViewportRenderAdapterRuntime
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (work.IsInvalidation)
+            {
+                var invalidationBounds = ViewportRenderRegionRuntime.ClipToViewport(
+                    work.Bounds,
+                    transform);
+
+                if (!invalidationBounds.IsEmpty)
+                {
+                    await sink
+                        .ClearInvalidatedRegionAsync(
+                            new ViewportRenderInvalidationContext(
+                                invalidationBounds,
+                                frame.Composite.Generation),
+                            cancellationToken)
+                        .ConfigureAwait(false);
+
+                    renderedUnits++;
+                }
+
+                continue;
+            }
+
             if (work.Kind == ViewportRenderWorkKind.Overlay)
             {
                 await sink
