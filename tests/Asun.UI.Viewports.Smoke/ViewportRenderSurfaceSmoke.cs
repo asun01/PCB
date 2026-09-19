@@ -220,9 +220,9 @@ public static class ViewportRenderSurfaceSmoke
     {
         using var surface = new ViewportRenderSurfaceRuntime();
 
-        surface.Begin(10);
+        var transaction = surface.Begin(10);
         surface.Commit(
-            10,
+            transaction,
             plannedUnits: 1,
             renderedUnits: 1,
             regions: Array.Empty<RectangleF>());
@@ -248,8 +248,10 @@ public static class ViewportRenderSurfaceSmoke
             surface.Snapshot.PresentedGeneration == 10,
             "Surface should reject an older generation without disturbing the newer presented surface.");
 
-        surface.Begin(10);
-        surface.Discard(10, ViewportRenderDeliveryStatus.Cancelled);
+        var retryTransaction = surface.Begin(10);
+        surface.Discard(
+            retryTransaction,
+            ViewportRenderDeliveryStatus.Cancelled);
 
         assert(
             surface.Snapshot.DiscardedGeneration == 10 &&
