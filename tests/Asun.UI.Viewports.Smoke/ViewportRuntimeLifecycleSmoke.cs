@@ -83,3 +83,46 @@ public static class ViewportRenderSchedulerGenerationSmoke
             "Rejected stale scheduling should preserve pending dirty work.");
     }
 }
+
+
+public static class ViewportInputLifecycleSmoke
+{
+    public static async ValueTask RunAsync(Action<bool, string> assert)
+    {
+        using var input = new ViewportInputSubmissionRuntime();
+
+        var waiter = input.WaitAndDrainAsync(
+            maxCount: 8);
+
+        input.Submit(
+            ViewportInputEventKind.PointerMove,
+            new System.Numerics.Vector2(12, 14));
+
+        var events = await waiter;
+
+        assert(
+            events.Count == 1 &&
+            events[0].Kind == ViewportInputEventKind.PointerMove,
+            "Async input waiting should wake when a new event is submitted.");
+
+        input.Cancel();
+
+        assert(
+            input.IsCancelled &&
+            input.IsCompleted &&
+            !input.TrySubmit(
+                ViewportInputEventKind.PointerMove,
+                new System.Numerics.Vector2(1, 1)),
+            "Cancelled input should reject new submissions.");
+
+        input.ResetLifecycle();
+
+        assert(
+            !input.IsCancelled &&
+            !input.IsCompleted &&
+            input.TrySubmit(
+                ViewportInputEventKind.PointerUp,
+                new System.Numerics.Vector2(20, 20)),
+            "ResetLifecycle should restore a reusable input runtime.");
+    }
+}
