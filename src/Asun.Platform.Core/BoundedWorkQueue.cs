@@ -45,6 +45,32 @@ public sealed class BoundedWorkQueue<T>
         _channel.Reader.TryRead(out item);
 
     /// <summary>
+    /// Waits for the first available item, then drains additional items that are
+    /// already available without waiting for the batch to fill.
+    /// </summary>
+    public async ValueTask<int> DequeueBatchAsync(
+        Memory<T> destination,
+        CancellationToken cancellationToken = default)
+    {
+        if (destination.Length == 0)
+            throw new ArgumentException("Destination must contain at least one element.", nameof(destination));
+
+        destination.Span[0] = await _channel.Reader
+            .ReadAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var count = 1;
+
+        while (count < destination.Length &&
+               _channel.Reader.TryRead(out var item))
+        {
+            destination.Span[count++] = item!;
+        }
+
+        return count;
+    }
+
+    /// <summary>
     /// Removes up to <paramref name="destination"/>.Length currently available
     /// items without waiting for additional work.
     /// </summary>
