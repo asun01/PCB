@@ -102,6 +102,18 @@ public sealed class Polyline2D
         return Array.AsReadOnly(segments);
     }
 
+    public bool TryPointAtFraction(double fraction, out Vector2 point)
+    {
+        if (!double.IsFinite(fraction) || fraction < 0 || fraction > 1)
+        {
+            point = default;
+            return false;
+        }
+
+        point = PointAtFraction(fraction);
+        return true;
+    }
+
     public Vector2 PointAtFraction(double fraction)
     {
         if (!double.IsFinite(fraction) || fraction < 0 || fraction > 1)
