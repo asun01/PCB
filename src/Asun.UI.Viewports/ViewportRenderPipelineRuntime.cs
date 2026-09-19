@@ -106,8 +106,12 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             composite,
             submission.DirtyFlags);
 
-        var budgeted = ViewportRenderBudgetRuntime.Apply(
+        var prioritized = ViewportRenderPriorityRuntime.Prioritize(
             plan,
+            composite);
+
+        var budgeted = ViewportRenderBudgetRuntime.Apply(
+            prioritized,
             _budget);
 
         var batch = ViewportRenderBatchRuntime.Create(
@@ -155,8 +159,12 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             composite,
             submission.DirtyFlags);
 
-        var budgeted = ViewportRenderBudgetRuntime.Apply(
+        var prioritized = ViewportRenderPriorityRuntime.Prioritize(
             plan,
+            composite);
+
+        var budgeted = ViewportRenderBudgetRuntime.Apply(
+            prioritized,
             _budget);
 
         return new ViewportRenderPipelineFrame<TTile>(
