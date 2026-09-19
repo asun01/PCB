@@ -82,6 +82,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
             {
                 var beforeGeneration = _pipeline.Composite.Generation;
                 var beforeSurface = _continuous.Surface.Snapshot;
+                var beforeBuffer = _continuous.PresentationBuffers.Snapshot;
 
                 var snapshot = _lifecycle.Capture(
                     beforeGeneration,
@@ -93,25 +94,47 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     _continuous.Statistics,
                     _continuous.LastDelivery?.FrameState,
                     beforeSurface,
+                    beforeBuffer,
                     isGenerationStable: false,
-                    isSurfaceStable: false);
+                    isSurfaceStable: false,
+                    isBufferStable: false);
 
                 var afterGeneration = _pipeline.Composite.Generation;
                 var afterSurface = _continuous.Surface.Snapshot;
+                var afterBuffer = _continuous.PresentationBuffers.Snapshot;
 
-                if (beforeGeneration == afterGeneration &&
+                var surfaceStable =
                     beforeSurface.State == afterSurface.State &&
                     beforeSurface.RenderingGeneration ==
                     afterSurface.RenderingGeneration &&
                     beforeSurface.RenderingSequence ==
                     afterSurface.RenderingSequence &&
                     beforeSurface.PresentationSequence ==
-                    afterSurface.PresentationSequence)
+                    afterSurface.PresentationSequence;
+
+                var bufferStable =
+                    beforeBuffer.FirstState == afterBuffer.FirstState &&
+                    beforeBuffer.SecondState == afterBuffer.SecondState &&
+                    beforeBuffer.RenderingSlot == afterBuffer.RenderingSlot &&
+                    beforeBuffer.PresentedSlot == afterBuffer.PresentedSlot &&
+                    beforeBuffer.RenderingGeneration ==
+                    afterBuffer.RenderingGeneration &&
+                    beforeBuffer.PresentedGeneration ==
+                    afterBuffer.PresentedGeneration &&
+                    beforeBuffer.RenderingSequence ==
+                    afterBuffer.RenderingSequence &&
+                    beforeBuffer.PresentedSequence ==
+                    afterBuffer.PresentedSequence;
+
+                if (beforeGeneration == afterGeneration &&
+                    surfaceStable &&
+                    bufferStable)
                 {
                     return snapshot with
                     {
                         IsGenerationStable = true,
-                        IsSurfaceStable = true
+                        IsSurfaceStable = true,
+                        IsBufferStable = true
                     };
                 }
             }
@@ -128,8 +151,10 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 _continuous.Statistics,
                 _continuous.LastDelivery?.FrameState,
                 _continuous.Surface.Snapshot,
+                _continuous.PresentationBuffers.Snapshot,
                 isGenerationStable: false,
-                isSurfaceStable: false);
+                isSurfaceStable: false,
+                isBufferStable: false);
         }
     }
 
