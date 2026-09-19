@@ -20,6 +20,12 @@ Assert(
     "Percentile interpolation should be deterministic.",
     failures);
 
+var latency = new LatencyStatistics(new[] { 10d, 20d, 30d, 40d, 50d });
+Assert(latency.Count == 5, "Latency count should be preserved.", failures);
+Assert(Math.Abs(latency.P50 - 30) < 1e-9, "Latency P50 should be deterministic.", failures);
+Assert(Math.Abs(latency.P95 - 48) < 1e-9, "Latency P95 should use interpolation.", failures);
+Assert(Math.Abs(latency.P99 - 49.6) < 1e-9, "Latency P99 should use interpolation.", failures);
+
 var queue = new BoundedWorkQueue<int>(2);
 Assert(queue.TryEnqueue(1), "First enqueue should succeed.", failures);
 Assert(queue.TryEnqueue(2), "Second enqueue should succeed.", failures);
