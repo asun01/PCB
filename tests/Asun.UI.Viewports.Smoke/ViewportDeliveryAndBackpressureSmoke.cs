@@ -80,6 +80,33 @@ public static class ViewportDeliveryAndBackpressureSmoke
             assert(
                 drained.Count == 4,
                 $"Delivery chain {i + 1} should retain exactly the bounded event count.");
+
+            input.Cancel();
+
+            assert(
+                input.IsCompleted &&
+                input.IsCancelled &&
+                !input.TrySubmit(
+                    ViewportInputEventKind.PointerMove,
+                    new Vector2(99, 99)),
+                $"Delivery chain {i + 1} should reject input after cancellation.");
+
+            var tracked = new ViewportRenderDeliveryTracker();
+            var trackedSuccess = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                frame,
+                successfulSink,
+                tracked);
+
+            var trackedStats = tracked.Statistics;
+
+            assert(
+                trackedSuccess.Succeeded &&
+                trackedStats.Attempts == 1 &&
+                trackedStats.Succeeded == 1 &&
+                trackedStats.Failed == 0 &&
+                trackedStats.Cancelled == 0 &&
+                trackedStats.RenderedUnits == trackedSuccess.RenderedUnits,
+                $"Delivery chain {i + 1} should expose delivery statistics.");
         }
     }
 
