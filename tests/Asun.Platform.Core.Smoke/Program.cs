@@ -362,6 +362,23 @@ var prefetchTileRange = panned.GetPrefetchTileRange(
     new System.Numerics.Vector2(256, 256),
     marginTiles: 1);
 
+var centerTile = Asun.UI.Viewports.ImageTileGeometry.GetCenterTileIndex(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new System.Numerics.Vector2(500, 250));
+
+var centerPoint = Asun.UI.Viewports.ImageTileGeometry.GetTileCenter(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    centerTile);
+
+Assert(
+    centerTile == new Asun.UI.Viewports.TileIndex(1, 0) &&
+    centerPoint.X >= 256 && centerPoint.X < 512 &&
+    centerPoint.Y >= 0 && centerPoint.Y < 256,
+    "Tile center helpers should resolve a point and return a point inside that tile.",
+    failures);
+
 Assert(
     !prefetchTileRange.IsEmpty &&
     prefetchTileRange.Count >= tileRange.Count &&
