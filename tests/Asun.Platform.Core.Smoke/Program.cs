@@ -2787,6 +2787,8 @@ Assert(
 
 // ------------------------------------------------------------------------------
 
+await PlatformInvariantSmoke.RunAsync((condition, message) => Assert(condition, message, failures));
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
