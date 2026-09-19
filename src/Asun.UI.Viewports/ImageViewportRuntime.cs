@@ -187,6 +187,45 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
         }
     }
 
+    public ViewportTileFrame<TTile> CreateCachedFrame()
+    {
+        ViewportTransform transform;
+        IReadOnlyList<TileRequest> requests;
+
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+            transform = _viewport.Transform;
+            requests = _viewport.GetTileRequests();
+        }
+
+        var visible = requests
+            .Where(request => request.IsVisible)
+            .ToArray();
+
+        var loaded = new Dictionary<TileIndex, TTile>();
+
+        foreach (var request in visible)
+        {
+            if (_loader.Cache.TryGet(request.Index, out var tile))
+                loaded[request.Index] = tile;
+        }
+
+        return CreateFrame(
+            transform,
+            requests,
+            loaded,
+            Array.Empty<TileLoadFailure<TTile>>());
+    }
+
+    public TileViewportRuntimeStatistics GetStatistics()
+    {
+        return new TileViewportRuntimeStatistics(
+            _loader.Cache.Statistics,
+            _loader.InFlightCount,
+            GetCurrentRequests().Count);
+    }
+
     public ValueTask<ViewportTileFrame<TTile>> RefreshAsync(
         CancellationToken cancellationToken = default) =>
         RefreshCoreAsync(
