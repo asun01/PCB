@@ -138,6 +138,11 @@ public static class ViewportContinuousAndDeferredSmoke
             new ViewportRenderBudget(4, 4, 2, 8),
             1000);
 
+        var roiId = pipeline.Composite.AddRoi(
+            RoiGeometry.CreateRectangle(
+                new Vector2(100, 50),
+                new Vector2(80, 50)));
+
         var frame = await pipeline.RefreshAsync(
             DateTimeOffset.UtcNow.AddSeconds(1));
 
@@ -174,6 +179,78 @@ public static class ViewportContinuousAndDeferredSmoke
                 new[] { "Begin", "End", "Commit" }) &&
             successfulSink.DiscardCount == 0,
             "A successful render should atomically transition the surface to Presented after EndFrame and Commit.");
+
+        pipeline.Composite.SelectRoi(roiId);
+        pipeline.Composite.TranslateSelected(new Vector2(12, 7));
+
+        var incrementalFrame = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(2));
+
+        assert(
+            incrementalFrame is not null &&
+            incrementalFrame.Batch.FullSurfaceCount == 0 &&
+            incrementalFrame.Batch.InvalidationCount > 0 &&
+            incrementalFrame.Batch.RoiCount > 0,
+            "ROI motion should produce an incremental render batch without a full-surface clear.");
+
+        if (incrementalFrame is not null)
+        {
+            var incrementalSink = new TransactionalSink();
+
+            var incrementalDelivery = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                incrementalFrame,
+                incrementalSink,
+                surface: surface);
+
+            var incrementalPresented = surface.Snapshot;
+
+            assert(
+                incrementalDelivery.Succeeded &&
+                incrementalPresented.State == ViewportRenderSurfaceState.Presented &&
+                incrementalPresented.PresentationSequence == 2 &&
+                incrementalPresented.PresentedGeneration == incrementalFrame.Composite.Generation &&
+                incrementalPresented.PresentedRegionCount == incrementalFrame.Batch.RegionCount &&
+                incrementalSink.CommitContext is not null &&
+                incrementalSink.CommitContext.Value.FullSurfaceCount == 0 &&
+                incrementalSink.CommitContext.Value.InvalidationCount == incrementalFrame.Batch.InvalidationCount &&
+                incrementalSink.CommitContext.Value.RoiCount == incrementalFrame.Batch.RoiCount,
+                "Incremental ROI presentation should commit only the affected regions and layer counts.");
+        }
+
+        pipeline.Invalidate(
+            ViewportDirtyFlags.Overlay,
+            pipeline.Composite.Generation);
+
+        var overlayFrame = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(3));
+
+        assert(
+            overlayFrame is not null &&
+            overlayFrame.Batch.FullSurfaceCount == 0 &&
+            overlayFrame.Batch.OverlayCount == 1,
+            "Overlay invalidation should produce an overlay-only render batch.");
+
+        if (overlayFrame is not null)
+        {
+            var overlaySink = new TransactionalSink();
+
+            var overlayDelivery = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                overlayFrame,
+                overlaySink,
+                surface: surface);
+
+            var overlayPresented = surface.Snapshot;
+
+            assert(
+                overlayDelivery.Succeeded &&
+                overlayPresented.State == ViewportRenderSurfaceState.Presented &&
+                overlayPresented.PresentationSequence == 3 &&
+                overlaySink.CommitContext is not null &&
+                overlaySink.CommitContext.Value.OverlayCount == 1 &&
+                overlaySink.CommitContext.Value.FullSurfaceCount == 0 &&
+                overlaySink.CommitContext.Value.InvalidationCount == 0,
+                "Overlay-only presentation should commit without replaying the image or ROI layers.");
+        }
 
         using var failedSurface = new ViewportRenderSurfaceRuntime();
         var failingSink = new TransactionalSink
