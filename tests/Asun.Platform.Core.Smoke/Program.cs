@@ -1193,6 +1193,11 @@ Assert(
     failures);
 
 Assert(
+    Math.Abs(segment.DistanceTo(new System.Numerics.Vector2(3, 0)) - Math.Sqrt(7.2)) < 1e-5,
+    "Line segment Euclidean distance should match its squared distance.",
+    failures);
+
+Assert(
     Math.Abs(polyline.DistanceSquaredTo(new System.Numerics.Vector2(3, 0)) - 7.2) < 1e-5 &&
     Math.Abs(polyline.DistanceTo(new System.Numerics.Vector2(3, 0)) - Math.Sqrt(7.2)) < 1e-5,
     "Polyline Euclidean distance should be deterministic.",
@@ -1294,6 +1299,21 @@ Assert(
     segment.Direction == new System.Numerics.Vector2(0.6f, 0.8f) &&
     segment.Midpoint == new System.Numerics.Vector2(1.5f, 2f),
     "Line segment length, direction and midpoint should be deterministic.",
+    failures);
+
+var boundingCircle = segment.GetBoundingCircle();
+Assert(
+    boundingCircle.Center == segment.Midpoint &&
+    Math.Abs(boundingCircle.Radius - 2.5) < 1e-12,
+    "Line segment bounding circle should use the segment midpoint and half-length.",
+    failures);
+
+Assert(
+    segment.WithStart(new System.Numerics.Vector2(-1, 0)).Start ==
+        new System.Numerics.Vector2(-1, 0) &&
+    segment.WithEnd(new System.Numerics.Vector2(3, 5)).End ==
+        new System.Numerics.Vector2(3, 5),
+    "Line segment endpoint helpers should replace exactly one endpoint.",
     failures);
 
 Assert(
