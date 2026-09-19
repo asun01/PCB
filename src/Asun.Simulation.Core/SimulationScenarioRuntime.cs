@@ -62,10 +62,5 @@ public static class SimulationScenarioRuntime
                 scenario,
                 observation)
         };
-        return new SimulationObservation(
-            FrameSequence.Create(sequence),
-            MetrologyPoint2D.Zero,
-            defects,
-            fingerprint);
     }
 }
