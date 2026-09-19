@@ -37,7 +37,7 @@ public static class ViewportRenderBudgetRuntime
         AddUpTo(
             selected,
             plan.Items.Where(item => item.IsInvalidation),
-            budget.MaxRoiWork);
+            budget.MaxTotalWork);
 
         var remaining = Math.Max(
             0,
