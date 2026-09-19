@@ -188,7 +188,7 @@ public static class ViewportReplayBundleSchemaHundredStageSmoke
 
             var caseVariant = json.Replace(
                 "\"formatVersion\"",
-                "\"FORMATVERSION\",
+                "\"FORMATVERSION\"",
                 StringComparison.Ordinal);
 
             var restored =
