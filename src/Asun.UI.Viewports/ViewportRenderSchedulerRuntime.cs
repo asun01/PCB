@@ -5,6 +5,12 @@ public readonly record struct ViewportRenderSubmission(
     ViewportDirtyFlags DirtyFlags,
     long Generation);
 
+public readonly record struct ViewportRenderSchedulerStatistics(
+    long Submissions,
+    long AcceptedFrames,
+    long RateLimited,
+    long StaleRejected);
+
 public sealed class ViewportRenderSchedulerRuntime
 {
     private readonly object _sync = new();
@@ -14,6 +20,10 @@ public sealed class ViewportRenderSchedulerRuntime
     private long _sequence;
     private long _latestGeneration;
     private ViewportRenderSubmission? _latest;
+    private long _submissions;
+    private long _acceptedFrames;
+    private long _rateLimited;
+    private long _staleRejected;
 
     public ViewportRenderSchedulerRuntime(
         double framesPerSecond = 60)
@@ -30,6 +40,13 @@ public sealed class ViewportRenderSchedulerRuntime
                 return _pendingFlags;
         }
     }
+
+    public ViewportRenderSchedulerStatistics Statistics =>
+        new(
+            Interlocked.Read(ref _submissions),
+            Interlocked.Read(ref _acceptedFrames),
+            Interlocked.Read(ref _rateLimited),
+            Interlocked.Read(ref _staleRejected));
 
     public ViewportRenderSubmission? LatestSubmission
     {
@@ -49,6 +66,7 @@ public sealed class ViewportRenderSchedulerRuntime
 
         lock (_sync)
         {
+            Interlocked.Increment(ref _submissions);
             _pendingFlags |= flags;
             if (generation >= _latestGeneration)
                 _latestGeneration = generation;
@@ -73,10 +91,22 @@ public sealed class ViewportRenderSchedulerRuntime
     {
         lock (_sync)
         {
-            if (_pendingFlags == ViewportDirtyFlags.None ||
-                _latestGeneration < minimumGeneration ||
-                !_rateGate.TryEnter(now))
+            if (_pendingFlags == ViewportDirtyFlags.None)
             {
+                submission = default;
+                return false;
+            }
+
+            if (_latestGeneration < minimumGeneration)
+            {
+                Interlocked.Increment(ref _staleRejected);
+                submission = default;
+                return false;
+            }
+
+            if (!_rateGate.TryEnter(now))
+            {
+                Interlocked.Increment(ref _rateLimited);
                 submission = default;
                 return false;
             }
@@ -89,6 +119,7 @@ public sealed class ViewportRenderSchedulerRuntime
 
             _pendingFlags = ViewportDirtyFlags.None;
             _latest = null;
+            Interlocked.Increment(ref _acceptedFrames);
             return true;
         }
     }
@@ -105,6 +136,10 @@ public sealed class ViewportRenderSchedulerRuntime
             _latestGeneration = 0;
             _rateGate.Reset();
             _pointerCoalescer.Clear();
+            Interlocked.Exchange(ref _submissions, 0);
+            Interlocked.Exchange(ref _acceptedFrames, 0);
+            Interlocked.Exchange(ref _rateLimited, 0);
+            Interlocked.Exchange(ref _staleRejected, 0);
         }
     }
 }
