@@ -49,7 +49,7 @@ public static class ViewportCompositeSmoke
             var cached = runtime.CreateCachedFrame();
 
             assert(
-                cached.Roi.Roi.Items.Count == 2 &&
+                cached.Roi.Document.Items.Count == 2 &&
                 cached.RoiCommands.Count > 0 &&
                 cached.SceneCommands.Count > 0,
                 $"Composite chain {i + 1} should build ROI and scene render commands.");
