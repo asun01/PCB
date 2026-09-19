@@ -53,6 +53,20 @@ public sealed class AsyncPipeline<TContext>
         return _nodes.Any(node => string.Equals(node.Id, id, StringComparison.Ordinal));
     }
 
+    public bool TryGetNode(string id, out Node? node)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            node = null;
+            return false;
+        }
+
+        node = _nodes.FirstOrDefault(
+            candidate => string.Equals(candidate.Id, id, StringComparison.Ordinal));
+
+        return node is not null;
+    }
+
     public ValueTask ExecuteAsync(
         TContext context,
         CancellationToken cancellationToken = default) =>
