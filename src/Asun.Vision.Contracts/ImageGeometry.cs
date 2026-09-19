@@ -23,6 +23,13 @@ public readonly record struct ImageSize
     public Vector2 Vector => new(Width, Height);
 
     public Vector2 Center => new(Width / 2f, Height / 2f);
+
+    public bool Contains(PixelPoint point) =>
+        point.IsFinite &&
+        point.X >= 0 &&
+        point.Y >= 0 &&
+        point.X <= Width &&
+        point.Y <= Height;
 }
 
 public readonly record struct PixelPoint(double X, double Y)
