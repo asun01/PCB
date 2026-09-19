@@ -298,6 +298,13 @@ Assert(
     "Rendered image rectangle should match scale and translation.",
     failures);
 
+var panClamped = viewport.PanByClamped(new System.Numerics.Vector2(-5000, 5000));
+Assert(
+    panClamped.RenderedImageRectangle.Right >= panClamped.ViewportSize.X &&
+    panClamped.RenderedImageRectangle.Bottom >= panClamped.ViewportSize.Y,
+    "PanByClamped should prevent blank viewport gaps.",
+    failures);
+
 var panned = viewport.PanBy(new System.Numerics.Vector2(-100, 25));
 Assert(
     panned.Translation == viewport.Translation + new System.Numerics.Vector2(-100, 25),
