@@ -5,7 +5,28 @@ namespace Asun.UI.Viewports;
 public sealed class ViewportInputReplayRuntime
 {
     private readonly object _sync = new();
+    private readonly int _capacity;
     private readonly List<ViewportInputEvent> _events = new();
+    private long _dropped;
+
+    public ViewportInputReplayRuntime(int capacity = 2048)
+    {
+        if (capacity <= 0)
+            throw new ArgumentOutOfRangeException(nameof(capacity));
+
+        _capacity = capacity;
+    }
+
+    public int Capacity => _capacity;
+
+    public long DroppedCount
+    {
+        get
+        {
+            lock (_sync)
+                return _dropped;
+        }
+    }
 
     public int Count
     {
@@ -21,7 +42,15 @@ public sealed class ViewportInputReplayRuntime
         Validate(input);
 
         lock (_sync)
+        {
+            if (_events.Count >= _capacity)
+            {
+                _events.RemoveAt(0);
+                _dropped++;
+            }
+
             _events.Add(input);
+        }
     }
 
     public void Record(
@@ -78,7 +107,10 @@ public sealed class ViewportInputReplayRuntime
     public void Reset()
     {
         lock (_sync)
+        {
             _events.Clear();
+            _dropped = 0;
+        }
     }
 
     private static void Validate(ViewportInputEvent input)
