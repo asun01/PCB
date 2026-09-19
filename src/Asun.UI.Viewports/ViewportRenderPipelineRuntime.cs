@@ -96,6 +96,9 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
 
         lock (_sync)
         {
+            if (generation > (_composite.Generation - 1))
+                _reuse.Clear();
+
             if (_deferredGeneration >= 0 &&
                 generation > _deferredGeneration)
             {
