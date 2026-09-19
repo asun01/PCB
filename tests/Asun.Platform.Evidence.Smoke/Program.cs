@@ -60,7 +60,10 @@ if(!cancelledObserved) failures.Add("Evidence catalog lookup should honor cancel
 
 
 EvidenceCatalogSnapshotHundredStageSmoke.Run((condition,message)=>
-    Check(condition,message));
+{
+    if(!condition)
+        failures.Add(message);
+});
 
 
 await EvidenceCatalogHundredStageSmoke.Run((condition,message)=>
@@ -69,6 +72,11 @@ await EvidenceCatalogHundredStageSmoke.Run((condition,message)=>
         failures.Add(message);
 });
 EvidenceDescriptorFingerprintHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceCatalogSnapshotDiffHundredStageSmoke.Run((condition,message)=>
 {
     if(!condition)
         failures.Add(message);
