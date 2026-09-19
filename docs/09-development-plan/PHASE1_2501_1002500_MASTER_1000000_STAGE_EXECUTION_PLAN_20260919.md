@@ -2372,3 +2372,13 @@ Current completed boundary: **30,000**
 Next executable stage: **30,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 30500 — 2026-09-20
+
+Completed rotating chain window 30001–30500 for Production → Render replay integrity. The implementation now retains both the actual render summary facts and the existing deterministic render fingerprint, allowing independent recomputation during replay validation.
+
+Current completed boundary: **30,500**
+Next executable stage: **30,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
