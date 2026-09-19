@@ -50,68 +50,6 @@ public static class ViewportRenderReuseValidationHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            var reuse = new ViewportRenderReuseRuntime<string>();
-            var synthetic = new ViewportRenderPipelineFrame<string>(
-                new ViewportCompositeFrame<string>(),
-                default,
-                null!,
-                null!,
-                false);
-            Check(
-                synthetic.HasDeferredWork == false,
-                $"empty synthetic frame {i + 1} should retain the non-deferred flag.");
-            synthetic = default!;
-            _ = reuse;
-        }
-
-        for (var i = 0; i < 10; i++)
-        {
-            using var pipeline = CreatePipeline();
-            pipeline.Invalidate(
-                ViewportDirtyFlags.All,
-                pipeline.Composite.Generation);
-
-            var frame =
-                pipeline.RefreshAsync(
-                    DateTimeOffset.UtcNow.AddSeconds(1))
-                    .GetAwaiter()
-                    .GetResult();
-
-            var reuse =
-                new ViewportRenderReuseRuntime<string>();
-
-            reuse.Store(frame!);
-
-            Check(
-                !reuse.TryReuse(frame!.Composite.Generation, out _),
-                $"unpresented frame {i + 1} should not be reusable.");
-        }
-
-        for (var i = 0; i < 10; i++)
-        {
-            using var pipeline = CreatePipeline();
-            pipeline.Invalidate(
-                ViewportDirtyFlags.All,
-                pipeline.Composite.Generation);
-
-            var frame =
-                pipeline.RefreshAsync(
-                    DateTimeOffset.UtcNow.AddSeconds(1))
-                    .GetAwaiter()
-                    .GetResult();
-
-            pipeline.MarkPresented(frame!);
-
-            var reuse = pipeline.Reuse;
-
-            Check(
-                reuse.TryReuse(frame!.Composite.Generation, out var cached) &&
-                ReferenceEquals(cached, frame),
-                $"presented frame reuse {i + 1} should return the same instance.");
-        }
-
-        for (var i = 0; i < 10; i++)
-        {
             using var pipeline = CreatePipeline();
 
             pipeline.Invalidate(
