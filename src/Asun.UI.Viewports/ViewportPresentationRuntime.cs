@@ -169,7 +169,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                         IsGenerationStable = true,
                         IsSurfaceStable = true,
                         IsBufferStable = true,
-                        IsQueueStable = true
+                        IsQueueStable = true,
+                        IsExecutionStable = true
                     };
                 }
             }
@@ -192,7 +193,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 isGenerationStable: false,
                 isSurfaceStable: false,
                 isBufferStable: false,
-                isQueueStable: false);
+                isQueueStable: false,
+                isExecutionStable: false);
         }
     }
 
