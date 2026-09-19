@@ -4,7 +4,20 @@ public enum ViewportRenderDeliveryStatus
 {
     Succeeded,
     Failed,
+    Deferred,
     Cancelled
+}
+
+public sealed class ViewportRenderWorkUnavailableException : Exception
+{
+    public ViewportRenderWorkUnavailableException(
+        ViewportRenderWorkItem workItem)
+        : base($"Render work is not currently available: {workItem.Kind}.")
+    {
+        WorkItem = workItem;
+    }
+
+    public ViewportRenderWorkItem WorkItem { get; }
 }
 
 public readonly record struct ViewportRenderDeliveryResult(
@@ -17,9 +30,11 @@ public readonly record struct ViewportRenderDeliveryResult(
     public ViewportRenderDeliveryStatus Status =>
         Cancelled
             ? ViewportRenderDeliveryStatus.Cancelled
-            : Succeeded
-                ? ViewportRenderDeliveryStatus.Succeeded
-                : ViewportRenderDeliveryStatus.Failed;
+            : Deferred
+                ? ViewportRenderDeliveryStatus.Deferred
+                : Succeeded
+                    ? ViewportRenderDeliveryStatus.Succeeded
+                    : ViewportRenderDeliveryStatus.Failed;
 }
 
 public static class ViewportRenderDeliveryRuntime
@@ -46,8 +61,10 @@ public static class ViewportRenderDeliveryRuntime
             result = new ViewportRenderDeliveryResult(
                 true,
                 false,
+                false,
                 frame.Composite.Generation,
                 units,
+                0,
                 null);
         }
         catch (OperationCanceledException)
@@ -55,8 +72,21 @@ public static class ViewportRenderDeliveryRuntime
             result = new ViewportRenderDeliveryResult(
                 false,
                 true,
+                false,
                 frame.Composite.Generation,
                 0,
+                0,
+                null);
+        }
+        catch (ViewportRenderWorkUnavailableException)
+        {
+            result = new ViewportRenderDeliveryResult(
+                false,
+                false,
+                true,
+                frame.Composite.Generation,
+                0,
+                1,
                 null);
         }
         catch (Exception exception)
@@ -64,7 +94,9 @@ public static class ViewportRenderDeliveryRuntime
             result = new ViewportRenderDeliveryResult(
                 false,
                 false,
+                false,
                 frame.Composite.Generation,
+                0,
                 0,
                 exception);
         }
