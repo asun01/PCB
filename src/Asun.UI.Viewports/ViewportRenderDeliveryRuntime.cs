@@ -18,7 +18,7 @@ public static class ViewportRenderDeliveryRuntime
         ArgumentNullException.ThrowIfNull(frame);
         ArgumentNullException.ThrowIfNull(sink);
 
-        var started = Stopwatch.GetTimestamp();
+        var started = System.Diagnostics.Stopwatch.GetTimestamp();
 
         ViewportRenderDeliveryResult result;
 
@@ -56,7 +56,7 @@ public static class ViewportRenderDeliveryRuntime
 
         tracker?.Record(
             result,
-            Stopwatch.GetElapsedTime(started));
+            System.Diagnostics.Stopwatch.GetElapsedTime(started));
 
         return result;
     }
