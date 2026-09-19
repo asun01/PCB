@@ -21,6 +21,10 @@ public readonly record struct ImageSize
 public readonly record struct PixelPoint(double X, double Y)
 {
     public bool IsFinite => double.IsFinite(X) && double.IsFinite(Y);
+
+    public double LengthSquared => X * X + Y * Y;
+
+    public double Length => Math.Sqrt(LengthSquared);
 }
 
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
