@@ -38,6 +38,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
     private long? _presentedGeneration;
     private long? _discardedGeneration;
     private ViewportRenderDeliveryStatus? _lastDiscardStatus;
+    private long _transactionSequence;
     private long _presentationSequence;
     private int _lastRenderedUnits;
     private int _lastPlannedUnits;
@@ -93,7 +94,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
 
             var transaction = new ViewportRenderSurfaceTransaction(
                 generation,
-                _presentationSequence + 1);
+                ++_transactionSequence);
 
             _state = ViewportRenderSurfaceState.Rendering;
             _renderingGeneration = generation;
@@ -169,6 +170,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             _presentedGeneration = null;
             _discardedGeneration = null;
             _lastDiscardStatus = null;
+            _transactionSequence = 0;
             _presentationSequence = 0;
             _lastRenderedUnits = 0;
             _lastPlannedUnits = 0;
