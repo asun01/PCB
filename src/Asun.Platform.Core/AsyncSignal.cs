@@ -33,8 +33,9 @@ public sealed class AsyncSignal
             return;
         }
 
-        if (!await _completion.Task.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
-            throw new TimeoutException($"The signal was not set within {timeout}.");
+        await _completion.Task
+            .WaitAsync(timeout, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async ValueTask WaitAsync(CancellationToken cancellationToken = default)
