@@ -46,6 +46,43 @@ public sealed class ViewportInputSubmissionRuntime
         }
     }
 
+    public int PendingCount
+    {
+        get
+        {
+            lock (_sync)
+                return _queue.Count;
+        }
+    }
+
+    public bool TryReplaceLatestMove(System.Numerics.Vector2 position)
+    {
+        if (!float.IsFinite(position.X) ||
+            !float.IsFinite(position.Y))
+        {
+            throw new ArgumentOutOfRangeException(nameof(position));
+        }
+
+        lock (_sync)
+        {
+            var node = _queue.Last;
+            if (node is null ||
+                node.Value.Kind != ViewportInputEventKind.PointerMove)
+            {
+                return false;
+            }
+
+            node.Value = node.Value with
+            {
+                Sequence = ++_sequence,
+                Position = position
+            };
+
+            _coalesced++;
+            return true;
+        }
+    }
+
     public long Submit(
         ViewportInputEventKind kind,
         Vector2 position,
