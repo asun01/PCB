@@ -3,6 +3,7 @@ namespace Asun.UI.Viewports;
 public readonly record struct ViewportRenderDeliveryStatistics(
     long Attempts,
     long Succeeded,
+    long Partial,
     long Failed,
     long Deferred,
     long Cancelled,
@@ -18,6 +19,7 @@ public sealed class ViewportRenderDeliveryTracker
 {
     private long _attempts;
     private long _succeeded;
+    private long _partial;
     private long _failed;
     private long _deferred;
     private long _cancelled;
@@ -29,6 +31,7 @@ public sealed class ViewportRenderDeliveryTracker
         new(
             Interlocked.Read(ref _attempts),
             Interlocked.Read(ref _succeeded),
+            Interlocked.Read(ref _partial),
             Interlocked.Read(ref _failed),
             Interlocked.Read(ref _deferred),
             Interlocked.Read(ref _cancelled),
@@ -46,7 +49,12 @@ public sealed class ViewportRenderDeliveryTracker
         if (result.Cancelled)
             Interlocked.Increment(ref _cancelled);
         else if (result.Deferred)
+        {
             Interlocked.Increment(ref _deferred);
+
+            if (result.FrameState.IsPartial)
+                Interlocked.Increment(ref _partial);
+        }
         else if (result.Succeeded)
             Interlocked.Increment(ref _succeeded);
         else
@@ -57,6 +65,7 @@ public sealed class ViewportRenderDeliveryTracker
     {
         Interlocked.Exchange(ref _attempts, 0);
         Interlocked.Exchange(ref _succeeded, 0);
+        Interlocked.Exchange(ref _partial, 0);
         Interlocked.Exchange(ref _failed, 0);
         Interlocked.Exchange(ref _deferred, 0);
         Interlocked.Exchange(ref _cancelled, 0);
