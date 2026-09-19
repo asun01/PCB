@@ -73,6 +73,13 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
         {
             ThrowIfDisposed();
 
+            if (_presentedGeneration is long presented &&
+                generation < presented)
+            {
+                throw new InvalidOperationException(
+                    "A stale render generation cannot replace a newer presented generation.");
+            }
+
             if (_state == ViewportRenderSurfaceState.Rendering)
             {
                 if (_renderingGeneration == generation)
