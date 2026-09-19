@@ -83,3 +83,16 @@ Verification note:
 - Repository edits and smoke wiring were completed through the GitHub repository workflow; no local build/test execution result is asserted from this environment.
 - The latest branch commits still require external CI/build execution for authoritative compile/test verification.
 
+### Latest viewport presentation/visibility closure — 2026-09-19
+- Render batches now expose executable counts for Tile, ROI, Overlay, invalidation, and FullSurface work.
+- Delivery results now publish a unified ViewportRenderFrameState containing status, generation, planned/rendered/deferred units, region count, deferred WorkItems, and error state.
+- Continuous Runtime retains the last delivery; Presentation Runtime exposes both LastDelivery and LastFrameState.
+- Presentation diagnostics snapshots now include LastFrameState so engineering/UI layers do not need to reconstruct frame completeness from lower-level statistics.
+- Delivery telemetry now distinguishes partial deferred delivery from ordinary deferred attempts.
+- Tile/ROI joint visibility is now consumed by the Render Adapter for Tile delivery instead of being calculated and discarded at the sink boundary.
+- Joint visibility provides constant-time Tile lookup and smoke coverage verifies a cross-boundary ROI is associated with every intersecting visible tile.
+- End-to-end smoke now covers Batch metrics, partial-frame state, exact deferred retry, Presentation frame-state publication, and Tile/ROI joint visibility.
+
+Verification note:
+- Repository implementation and smoke wiring are completed through the GitHub repository workflow.
+- No local build/test execution result is asserted from this environment; external CI/build execution remains the authoritative compile/test verification path.
