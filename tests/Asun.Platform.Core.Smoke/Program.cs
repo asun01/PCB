@@ -305,6 +305,15 @@ Assert(
     "PanByClamped should prevent blank viewport gaps.",
     failures);
 
+var resetFit = viewport.PanBy(new System.Numerics.Vector2(-100, 25))
+    .WithZoomFactor(2, new System.Numerics.Vector2(600, 400))
+    .ResetToFit();
+
+Assert(
+    resetFit.ApproximatelyEquals(viewport),
+    "ResetToFit should restore the canonical fit transform.",
+    failures);
+
 var panned = viewport.PanBy(new System.Numerics.Vector2(-100, 25));
 Assert(
     panned.Translation == viewport.Translation + new System.Numerics.Vector2(-100, 25),
