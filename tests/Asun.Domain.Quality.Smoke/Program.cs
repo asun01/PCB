@@ -36,6 +36,7 @@ QualityInspectionReplayWindowHundredStageSmoke.Run(Assert);
 QualityInspectionReplayWindowDiffHundredStageSmoke.Run(Assert);
 QualityInspectionOutcomeSummaryHundredStageSmoke.Run(Assert);
 QualityInspectionSeveritySummaryHundredStageSmoke.Run(Assert);
+QualityInspectionEvidenceSummaryHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
