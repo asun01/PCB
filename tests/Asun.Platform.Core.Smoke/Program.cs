@@ -810,6 +810,18 @@ catch (ArgumentException)
 }
 Assert(invalidGraphRejected, "Cyclic pipeline graphs should be rejected.", failures);
 
+var emptyPipelineRejected = false;
+try
+{
+    AsyncPipeline<object>.Validate(Array.Empty<AsyncPipeline<object>.Node>());
+}
+catch (ArgumentException)
+{
+    emptyPipelineRejected = true;
+}
+
+Assert(emptyPipelineRejected, "Standalone validation should reject an empty graph.", failures);
+
 var downstreamExecuted = false;
 var failingPipeline = new AsyncPipeline<object>(new[]
 {
