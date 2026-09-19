@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 SimulationScenarioHundredStageSmoke.Run(Check);
+SimulationObservationIntegrityHundredStageSmoke.Run(Check);
 SimulationSessionHundredStageSmoke.Run(Check);
 
 if(failures.Count>0)
