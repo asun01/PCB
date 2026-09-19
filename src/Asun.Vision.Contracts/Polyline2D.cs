@@ -168,4 +168,12 @@ public sealed class Polyline2D
         var closest = ClosestPoint(point);
         return Vector2.DistanceSquared(closest, point);
     }
+
+    public Polyline2D Translate(Vector2 delta)
+    {
+        if (!float.IsFinite(delta.X) || !float.IsFinite(delta.Y))
+            throw new ArgumentOutOfRangeException(nameof(delta));
+
+        return new Polyline2D(_points.Select(point => point + delta));
+    }
 }
