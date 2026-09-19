@@ -96,13 +96,13 @@ public sealed class RoiSelectionRuntime
     {
         ArgumentNullException.ThrowIfNull(index);
 
-        var candidates = index.QueryPoint(imagePoint);
-        if (candidates.Count == 0)
+        var hit = index.HitTest(imagePoint, handleTolerance, 0f);
+        if (!hit.Hit)
             return Select(Array.Empty<Guid>(), mode == RoiSelectionMode.Replace
                 ? RoiSelectionMode.Replace
                 : mode);
 
-        return Select(new[] { candidates[0].Id }, mode);
+        return Select(new[] { hit.Id }, mode);
     }
 
     public void BeginMarquee(Vector2 imagePoint)
