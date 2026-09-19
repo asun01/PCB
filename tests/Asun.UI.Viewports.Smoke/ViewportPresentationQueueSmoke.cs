@@ -67,6 +67,23 @@ public static class ViewportPresentationQueueSmoke
             "The render boundary should acknowledge only the current in-flight token.");
 
         assert(
+            queue.TryEnqueue(second, out var inFlightPacket) &&
+            queue.TryTakeLatest(out var inFlightLatest),
+            "Queue should support starting a new in-flight presentation for supersede testing.");
+
+        var inFlightCancellation =
+            queue.GetInFlightCancellationToken(inFlightLatest.Token);
+
+        assert(
+            queue.TryEnqueue(second, out var newerPacket) &&
+            newerPacket.Token.Sequence > inFlightLatest.Token.Sequence &&
+            !queue.IsCurrent(inFlightLatest.Token) &&
+            inFlightCancellation.IsCancellationRequested,
+            "A newer presentation submission must invalidate and cancel the older in-flight execution token.");
+
+        queue.TryCancel(inFlightLatest.Token);
+
+        assert(
             !queue.TryEnqueue(first, out _) &&
             queue.Statistics.StaleRejected == 1,
             "A stale generation must be rejected after a newer generation has entered the presentation queue.");
