@@ -45,6 +45,16 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
             Interlocked.Read(ref _skippedLoops),
             Interlocked.Read(ref _processedInputs));
 
+    public void Reset()
+    {
+        _input.Clear();
+        _interaction.Reset();
+        Interlocked.Exchange(ref _loopCount, 0);
+        Interlocked.Exchange(ref _renderedFrames, 0);
+        Interlocked.Exchange(ref _skippedLoops, 0);
+        Interlocked.Exchange(ref _processedInputs, 0);
+    }
+
     public async ValueTask RunAsync(
         IViewportRenderSink<TTile> sink,
         CancellationToken cancellationToken = default)
