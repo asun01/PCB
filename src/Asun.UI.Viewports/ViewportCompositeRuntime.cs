@@ -384,6 +384,13 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+
+            if (Generation != generationAtStart)
+            {
+                throw new OperationCanceledException(
+                    "The composite viewport changed while the tile refresh was in flight.");
+            }
+
             return BuildFrameUnsafe(
                 tileFrame,
                 roiSnapshot,
