@@ -23,5 +23,17 @@ public sealed class ViewportFrameRateGate
         }
     }
 
+    public TimeSpan GetDelay(DateTimeOffset now)
+    {
+        var previous = Volatile.Read(ref _last);
+        if (previous <= 0)
+            return TimeSpan.Zero;
+
+        var remaining = _minimumTicks - (now.UtcTicks - previous);
+        return remaining <= 0
+            ? TimeSpan.Zero
+            : TimeSpan.FromTicks(remaining);
+    }
+
     public void Reset() => Interlocked.Exchange(ref _last, 0);
 }
