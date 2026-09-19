@@ -218,6 +218,16 @@ Assert(
     "Viewport should contain the rendered image origin.",
     failures);
 
+var renderedImageRectangle = viewport.RenderedImageRectangle;
+Assert(
+    renderedImageRectangle == new RectangleF(
+        viewport.Translation.X,
+        viewport.Translation.Y,
+        viewport.RenderedImageSize.X,
+        viewport.RenderedImageSize.Y),
+    "Rendered image rectangle should match scale and translation.",
+    failures);
+
 var panned = viewport.PanBy(new System.Numerics.Vector2(-100, 25));
 Assert(
     panned.Translation == viewport.Translation + new System.Numerics.Vector2(-100, 25),
