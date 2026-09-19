@@ -47,6 +47,17 @@ Assert(
     "Arbitrary latency percentile should use the same interpolation rule.",
     failures);
 
+var duplicateRequestedPercentiles = Percentiles.CalculateMany(
+    new[] { 0d, 10d, 20d },
+    new[] { 50d, 50d, 100d });
+
+Assert(
+    duplicateRequestedPercentiles.Count == 3 &&
+    Math.Abs(duplicateRequestedPercentiles[0] - duplicateRequestedPercentiles[1]) < 1e-9 &&
+    Math.Abs(duplicateRequestedPercentiles[2] - 20) < 1e-9,
+    "Multiple percentile calculation should preserve requested order and duplicates.",
+    failures);
+
 var execution = new List<string>();
 var pipeline = new AsyncPipeline<List<string>>(new[]
 {
