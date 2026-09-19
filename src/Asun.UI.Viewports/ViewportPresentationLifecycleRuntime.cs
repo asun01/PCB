@@ -17,18 +17,21 @@ public readonly record struct ViewportPresentationSnapshot(
     ViewportInputBackpressureSnapshot Backpressure,
     ViewportRenderSchedulerStatistics Scheduler,
     ViewportRenderDeliveryStatistics Delivery,
+    ViewportPresentationQueueStatistics Queue,
     ViewportContinuousFrameStatistics Frames,
     ViewportRenderFrameState? LastFrameState,
     ViewportRenderSurfaceSnapshot Surface,
     ViewportPresentationBufferSnapshot Buffer,
     bool IsGenerationStable,
     bool IsSurfaceStable,
-    bool IsBufferStable)
+    bool IsBufferStable,
+    bool IsQueueStable)
 {
     public bool IsPresentationStable =>
         IsGenerationStable &&
         IsSurfaceStable &&
-        IsBufferStable;
+        IsBufferStable &&
+        IsQueueStable;
 }
 
 public sealed class ViewportPresentationLifecycleRuntime : IDisposable
@@ -51,13 +54,15 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         ViewportInputBackpressureSnapshot backpressure,
         ViewportRenderSchedulerStatistics scheduler,
         ViewportRenderDeliveryStatistics delivery,
+        ViewportPresentationQueueStatistics queue,
         ViewportContinuousFrameStatistics frames,
         ViewportRenderFrameState? lastFrameState,
         ViewportRenderSurfaceSnapshot surface,
         ViewportPresentationBufferSnapshot buffer,
         bool isGenerationStable,
         bool isSurfaceStable,
-        bool isBufferStable) =>
+        bool isBufferStable,
+        bool isQueueStable) =>
         new(
             State,
             generation,
@@ -66,13 +71,15 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
             backpressure,
             scheduler,
             delivery,
+            queue,
             frames,
             lastFrameState,
             surface,
             buffer,
             isGenerationStable,
             isSurfaceStable,
-            isBufferStable);
+            isBufferStable,
+            isQueueStable);
 
     public bool TryStart(out CancellationToken token)
     {
