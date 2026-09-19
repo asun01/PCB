@@ -292,6 +292,30 @@ Assert(
     "Viewport rectangle conversion should round-trip.",
     failures);
 
+var duplicateDependencyRejected = false;
+try
+{
+    _ = new AsyncPipeline<object>(new[]
+    {
+        new AsyncPipeline<object>.Node(
+            "DuplicateDependency",
+            new[] { "Root", "Root" },
+            (_, _) => ValueTask.CompletedTask),
+        new AsyncPipeline<object>.Node(
+            "Root",
+            (_, _) => ValueTask.CompletedTask)
+    });
+}
+catch (ArgumentException)
+{
+    duplicateDependencyRejected = true;
+}
+
+Assert(
+    duplicateDependencyRejected,
+    "Pipeline nodes should reject duplicate dependency edges.",
+    failures);
+
 var nullDependenciesRejected = false;
 try
 {

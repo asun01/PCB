@@ -140,8 +140,16 @@ public sealed class AsyncPipeline<TContext>
 
         foreach (var node in nodes)
         {
+            var dependencies = new HashSet<string>(StringComparer.Ordinal);
+
             foreach (var dependency in node.Dependencies)
             {
+                if (!dependencies.Add(dependency))
+                {
+                    throw new ArgumentException(
+                        $"Node '{node.Id}' contains duplicate dependency '{dependency}'.",
+                        nameof(nodes));
+                }
                 if (!ids.Contains(dependency))
                 {
                     throw new ArgumentException(
