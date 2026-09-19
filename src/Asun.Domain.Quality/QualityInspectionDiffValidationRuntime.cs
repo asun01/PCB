@@ -1,0 +1,57 @@
+namespace Asun.Domain.Quality;
+
+public static class QualityInspectionDiffValidationRuntime
+{
+    public static IReadOnlyList<string> Validate(
+        QualityInspectionDiff diff)
+    {
+        ArgumentNullException.ThrowIfNull(diff);
+
+        var errors = new List<string>();
+
+        ValidateUnique(
+            diff.AddedFindingIds,
+            "Added finding ids",
+            errors);
+        ValidateUnique(
+            diff.RemovedFindingIds,
+            "Removed finding ids",
+            errors);
+        ValidateUnique(
+            diff.ChangedFindingIds,
+            "Changed finding ids",
+            errors);
+        ValidateUnique(
+            diff.AddedEvidenceKeys,
+            "Added evidence keys",
+            errors);
+        ValidateUnique(
+            diff.RemovedEvidenceKeys,
+            "Removed evidence keys",
+            errors);
+
+        if (diff.AddedFindingIds.Intersect(diff.RemovedFindingIds).Any())
+            errors.Add("A finding cannot be both added and removed.");
+
+        if (diff.AddedFindingIds.Intersect(diff.ChangedFindingIds).Any() ||
+            diff.RemovedFindingIds.Intersect(diff.ChangedFindingIds).Any())
+        {
+            errors.Add("A finding cannot be both added/removed and changed.");
+        }
+
+        return errors;
+    }
+
+    public static bool IsValid(QualityInspectionDiff diff) =>
+        Validate(diff).Count == 0;
+
+    private static void ValidateUnique<T>(
+        IReadOnlyList<T> values,
+        string label,
+        List<string> errors)
+        where T : notnull
+    {
+        if (values.Count != values.Distinct().Count())
+            errors.Add($"{label} must contain unique values.");
+    }
+}
