@@ -13,6 +13,8 @@ public readonly record struct ViewportReplaySessionBundleComparison(
 
 public static class ViewportReplaySessionBundleRuntime
 {
+    public const int CurrentFormatVersion = 1;
+
     public static string ToJson(
         ViewportReplaySessionBundle bundle)
     {
@@ -81,6 +83,27 @@ public static class ViewportReplaySessionBundleRuntime
         ViewportReplaySessionBundle bundle)
     {
         var errors = new List<string>();
+
+        if (bundle.FormatVersion != CurrentFormatVersion)
+            errors.Add(
+                $"Unsupported replay bundle format version '{bundle.FormatVersion}'.");
+
+        if (bundle.Inputs is null)
+            errors.Add("Replay bundle inputs must not be null.");
+
+        if (bundle.Evidence is null)
+            errors.Add("Replay bundle evidence must not be null.");
+
+        if (bundle.Audit is null)
+            errors.Add("Replay bundle audit must not be null.");
+
+        if (bundle.Inputs is null ||
+            bundle.Evidence is null ||
+            bundle.Audit is null)
+        {
+            return errors;
+        }
+
         var manifest = bundle.Manifest;
 
         if (manifest.InputEventCount != bundle.Inputs.Length)
