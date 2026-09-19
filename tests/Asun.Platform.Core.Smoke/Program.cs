@@ -354,6 +354,11 @@ Assert(
     failures);
 
 Assert(
+    viewport.IsImageFullyVisible,
+    "Fit transform should keep the rendered image fully visible.",
+    failures);
+
+Assert(
     viewport.ViewportCenter == new System.Numerics.Vector2(600, 400) &&
     viewport.ImageCenter == new System.Numerics.Vector2(500, 250),
     "Viewport and image centers should be derived from their sizes.",
