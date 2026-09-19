@@ -40,6 +40,31 @@ public sealed class Polyline2D
     public bool IsClosed =>
         _points[0] == _points[^1];
 
+    public double ClosedLength =>
+        IsClosed
+            ? Length
+            : Length + Vector2.Distance(_points[^1], _points[0]);
+
+    public double SignedArea
+    {
+        get
+        {
+            if (!IsClosed || _points.Length < 3)
+                throw new InvalidOperationException("A closed polyline with at least three points is required.");
+
+            double areaTwice = 0;
+
+            for (var index = 0; index < _points.Length - 1; index++)
+            {
+                var current = _points[index];
+                var next = _points[index + 1];
+                areaTwice += (double)current.X * next.Y - (double)next.X * current.Y;
+            }
+
+            return areaTwice / 2d;
+        }
+    }
+
     public IReadOnlyList<Vector2> Points =>
         Array.AsReadOnly(_points);
 
