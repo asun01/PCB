@@ -34,81 +34,105 @@ public static class RoiTeachingValidationHundredStageSmoke
         for (var i = 0; i < 10; i++)
             Check(
                 RoiTeachingValidationRuntime.HasUniqueIds(steps),
-                $"teaching step identity round {i + 1} should remain unique.");
+                $"teaching identity round {i + 1} should remain unique.");
 
         for (var i = 0; i < 10; i++)
             Check(
                 RoiTeachingValidationRuntime.HasCurrentStepWhenActive(
                     guide.Snapshot,
                     steps),
-                $"initial teaching state round {i + 1} should expose a current step.");
+                $"initial active state round {i + 1} should expose a step.");
 
-        var press = new RoiEditorEvent(
+        for (var i = 0; i < 10; i++)
+        {
+            guide.Reset();
+            guide.Start(restart: true);
+            Check(
+                guide.Observe(new RoiEditorEvent(
+                    RoiEditorEventKind.PointerDown,
+                    RoiInteractionKind.Creating,
+                    RoiHandleKind.Body,
+                    default,
+                    false)),
+                $"pointer-down advance round {i + 1} should succeed.");
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            Check(
+                guide.Snapshot.CurrentStep?.Action ==
+                    RoiTeachingAction.PointerUp,
+                $"second teaching step round {i + 1} should be PointerUp.");
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            guide.Reset();
+            guide.Start(restart: true);
+            guide.Observe(new RoiEditorEvent(
+                RoiEditorEventKind.PointerDown,
+                RoiInteractionKind.Creating,
+                RoiHandleKind.Body,
+                default,
+                false));
+            Check(
+                guide.Observe(new RoiEditorEvent(
+                    RoiEditorEventKind.PointerUp,
+                    RoiInteractionKind.Creating,
+                    RoiHandleKind.Body,
+                    default,
+                    true)),
+                $"completion round {i + 1} should advance to terminal.");
+        }
+
+        guide.Reset();
+        guide.Start(restart: true);
+        guide.Observe(new RoiEditorEvent(
             RoiEditorEventKind.PointerDown,
             RoiInteractionKind.Creating,
             RoiHandleKind.Body,
             default,
-            false);
-
-        for (var i = 0; i < 10; i++)
-        {
-            Check(
-                guide.Observe(press),
-                $"expected teaching action round {i + 1} should advance.");
-            guide.Reset();
-            guide.Start(restart: true);
-        }
-
-        guide.Observe(press);
-
-        var release = new RoiEditorEvent(
+            false));
+        guide.Observe(new RoiEditorEvent(
             RoiEditorEventKind.PointerUp,
             RoiInteractionKind.Creating,
             RoiHandleKind.Body,
             default,
-            true);
+            true));
 
-        for (var i = 0; i < 10; i++)
-        {
-            Check(
-                guide.Observe(release) ||
-                !guide.Snapshot.IsActive,
-                $"completion observation round {i + 1} should reach a terminal state.");
-            guide.Reset();
-            guide.Start(restart: true);
-            guide.Observe(press);
-        }
-
-        guide.Observe(release);
         var completed = guide.Snapshot;
 
         for (var i = 0; i < 10; i++)
         {
             guide.Start();
             Check(
+                completed.IsCompleted &&
                 !guide.Snapshot.IsActive &&
                 guide.Snapshot.CurrentStep is null,
                 $"completed non-repeatable start round {i + 1} should remain terminal.");
         }
 
-        guide.Start(restart: true);
-
         for (var i = 0; i < 10; i++)
+        {
+            guide.Start(restart: true);
             Check(
                 guide.Snapshot.IsActive &&
                 RoiTeachingValidationRuntime.HasCurrentStepWhenActive(
                     guide.Snapshot,
                     steps),
-                $"explicit restart round {i + 1} should reopen from the first step.");
+                $"explicit restart round {i + 1} should reopen at the first step.");
+            guide.Stop();
+        }
 
-        Check(
-            completed.IsCompleted &&
-            !completed.IsActive,
-            "completed guide should expose terminal completion.");
+        for (var i = 0; i < 10; i++)
+            Check(
+                RoiTeachingValidationRuntime.HasCurrentStepWhenActive(
+                    guide.Snapshot,
+                    steps),
+                $"stopped teaching round {i + 1} should not expose an invalid active index.");
 
-        Check(
+        assert(
             round == 100,
             $"ROI teaching validation smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
-
