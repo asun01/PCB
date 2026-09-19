@@ -533,6 +533,22 @@ if (tileRequests.Count > 0)
         failures);
 }
 
+var neighbors = Asun.UI.Viewports.ImageTileGeometry.GetNeighbors(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new Asun.UI.Viewports.TileIndex(1, 0),
+    includeDiagonals: false);
+
+Assert(
+    neighbors.SequenceEqual(new[]
+    {
+        new Asun.UI.Viewports.TileIndex(0, 0),
+        new Asun.UI.Viewports.TileIndex(1, 1),
+        new Asun.UI.Viewports.TileIndex(2, 0)
+    }),
+    "Orthogonal tile neighbors should be deterministic and grid-clamped.",
+    failures);
+
 var edgeTile = Asun.UI.Viewports.ImageTileGeometry.GetTileRectangle(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(256, 256),
