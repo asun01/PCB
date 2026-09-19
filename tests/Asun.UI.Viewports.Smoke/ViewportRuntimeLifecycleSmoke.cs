@@ -2,7 +2,7 @@ using Asun.UI.Viewports;
 
 public static class ViewportPresentationLifecycleSmoke
 {
-    public static void Run(Action<bool, string> assert)
+    public static async ValueTask RunAsync(Action<bool, string> assert)
     {
         var lifecycle = new ViewportPresentationLifecycleRuntime();
 
@@ -27,7 +27,14 @@ public static class ViewportPresentationLifecycleSmoke
             token.IsCancellationRequested,
             "Stopping should cancel the active run token.");
 
+        var stopWait = lifecycle.WaitForStopAsync();
+        assert(
+            !stopWait.IsCompleted,
+            "WaitForStopAsync should remain pending until the active run exits.");
+
         lifecycle.MarkStopped();
+
+        await stopWait;
 
         assert(
             lifecycle.State == ViewportPresentationState.Stopped,
