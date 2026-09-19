@@ -1,6 +1,7 @@
-namespace Asun.UI.Viewports;
-
+using System.Collections.ObjectModel;
 using System.Numerics;
+
+namespace Asun.UI.Viewports;
 
 /// <summary>
 /// Immutable display snapshot produced by the viewport tile runtime.
@@ -14,9 +15,10 @@ public sealed class ViewportTileFrame<TTile>
         IReadOnlyList<TileLoadFailure<TTile>> failures)
     {
         Transform = transform;
-        Requests = requests;
-        LoadedTiles = loadedTiles;
-        Failures = failures;
+        Requests = Array.AsReadOnly(requests.ToArray());
+        LoadedTiles = new ReadOnlyDictionary<TileIndex, TTile>(
+            new Dictionary<TileIndex, TTile>(loadedTiles));
+        Failures = Array.AsReadOnly(failures.ToArray());
     }
 
     public ViewportTransform Transform { get; }
