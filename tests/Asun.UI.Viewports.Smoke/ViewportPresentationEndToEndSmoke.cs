@@ -191,8 +191,7 @@ public static class ViewportPresentationEndToEndSmoke
         assert(
             snapshot.IsPresentationStable &&
             snapshot.LastFrameState?.IsComplete == true &&
-            snapshot.LastFrameState?.Status == ViewportRenderDeliveryStatus.Succeeded &&
-            runtime.Composite.Roi.Runtime?.SelectedId is null or _,
+            snapshot.LastFrameState?.Status == ViewportRenderDeliveryStatus.Succeeded,
             "The continuous runtime should expose a stable completed presentation snapshot.");
 
         assert(
