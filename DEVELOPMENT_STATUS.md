@@ -32,3 +32,20 @@ Current automated work:
 Status policy:
 - Repository progress and production qualification are tracked separately.
 - An external CI execution failure is recorded as an execution-environment issue unless its logs demonstrate a repository defect.
+
+
+### Latest non-blocked viewport/runtime slice — 2026-09-19
+Implemented in the framework-neutral presentation/rendering preparation path:
+- Deferred render work is paged by concrete remaining WorkItems rather than re-planning the completed page.
+- Full-surface clear is a one-time page action; later deferred pages continue with fine-grained work.
+- Deferred delivery is explicit; unavailable tile work is surfaced for retry instead of being reported as success.
+- Delivery retry requeues the failed page ahead of later deferred pages.
+- Composite snapshots are reused across pure budget-pagination pages; delivery retries force a fresh Composite refresh so recovered tiles can be loaded.
+- Reusable render cache excludes deferred/partial frames.
+- Superseded frame generations are rejected before presentation.
+- Presentation supports awaitable stop and async disposal; resource release is deferred until an active render loop exits.
+- Smoke coverage was extended for deferred paging, tile recovery, reuse safety, lifecycle disposal, and delivery telemetry.
+
+Verification note:
+- These changes are repository edits and smoke-test wiring. No local build/test execution result is being asserted from this environment.
+- GitHub Actions status for the latest branch commits remains unverified when no workflow run/status is associated with the commit.
