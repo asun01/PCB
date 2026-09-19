@@ -177,6 +177,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
                         if (delivery.Succeeded)
                         {
+                            _pipeline.MarkPresented(frame);
                             Interlocked.Increment(ref _renderedFrames);
                         }
                         else
