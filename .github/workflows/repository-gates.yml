@@ -45,6 +45,9 @@ jobs:
       - name: Report open gates
         run: python3 tools/task_gate_check.py
 
+      - name: Generate task admission report
+        run: python3 tools/generate_task_admission.py
+
       - name: Resolve repository authorities
         run: python3 tools/validate_repository_authorities.py
 
