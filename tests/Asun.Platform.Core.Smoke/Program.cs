@@ -1481,6 +1481,21 @@ Assert(
     "Saturated resources should time out deterministically for asynchronous lease acquisition.",
     failures);
 
+var invalidLeaseTimeoutRejected = false;
+try
+{
+    _ = await resources.AcquireAsync("camera", TimeSpan.FromMilliseconds(-2));
+}
+catch (ArgumentOutOfRangeException)
+{
+    invalidLeaseTimeoutRejected = true;
+}
+
+Assert(
+    invalidLeaseTimeoutRejected,
+    "Negative resource lease timeouts should be rejected.",
+    failures);
+
 cameraLease!.Dispose();
 Assert(cameraLease.IsDisposed, "Disposed resource leases should report released state.", failures);
 using var secondCameraLease = await waitingLeaseTask;
