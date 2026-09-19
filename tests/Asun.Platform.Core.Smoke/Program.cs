@@ -927,6 +927,13 @@ Assert(
     "Oriented rectangle closest point should clamp to the local bounds.",
     failures);
 
+var resizedOriented = oriented.Resize(new System.Numerics.Vector2(80, 40));
+Assert(
+    resizedOriented.Size == new System.Numerics.Vector2(80, 40) &&
+    Math.Abs(resizedOriented.DiagonalLength - Math.Sqrt(8000)) < 1e-9,
+    "Oriented rectangle resize and diagonal metadata should be deterministic.",
+    failures);
+
 var translatedOriented = oriented.Translate(new System.Numerics.Vector2(5, -10));
 Assert(
     translatedOriented.Center == new System.Numerics.Vector2(105, 40),
