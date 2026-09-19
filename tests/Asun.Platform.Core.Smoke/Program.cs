@@ -416,6 +416,68 @@ Assert(
 var tileRange = panned.GetVisibleTileRange(
     new System.Numerics.Vector2(256, 256));
 
+var plannedVisibleRange = panned.GetVisibleTileRange(
+    new System.Numerics.Vector2(256, 256));
+var plannedPrefetchRange = panned.GetPrefetchTileRange(
+    new System.Numerics.Vector2(256, 256),
+    marginTiles: 1);
+
+var tileRequests = Asun.UI.Viewports.TileRequestPlanner.Plan(
+    panned.ImageSize,
+    new System.Numerics.Vector2(256, 256),
+    plannedVisibleRange,
+    plannedPrefetchRange,
+    panned.ImagePointAtViewportCenter);
+
+Assert(
+    tileRequests.Count == plannedPrefetchRange.Count &&
+    tileRequests.Count >= plannedVisibleRange.Count,
+    "Tile request planning should cover the full prefetch range.",
+    failures);
+
+var firstPrefetchIndex = tileRequests
+    .Select((request, index) => (request, index))
+    .FirstOrDefault(item => item.request.IsPrefetch).index;
+
+Assert(
+    firstPrefetchIndex >= plannedVisibleRange.Count,
+    "Visible tile requests should always precede prefetch requests.",
+    failures);
+
+var nearestRequest = tileRequests
+    .Where(request => request.IsVisible)
+    .OrderBy(request => request.DistanceSquaredToViewportCenter)
+    .First();
+
+Assert(
+    tileRequests.First(request => request.IsVisible).Index == nearestRequest.Index,
+    "Visible tile requests should be ordered by center distance.",
+    failures);
+
+var asymmetricPlanner = Asun.UI.Viewports.TileRequestPlanner.PlanForViewport(
+    panned,
+    new System.Numerics.Vector2(256, 256),
+    marginX: 2,
+    marginY: 0);
+
+Assert(
+    asymmetricPlanner.Count >= plannedVisibleRange.Count,
+    "Viewport tile planner should support asymmetric prefetch margins.",
+    failures);
+
+if (tileRequests.Count > 0)
+{
+    var requestRectangle = Asun.UI.Viewports.TileRequestPlanner.GetRequestRectangle(
+        panned.ImageSize,
+        new System.Numerics.Vector2(256, 256),
+        tileRequests[0]);
+
+    Assert(
+        requestRectangle.Width > 0 && requestRectangle.Height > 0,
+        "Tile request rectangle should map to positive image geometry.",
+        failures);
+}
+
 var edgeTile = Asun.UI.Viewports.ImageTileGeometry.GetTileRectangle(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(256, 256),
