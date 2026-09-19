@@ -417,3 +417,29 @@ Closed acceptance assets:
 Verification:
 - static source/project/solution audits passed;
 - no build/test/CI success is claimed without authoritative execution evidence.
+
+
+### 7001→7500 quality-domain finding/result foundation — 2026-09-19
+
+Completed stages 7001–7500 inside the active 100,000-stage execution window.
+
+Implemented:
+- `QualityOutcome`
+- `QualitySeverity`
+- `QualityFindingId`
+- `QualityFinding`
+- immutable `QualityFindingSet`
+- five corresponding validation runtimes.
+
+Added a dedicated `Asun.Domain.Quality.Smoke` project, registered in `AsunVision.slnx`, with five exact 100-round Smokes covering outcome/severity taxonomy, finding validation, and collection uniqueness/lookup.
+
+Boundary:
+- No AOI/SPI-specific acceptance thresholds, customer policies, defect classification policy, HALCON semantics, or hardware behavior were encoded into the quality foundation.
+
+Closed acceptance assets:
+- stage ledgers 7001–7100, 7101–7200, 7201–7300, 7301–7400, 7401–7500;
+- integration checkpoint `PHASE1_7001_7500_INTEGRATION_CHECKPOINT_20260919.md`.
+
+Verification:
+- static source/project/solution audits passed;
+- no build/test/CI success is claimed without authoritative execution evidence.
