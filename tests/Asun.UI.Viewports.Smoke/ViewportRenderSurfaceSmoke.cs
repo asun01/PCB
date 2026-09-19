@@ -8,6 +8,7 @@ public static class ViewportRenderSurfaceSmoke
     {
         await VerifySuccessfulCommitAsync(assert);
         await VerifyIncrementalLayerCommitAsync(assert);
+        await VerifyResetAsync(assert);
         await VerifyFailureDiscardAsync(assert);
         await VerifyDeferredDiscardAsync(assert);
     }
@@ -166,6 +167,51 @@ public static class ViewportRenderSurfaceSmoke
             overlaySink.CommitContext.Value.FullSurfaceCount == 0 &&
             overlaySink.CommitContext.Value.InvalidationCount == 0,
             "Overlay-only presentation should advance the surface without replaying image or ROI layers.");
+    }
+
+    private static async ValueTask VerifyResetAsync(
+        Action<bool, string> assert)
+    {
+        using var pipeline = CreatePipeline(new StableTileSource());
+
+        var frame = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(7));
+
+        assert(
+            frame is not null,
+            "Surface smoke should create a frame for reset verification.");
+
+        if (frame is null)
+            return;
+
+        using var surface = new ViewportRenderSurfaceRuntime();
+        var sink = new TrackingSink();
+
+        var result = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+            frame,
+            sink,
+            surface: surface);
+
+        assert(
+            result.Succeeded &&
+            surface.Snapshot.PresentationSequence == 1,
+            "Surface smoke should establish presentation history before reset.");
+
+        surface.Reset();
+
+        var snapshot = surface.Snapshot;
+
+        assert(
+            snapshot.State == ViewportRenderSurfaceState.Idle &&
+            snapshot.RenderingGeneration is null &&
+            snapshot.PresentedGeneration is null &&
+            snapshot.DiscardedGeneration is null &&
+            snapshot.LastDiscardStatus is null &&
+            snapshot.PresentationSequence == 0 &&
+            snapshot.LastRenderedUnits == 0 &&
+            snapshot.LastPlannedUnits == 0 &&
+            snapshot.PresentedRegionCount == 0,
+            "Surface reset should clear the entire presentation session state.");
     }
 
     private static async ValueTask VerifyFailureDiscardAsync(
