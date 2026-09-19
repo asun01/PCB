@@ -94,6 +94,12 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
             Check(
+                !blockedRouter.Escape(new Vector2(20, 20)) &&
+                capture.Owner == ViewportInputOwner.Overlay,
+                $"foreign Escape round {i + 1} should remain isolated.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
                 ViewportInputCaptureValidationRuntime.IsOwnedBy(
                     capture.Owner,
                     ViewportInputOwner.Overlay) &&
