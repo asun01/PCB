@@ -23,10 +23,12 @@ public static class ViewportPresentationFacadeSmoke
                 320 + i % 11 * 10,
                 240 + i % 7 * 8);
 
-            presentation.Composite.AddRoi(
+            var roiId = presentation.Composite.AddRoi(
                 RoiGeometry.CreateRectangle(
                     center,
                     new Vector2(90, 60)));
+
+            presentation.Composite.SelectRoi(roiId);
 
             presentation.Submit(
                 ViewportInputEventKind.PointerMove,
@@ -62,6 +64,19 @@ public static class ViewportPresentationFacadeSmoke
                 delivery.Error is null &&
                 delivery.RenderedUnits > 0,
                 $"Presentation facade {i + 1} should deliver an initial render frame.");
+
+            presentation.Composite.TranslateSelected(new Vector2(7, 5));
+
+            var incremental = await presentation.Pipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1));
+
+            assert(
+                incremental is not null &&
+                incremental.WorkPlan.Items.Any(item => item.IsInvalidation) &&
+                incremental.WorkPlan.Items.Any(item =>
+                    item.Kind == ViewportRenderWorkKind.Roi &&
+                    !item.IsInvalidation),
+                $"Presentation facade {i + 1} should retain previous ROI bounds for incremental invalidation.");
 
             var before = presentation.Composite.Generation;
             var processed = presentation.Continuous.ProcessInputs();
