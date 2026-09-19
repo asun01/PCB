@@ -127,6 +127,27 @@ Assert(
     "Viewport and image centers should be derived from their sizes.",
     failures);
 
+var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
+var roi = new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100);
+
+Assert(
+    imageBounds.Contains(roi) &&
+    roi.Contains(roi.Center),
+    "Pixel rectangle containment should be deterministic.",
+    failures);
+
+var overlap = roi.Intersect(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
+Assert(
+    overlap == new Asun.Vision.Contracts.PixelRect(250, 100, 50, 50),
+    "Pixel rectangle intersection should return the overlapping region.",
+    failures);
+
+var inflated = roi.Inflate(10, 20);
+Assert(
+    inflated == new Asun.Vision.Contracts.PixelRect(90, 30, 220, 140),
+    "Pixel rectangle inflation should preserve the rectangle center.",
+    failures);
+
 var sourceRect = new RectangleF(100, 50, 200, 100);
 var viewportRect = viewport.ImageToViewportRectangle(sourceRect);
 var sourceRoundTripRect = viewport.ViewportToImageRectangle(viewportRect);
