@@ -13,6 +13,7 @@
 - Planning cross-link validator for DEV-PLAN-008/011/012/014: active.
 - Repository authority resolver/fingerprint report: active and non-mutating.
 - Automatic task-admission report: active; non-authoritative preparation continues while production gates remain open.
+- Runnable WPF bootstrap shell: implemented with vendor-neutral workspace host and structural smoke validator.
 - Repository CI now includes all deterministic validators and open-gate reporting.
 - DevExpress 25.2.3: local assembly/package resolution remains an environment gate.
 - HALCON 25.11: target version fixed by repository baseline; actual local operator/API verification remains an environment gate.
