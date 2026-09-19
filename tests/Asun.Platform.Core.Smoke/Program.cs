@@ -155,6 +155,39 @@ Assert(
     "Multiple percentile calculation should preserve requested order and duplicates.",
     failures);
 
+var signal = new Asun.Platform.Core.AsyncSignal();
+Assert(!signal.IsSignaled, "A new async signal should be unsignaled.", failures);
+
+var signalWait = signal.WaitAsync().AsTask();
+Assert(!signalWait.IsCompleted, "An unsignaled async signal should not complete its wait.", failures);
+
+Assert(signal.TrySignal(), "The first async signal should succeed.", failures);
+Assert(!signal.TrySignal(), "A one-shot async signal should reject repeated signaling.", failures);
+
+await signalWait;
+Assert(
+    signal.IsSignaled && signal.Completion.IsCompletedSuccessfully,
+    "A signaled async signal should expose a completed state.",
+    failures);
+
+var cancelledSignal = new Asun.Platform.Core.AsyncSignal();
+using (var signalCancellation = new CancellationTokenSource())
+{
+    signalCancellation.Cancel();
+    var cancelledObserved = false;
+
+    try
+    {
+        await cancelledSignal.WaitAsync(signalCancellation.Token);
+    }
+    catch (OperationCanceledException)
+    {
+        cancelledObserved = true;
+    }
+
+    Assert(cancelledObserved, "Async signal waits should honor cancellation.", failures);
+}
+
 var execution = new List<string>();
 var pipeline = new AsyncPipeline<List<string>>(new[]
 {
