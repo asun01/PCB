@@ -1459,6 +1459,16 @@ Assert(resources.Available("gpu") == 2, "Independent resource capacity should st
 Assert(resources.TryAcquire("camera", out var cameraLease), "The first lease should be granted.", failures);
 Assert(!resources.TryAcquire("camera", out _), "A saturated resource should reject a non-blocking lease.", failures);
 
+var timedLease = resources.TryAcquire(
+    "camera",
+    TimeSpan.FromMilliseconds(5),
+    out var timedLeaseValue);
+
+Assert(
+    !timedLease && timedLeaseValue is null,
+    "Saturated resources should time out deterministically for synchronous lease acquisition.",
+    failures);
+
 var waitingLeaseTask = resources.AcquireAsync("camera").AsTask();
 Assert(!waitingLeaseTask.IsCompleted, "A saturated resource should apply bounded waiting.", failures);
 
