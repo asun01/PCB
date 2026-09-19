@@ -1683,10 +1683,22 @@ Assert(
 var imageSize = new Asun.Vision.Contracts.ImageSize(1000, 500);
 Assert(
     imageSize.PixelCount == 500000 &&
+    !imageSize.IsSquare &&
+    imageSize.Bounds == new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500) &&
     Math.Abs(imageSize.AspectRatio - 2) < 1e-12 &&
+    Math.Abs(imageSize.InverseAspectRatio - 0.5) < 1e-12 &&
+    Math.Abs(imageSize.DiagonalLength - Math.Sqrt(1250000)) < 1e-9 &&
     imageSize.Vector == new System.Numerics.Vector2(1000, 500) &&
     imageSize.Contains(new Asun.Vision.Contracts.PixelPoint(500, 250)),
-    "Image size metrics and point containment should be deterministic.",
+    "Image size metrics and bounds should be deterministic.",
+    failures);
+
+Assert(
+    imageSize.Clamp(new Asun.Vision.Contracts.PixelPoint(-20, 600)) ==
+        new Asun.Vision.Contracts.PixelPoint(0, 500) &&
+    imageSize.TryClamp(new Asun.Vision.Contracts.PixelPoint(20, 30), out var clampedImagePoint) &&
+    clampedImagePoint == new Asun.Vision.Contracts.PixelPoint(20, 30),
+    "Image size point clamping should be deterministic.",
     failures);
 
 var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
