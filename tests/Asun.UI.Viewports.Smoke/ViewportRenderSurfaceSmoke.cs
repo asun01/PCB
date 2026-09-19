@@ -9,6 +9,7 @@ public static class ViewportRenderSurfaceSmoke
         await VerifySuccessfulCommitAsync(assert);
         await VerifyIncrementalLayerCommitAsync(assert);
         await VerifyResetAsync(assert);
+        await VerifyStaleGenerationFenceAsync(assert);
         await VerifyFailureDiscardAsync(assert);
         await VerifyDeferredDiscardAsync(assert);
     }
@@ -212,6 +213,48 @@ public static class ViewportRenderSurfaceSmoke
             snapshot.LastPlannedUnits == 0 &&
             snapshot.PresentedRegionCount == 0,
             "Surface reset should clear the entire presentation session state.");
+    }
+
+    private static async ValueTask VerifyStaleGenerationFenceAsync(
+        Action<bool, string> assert)
+    {
+        using var surface = new ViewportRenderSurfaceRuntime();
+
+        surface.Begin(10);
+        surface.Commit(
+            10,
+            plannedUnits: 1,
+            renderedUnits: 1,
+            regions: Array.Empty<RectangleF>());
+
+        assert(
+            surface.Snapshot.PresentedGeneration == 10,
+            "Surface stale-generation smoke should establish a newer presented generation first.");
+
+        var rejected = false;
+
+        try
+        {
+            surface.Begin(9);
+        }
+        catch (InvalidOperationException)
+        {
+            rejected = true;
+        }
+
+        assert(
+            rejected &&
+            surface.Snapshot.State == ViewportRenderSurfaceState.Presented &&
+            surface.Snapshot.PresentedGeneration == 10,
+            "Surface should reject an older generation without disturbing the newer presented surface.");
+
+        surface.Begin(10);
+        surface.Discard(10, ViewportRenderDeliveryStatus.Cancelled);
+
+        assert(
+            surface.Snapshot.DiscardedGeneration == 10 &&
+            surface.Snapshot.PresentedGeneration == 10,
+            "Surface should still allow a same-generation retry while preserving the last successful presentation.");
     }
 
     private static async ValueTask VerifyFailureDiscardAsync(
