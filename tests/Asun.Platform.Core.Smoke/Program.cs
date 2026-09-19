@@ -288,6 +288,11 @@ Assert(
     "Viewport should contain the rendered image origin.",
     failures);
 
+Assert(
+    !viewport.ContainsViewportPoint(new System.Numerics.Vector2(float.NaN, 0)),
+    "Viewport containment should reject non-finite points.",
+    failures);
+
 var renderedImageRectangle = viewport.RenderedImageRectangle;
 Assert(
     renderedImageRectangle == new RectangleF(
