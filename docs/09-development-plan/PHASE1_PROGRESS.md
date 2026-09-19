@@ -30,6 +30,7 @@
 Continue all non-blocked repository, tooling, dependency-boundary, simulation-boundary, documentation, validator, replay-harness preparation, and audit work. Never invent production schema/state/owner/threshold/API to bypass an open gate.
 
 ### 100-round non-blocked continuation — 2026-09-19
+
 - Completed 100 tracked engineering work units across render evidence, structural invariants, navigation, workflow replay, Scene/Visibility, input/backpressure, render planning/budgeting, and Platform.Core regressions.
 - Added deterministic Replay/Render evidence fingerprints without introducing a pixel-golden authority or vendor-specific rendering dependency.
 - Added centralized invariant validation and dedicated smoke suites, all registered through the existing repository smoke entry.
@@ -41,6 +42,7 @@ Verification note:
 - Latest branch workflow/status lookup returned no associated GitHub Actions run/status; authoritative build/test verification remains pending external execution.
 
 ### 300-round continuous continuation — 2026-09-19
+
 - Added a deterministic 300-round verification matrix and registered it in the main viewport smoke entry.
 - Added Render Evidence Manifest, Presentation Audit Trace, deterministic Input Replay Runtime, and Replay Session JSON evidence bundle.
 - Centralized structural invariants now validate the new evidence/replay state in addition to render, presentation, input, scene, workflow, and metric state.
@@ -52,12 +54,19 @@ Verification note:
 - No GitHub Actions success is inferred without an associated workflow run/status.
 
 ### Post-300-round hardening — 2026-09-19
+
 - Continuous presentation runtime now retains bounded Render Evidence Manifest history and ordered Presentation Audit Trace for every executed frame outcome.
 - Presentation facade exposes EvidenceHistory and AuditTrace for engineering diagnostics and future UI tooling.
 - Added bounded EvidenceStore and bounded AuditTrace semantics to avoid unbounded long-running diagnostic memory.
 - Added dependency-free C# source-structure validator plus regression fixtures; repository CI invokes the validator before the deterministic repository/document gates.
 - Validator specifically guards against delimiter imbalance and high-confidence class-scope executable statements, complementing—not replacing—the C# compiler.
+- Added a deterministic Render Evidence Comparator that reports field-level logical differences between expected and actual manifests.
+- Added replay-session integrity validation covering input ordering, evidence monotonicity, audit ordering, counters, and SHA-256 evidence structure.
+- Evidence history now rejects duplicate StableKey entries and validates duplicate-key absence.
+- Replay-session smoke coverage now includes successful validation, malformed input sequence rejection, JSON evidence-layer presence, reset behavior, and deterministic hashes.
+- Registered the comparator smoke in the primary viewport smoke entry.
 
 Verification note:
-- The current environment cannot resolve github.com, so a fresh local repository checkout could not be obtained for real dotnet execution.
-- No build/test/CI success is inferred from that limitation.
+- The current environment cannot resolve github.com for a local checkout, so no fresh local dotnet build/test result is asserted.
+- The latest GitHub branch commit currently has no associated workflow run or status result, so CI success is not inferred.
+- Current branch is continuously ahead of main; authoritative merge/CI handling remains with the existing open PR and repository governance.
