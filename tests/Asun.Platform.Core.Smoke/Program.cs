@@ -558,6 +558,11 @@ Assert(
     failures);
 
 Assert(
+    viewport.ImagePointAtViewportCenter == new System.Numerics.Vector2(500, 250),
+    "Viewport center should map to the image center for a fit transform.",
+    failures);
+
+Assert(
     viewport.ViewportCenter == new System.Numerics.Vector2(600, 400) &&
     viewport.ImageCenter == new System.Numerics.Vector2(500, 250),
     "Viewport and image centers should be derived from their sizes.",
