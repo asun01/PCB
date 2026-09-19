@@ -116,13 +116,24 @@ public static class ImageTileGeometry
         Vector2 imageSize,
         Vector2 tileSize,
         VisibleTileRange visibleRange,
-        int marginTiles)
+        int marginTiles) =>
+        ExpandTileRange(imageSize, tileSize, visibleRange, marginTiles, marginTiles);
+
+    public static VisibleTileRange ExpandTileRange(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        VisibleTileRange visibleRange,
+        int marginX,
+        int marginY)
     {
         ValidatePositiveFinite(imageSize, nameof(imageSize));
         ValidatePositiveFinite(tileSize, nameof(tileSize));
 
-        if (marginTiles < 0)
-            throw new ArgumentOutOfRangeException(nameof(marginTiles));
+        if (marginX < 0)
+            throw new ArgumentOutOfRangeException(nameof(marginX));
+
+        if (marginY < 0)
+            throw new ArgumentOutOfRangeException(nameof(marginY));
 
         if (visibleRange.IsEmpty)
             return EmptyRange();
@@ -140,15 +151,13 @@ public static class ImageTileGeometry
                 "Tile range must stay inside the image tile grid.");
         }
 
-        var minimum = new TileIndex(
-            Math.Max(0, visibleRange.Minimum.X - marginTiles),
-            Math.Max(0, visibleRange.Minimum.Y - marginTiles));
-
-        var maximum = new TileIndex(
-            Math.Min(gridSize.X - 1, visibleRange.Maximum.X + marginTiles),
-            Math.Min(gridSize.Y - 1, visibleRange.Maximum.Y + marginTiles));
-
-        return new VisibleTileRange(minimum, maximum);
+        return new VisibleTileRange(
+            new TileIndex(
+                Math.Max(0, visibleRange.Minimum.X - marginX),
+                Math.Max(0, visibleRange.Minimum.Y - marginY)),
+            new TileIndex(
+                Math.Min(gridSize.X - 1, visibleRange.Maximum.X + marginX),
+                Math.Min(gridSize.Y - 1, visibleRange.Maximum.Y + marginY)));
     }
 
     public static bool ContainsTile(
