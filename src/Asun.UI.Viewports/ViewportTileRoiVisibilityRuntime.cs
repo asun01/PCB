@@ -24,6 +24,23 @@ public sealed class ViewportTileRoiVisibilitySnapshot
 
     public int TileCount => Tiles.Count;
 
+    public bool TryGetTile(
+        TileIndex index,
+        out ViewportTileVisibility visibility)
+    {
+        foreach (var tile in Tiles)
+        {
+            if (tile.Index != index)
+                continue;
+
+            visibility = tile;
+            return true;
+        }
+
+        visibility = default;
+        return false;
+    }
+
     public int LoadedTileCount =>
         Tiles.Count(tile => tile.IsLoaded);
 }
