@@ -548,6 +548,14 @@ Assert(
     "Pixel rectangle containment should be deterministic.",
     failures);
 
+var normalized = new Asun.Vision.Contracts.PixelRect(300, 250, -200, -100)
+    .Normalize();
+
+Assert(
+    normalized == new Asun.Vision.Contracts.PixelRect(100, 150, 200, 100),
+    "Pixel rectangle normalization should recover positive bounds from reversed dimensions.",
+    failures);
+
 var clipped = new Asun.Vision.Contracts.PixelRect(-50, 25, 200, 600)
     .ClampTo(imageBounds);
 Assert(
