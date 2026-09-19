@@ -292,6 +292,12 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
 
         var dirtyFlags = _composite.ConsumeDirtyFlags();
 
+        var cachedGeneration = _reuse.LatestGeneration;
+
+        if (cachedGeneration is long cached &&
+            composite.Generation > cached)
+            _reuse.Clear();
+
         _scheduler.Submit(
             dirtyFlags,
             composite.Generation);
