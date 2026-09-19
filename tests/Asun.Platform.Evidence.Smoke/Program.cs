@@ -33,12 +33,12 @@ if(round!=100)
 var missing=await EvidenceCatalogRuntime.GetValidatedAsync(
     new StubEvidenceCatalog(descriptor),
     EvidenceHandle.Create("frame://missing"));
-Check(missing is null,"Missing evidence lookup should remain empty.");
+if(missing is not null) failures.Add("Missing evidence lookup should remain empty.");
 
 var found=await EvidenceCatalogRuntime.GetValidatedAsync(
     new StubEvidenceCatalog(descriptor),
     handle);
-Check(found==descriptor,"Validated evidence lookup should return the descriptor.");
+if(found!=descriptor) failures.Add("Validated evidence lookup should return the descriptor.");
 
 using var cancellation=new CancellationTokenSource();
 cancellation.Cancel();
@@ -55,7 +55,7 @@ catch(OperationCanceledException)
     cancelledObserved=true;
 }
 
-Check(cancelledObserved,"Evidence catalog lookup should honor cancellation.");
+if(!cancelledObserved) failures.Add("Evidence catalog lookup should honor cancellation.");
 
 if(failures.Count>0)
 {
