@@ -27,6 +27,15 @@ jobs:
       - name: Validate implementation policy
         run: python3 tools/validate_repository_policy.py
 
+      - name: Validate FunctionSpec bindings
+        run: python3 tools/validate_function_bindings.py
+
+      - name: Validate PageContracts
+        run: python3 tools/validate_page_contracts.py
+
+      - name: Report open gates
+        run: python3 tools/task_gate_check.py
+
       - name: Build convenience master
         run: python3 tools/build_master.py
 
