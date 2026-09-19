@@ -387,6 +387,14 @@ public readonly record struct ViewportTransform(
         return this with { Translation = translation };
     }
 
+    private static Vector2 ValidateAndReturnDelta(Vector2 delta)
+    {
+        if (!IsFinite(delta))
+            throw new ArgumentOutOfRangeException(nameof(delta));
+
+        return delta;
+    }
+
     private static void ValidateSize(Vector2 size, string parameterName)
     {
         if (!IsFinite(size) || size.X <= 0 || size.Y <= 0)
