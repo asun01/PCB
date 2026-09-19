@@ -51,11 +51,17 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         _resources = resources;
     }
 
-    public int Capacity(TKey resource) =>
-        GetEntry(resource).Capacity;
+    public int Capacity(TKey resource)
+    {
+        ThrowIfDisposed();
+        return GetEntry(resource).Capacity;
+    }
 
-    public int Available(TKey resource) =>
-        GetEntry(resource).Semaphore.CurrentCount;
+    public int Available(TKey resource)
+    {
+        ThrowIfDisposed();
+        return GetEntry(resource).Semaphore.CurrentCount;
+    }
 
     public bool TryAcquire(TKey resource, out Lease? lease)
     {
@@ -91,7 +97,7 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
             return;
 
         foreach (var entry in _resources.Values)
-            entry.Semaphore.Dispose();
+            entry.Dispose();
     }
 
     private ResourceEntry GetEntry(TKey resource)
@@ -118,8 +124,31 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
             Semaphore = new SemaphoreSlim(capacity, capacity);
         }
 
+        private int _disposed;
+
         public int Capacity { get; }
         public SemaphoreSlim Semaphore { get; }
+
+        public void Dispose()
+        {
+            Interlocked.Exchange(ref _disposed, 1);
+            Semaphore.Dispose();
+        }
+
+        public void Release()
+        {
+            if (Volatile.Read(ref _disposed) != 0)
+                return;
+
+            try
+            {
+                Semaphore.Release();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Pool disposal invalidates remaining leases; release becomes a no-op.
+            }
+        }
     }
 
     public sealed class Lease : IDisposable
@@ -137,7 +166,7 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         public void Dispose()
         {
             var entry = Interlocked.Exchange(ref _entry, null);
-            entry?.Semaphore.Release();
+            entry?.Release();
         }
     }
 }

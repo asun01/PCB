@@ -334,6 +334,23 @@ using (var leaseCancellation = new CancellationTokenSource())
 
 Assert(cancelledLease, "Resource acquisition should honor cancellation.", failures);
 
+using (var disposablePool = new ResourceLeasePool<string>(
+           new[] { new KeyValuePair<string, int>("single", 1) }))
+{
+    Assert(
+        disposablePool.TryAcquire("single", out var activeLease),
+        "A disposable pool should grant its active lease.",
+        failures);
+
+    disposablePool.Dispose();
+    activeLease!.Dispose();
+}
+
+Assert(
+    resources.Available("camera") == 0,
+    "Active lease state should remain consistent before final disposal.",
+    failures);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)

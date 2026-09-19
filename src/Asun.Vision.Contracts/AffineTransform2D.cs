@@ -54,6 +54,9 @@ public readonly record struct AffineTransform2D
         return Vector2.Transform(point, _matrix);
     }
 
+    /// <summary>
+    /// Returns a transform that applies this transform first and <paramref name="next"/> second.
+    /// </summary>
     public AffineTransform2D Combine(AffineTransform2D next)
     {
         var combined = Matrix3x2.Multiply(_matrix, next._matrix);
