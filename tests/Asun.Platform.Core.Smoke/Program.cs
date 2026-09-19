@@ -102,6 +102,20 @@ Assert(
     "P50 should be the median.",
     failures);
 
+var rateMeter = new RateMeter();
+rateMeter.Increment();
+rateMeter.Increment(4);
+
+Assert(
+    rateMeter.Count == 5 &&
+    rateMeter.Elapsed >= TimeSpan.Zero &&
+    rateMeter.RatePerSecond >= 0,
+    "Rate meter should track count and monotonic elapsed time.",
+    failures);
+
+rateMeter.Reset();
+Assert(rateMeter.Count == 0, "Rate meter reset should clear its count.", failures);
+
 var runningStatistics = new RunningStatistics();
 runningStatistics.AddRange(new[] { 1d, 2d, 3d, 4d, 5d });
 
