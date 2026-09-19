@@ -250,6 +250,10 @@ await ViewportPresentationFacadeSmoke.RunAsync(Assert);
 
 await ViewportDeliveryAndBackpressureSmoke.RunAsync(Assert);
 
+ViewportPresentationLifecycleSmoke.Run(Assert);
+
+ViewportRenderSchedulerGenerationSmoke.Run(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
