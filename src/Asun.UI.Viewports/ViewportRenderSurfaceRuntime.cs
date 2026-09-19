@@ -19,7 +19,7 @@ public readonly record struct ViewportRenderSurfaceSnapshot(
     IReadOnlyList<System.Drawing.RectangleF> PresentedRegions)
 {
     public int PresentedRegionCount => PresentedRegions.Count;
-};
+}
 
 public sealed class ViewportRenderSurfaceRuntime : IDisposable
 {
