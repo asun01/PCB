@@ -170,7 +170,6 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             _presentedGeneration = null;
             _discardedGeneration = null;
             _lastDiscardStatus = null;
-            _transactionSequence = 0;
             _presentationSequence = 0;
             _lastRenderedUnits = 0;
             _lastPlannedUnits = 0;
