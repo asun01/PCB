@@ -281,6 +281,14 @@ Assert(
     "Tile grid membership should reject indexes outside the image grid.",
     failures);
 
+var outsidePointFound = Asun.UI.Viewports.ImageTileGeometry.TryGetTileIndexAtImagePoint(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new System.Numerics.Vector2(-1, 250),
+    out _);
+
+Assert(!outsidePointFound, "Points outside the image should not resolve to a tile.", failures);
+
 var pointTileFound = Asun.UI.Viewports.ImageTileGeometry.TryGetTileIndexAtImagePoint(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(256, 256),
