@@ -343,6 +343,21 @@ Assert(
     "Visible tile range count should match enumeration.",
     failures);
 
+var asymmetricPrefetch = Asun.UI.Viewports.ImageTileGeometry.ExpandTileRange(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new Asun.UI.Viewports.VisibleTileRange(
+        new Asun.UI.Viewports.TileIndex(1, 1),
+        new Asun.UI.Viewports.TileIndex(2, 1)),
+    marginX: 1,
+    marginY: 0);
+
+Assert(
+    asymmetricPrefetch.Minimum == new Asun.UI.Viewports.TileIndex(0, 1) &&
+    asymmetricPrefetch.Maximum == new Asun.UI.Viewports.TileIndex(3, 1),
+    "Asymmetric tile margins should expand only the requested axes.",
+    failures);
+
 var prefetchTileRange = panned.GetPrefetchTileRange(
     new System.Numerics.Vector2(256, 256),
     marginTiles: 1);
