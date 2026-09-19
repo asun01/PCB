@@ -1051,3 +1051,39 @@ Current continuous execution position:
 - completed through Stage 14500 in the active 4501–104500 window;
 - next natural stage: 14501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 14501→15000 Evidence query batch chain — 2026-09-19
+
+Completed stages 14501–15000.
+
+Implemented:
+- EvidenceCatalogQueryBatch;
+- deterministic batch execution;
+- batch validation for snapshot binding, result validity, count coherence, and unique result fingerprints;
+- deterministic batch SHA-256 fingerprint and validation;
+- four dedicated batch Smokes plus end-to-end integration, all exact 100-round.
+
+Boundary:
+- batch query execution remains in-memory and observational;
+- no persistence, transport, serialization, HALCON, DevExpress, renderer, or hardware authority introduced.
+
+Closed acceptance asset:
+- PHASE1_14501_15000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_14501-14600_STAGE_LEDGER_20260919.md
+- PHASE1_14601-14700_STAGE_LEDGER_20260919.md
+- PHASE1_14701-14800_STAGE_LEDGER_20260919.md
+- PHASE1_14801-14900_STAGE_LEDGER_20260919.md
+- PHASE1_14901-15000_STAGE_LEDGER_20260919.md
+
+Verification:
+- static audits confirm balanced delimiters and no TODO/NotImplementedException in the changed query-batch assets;
+- all new 100-round Smokes use 10 loop groups and explicit round == 100 assertions;
+- workflow lookup for checkpoint commit 9bacb12c0aafb6a034b187ff10f5c919a7b9da3f returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 15000 in the active 4501–104500 window;
+- next natural stage: 15001;
+- global one-million-stage horizon remains 2501–1002500.
