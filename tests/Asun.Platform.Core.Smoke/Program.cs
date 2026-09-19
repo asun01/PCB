@@ -532,6 +532,10 @@ Assert(!singular.IsInvertible, "A singular affine transform should report non-in
 
 var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
 Assert(
+    imageBounds.EnsureValid() == imageBounds,
+    "Valid pixel rectangles should pass the explicit validity guard.",
+    failures);
+Assert(
     imageBounds.AreBoundsFinite &&
     imageBounds.Area == 500000,
     "Valid pixel rectangles should expose finite bounds and area.",
