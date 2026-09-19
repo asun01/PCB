@@ -671,3 +671,72 @@ Verification:
 Current continuous execution position:
 - completed through Stage 9500 in the active 4501–104500 window;
 - next natural stage: 9501.
+
+
+### 9501→9600 replay bundle hardening — 2026-09-19
+
+Completed stages 9501–9600.
+
+Implemented:
+- QualityInspectionReplayBundle;
+- deterministic bundle construction and validation;
+- null Current/Diff boundary hardening;
+- exact 100-round replay bundle Smoke.
+
+### 9601→9700 replay bundle integrity fingerprint — 2026-09-19
+
+Completed stages 9601–9700.
+
+Implemented:
+- QualityInspectionReplayBundleFingerprintRuntime;
+- bundle fingerprint validation;
+- exact 100-round bundle fingerprint Smoke.
+
+The fingerprint is a deterministic SHA-256 representation of the canonical Previous/Current projections and Diff content. It is not persistence or serialization authority.
+
+### 9701→9800 replay integrity envelope — 2026-09-19
+
+Completed stages 9701–9800.
+
+Implemented:
+- QualityInspectionReplayEnvelope;
+- envelope creation runtime;
+- envelope validation with fingerprint recomputation;
+- exact 100-round envelope Smoke.
+
+Envelope validation now detects fingerprint tampering without introducing external storage or transport semantics.
+
+### 9801→9900 replay window — 2026-09-19
+
+Completed stages 9801–9900.
+
+Implemented:
+- QualityInspectionReplayWindow;
+- deterministic ordering by sequence, snapshot identity, then result identity;
+- replay-window validation with duplicate ResultId/SnapshotId detection;
+- invalid-envelope dereference hardening;
+- exact 100-round replay window Smoke.
+
+### 9901→10000 replay window diff — 2026-09-19
+
+Completed stages 9901–10000.
+
+Implemented:
+- QualityInspectionReplayWindowDiff;
+- deterministic replay window diff runtime;
+- replay window diff validation;
+- exact 100-round replay window diff Smoke.
+
+Window diff reports added, removed, and changed ResultIds; changed common results are detected from bundle fingerprint differences.
+
+Closed acceptance asset:
+- PHASE1_9501_10000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- static source audits for the new 100-round Smokes use exact 10-loop/10-Check/round==100 structure;
+- balanced delimiters and no TODO/NotImplementedException placeholder in the newly changed assets;
+- latest workflow lookup for commit f948e358e554eb03c7564e43b5921b8e3dd82afa returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 10000 in the active 4501–104500 window;
+- next natural stage: 10001.
