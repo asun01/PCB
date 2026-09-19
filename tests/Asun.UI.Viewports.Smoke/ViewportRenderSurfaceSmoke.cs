@@ -10,6 +10,7 @@ public static class ViewportRenderSurfaceSmoke
         await VerifyIncrementalLayerCommitAsync(assert);
         await VerifyResetAsync(assert);
         await VerifyStaleGenerationFenceAsync(assert);
+        await VerifyConcurrentDisposeAsync(assert);
         await VerifyFailureDiscardAsync(assert);
         await VerifyDeferredDiscardAsync(assert);
     }
@@ -280,6 +281,37 @@ public static class ViewportRenderSurfaceSmoke
             "An older discarded transaction token must not be able to commit over a later same-generation transaction.");
     }
 
+    private static async ValueTask VerifyConcurrentDisposeAsync(
+        Action<bool, string> assert)
+    {
+        using var pipeline = CreatePipeline(new StableTileSource());
+
+        var frame = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(8));
+
+        assert(
+            frame is not null,
+            "Surface smoke should create a frame for concurrent-dispose verification.");
+
+        if (frame is null)
+            return;
+
+        using var surface = new ViewportRenderSurfaceRuntime();
+        var sink = new DisposeDuringCommitSink(surface);
+
+        var result = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+            frame,
+            sink,
+            surface: surface);
+
+        assert(
+            !result.Succeeded &&
+            result.Status == ViewportRenderDeliveryStatus.Failed &&
+            result.Error is ObjectDisposedException &&
+            sink.CommitCount == 1,
+            "Concurrent surface disposal should preserve the original commit/dispose failure without a secondary rollback exception.");
+    }
+
     private static async ValueTask VerifyFailureDiscardAsync(
         Action<bool, string> assert)
     {
@@ -454,6 +486,25 @@ public static class ViewportRenderSurfaceSmoke
         {
             DiscardCount++;
             return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class DisposeDuringCommitSink : TrackingSink
+    {
+        private readonly ViewportRenderSurfaceRuntime _surface;
+
+        public DisposeDuringCommitSink(ViewportRenderSurfaceRuntime surface)
+        {
+            _surface = surface;
+        }
+
+        public override ValueTask CommitFrameAsync(
+            ViewportRenderCommitContext context,
+            CancellationToken cancellationToken = default)
+        {
+            CommitCount++;
+            _surface.Dispose();
+            throw new ObjectDisposedException(nameof(ViewportRenderSurfaceRuntime));
         }
     }
 
