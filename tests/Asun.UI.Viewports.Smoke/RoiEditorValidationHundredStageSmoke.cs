@@ -23,18 +23,17 @@ public static class RoiEditorValidationHundredStageSmoke
         for (var i = 0; i < 10; i++)
             Check(
                 RoiEditorValidationRuntime.IsValid(before),
-                $"baseline ROI round {i + 1} should be structurally valid.");
+                $"baseline ROI round {i + 1} should be valid.");
 
         editor.PointerDown(new Vector2(50, 50));
         editor.PointerMove(new Vector2(65, 70));
-
         var duringEdit = editor.CreateSnapshot();
 
         for (var i = 0; i < 10; i++)
             Check(
                 duringEdit.Interaction.IsActive &&
                 RoiEditorValidationRuntime.IsValid(duringEdit),
-                $"active ROI edit round {i + 1} should retain transaction state.");
+                $"active edit round {i + 1} should retain interaction state.");
 
         editor.Cancel(new Vector2(65, 70));
         var afterCancel = editor.CreateSnapshot();
@@ -44,7 +43,7 @@ public static class RoiEditorValidationHundredStageSmoke
                 RoiEditorValidationRuntime.IsCancelledToCommitted(
                     before,
                     afterCancel),
-                $"ROI cancel round {i + 1} should restore committed geometry.");
+                $"cancel round {i + 1} should restore committed geometry.");
 
         editor.Mode = RoiEditorMode.CreateRectangle;
         editor.PointerDown(new Vector2(10, 10));
@@ -56,7 +55,7 @@ public static class RoiEditorValidationHundredStageSmoke
                 duringCreate.Interaction.Kind == RoiInteractionKind.Creating &&
                 duringCreate.Interaction.StartGeometry is null &&
                 RoiEditorValidationRuntime.IsValid(duringCreate),
-                $"ROI create preview round {i + 1} should keep creation semantics.");
+                $"create preview round {i + 1} should retain creation semantics.");
 
         editor.Cancel(new Vector2(20, 30));
         var afterCreateCancel = editor.CreateSnapshot();
@@ -66,7 +65,7 @@ public static class RoiEditorValidationHundredStageSmoke
                 RoiEditorValidationRuntime.IsValid(afterCreateCancel) &&
                 afterCreateCancel.Geometry!.Equals(
                     afterCreateCancel.CommittedGeometry!),
-                $"create cancellation round {i + 1} should restore the previous ROI.");
+                $"create cancellation round {i + 1} should restore committed ROI.");
 
         editor.Mode = RoiEditorMode.Select;
         editor.PointerDown(new Vector2(50, 50));
@@ -79,9 +78,14 @@ public static class RoiEditorValidationHundredStageSmoke
                 !afterCommit.Interaction.IsActive &&
                 afterCommit.Geometry!.Equals(
                     afterCommit.CommittedGeometry!),
-                $"committed ROI round {i + 1} should converge preview and committed geometry.");
+                $"commit round {i + 1} should converge preview and committed geometry.");
 
-        Check(
+        for (var i = 0; i < 10; i++)
+            Check(
+                RoiEditorValidationRuntime.IsValid(afterCommit),
+                $"final ROI state round {i + 1} should remain valid.");
+
+        assert(
             round == 100,
             $"ROI editor validation smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
