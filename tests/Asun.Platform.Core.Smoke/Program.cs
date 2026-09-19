@@ -1314,6 +1314,40 @@ Assert(
     "Convex hull polygon should preserve the outer area.",
     failures);
 
+var pointSet = new Asun.Vision.Contracts.PointSet2D(new[]
+{
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(10, 0),
+    new System.Numerics.Vector2(5, 10)
+});
+
+Assert(
+    pointSet.Count == 3 &&
+    pointSet.Bounds == new Asun.Vision.Contracts.PixelRect(0, 0, 10, 10) &&
+    pointSet.Centroid == new System.Numerics.Vector2(5, 10f / 3f),
+    "Point-set count, bounds and centroid should be deterministic.",
+    failures);
+
+Assert(
+    pointSet.ClosestPoint(new System.Numerics.Vector2(6, 1)) ==
+        new System.Numerics.Vector2(10, 0) &&
+    Math.Abs(pointSet.DistanceSquaredTo(new System.Numerics.Vector2(6, 1)) - 17) < 1e-12,
+    "Point-set nearest-point distance should be deterministic.",
+    failures);
+
+var translatedPointSet = pointSet.Translate(new System.Numerics.Vector2(2, -2));
+Assert(
+    translatedPointSet.Centroid == new System.Numerics.Vector2(7, 10f / 3f - 2),
+    "Point-set translation should move every point consistently.",
+    failures);
+
+var pointSetPolyline = pointSet.ToPolyline();
+Assert(
+    pointSetPolyline.Count == 3 &&
+    pointSet.GetAxisAlignedDiagonal().Length > 0,
+    "Point-set conversion to polyline and diagonal should be deterministic.",
+    failures);
+
 var polygon = new Asun.Vision.Contracts.Polygon2D(new[]
 {
     new System.Numerics.Vector2(0, 0),
