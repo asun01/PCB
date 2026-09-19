@@ -69,6 +69,7 @@ public static class ViewportCompositeSmoke
                 metrics.VisibleTiles > 0 &&
                 metrics.RoiCommands > 0 &&
                 metrics.SceneCommands > 0 &&
+                metrics.SceneDiffs >= 0 &&
                 metrics.Complete,
                 $"Composite chain {i + 1} should finish the image-to-render frame.");
 
@@ -87,6 +88,7 @@ public static class ViewportCompositeSmoke
             var refreshed = await runtime.RefreshAsync();
             assert(
                 refreshed.Tiles.Transform == refreshed.Roi.Transform &&
+                refreshed.SceneDiff.Count > 0 &&
                 refreshed.IsReady,
                 $"Composite chain {i + 1} should refresh after navigation.");
         }
