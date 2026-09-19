@@ -1472,6 +1472,15 @@ Assert(
 var waitingLeaseTask = resources.AcquireAsync("camera").AsTask();
 Assert(!waitingLeaseTask.IsCompleted, "A saturated resource should apply bounded waiting.", failures);
 
+var asyncTimedLease = await resources.AcquireAsync(
+    "camera",
+    TimeSpan.FromMilliseconds(5));
+
+Assert(
+    asyncTimedLease is null,
+    "Saturated resources should time out deterministically for asynchronous lease acquisition.",
+    failures);
+
 cameraLease!.Dispose();
 Assert(cameraLease.IsDisposed, "Disposed resource leases should report released state.", failures);
 using var secondCameraLease = await waitingLeaseTask;
