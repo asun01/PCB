@@ -453,6 +453,11 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
     private void ThrowIfDisposed() =>
         ObjectDisposedException.ThrowIf(_disposed != 0, this);
 
+public readonly record struct TileViewportRuntimeStatistics(
+    TileCacheStatistics Cache,
+    int InFlightCount,
+    int PlannedRequestCount);
+
     private sealed record RefreshOperation(
         long Generation,
         CancellationTokenSource Cancellation,
