@@ -101,6 +101,27 @@ Assert(
     failures);
 
 Assert(
+    pipeline.RootNodeIds.SequenceEqual(new[] { "Acquire" }) &&
+    pipeline.LeafNodeIds.SequenceEqual(new[] { "Report" }),
+    "Pipeline root and leaf nodes should be deterministic.",
+    failures);
+
+Assert(
+    pipeline.GetDependencies("Inspect").SequenceEqual(new[] { "Acquire" }) &&
+    pipeline.GetDependents("Inspect").SequenceEqual(new[] { "Report" }),
+    "Pipeline dependency relationships should be exposed accurately.",
+    failures);
+
+var pipelineLayers = pipeline.GetExecutionLayers();
+Assert(
+    pipelineLayers.Count == 3 &&
+    pipelineLayers[0].SequenceEqual(new[] { "Acquire" }) &&
+    pipelineLayers[1].SequenceEqual(new[] { "Inspect" }) &&
+    pipelineLayers[2].SequenceEqual(new[] { "Report" }),
+    "Pipeline execution layers should match dependency depth.",
+    failures);
+
+Assert(
     execution.SequenceEqual(new[] { "Acquire", "Inspect", "Report" }),
     "Pipeline dependencies should be honored.",
     failures);
