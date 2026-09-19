@@ -131,7 +131,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             _presentedRegions = regions is null
                 ? Array.Empty<System.Drawing.RectangleF>()
                 : regions.ToArray();
-            _presentedGeneration = generation;
+            _presentedGeneration = transaction.Generation;
             _presentationSequence++;
             _renderingGeneration = null;
             _state = ViewportRenderSurfaceState.Presented;
