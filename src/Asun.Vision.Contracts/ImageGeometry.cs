@@ -107,6 +107,31 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         return new PixelRect(translatedX, translatedY, Width, Height);
     }
 
+    public PixelRect ScaleAroundCenter(double factorX, double factorY)
+    {
+        ValidateFinite(factorX, nameof(factorX));
+        ValidateFinite(factorY, nameof(factorY));
+
+        if (!IsValid)
+            throw new InvalidOperationException("The rectangle is invalid.");
+
+        if (factorX < 0 || factorY < 0)
+            throw new ArgumentOutOfRangeException(nameof(factorX), "Scale factors cannot be negative.");
+
+        var center = Center;
+        var width = Width * factorX;
+        var height = Height * factorY;
+
+        if (!double.IsFinite(width) || !double.IsFinite(height))
+            throw new ArgumentOutOfRangeException(nameof(factorX), "Scaling produces non-finite dimensions.");
+
+        return new PixelRect(
+            center.X - width / 2d,
+            center.Y - height / 2d,
+            width,
+            height);
+    }
+
     public PixelRect Inflate(double horizontal, double vertical)
     {
         ValidateFinite(horizontal, nameof(horizontal));
