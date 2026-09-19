@@ -84,6 +84,28 @@ public readonly record struct ViewportInteractionState(
         };
     }
 
+    public ViewportInteractionState CenterOnImagePoint(Vector2 imagePoint)
+    {
+        Validate(imagePoint, nameof(imagePoint));
+
+        return this with
+        {
+            Transform = Transform.CenterOnImagePoint(imagePoint)
+        };
+    }
+
+    public ViewportInteractionState FitToViewport()
+    {
+        return this with
+        {
+            Transform = ViewportTransform.Fit(
+                Transform.ImageSize,
+                Transform.ViewportSize),
+            IsPanning = false,
+            PointerPosition = Vector2.Zero
+        };
+    }
+
     private static void Validate(Vector2 point, string parameterName)
     {
         if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
