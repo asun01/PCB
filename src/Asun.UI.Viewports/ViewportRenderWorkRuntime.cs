@@ -72,7 +72,7 @@ public static class ViewportRenderWorkRuntime
 
                 var imageBounds = TileRequestPlanner.GetRequestRectangle(
                     frame.Tiles.Transform.ImageSize,
-                    GetTileSize(frame),
+                    frame.Tiles.TileSize,
                     request);
 
                 var viewportBounds =
@@ -161,30 +161,6 @@ public static class ViewportRenderWorkRuntime
             Deduplicate(items),
             dirtyFlags,
             frame.Generation);
-    }
-
-    private static Vector2 GetTileSize<TTile>(
-        ViewportCompositeFrame<TTile> frame) =>
-        frame.Tiles.Requests.Count == 0
-            ? Vector2.One
-            : InferTileSize(frame);
-
-    private static Vector2 InferTileSize<TTile>(
-        ViewportCompositeFrame<TTile> frame)
-    {
-        var requests = frame.Tiles.Requests;
-        if (requests.Count == 0)
-            return Vector2.One;
-
-        var first = requests[0];
-        var rectangle = TileRequestPlanner.GetRequestRectangle(
-            frame.Tiles.Transform.ImageSize,
-            new System.Numerics.Vector2(1, 1),
-            first);
-
-        return new System.Numerics.Vector2(
-            Math.Max(1f, rectangle.Width),
-            Math.Max(1f, rectangle.Height));
     }
 
     private static RectangleF Union(
