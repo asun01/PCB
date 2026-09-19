@@ -83,6 +83,16 @@ public readonly record struct Circle2D(
         return Center + delta * scale;
     }
 
+    public double DistanceToCircumference(Vector2 point)
+    {
+        EnsureValid();
+
+        if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        return Math.Abs(Math.Sqrt(Vector2.DistanceSquared(point, Center)) - Radius);
+    }
+
     public double DistanceSquaredToCenter(Vector2 point)
     {
         EnsureValid();
