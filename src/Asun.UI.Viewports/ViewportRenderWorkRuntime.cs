@@ -89,21 +89,14 @@ public static class ViewportRenderWorkRuntime
             }
         }
 
-        if (roiDirty)
-        {
-            foreach (var command in frame.SceneCommands)
-            {
-                var bounds = ViewportSceneRuntime.GetCommandBounds(command);
-                items.Add(
-                    new ViewportRenderWorkItem(
-                        ViewportRenderWorkKind.Roi,
-                        bounds,
-                        command.RoiId,
-                        null,
-                        frame.Generation));
-            }
-        }
-        else if (frame.SceneDiff.Count > 0)
+        var hasTransformDiff = frame.SceneDiff.Any(
+            diff => diff.Kind == ViewportSceneDiffKind.TransformChanged);
+
+        var canIncrementallyRedrawScene =
+            frame.SceneDiff.Count > 0 &&
+            !hasTransformDiff;
+
+        if (canIncrementallyRedrawScene)
         {
             foreach (var diff in frame.SceneDiff)
             {
@@ -129,6 +122,20 @@ public static class ViewportRenderWorkRuntime
                             null,
                             frame.Generation));
                 }
+            }
+        }
+        else if (roiDirty || frame.SceneDiff.Count == 0)
+        {
+            foreach (var command in frame.SceneCommands)
+            {
+                var bounds = ViewportSceneRuntime.GetCommandBounds(command);
+                items.Add(
+                    new ViewportRenderWorkItem(
+                        ViewportRenderWorkKind.Roi,
+                        bounds,
+                        command.RoiId,
+                        null,
+                        frame.Generation));
             }
         }
 
