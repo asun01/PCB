@@ -24,5 +24,6 @@
   <Project Path="tests/Asun.Domain.Pcb.Smoke/Asun.Domain.Pcb.Smoke.csproj" />
   <Project Path="tests/Asun.Metrology.Core.Smoke/Asun.Metrology.Core.Smoke.csproj" />
   <Project Path="tests/Asun.Device.Impl.Smoke/Asun.Device.Impl.Smoke.csproj" />
+  <Project Path="tests/Asun.Program.Core.Smoke/Asun.Program.Core.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Quality.Smoke/Asun.Domain.Quality.Smoke.csproj" />
 </Solution>
