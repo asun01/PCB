@@ -161,7 +161,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             dirtyFlags,
             composite.Generation);
 
-        if (!_scheduler.TryTakeFrame(now, out var submission))
+        if (!_scheduler.TryTakeFrame(now, out var submission, composite.Generation))
         {
             var emptyResult = new ViewportRenderPipelineFrame<TTile>(
                 composite,
