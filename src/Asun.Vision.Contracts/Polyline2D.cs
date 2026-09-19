@@ -122,6 +122,18 @@ public sealed class Polyline2D
         return PointAtDistance(Length * fraction);
     }
 
+    public bool TryPointAtDistance(double distance, out Vector2 point)
+    {
+        if (!double.IsFinite(distance) || distance < 0 || distance > Length)
+        {
+            point = default;
+            return false;
+        }
+
+        point = PointAtDistance(distance);
+        return true;
+    }
+
     public Vector2 PointAtDistance(double distance)
     {
         if (!double.IsFinite(distance) || distance < 0 || distance > Length)
