@@ -35,7 +35,10 @@ public readonly record struct ViewportPresentationQueueStatistics(
     long? PresentedSequence,
     long? InFlightGeneration,
     long? InFlightSequence,
-    long LatestSubmissionSequence);
+    long LatestSubmissionSequence,
+    bool CommitInProgress,
+    long? CommittingGeneration,
+    long? CommittingSequence);
 
 public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 {
@@ -54,6 +57,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
     private long _cancelled;
     private long? _latestGeneration;
     private ViewportPresentationPacket<TTile>? _inFlight;
+    private ViewportPresentationSubmissionToken? _committingToken;
     private long? _presentedGeneration;
     private long? _presentedSequence;
     private int _disposed;
@@ -87,7 +91,10 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                     _presentedSequence,
                     _inFlight?.Token.Generation,
                     _inFlight?.Token.Sequence,
-                    _latestSubmissionSequence);
+                    _latestSubmissionSequence,
+                    _committingToken is not null,
+                    _committingToken?.Generation,
+                    _committingToken?.Sequence);
             }
         }
     }
@@ -140,7 +147,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                 _latestSubmissionSequence = packet.Token.Sequence;
 
                 if (_inFlight is not null &&
-                    packet.Token.Sequence > _inFlight.Token.Sequence)
+                    packet.Token.Sequence > _inFlight.Token.Sequence &&
+                    _committingToken is null)
                 {
                     supersededCancellation = _inFlightCancellation;
                 }
@@ -240,7 +248,38 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             .ConfigureAwait(false);
     }
 
-    public bool TryAcknowledgePresented(
+    public bool TryBeginCommit(
+        ViewportPresentationSubmissionToken token)
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            if (_committingToken is not null ||
+                _inFlight is null ||
+                _inFlight.Token != token ||
+                _latestSubmissionSequence != token.Sequence)
+                return false;
+
+            _committingToken = token;
+            return true;
+        }
+    }
+
+    public bool IsCommitCurrent(
+        ViewportPresentationSubmissionToken token)
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            return _inFlight is not null &&
+                _inFlight.Token == token &&
+                _committingToken == token;
+        }
+    }
+
+    public bool TryCompleteCommit(
         ViewportPresentationSubmissionToken token)
     {
         lock (_sync)
@@ -249,7 +288,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
             if (_inFlight is null ||
                 _inFlight.Token != token ||
-                _latestSubmissionSequence != token.Sequence)
+                _committingToken != token)
                 return false;
 
             if (_presentedSequence is long presented &&
@@ -262,12 +301,35 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
             _presentedGeneration = token.Generation;
             _presentedSequence = token.Sequence;
+            _committingToken = null;
+            _committingToken = null;
             _inFlight = null;
             _inFlightCancellation?.Dispose();
             _inFlightCancellation = null;
             _presented++;
             return true;
         }
+    }
+
+    public bool TryAbortCommit(
+        ViewportPresentationSubmissionToken token)
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            if (_committingToken != token)
+                return false;
+
+            _committingToken = null;
+            return true;
+        }
+    }
+
+    public bool TryAcknowledgePresented(
+        ViewportPresentationSubmissionToken token)
+    {
+        return TryCompleteCommit(token);
     }
 
     public bool TryCancel(
@@ -277,7 +339,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
 
-            if (_inFlight is null ||
+            if (_committingToken is not null ||
+                _inFlight is null ||
                 _inFlight.Token != token)
                 return false;
 
@@ -296,6 +359,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             ThrowIfDisposed();
 
             _pending.Clear();
+            _committingToken = null;
             _inFlight = null;
             _inFlightCancellation?.Cancel();
             _inFlightCancellation?.Dispose();
@@ -321,6 +385,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
         lock (_sync)
         {
             _pending.Clear();
+            _committingToken = null;
             _inFlight = null;
             _inFlightCancellation?.Cancel();
             _inFlightCancellation?.Dispose();
