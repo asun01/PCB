@@ -76,6 +76,14 @@ public readonly record struct ViewportTransform(
             viewportRectangle.Width / (float)Scale,
             viewportRectangle.Height / (float)Scale);
 
+    public double FitScale =>
+        Math.Min(
+            ViewportSize.X / ImageSize.X,
+            ViewportSize.Y / ImageSize.Y);
+
+    public double ZoomRatioToFit =>
+        Scale / FitScale;
+
     public Vector2 RenderedImageSize =>
         ImageSize * (float)Scale;
 
