@@ -842,3 +842,59 @@ Verification:
 Current continuous execution position:
 - completed through Stage 12000 in the active 4501–104500 window;
 - next natural stage: 12001.
+
+
+### 11501→12000 Finding audit replay chain — 2026-09-19
+
+Completed stages 11501–12000.
+
+Implemented:
+- QualityInspectionFindingAuditProjectionDiff;
+- QualityInspectionFindingAuditEnvelope;
+- QualityInspectionFindingAuditWindow;
+- QualityInspectionFindingAuditWindowDiff;
+- QualityInspectionFindingAuditReplayBundle.
+
+Replay chain:
+- projection diff detects added/removed/changed FindingIds;
+- envelope binds ResultId/SnapshotId/Sequence to projection fingerprint;
+- window provides deterministic ordering and complete supplied-result coverage;
+- window diff detects added/removed/changed ResultIds using projection fingerprints;
+- replay bundle composes previous/current projections and deterministic diff.
+
+Closed acceptance asset:
+- PHASE1_11501_12000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- five new Smokes use exact 10-loop/10-Check/round==100 structure;
+- balanced delimiters and no TODO/NotImplementedException placeholder;
+- no build/test/CI success claimed without authoritative execution evidence.
+
+### 12001→12500 top-level audit projection/replay chain — 2026-09-19
+
+Completed stages 12001–12500.
+
+Implemented:
+- QualityInspectionAuditProjection composing AuditRecord, InspectionSummary, RuleAuditProjection, and FindingAuditProjection;
+- deterministic top-level audit projection fingerprint;
+- QualityInspectionAuditEnvelope;
+- QualityInspectionAuditWindow;
+- QualityInspectionAuditWindowDiff;
+- QualityInspectionAuditReplayBundle.
+
+Boundary:
+- top-level audit remains a composition/observation layer over existing Quality contracts;
+- no acceptance policy, persistence schema, transport protocol, HALCON, DevExpress, or hardware authority introduced.
+
+Closed acceptance asset:
+- PHASE1_12001_12500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- all five 12001–12500 Smokes use exact 10-loop/10-Check/round==100 structure;
+- static delimiter checks balanced;
+- no TODO/NotImplementedException placeholder in new assets;
+- workflow lookup for checkpoint commit fe7dbc63f9f32d3a5c415cc92a3f0ed6e1116e16 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 12500 in the active 4501–104500 window;
+- next natural stage: 12501.
