@@ -569,6 +569,17 @@ Assert(
     "Pixel rectangle union should contain both input rectangles.",
     failures);
 
+var distanceSquared = roi.DistanceSquaredTo(new Asun.Vision.Contracts.PixelPoint(0, 50));
+Assert(
+    Math.Abs(distanceSquared - 10000) < 1e-9,
+    "Pixel rectangle point distance should be zero on axes inside the rectangle and positive outside.",
+    failures);
+
+var disjointIntersection = roi.TryIntersect(
+    new Asun.Vision.Contracts.PixelRect(500, 500, 20, 20),
+    out _);
+Assert(!disjointIntersection, "Disjoint pixel rectangles should report no intersection.", failures);
+
 var overlap = roi.Intersect(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
 Assert(
     overlap == new Asun.Vision.Contracts.PixelRect(250, 100, 50, 50),
