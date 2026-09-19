@@ -7,3 +7,10 @@ Current deterministic checks include solution/project layout, FunctionSpec/PageC
 `validate_repository_authorities.py` reads `docs/00-baseline/REQUIRED-REPOSITORY-AUTHORITIES.md` as its sole registry source. Missing authorities remain governance gates; the tool reports them without inventing substitutes or changing gate state.
 
 `generate_task_admission.py` derives per-FunctionSpec admission from the recorded open gates. It does not close gates or invent semantics; it explicitly distinguishes preparation-allowed work from production-blocked work.
+
+
+## C# source structure validator
+
+The validate_csharp_structure.py tool performs a dependency-free structural scan over repository C# files. It checks delimiter balance, negative nesting, and several high-confidence class-scope executable-statement patterns. It is intentionally not a C# compiler and does not replace dotnet build or tests.
+
+The repository gate invokes it before the document and architecture validators.
