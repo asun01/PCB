@@ -275,6 +275,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     {
         _input.Dispose();
         _pipeline.Dispose();
+        _continuous.PresentationQueue.Dispose();
         _continuous.Surface.Dispose();
         _lifecycle.Dispose();
     }
