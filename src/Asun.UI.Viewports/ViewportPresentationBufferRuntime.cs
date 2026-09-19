@@ -212,6 +212,14 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
 
             var slot = _slots[transaction.SlotIndex];
 
+            if (renderedUnits > slot.PlannedUnits)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(renderedUnits),
+                    renderedUnits,
+                    "Rendered units cannot exceed planned presentation units.");
+            }
+
             if (slot.State != ViewportPresentationBufferState.Rendering ||
                 slot.Generation != transaction.Submission.Generation ||
                 slot.Sequence != transaction.Submission.Sequence)
