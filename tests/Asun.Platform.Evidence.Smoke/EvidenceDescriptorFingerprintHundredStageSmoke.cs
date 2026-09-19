@@ -27,7 +27,7 @@ public static class EvidenceDescriptorFingerprintHundredStageSmoke
         for(var i=0;i<10;i++) Check(EvidenceDescriptorFingerprintRuntime.CreateFingerprint(descriptor)==fingerprint,"Descriptor fingerprint should be deterministic.");
         for(var i=0;i<10;i++) Check(EvidenceDescriptorFingerprintValidationRuntime.IsValidDescriptor(descriptor,fingerprint),"Descriptor fingerprint should validate the source descriptor.");
         for(var i=0;i<10;i++) Check(!EvidenceDescriptorFingerprintValidationRuntime.IsValidDescriptor(tampered,fingerprint),"Descriptor mutation should invalidate the original fingerprint.");
-        for(var i=0;i<10;i++) Check(!EvidenceDescriptorFingerprintValidationRuntime.IsValidFingerprint(bad)==false,"A valid-length lowercase hex fingerprint should pass syntax validation.");
+        for(var i=0;i<10;i++) Check(EvidenceDescriptorFingerprintValidationRuntime.IsValidFingerprint(bad),"A valid-length lowercase hex fingerprint should pass syntax validation.");
         for(var i=0;i<10;i++) Check(fingerprint.All(character=>Uri.IsHexDigit(character)),"Descriptor fingerprint should contain only hexadecimal characters.");
         for(var i=0;i<10;i++) Check(fingerprint.All(character=>char.ToLowerInvariant(character)==character),"Descriptor fingerprint should remain lowercase.");
         for(var i=0;i<10;i++) Check(descriptor.Handle.Value=="frame://fp","Descriptor source handle should remain stable.");
