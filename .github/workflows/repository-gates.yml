@@ -32,6 +32,9 @@ jobs:
       - name: C# source structure check
         run: python3 tools/validate_csharp_structure.py .
 
+      - name: C# source structure validator tests
+        run: python3 tools/test_validate_csharp_structure.py
+
       - name: Validate baseline documents
         run: python3 tools/validate_docs.py
 
