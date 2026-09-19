@@ -43,6 +43,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
     private readonly SemaphoreSlim _activitySignal = new(0, 1);
     private readonly int _capacity;
     private long _submissionSequence;
+    private long _latestSubmissionSequence;
+    private CancellationTokenSource? _inFlightCancellation;
     private long _enqueued;
     private long _dequeued;
     private long _presented;
@@ -129,6 +131,14 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                     ++_submissionSequence),
                 frame);
 
+            _latestSubmissionSequence = packet.Token.Sequence;
+
+            if (_inFlight is not null &&
+                packet.Token.Sequence > _inFlight.Token.Sequence)
+            {
+                _inFlightCancellation?.Cancel();
+            }
+
             var wasEmpty = _pending.Count == 0;
             _pending.Enqueue(packet);
             _enqueued++;
@@ -164,8 +174,38 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
             _activitySignal.Wait(0);
             _inFlight = packet;
+            _inFlightCancellation = new CancellationTokenSource();
             _dequeued++;
             return true;
+        }
+    }
+
+    public CancellationToken GetInFlightCancellationToken(
+        ViewportPresentationSubmissionToken token)
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            if (_inFlight is null ||
+                _inFlight.Token != token ||
+                _inFlightCancellation is null)
+                throw new InvalidOperationException(
+                    "The requested presentation token is not in flight.");
+
+            return _inFlightCancellation.Token;
+        }
+    }
+
+    public bool IsCurrent(ViewportPresentationSubmissionToken token)
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            return _inFlight is not null &&
+                _inFlight.Token == token &&
+                _latestSubmissionSequence == token.Sequence;
         }
     }
 
@@ -201,6 +241,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             _presentedGeneration = token.Generation;
             _presentedSequence = token.Sequence;
             _inFlight = null;
+            _inFlightCancellation?.Dispose();
+            _inFlightCancellation = null;
             _presented++;
             return true;
         }
@@ -218,6 +260,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                 return false;
 
             _inFlight = null;
+            _inFlightCancellation?.Dispose();
+            _inFlightCancellation = null;
             _cancelled++;
             return true;
         }
@@ -231,6 +275,9 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
             _pending.Clear();
             _inFlight = null;
+            _inFlightCancellation?.Cancel();
+            _inFlightCancellation?.Dispose();
+            _inFlightCancellation = null;
             _activitySignal.Wait(0);
             _enqueued = 0;
             _dequeued = 0;
@@ -253,6 +300,9 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
         {
             _pending.Clear();
             _inFlight = null;
+            _inFlightCancellation?.Cancel();
+            _inFlightCancellation?.Dispose();
+            _inFlightCancellation = null;
             _activitySignal.Dispose();
         }
     }
