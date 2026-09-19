@@ -80,7 +80,7 @@ public static class ViewportRenderDeliveryRuntime
                 0,
                 null);
         }
-        catch (ViewportRenderWorkUnavailableException)
+        catch (ViewportRenderWorkUnavailableException exception)
         {
             result = new ViewportRenderDeliveryResult(
                 false,
@@ -89,7 +89,7 @@ public static class ViewportRenderDeliveryRuntime
                 frame.Composite.Generation,
                 0,
                 1,
-                null);
+                exception);
         }
         catch (Exception exception)
         {
