@@ -55,6 +55,15 @@ public static class ProductionFrameProvenanceHundredStageSmoke
         shifted[1]=CapturedFrame.Create(
             shifted[1].Metadata with {Sequence=FrameSequence.Create(3)},
             shifted[1].Payload);
+        var mismatchedRejected=false;
+        try
+        {
+            _=ProductionFrameProvenanceRuntime.Create(production,shifted);
+        }
+        catch(ArgumentException)
+        {
+            mismatchedRejected=true;
+        }
 
         for(var i=0;i<10;i++) Check(recorder.Frames.Count==2,"Recording source should retain both captured frames.");
         for(var i=0;i<10;i++) Check(production.FrameCount==2,"Production session should retain two frames.");
@@ -65,7 +74,7 @@ public static class ProductionFrameProvenanceHundredStageSmoke
         for(var i=0;i<10;i++) Check(provenance.All(frame=>frame.PayloadFingerprint.Length==64),"Provenance should preserve payload fingerprints.");
         for(var i=0;i<10;i++) Check(ProductionFrameProvenanceRuntime.IsValid(production,provenance),"Frame provenance should validate against production.");
         for(var i=0;i<10;i++) Check(!ProductionFrameProvenanceRuntime.IsValid(production,tampered),"Tampered frame dimensions should be rejected.");
-        for(var i=0;i<10;i++) Check(shifted[1].Metadata.Sequence.Value==3,"Changed source frame sequence should be observable before provenance creation.");
+        for(var i=0;i<10;i++) Check(mismatchedRejected,"Mismatched source frame sequence should be rejected by provenance creation.");
 
         assert(round==100,$"Production frame provenance smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
