@@ -81,6 +81,18 @@ public static class ViewportInputRouterValidationHundredStageSmoke
                 move.Kind == ViewportGestureKind.Panning,
                 $"gesture result stability round {i + 1} should remain deterministic.");
 
+        for (var i = 0; i < 10; i++)
+            Check(
+                ViewportInputRouterValidationRuntime.IsReleased(
+                    capture.Owner,
+                    router.CapturedOwner),
+                $"final release contract round {i + 1} should remain deterministic.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                capture.Owner == ViewportInputOwner.None,
+                $"final capture owner round {i + 1} should remain None.");
+
         assert(
             round == 100,
             $"Input router validation smoke should execute exactly 100 numbered rounds; actual {round}.");
