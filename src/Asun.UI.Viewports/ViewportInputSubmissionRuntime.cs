@@ -22,7 +22,7 @@ public readonly record struct ViewportInputEvent(
 public sealed class ViewportInputSubmissionRuntime
 {
     private readonly object _sync = new();
-    private readonly Queue<ViewportInputEvent> _queue = new();
+    private readonly LinkedList<ViewportInputEvent> _queue = new();
     private long _sequence;
     private long _submitted;
     private long _coalesced;
@@ -64,14 +64,13 @@ public sealed class ViewportInputSubmissionRuntime
             var sequence = ++_sequence;
 
             if (kind == ViewportInputEventKind.PointerMove &&
-                _queue.Count > 0 &&
-                _queue.Last().Kind == ViewportInputEventKind.PointerMove)
+                _queue.Last?.Value.Kind == ViewportInputEventKind.PointerMove)
             {
-                _queue.Dequeue();
+                _queue.RemoveLast();
                 _coalesced++;
             }
 
-            _queue.Enqueue(
+            _queue.AddLast(
                 new ViewportInputEvent(
                     sequence,
                     kind,
@@ -95,7 +94,9 @@ public sealed class ViewportInputSubmissionRuntime
             var events = new List<ViewportInputEvent>(count);
 
             for (var i = 0; i < count; i++)
-                events.Add(_queue.Dequeue());
+                var node = _queue.First!;
+                events.Add(node.Value);
+                _queue.RemoveFirst();
 
             return events;
         }
