@@ -60,7 +60,7 @@ public static class AsyncPipelineValidationHundredStageSmoke
             Check(closure.SequenceEqual(new[] { "A", "B" }), $"dependency closure round {i + 1} should include both roots.");
 
         for (var i = 0; i < 10; i++)
-            Check(dependents.SequenceEqual(new[] { "B", "C" }) == false || dependents.Contains("C"), $"dependent closure round {i + 1} should include the downstream graph.");
+            Check(dependents.SequenceEqual(new[] { "B", "C" }), $"dependent closure round {i + 1} should include the downstream graph.");
 
         for (var i = 0; i < 10; i++)
             Check(execution.Contains("A") && execution.Contains("B") && execution.Contains("C"), $"execution coverage round {i + 1} should include every node.");
