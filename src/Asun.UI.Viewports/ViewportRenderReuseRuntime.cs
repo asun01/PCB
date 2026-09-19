@@ -32,7 +32,13 @@ public sealed class ViewportRenderReuseRuntime<TTile>
             return;
 
         lock (_sync)
+        {
+            if (_latest is not null &&
+                frame.Composite.Generation < _latest.Composite.Generation)
+                return;
+
             _latest = frame;
+        }
     }
 
     public void Clear()
