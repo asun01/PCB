@@ -192,7 +192,7 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                     bufferTransaction.Value,
                     delivery.RenderedUnits,
                     frame.CommandStream.Regions,
-                    () => _queue.IsCurrent(packet.Token));
+                    () => _queue.IsCommitCurrent(packet.Token));
 
                 if (_queue.TryCompleteCommit(packet.Token))
                 {
