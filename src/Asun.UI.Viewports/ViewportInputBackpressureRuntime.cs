@@ -56,8 +56,14 @@ public sealed class ViewportInputBackpressureRuntime
     {
         ArgumentNullException.ThrowIfNull(input);
 
+        if (input.IsCompleted || input.IsCancelled)
+            return false;
+
         lock (_sync)
         {
+            if (input.IsCompleted || input.IsCancelled)
+                return false;
+
             if (input.PendingCount >= _capacity)
             {
                 switch (_dropPolicy)
@@ -84,13 +90,24 @@ public sealed class ViewportInputBackpressureRuntime
                 }
             }
 
-            input.Submit(
-                kind,
-                position,
-                wheelDelta,
-                button);
+            try
+            {
+                input.Submit(
+                    kind,
+                    position,
+                    wheelDelta,
+                    button);
 
-            return true;
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+            catch (ObjectDisposedException)
+            {
+                return false;
+            }
         }
     }
 }
