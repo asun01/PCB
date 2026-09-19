@@ -106,8 +106,10 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             .RefreshAsync(includePrefetch, cancellationToken)
             .ConfigureAwait(false);
 
+        var dirtyFlags = _composite.ConsumeDirtyFlags();
+
         _scheduler.Submit(
-            composite.DirtyFlags,
+            dirtyFlags,
             composite.Generation);
 
         if (!_scheduler.TryTakeFrame(now, out var submission))
@@ -153,8 +155,10 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         ArgumentNullException.ThrowIfNull(composite);
         ThrowIfDisposed();
 
+        var dirtyFlags = _composite.ConsumeDirtyFlags();
+
         _scheduler.Submit(
-            composite.DirtyFlags,
+            dirtyFlags,
             composite.Generation);
 
         if (!_scheduler.TryTakeFrame(now, out var submission))
@@ -168,7 +172,6 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                 ViewportRenderBatchRuntime.Empty(
                     composite.Generation));
 
-            _reuse.Store(emptyResult);
             return emptyResult;
         }
 
