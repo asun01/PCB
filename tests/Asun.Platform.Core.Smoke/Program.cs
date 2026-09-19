@@ -533,6 +533,17 @@ Assert(
     "Zoom should preserve the viewport anchor.",
     failures);
 
+var clampedFactor = viewport.WithZoomFactorClamped(
+    zoomFactor: 100,
+    minScale: 0.5,
+    maxScale: 4,
+    viewportAnchor: new System.Numerics.Vector2(600, 400));
+
+Assert(
+    Math.Abs(clampedFactor.Scale - 4) < 1e-9,
+    "Clamped zoom factor should respect scale bounds.",
+    failures);
+
 var doubled = viewport.WithZoomFactor(2, new System.Numerics.Vector2(600, 400));
 Assert(
     Math.Abs(doubled.Scale - zoomed.Scale) < 1e-9,
