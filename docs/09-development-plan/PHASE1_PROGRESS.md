@@ -196,3 +196,17 @@ Verification note:
 - Static source checks were used; no build/test/CI success is asserted without authoritative execution evidence.
 
 - Final hardening after the 1501–2000 static audit: Diagnostic Manifest hash validation now rejects null/blank hashes cleanly; Presentation Diagnostic equivalence now includes the complete Presentation Snapshot; capture rejects Presentation/State generation drift.
+
+### 2001→2500 checkpoint and bundle integrity hardening — 2026-09-19
+
+- Completed stages 2001–2500 as five contiguous 100-stage blocks.
+- Corrected a real semantic defect in ViewportReplayExecutionReport: the execution layer now preserves the actual last input sequence instead of deriving it from result count.
+- ViewportReplayCheckpointRuntime.Capture(report) now uses the actual source sequence; non-empty checkpoints require a positive last sequence.
+- ViewportReplayCheckpointStore now enforces monotonic Generation in addition to ordinal/input sequence.
+- ViewportReplaySessionBundleRuntime.FromJson now normalizes malformed JSON parsing into a deterministic InvalidOperationException.
+- Bundle validation now rejects non-finite input positions, undefined input kind/button values, duplicate or blank evidence StableKeys, and dangling audit evidence references.
+- Repaired an existing malformed string literal in ViewportReplayBundleSchemaHundredStageSmoke.
+- Added and registered five new exact 100-round Smoke matrices for checkpoint sequence semantics, bundle integrity, JSON serialization boundary, checkpoint-store generation, and integrated diagnostic integrity.
+- Added independent stage ledgers for 2001–2100, 2101–2200, 2201–2300, 2301–2400, and 2401–2500.
+- Static verification confirms each new 100-round smoke has exactly 10 loops × 10 Check calls and round == 100.
+- No local build/test/CI success is asserted without authoritative execution evidence.
