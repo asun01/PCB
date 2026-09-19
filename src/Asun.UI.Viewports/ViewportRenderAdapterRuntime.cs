@@ -127,7 +127,7 @@ public static class ViewportRenderAdapterRuntime
             }
 
             if (work.Kind == ViewportRenderWorkKind.Tile &&
-                work.Tile is TileIndex unavailableTile)
+                work.Tile is TileIndex)
             {
                 throw new ViewportRenderWorkUnavailableException(work);
             }
