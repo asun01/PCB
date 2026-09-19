@@ -167,6 +167,45 @@ public static class ImageTileGeometry
                tileIndex.Y < gridSize.Y;
     }
 
+    public static bool TryGetTileIndexAtImagePoint(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        Vector2 imagePoint,
+        out TileIndex tileIndex)
+    {
+        ValidatePositiveFinite(imageSize, nameof(imageSize));
+        ValidatePositiveFinite(tileSize, nameof(tileSize));
+
+        if (!float.IsFinite(imagePoint.X) ||
+            !float.IsFinite(imagePoint.Y) ||
+            imagePoint.X < 0 ||
+            imagePoint.Y < 0 ||
+            imagePoint.X >= imageSize.X ||
+            imagePoint.Y >= imageSize.Y)
+        {
+            tileIndex = default;
+            return false;
+        }
+
+        var gridSize = CalculateGridSize(imageSize, tileSize);
+        tileIndex = new TileIndex(
+            Math.Clamp((int)Math.Floor(imagePoint.X / tileSize.X), 0, gridSize.X - 1),
+            Math.Clamp((int)Math.Floor(imagePoint.Y / tileSize.Y), 0, gridSize.Y - 1));
+
+        return true;
+    }
+
+    public static TileIndex GetTileIndexAtImagePoint(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        Vector2 imagePoint)
+    {
+        if (!TryGetTileIndexAtImagePoint(imageSize, tileSize, imagePoint, out var tileIndex))
+            throw new ArgumentOutOfRangeException(nameof(imagePoint), imagePoint, "Point is outside the image bounds.");
+
+        return tileIndex;
+    }
+
     public static RectangleF GetTileRectangle(
         Vector2 imageSize,
         Vector2 tileSize,
