@@ -173,7 +173,7 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
 
             if (delivery.Succeeded)
             {
-                if (!_queue.IsCurrent(packet.Token))
+                if (!_queue.IsCommitCurrent(packet.Token))
                 {
                     if (bufferTransaction is ViewportPresentationBufferTransaction staleBuffer)
                         _buffers.Discard(staleBuffer);
