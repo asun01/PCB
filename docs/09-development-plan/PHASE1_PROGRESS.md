@@ -933,3 +933,46 @@ Workflow boundary:
 Current continuous execution position:
 - completed through Stage 13000 in the active 4501–104500 window;
 - next natural stage: 13001.
+
+
+### 13001→13500 Evidence snapshot integrity chain — 2026-09-19
+
+Completed stages 13001–13500.
+
+Implemented:
+- EvidenceCatalogSnapshotFingerprintRuntime and validation;
+- EvidenceCatalogSnapshotEnvelope, creation, and validation;
+- sequenced EvidenceCatalogSnapshotWindow and validation;
+- EvidenceCatalogSnapshotWindowDiff and validation;
+- five dedicated exact 100-round Smokes covering fingerprint, envelope, window, window diff, and end-to-end integration.
+
+Real corrections during this block:
+- fixed the Evidence descriptor fingerprint Smoke's tautological syntax assertion;
+- fixed the main Evidence Smoke so helper Smoke counters cannot contaminate the primary 100-round counter;
+- kept smoke assets in the dedicated Evidence Smoke project rather than the runtime library;
+- hardened the envelope Smoke to use a real mutated snapshot instead of an invalid class with-expression.
+
+Boundary:
+- no database/filesystem/object-store provider, persistence schema, transport protocol, HALCON, DevExpress, renderer, or hardware authority introduced;
+- Evidence remains a vendor-neutral descriptor/catalog contract.
+
+Closed acceptance asset:
+- PHASE1_13001_13500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_13001-13100_STAGE_LEDGER_20260919.md
+- PHASE1_13101-13200_STAGE_LEDGER_20260919.md
+- PHASE1_13201-13300_STAGE_LEDGER_20260919.md
+- PHASE1_13301-13400_STAGE_LEDGER_20260919.md
+- PHASE1_13401-13500_STAGE_LEDGER_20260919.md
+
+Verification:
+- changed Evidence runtime/smoke assets pass static delimiter checks;
+- new 100-round Smokes use 10 loop groups and explicit round == 100 assertions;
+- no TODO/NotImplementedException placeholder in the changed assets;
+- workflow lookup for checkpoint commit f36c92943a790d858563eb0e742c3d6f7bb3a023 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 13500 in the active 4501–104500 window;
+- next natural stage: 13501;
+- global one-million-stage horizon remains 2501–1002500.
