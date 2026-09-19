@@ -1088,6 +1088,40 @@ Assert(
     "Polyline distance should be deterministic.",
     failures);
 
+var closedPolyline = new Asun.Vision.Contracts.Polyline2D(new[]
+{
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(10, 0),
+    new System.Numerics.Vector2(10, 10),
+    new System.Numerics.Vector2(0, 10),
+    new System.Numerics.Vector2(0, 0)
+});
+
+Assert(
+    closedPolyline.IsClosed &&
+    Math.Abs(closedPolyline.ClosedLength - 40) < 1e-12 &&
+    Math.Abs(closedPolyline.SignedArea - 100) < 1e-12,
+    "Closed polyline perimeter and signed area should be deterministic.",
+    failures);
+
+Assert(
+    closedPolyline.IsClosedWithin(0),
+    "Closed polyline tolerance check should recognize exact closure.",
+    failures);
+
+var reversedPolyline = closedPolyline.Reverse();
+Assert(
+    reversedPolyline.StartPoint == closedPolyline.EndPoint &&
+    Math.Abs(reversedPolyline.SignedArea + closedPolyline.SignedArea) < 1e-12,
+    "Reversing a closed polyline should reverse winding and signed area.",
+    failures);
+
+var translatedPolyline = closedPolyline.Translate(new System.Numerics.Vector2(5, -3));
+Assert(
+    translatedPolyline.StartPoint == new System.Numerics.Vector2(5, -3),
+    "Polyline translation should preserve topology and move all points.",
+    failures);
+
 var circle = new Asun.Vision.Contracts.Circle2D(
     new System.Numerics.Vector2(10, 20),
     5);
