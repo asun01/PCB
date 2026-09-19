@@ -96,7 +96,10 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
 
         lock (_sync)
         {
-            if (generation > (_composite.Generation - 1))
+            var cachedGeneration = _reuse.LatestGeneration;
+
+            if (cachedGeneration is long cached &&
+                generation > cached)
                 _reuse.Clear();
 
             if (_deferredGeneration >= 0 &&
