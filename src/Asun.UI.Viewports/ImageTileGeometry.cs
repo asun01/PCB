@@ -89,6 +89,38 @@ public static class ImageTileGeometry
             new TileIndex(maxX, maxY));
     }
 
+    public static RectangleF GetTileRectangle(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        TileIndex tileIndex)
+    {
+        ValidatePositiveFinite(imageSize, nameof(imageSize));
+        ValidatePositiveFinite(tileSize, nameof(tileSize));
+
+        if (tileIndex.X < 0 || tileIndex.Y < 0)
+            throw new ArgumentOutOfRangeException(nameof(tileIndex));
+
+        var tileCountX = Math.Max(1, (int)Math.Ceiling(imageSize.X / tileSize.X));
+        var tileCountY = Math.Max(1, (int)Math.Ceiling(imageSize.Y / tileSize.Y));
+
+        if (tileIndex.X >= tileCountX || tileIndex.Y >= tileCountY)
+            throw new ArgumentOutOfRangeException(
+                nameof(tileIndex),
+                tileIndex,
+                "Tile index is outside the image tile grid.");
+
+        var left = tileIndex.X * tileSize.X;
+        var top = tileIndex.Y * tileSize.Y;
+        var right = Math.Min(left + tileSize.X, imageSize.X);
+        var bottom = Math.Min(top + tileSize.Y, imageSize.Y);
+
+        return new RectangleF(
+            left,
+            top,
+            Math.Max(0, right - left),
+            Math.Max(0, bottom - top));
+    }
+
     private static void ValidatePositiveFinite(Vector2 value, string parameterName)
     {
         if (!float.IsFinite(value.X) ||

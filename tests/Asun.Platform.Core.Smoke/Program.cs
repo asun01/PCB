@@ -164,6 +164,16 @@ var visible = panned.GetVisibleImageRectangle();
 var tileRange = panned.GetVisibleTileRange(
     new System.Numerics.Vector2(256, 256));
 
+var edgeTile = Asun.UI.Viewports.ImageTileGeometry.GetTileRectangle(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new Asun.UI.Viewports.TileIndex(3, 1));
+
+Assert(
+    edgeTile == new RectangleF(768, 256, 232, 244),
+    "Edge tile rectangles should be clipped to the image bounds.",
+    failures);
+
 var exactTile = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     new System.Numerics.Vector2(1024, 512),
     new System.Numerics.Vector2(256, 256),
