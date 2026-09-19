@@ -1,0 +1,73 @@
+<Window x:Class="Asun.App.Shell.Bootstrap.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Asun Vision Platform"
+        Width="1280"
+        Height="800"
+        MinWidth="1024"
+        MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        AutomationProperties.AutomationId="Asun.App.Shell.MainWindow">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock
+                AutomationProperties.AutomationId="Shell.Title"
+                FontSize="28"
+                FontWeight="SemiBold"
+                Text="Asun Vision Platform" />
+            <TextBlock
+                Margin="0,8,0,0"
+                AutomationProperties.AutomationId="Shell.Subtitle"
+                FontSize="14"
+                Opacity="0.72"
+                Text="Bootstrap shell · .NET 10 · WPF" />
+        </StackPanel>
+
+        <Border
+            Grid.Row="1"
+            Margin="0,24,0,0"
+            Padding="16"
+            BorderThickness="1"
+            CornerRadius="6">
+            <StackPanel>
+                <TextBlock
+                    AutomationProperties.AutomationId="Shell.StatusLabel"
+                    FontWeight="SemiBold"
+                    Text="Repository bootstrap status" />
+                <TextBlock
+                    Margin="0,6,0,0"
+                    AutomationProperties.AutomationId="Shell.StatusValue"
+                    Text="Ready — vendor-neutral shell boundary is running." />
+            </StackPanel>
+        </Border>
+
+        <Border
+            Grid.Row="2"
+            Margin="0,16,0,0"
+            Padding="20"
+            BorderThickness="1"
+            AutomationProperties.AutomationId="Shell.ContentHost">
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    Text="Workspace host" />
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Center"
+                    MaxWidth="760"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    Opacity="0.72"
+                    Text="Feature workspaces and production commands are intentionally not bound here yet. They will enter through approved Application Ports and PageContracts after the corresponding authority gates are closed." />
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
