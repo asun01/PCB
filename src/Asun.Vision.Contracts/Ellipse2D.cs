@@ -31,6 +31,12 @@ public readonly record struct Ellipse2D(
     public Vector2 LocalYAxis =>
         new(-(float)Math.Sin(AngleRadians), (float)Math.Cos(AngleRadians));
 
+    public bool IsAxisAligned =>
+        IsValid &&
+        NumericTolerance.Default.AreEqual(
+            Math.Sin(AngleRadians),
+            0);
+
     public RectangleF Bounds
     {
         get
