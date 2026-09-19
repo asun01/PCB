@@ -141,6 +141,28 @@ Assert(
 
 Assert(transform.IsInvertible, "A non-singular affine transform should be invertible.", failures);
 
+var clampedZoom = viewport.WithScaleAroundClamped(
+    requestedScale: 100,
+    minScale: 0.5,
+    maxScale: 4,
+    viewportAnchor: new System.Numerics.Vector2(600, 400));
+
+Assert(
+    Math.Abs(clampedZoom.Scale - 4) < 1e-9,
+    "Viewport zoom should respect the configured upper bound.",
+    failures);
+
+var clampedMinimumZoom = viewport.WithScaleAroundClamped(
+    requestedScale: 0.01,
+    minScale: 0.5,
+    maxScale: 4,
+    viewportAnchor: new System.Numerics.Vector2(600, 400));
+
+Assert(
+    Math.Abs(clampedMinimumZoom.Scale - 0.5) < 1e-9,
+    "Viewport zoom should respect the configured lower bound.",
+    failures);
+
 var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
 Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
 
