@@ -795,3 +795,50 @@ Verification:
 Current continuous execution position:
 - completed through Stage 11000 in the active 4501–104500 window;
 - next natural stage: 11001.
+
+
+### 11001→11500 Finding-level audit chain — 2026-09-19
+
+Completed stages 11001–11500.
+
+Implemented:
+- QualityInspectionFindingAuditRecord;
+- QualityInspectionFindingAuditIndex;
+- QualityInspectionFindingAuditDiff;
+- deterministic Finding Audit Index SHA-256 fingerprint;
+- QualityInspectionFindingAuditProjection with fingerprint validation.
+
+Boundary:
+- Finding audit records expose source facts only and remain vendor-neutral;
+- no customer acceptance mapping is encoded.
+
+### 11501→12000 Finding audit replay chain — 2026-09-19
+
+Completed stages 11501–12000.
+
+Implemented:
+- QualityInspectionFindingAuditProjectionDiff;
+- QualityInspectionFindingAuditEnvelope;
+- QualityInspectionFindingAuditWindow;
+- QualityInspectionFindingAuditWindowDiff;
+- QualityInspectionFindingAuditReplayBundle.
+
+Replay chain:
+- projection diff detects added/removed/changed FindingIds;
+- envelope binds ResultId/SnapshotId/Sequence to the projection fingerprint;
+- window orders finding-audit envelopes deterministically and verifies complete supplied-result coverage;
+- window diff detects added/removed/changed ResultIds using projection fingerprints;
+- replay bundle composes previous/current projection and deterministic projection diff.
+
+Closed acceptance asset:
+- PHASE1_11501_12000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- all five 11501–12000 Smokes use exact 10-loop/10-Check/round==100 structure;
+- static delimiter checks balanced;
+- no TODO/NotImplementedException placeholder in the new assets;
+- workflow lookup for checkpoint commit f3b403e997960197ff0b069393f90fa3e9efebb8 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 12000 in the active 4501–104500 window;
+- next natural stage: 12001.
