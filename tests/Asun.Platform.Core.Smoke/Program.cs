@@ -497,7 +497,8 @@ Assert(queue.TryDequeue(out var first) && first == 1, "FIFO dequeue should prese
 Assert(queue.TryDequeue(out var second) && second == 2, "FIFO dequeue should preserve order.", failures);
 Assert(!queue.TryDequeue(out _), "An empty queue should not produce a value.", failures);
 
-queue.Complete();
+Assert(queue.TryComplete(), "The first queue completion should succeed.", failures);
+Assert(!queue.TryComplete(), "Repeated queue completion should be idempotent.", failures);
 Assert(!queue.TryEnqueue(3), "Completed queue should reject new work.", failures);
 Assert(queue.IsCompleted, "Completed queue should report completion after draining.", failures);
 await queue.Completion;

@@ -44,8 +44,11 @@ public sealed class BoundedWorkQueue<T>
     public bool TryDequeue(out T? item) =>
         _channel.Reader.TryRead(out item);
 
-    public void Complete(Exception? error = null) =>
+    public bool TryComplete(Exception? error = null) =>
         _channel.Writer.TryComplete(error);
+
+    public void Complete(Exception? error = null) =>
+        _ = TryComplete(error);
 
     public IAsyncEnumerable<T> ReadAllAsync(CancellationToken cancellationToken = default) =>
         _channel.Reader.ReadAllAsync(cancellationToken);
