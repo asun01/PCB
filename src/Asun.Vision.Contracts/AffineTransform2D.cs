@@ -141,6 +141,14 @@ public readonly record struct AffineTransform2D
 
     public Matrix3x2 Matrix => _matrix;
 
+    public double LinearScaleX => Math.Sqrt(
+        (double)_matrix.M11 * _matrix.M11 +
+        (double)_matrix.M12 * _matrix.M12);
+
+    public double LinearScaleY => Math.Sqrt(
+        (double)_matrix.M21 * _matrix.M21 +
+        (double)_matrix.M22 * _matrix.M22);
+
     private static void ValidateFinite(Vector2 value, string parameterName)
     {
         if (!IsFinite(value))
