@@ -240,6 +240,8 @@ await ViewportRenderPipelineSmoke.RunAsync(Assert);
 
 await ViewportRenderBudgetSmoke.RunAsync(Assert);
 
+await ViewportRenderPrioritySmoke.RunAsync(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
