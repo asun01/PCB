@@ -42,6 +42,9 @@ jobs:
       - name: Report open gates
         run: python3 tools/task_gate_check.py
 
+      - name: Resolve repository authorities
+        run: python3 tools/validate_repository_authorities.py
+
       - name: Build convenience master
         run: python3 tools/build_master.py
 
