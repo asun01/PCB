@@ -113,3 +113,5 @@ public static class ViewportRenderAdapterRuntime
         }
 
         return renderedTiles + renderedRoiIds.Count;
+    }
+}
