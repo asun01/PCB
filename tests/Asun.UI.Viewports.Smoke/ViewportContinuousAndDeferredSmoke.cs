@@ -156,7 +156,9 @@ public static class ViewportContinuousAndDeferredSmoke
         assert(
             initialRendered &&
             presentation.LastFrameState is { IsComplete: true } &&
-            initialSnapshot.LastFrameState is { IsComplete: true },
+            initialSnapshot.LastFrameState is { IsComplete: true } &&
+            initialSnapshot.Surface.State == ViewportRenderSurfaceState.Presented &&
+            initialSnapshot.Surface.PresentedGeneration == presentation.Composite.Generation,
             "Continuous runtime should render its initial frame and publish a complete presentation frame state.");
 
         var before = presentation.Composite.Generation;
@@ -193,8 +195,16 @@ public static class ViewportContinuousAndDeferredSmoke
         }
 
         assert(
-            presentation.State == ViewportPresentationState.Stopped,
-            "Continuous runtime should return to Stopped after external cancellation.");
+            presentation.State == ViewportPresentationState.Stopped &&
+            presentation.Surface.Snapshot.State == ViewportRenderSurfaceState.Presented,
+            "Continuous runtime should return to Stopped while preserving the last presented surface state.");
+
+        presentation.Reset();
+
+        assert(
+            presentation.Surface.Snapshot.State == ViewportRenderSurfaceState.Idle &&
+            presentation.LastFrameState is null,
+            "Presentation reset should clear the active surface transaction and last delivery state.");
     }
 
     private sealed class RecoveringTileSource : ITileSource<string>
