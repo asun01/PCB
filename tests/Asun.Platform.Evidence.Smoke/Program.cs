@@ -26,19 +26,25 @@ var invalidHandle=new EvidenceDescriptor(
 var invalidLength=descriptor with {ByteLength=-1};
 var invalidKind=descriptor with {(Kind=(EvidenceKind)99)};
 
-for(var i=0;i<10;i++) Check(handle.IsValid,"Evidence handle should remain valid.");
-for(var i=0;i<10;i++) Check(handle.Value=="frame://001","Evidence handle should preserve its opaque value.");
-for(var i=0;i<10;i++) Check(EvidenceDescriptorValidationRuntime.IsValid(descriptor),"Valid evidence descriptor should pass.");
-for(var i=0;i<10;i++) Check(descriptor.Handle==handle,"Evidence descriptor should preserve its handle.");
-for(var i=0;i<10;i++) Check(descriptor.Kind==EvidenceKind.Image,"Evidence descriptor should preserve kind.");
-for(var i=0;i<10;i++) Check(descriptor.MediaType=="image/raw","Evidence descriptor should preserve media type.");
-for(var i=0;i<10;i++) Check(!EvidenceDescriptorValidationRuntime.IsValid(invalidHandle),"Invalid evidence handle should be rejected.");
-for(var i=0;i<10;i++) Check(!EvidenceDescriptorValidationRuntime.IsValid(invalidLength),"Negative evidence length should be rejected.");
-for(var i=0;i<10;i++) Check(!EvidenceDescriptorValidationRuntime.IsValid(invalidKind),"Invalid evidence kind should be rejected.");
-for(var i=0;i<10;i++) Check(EvidenceHandle.Create(" frame://001 ").Value=="frame://001","Evidence handle creation should normalize boundary whitespace.");
+var round=0;
+void IncrementedCheck(bool condition,string message)
+{
+    round++;
+    Check(condition,$"Round {round}: {message}");
+}
 
-var round=100;
-Check(round==100,"Smoke should preserve the exact 100-round acceptance marker.");
+for(var i=0;i<10;i++) IncrementedCheck(handle.IsValid,"Evidence handle round should remain valid.");
+for(var i=0;i<10;i++) IncrementedCheck(handle.Value=="frame://001","Evidence handle value round should remain stable.");
+for(var i=0;i<10;i++) IncrementedCheck(EvidenceDescriptorValidationRuntime.IsValid(descriptor),"Descriptor round should remain valid.");
+for(var i=0;i<10;i++) IncrementedCheck(descriptor.Handle==handle,"Descriptor handle round should remain stable.");
+for(var i=0;i<10;i++) IncrementedCheck(descriptor.Kind==EvidenceKind.Image,"Descriptor kind round should remain stable.");
+for(var i=0;i<10;i++) IncrementedCheck(descriptor.MediaType=="image/raw","Descriptor media type round should remain stable.");
+for(var i=0;i<10;i++) IncrementedCheck(!EvidenceDescriptorValidationRuntime.IsValid(invalidHandle),"Invalid handle round should remain rejected.");
+for(var i=0;i<10;i++) IncrementedCheck(!EvidenceDescriptorValidationRuntime.IsValid(invalidLength),"Invalid length round should remain rejected.");
+for(var i=0;i<10;i++) IncrementedCheck(!EvidenceDescriptorValidationRuntime.IsValid(invalidKind),"Invalid kind round should remain rejected.");
+for(var i=0;i<10;i++) IncrementedCheck(EvidenceHandle.Create(" frame://001 ").Value=="frame://001","Handle normalization round should remain deterministic.");
+
+Check(round==100,$"Evidence smoke should execute exactly 100 numbered rounds; actual {round}.");
 
 if(failures.Count>0)
 {
