@@ -780,6 +780,21 @@ catch
 
 Assert(graphValidated, "Standalone pipeline graph validation should accept a valid graph.", failures);
 
+var missingNodeValidationRejected = false;
+try
+{
+    AsyncPipeline<object>.Validate(new[]
+    {
+        new AsyncPipeline<object>.Node("A", new[] { "Unknown" }, (_, _) => ValueTask.CompletedTask)
+    });
+}
+catch (ArgumentException)
+{
+    missingNodeValidationRejected = true;
+}
+
+Assert(missingNodeValidationRejected, "Standalone validation should reject unknown dependencies.", failures);
+
 var invalidGraphRejected = false;
 try
 {
