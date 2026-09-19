@@ -42,6 +42,7 @@ public static class ViewportRenderAdapterRuntime
 
         var renderedRoiIds = new HashSet<Guid>();
         var pendingInvalidations = new List<RectangleF>();
+        var deferredWork = new List<ViewportRenderWorkItem>();
         var renderedUnits = 0;
 
         async ValueTask FlushInvalidationsAsync()
@@ -147,7 +148,8 @@ public static class ViewportRenderAdapterRuntime
             if (work.Kind == ViewportRenderWorkKind.Tile &&
                 work.Tile is TileIndex)
             {
-                throw new ViewportRenderWorkUnavailableException(work);
+                deferredWork.Add(work);
+                continue;
             }
 
             if (work.Kind != ViewportRenderWorkKind.Roi ||
@@ -175,12 +177,21 @@ public static class ViewportRenderAdapterRuntime
                             frame.Composite.Generation),
                         cancellationToken)
                     .ConfigureAwait(false);
+
+                renderedUnits++;
             }
         }
 
         await FlushInvalidationsAsync().ConfigureAwait(false);
 
-        return renderedUnits + renderedRoiIds.Count;
+        if (deferredWork.Count != 0)
+        {
+            throw new ViewportRenderWorkUnavailableException(
+                deferredWork,
+                renderedUnits);
+        }
+
+        return renderedUnits;
         }
         finally
         {
