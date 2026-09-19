@@ -42,7 +42,10 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 success.Status == ViewportRenderDeliveryStatus.Succeeded &&
                 !success.Cancelled &&
                 success.Error is null &&
-                success.RenderedUnits > 0,
+                success.RenderedUnits > 0 &&
+                success.FrameState.IsComplete &&
+                success.FrameState.PlannedUnits == frame.Batch.ItemCount &&
+                success.FrameState.RegionCount == frame.Batch.RegionCount,
                 $"Delivery chain {i + 1} should report successful delivery.");
 
             var failingSink = new ThrowingSink();
@@ -55,6 +58,8 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 failure.Status == ViewportRenderDeliveryStatus.Failed &&
                 !failure.Cancelled &&
                 failure.Error is not null &&
+                failure.FrameState.HasError &&
+                !failure.FrameState.IsComplete &&
                 failingSink.EndCount == 1,
                 $"Delivery chain {i + 1} should isolate sink exceptions and finalize the frame.");
 
@@ -67,7 +72,8 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 !cancellation.Succeeded &&
                 cancellation.Status == ViewportRenderDeliveryStatus.Cancelled &&
                 cancellation.Cancelled &&
-                cancellation.Error is null,
+                cancellation.Error is null &&
+                cancellation.FrameState.Status == ViewportRenderDeliveryStatus.Cancelled,
                 $"Delivery chain {i + 1} should classify cancellation separately.");
 
             var input = new ViewportInputSubmissionRuntime();
@@ -155,7 +161,9 @@ public static class ViewportDeliveryAndBackpressureSmoke
                     retryFirst.Status == ViewportRenderDeliveryStatus.Deferred &&
                     retryFirst.Deferred &&
                     retryFirst.DeferredUnits == 1 &&
-                    retryFirst.Error is ViewportRenderWorkUnavailableException,
+                    retryFirst.Error is ViewportRenderWorkUnavailableException &&
+                    retryFirst.FrameState.IsPartial &&
+                    retryFirst.FrameState.HasDeferredWork,
                     $"Delivery chain {i + 1} should classify an unavailable tile as deferred.");
 
                 retryPipeline.RequeueFrame(retryFrame);
@@ -178,7 +186,8 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
                     assert(
                         retryDelivered.Succeeded &&
-                        retryDelivered.Status == ViewportRenderDeliveryStatus.Succeeded,
+                        retryDelivered.Status == ViewportRenderDeliveryStatus.Succeeded &&
+                        retryDelivered.FrameState.IsComplete,
                         $"Delivery chain {i + 1} should succeed once the tile source recovers.");
                 }
 
