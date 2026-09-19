@@ -103,8 +103,8 @@ public static class ViewportReplayVerificationRuntime
             ? new ViewportReplayVerificationResult(
                 true,
                 true,
-                true,
-                true,
+                false,
+                false,
                 Array.Empty<string>())
             : new ViewportReplayVerificationResult(
                 false,
