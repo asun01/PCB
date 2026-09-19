@@ -79,7 +79,7 @@ public static class RoiGroupTransformRuntime
                 default,
                 Vector2.Zero);
 
-        var center = pivot ?? GetUnionBounds(source).Center.ToVector2();
+        var center = pivot ?? GetBoundsCenter(GetUnionBounds(source));
 
         var transformed = source
             .Select(item => item with
