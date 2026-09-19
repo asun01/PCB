@@ -161,6 +161,19 @@ public readonly record struct OrientedRectangle2D(
         return this with { AngleRadians = AngleRadians + deltaRadians };
     }
 
+    public OrientedRectangle2D NormalizeAngle()
+    {
+        EnsureValid();
+
+        var normalized = AngleRadians % (Math.PI * 2);
+        if (normalized <= -Math.PI)
+            normalized += Math.PI * 2;
+        else if (normalized > Math.PI)
+            normalized -= Math.PI * 2;
+
+        return this with { AngleRadians = normalized };
+    }
+
     public AffineTransform2D ToAffineTransform()
     {
         EnsureValid();
