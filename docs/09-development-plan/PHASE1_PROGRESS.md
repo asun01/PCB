@@ -117,3 +117,17 @@ Verification note:
 - Static source checks confirm balanced C# delimiters in the newly touched runtime/smoke files.
 - The exact replay-window smoke structure is 10 loops × 10 iterations × 1 Check = 100 numbered rounds, with an explicit `round == 100` assertion.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+### 700→800 unified replay execution — 2026-09-19
+
+- Completed stages 701–800 and recorded them in `PHASE1_700_800_STAGE_LEDGER_20260919.md`.
+- Added `ViewportReplayExecutionRuntime` as the single deterministic input-replay execution path.
+- Execution reports capture initial/final generation, deterministic input/result hashes, transform/document/selection changes, dirty-event count, and ordered results.
+- `ViewportInputReplayRuntime.Replay` now delegates to the unified execution runtime, and `ReplayReport` exposes the full execution report.
+- Added exact 100-round replay execution smoke covering deterministic repeatability, validation guards, empty replay, valid bundle replay, bounded counters, finite result coordinates, reversed ordering rejection, and cross-runtime consistency.
+- Registered the execution smoke in the primary viewport smoke entry.
+- Static review keeps the new runtime backend-neutral and free of HALCON/DevExpress/hardware-specific contracts.
+
+Verification note:
+- Exact replay execution matrix is 10 loop groups × 10 iterations × 1 Check = 100 numbered rounds; final round-count assertion is outside the Check counter.
+- No local build/test/CI success is asserted without authoritative execution evidence.
