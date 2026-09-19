@@ -108,7 +108,7 @@ public static class ViewportRenderAdapterRuntime
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                renderedTiles++;
+                renderedUnits++;
                 continue;
             }
 
