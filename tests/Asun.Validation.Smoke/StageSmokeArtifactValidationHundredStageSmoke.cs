@@ -40,7 +40,7 @@ public static void Run(Action<bool,string> assert)
         for(var i=0;i<10;i++) Check(!report.HasPlaceholderMarkers,$"placeholder scan round {i+1} should pass.");
         for(var i=0;i<10;i++) Check(report.Errors.Count==0,$"error list round {i+1} should be empty.");
         for(var i=0;i<10;i++) Check(StageArtifactValidator.ValidateSmoke(valid).IsValid,$"repeat validation round {i+1} should be deterministic.");
-        for(var i=0;i<10;i++) Check(report.CheckCalls==valid.Count(line=>false)==false?false:true,$"sanity round {i+1} should retain structural result.");
+        for(var i=0;i<10;i++) Check(report.CheckCalls==10,$"check-site sanity round {i+1} should retain ten call sites.");
         for(var i=0;i<10;i++) Check(report.IsValid,$"final validation round {i+1} should remain valid.");
 
         assert(round==100,$"Stage smoke artifact validation smoke should execute exactly 100 numbered rounds; actual {round}.");
