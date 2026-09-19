@@ -97,6 +97,31 @@ Assert(timeoutObserved, "Operation timeout should surface as TimeoutException.",
 var viewport = Asun.UI.Viewports.ViewportTransform.Fit(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(1200, 800));
+
+var interaction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
+    .BeginPan(new System.Numerics.Vector2(100, 100))
+    .UpdatePan(new System.Numerics.Vector2(120, 125));
+
+Assert(
+    interaction.IsPanning &&
+    interaction.Transform.Translation == viewport.Translation + new System.Numerics.Vector2(20, 25),
+    "Viewport interaction panning should follow pointer deltas.",
+    failures);
+
+interaction = interaction.EndPan();
+Assert(!interaction.IsPanning, "Viewport pan should end explicitly.", failures);
+
+var zoomInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
+    .ApplyZoom(
+        requestedScale: 10,
+        minScale: 0.5,
+        maxScale: 4,
+        viewportAnchor: new System.Numerics.Vector2(600, 400));
+
+Assert(
+    Math.Abs(zoomInteraction.Transform.Scale - 4) < 1e-9,
+    "Viewport interaction zoom should honor scale bounds.",
+    failures);
 var imagePoint = new System.Numerics.Vector2(250, 125);
 var viewportPoint = viewport.ImageToViewport(imagePoint);
 var roundTrip = viewport.ViewportToImage(viewportPoint);
@@ -313,7 +338,9 @@ Assert(queue.TryDequeue(out var second) && second == 2, "FIFO dequeue should pre
 Assert(!queue.TryDequeue(out _), "An empty queue should not produce a value.", failures);
 
 queue.Complete();
+Assert(!queue.TryEnqueue(3), "Completed queue should reject new work.", failures);
 Assert(queue.IsCompleted, "Completed queue should report completion after draining.", failures);
+await queue.Completion;
 
 using var resources = new ResourceLeasePool<string>(new[]
 {
