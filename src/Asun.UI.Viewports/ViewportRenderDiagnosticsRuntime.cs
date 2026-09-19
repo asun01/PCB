@@ -128,6 +128,7 @@ public static class ViewportRenderDiagnosticsRuntime
 {
     public static ViewportRenderEvidenceManifest BuildManifest<TTile>(
         ViewportRenderPipelineFrame<TTile> frame,
+        ViewportRenderFrameState? frameState = null,
         ViewportRenderReplaySnapshot? replay = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
@@ -144,8 +145,8 @@ public static class ViewportRenderDiagnosticsRuntime
             frame.Batch.InvalidationCount,
             frame.Batch.FullSurfaceCount,
             frame.Batch.ItemCount,
-            frame.LastFrameState.RenderedUnits,
-            frame.LastFrameState.DeferredUnits,
+            frameState?.RenderedUnits ?? 0,
+            frameState?.DeferredUnits ?? (frame.HasDeferredWork ? 1 : 0),
             ViewportRenderEvidenceRuntime.ComputeBatchHash(frame.Batch),
             ViewportRenderEvidenceRuntime.ComputeCommandStreamHash(frame.CommandStream),
             ViewportRenderEvidenceRuntime.ComputePipelineFrameHash(frame),
