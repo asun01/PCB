@@ -306,6 +306,39 @@ public readonly record struct ViewportTransform(
         };
     }
 
+    /// <summary>
+    /// Clamps panning so the rendered image covers the viewport whenever possible.
+    /// When the rendered image is smaller than the viewport on an axis, it is centered.
+    /// </summary>
+    public ViewportTransform WithTranslationClamped(Vector2 translation)
+    {
+        if (!IsFinite(translation))
+            throw new ArgumentOutOfRangeException(nameof(translation));
+
+        var rendered = RenderedImageSize;
+
+        var minX = rendered.X <= ViewportSize.X
+            ? (ViewportSize.X - rendered.X) / 2f
+            : ViewportSize.X - rendered.X;
+        var maxX = rendered.X <= ViewportSize.X
+            ? minX
+            : 0f;
+
+        var minY = rendered.Y <= ViewportSize.Y
+            ? (ViewportSize.Y - rendered.Y) / 2f
+            : ViewportSize.Y - rendered.Y;
+        var maxY = rendered.Y <= ViewportSize.Y
+            ? minY
+            : 0f;
+
+        return this with
+        {
+            Translation = new Vector2(
+                Math.Clamp(translation.X, minX, maxX),
+                Math.Clamp(translation.Y, minY, maxY))
+        };
+    }
+
     public ViewportTransform WithTranslation(Vector2 translation)
     {
         if (!IsFinite(translation))
