@@ -23,6 +23,7 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
 {
     private readonly object _sync = new();
     private CancellationTokenSource? _runCancellation;
+    private TaskCompletionSource<bool>? _runStopped;
     private int _disposed;
     private ViewportPresentationState _state = ViewportPresentationState.Created;
 
@@ -56,6 +57,8 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
 
             _runCancellation?.Dispose();
             _runCancellation = new CancellationTokenSource();
+            _runStopped = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
             _state = ViewportPresentationState.Running;
             token = _runCancellation.Token;
             return true;
@@ -82,7 +85,31 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         {
             if (_state != ViewportPresentationState.Disposed)
                 _state = ViewportPresentationState.Stopped;
+
+            _runStopped?.TrySetResult(true);
         }
+    }
+
+    public async ValueTask WaitForStopAsync(
+        CancellationToken cancellationToken = default)
+    {
+        Task? completion;
+
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            if (_state != ViewportPresentationState.Running &&
+                _state != ViewportPresentationState.Stopping)
+            {
+                return;
+            }
+
+            completion = _runStopped?.Task;
+        }
+
+        if (completion is not null)
+            await completion.WaitAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public void Reset()
@@ -112,6 +139,8 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
             _runCancellation?.Cancel();
             _runCancellation?.Dispose();
             _runCancellation = null;
+            _runStopped?.TrySetResult(true);
+            _runStopped = null;
         }
     }
 
