@@ -8,6 +8,7 @@ namespace Asun.Platform.Core;
 public sealed class AsyncPipeline<TContext>
 {
     private readonly IReadOnlyList<Node> _nodes;
+    private readonly IReadOnlyDictionary<string, IReadOnlyList<Node>> _dependents;
 
     public AsyncPipeline(IEnumerable<Node> nodes)
     {
@@ -21,6 +22,22 @@ public sealed class AsyncPipeline<TContext>
         }
 
         ValidateGraph(_nodes);
+
+        var dependents = _nodes.ToDictionary(
+            node => node.Id,
+            _ => new List<Node>(),
+            StringComparer.Ordinal);
+
+        foreach (var node in _nodes)
+        {
+            foreach (var dependency in node.Dependencies)
+                dependents[dependency].Add(node);
+        }
+
+        _dependents = dependents.ToDictionary(
+            pair => pair.Key,
+            pair => (IReadOnlyList<Node>)pair.Value,
+            StringComparer.Ordinal);
     }
 
     public ValueTask ExecuteAsync(
@@ -42,24 +59,26 @@ public sealed class AsyncPipeline<TContext>
         CancellationToken cancellationToken,
         Dictionary<string, TimeSpan>? timings)
     {
-        var remaining = _nodes.ToDictionary(node => node.Id, node => node);
-        var completed = new HashSet<string>(StringComparer.Ordinal);
+        var pendingDependencies = _nodes.ToDictionary(
+            node => node.Id,
+            node => node.Dependencies.Count,
+            StringComparer.Ordinal);
 
-        while (remaining.Count > 0)
+        var ready = _nodes
+            .Where(node => pendingDependencies[node.Id] == 0)
+            .ToList();
+
+        var completedCount = 0;
+
+        while (ready.Count > 0)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var ready = remaining.Values
-                .Where(node => node.Dependencies.All(completed.Contains))
-                .ToArray();
-
-            if (ready.Length == 0)
-            {
-                throw new InvalidOperationException("Pipeline graph cannot make progress.");
-            }
+            var batch = ready.ToArray();
+            ready.Clear();
 
             await Task.WhenAll(
-                ready.Select(async node =>
+                batch.Select(async node =>
                 {
                     var start = System.Diagnostics.Stopwatch.GetTimestamp();
                     await node.ExecuteAsync(context, cancellationToken);
@@ -67,12 +86,22 @@ public sealed class AsyncPipeline<TContext>
                         timings[node.Id] = System.Diagnostics.Stopwatch.GetElapsedTime(start);
                 }));
 
-            foreach (var node in ready)
+            completedCount += batch.Length;
+
+            foreach (var node in batch)
             {
-                remaining.Remove(node.Id);
-                completed.Add(node.Id);
+                foreach (var dependent in _dependents[node.Id])
+                {
+                    var remaining = --pendingDependencies[dependent.Id];
+
+                    if (remaining == 0)
+                        ready.Add(dependent);
+                }
             }
         }
+
+        if (completedCount != _nodes.Count)
+            throw new InvalidOperationException("Pipeline graph cannot make progress.");
     }
 
     private static void ValidateGraph(IReadOnlyList<Node> nodes)
