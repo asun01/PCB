@@ -7,6 +7,7 @@ public readonly record struct ViewportContinuousFrameStatistics(
     long ProcessedInputs,
     long DeliveryFailures,
     long DeliveryCancellations,
+    long SupersededFrames,
     long DeliveredUnits);
 
 public sealed class ViewportContinuousFrameRuntime<TTile>
@@ -20,6 +21,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private long _renderedFrames;
     private long _skippedLoops;
     private long _processedInputs;
+    private long _supersededFrames;
 
     public ViewportContinuousFrameRuntime(
         ViewportRenderPipelineRuntime<TTile> pipeline,
@@ -56,6 +58,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                 Interlocked.Read(ref _processedInputs),
                 delivery.Failed,
                 delivery.Cancelled,
+                Interlocked.Read(ref _supersededFrames),
                 delivery.RenderedUnits);
         }
     }
@@ -69,6 +72,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         Interlocked.Exchange(ref _renderedFrames, 0);
         Interlocked.Exchange(ref _skippedLoops, 0);
         Interlocked.Exchange(ref _processedInputs, 0);
+        Interlocked.Exchange(ref _supersededFrames, 0);
     }
 
     public async ValueTask RunAsync(
@@ -101,6 +105,24 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
                     if (frame is not null && frame.Accepted)
                     {
+                        var currentGeneration = _pipeline.Composite.Generation;
+
+                        if (frame.Composite.Generation != currentGeneration)
+                        {
+                            Interlocked.Increment(ref _supersededFrames);
+
+                            var dirty = _pipeline.Composite.DirtyRuntime.Flags;
+
+                            _pipeline.Invalidate(
+                                dirty == ViewportDirtyFlags.None
+                                    ? ViewportDirtyFlags.All
+                                    : dirty,
+                                currentGeneration);
+
+                            Interlocked.Increment(ref _skippedLoops);
+                            continue;
+                        }
+
                         if (frame.WorkPlan.IsEmpty)
                         {
                             Interlocked.Increment(ref _skippedLoops);
