@@ -102,6 +102,32 @@ Assert(
     "P50 should be the median.",
     failures);
 
+var runningStatistics = new RunningStatistics();
+runningStatistics.AddRange(new[] { 1d, 2d, 3d, 4d, 5d });
+
+Assert(
+    runningStatistics.Count == 5 &&
+    Math.Abs(runningStatistics.Mean - 3) < 1e-12 &&
+    Math.Abs(runningStatistics.Minimum - 1) < 1e-12 &&
+    Math.Abs(runningStatistics.Maximum - 5) < 1e-12 &&
+    Math.Abs(runningStatistics.VariancePopulation - 2) < 1e-12 &&
+    Math.Abs(runningStatistics.VarianceSample - 2.5) < 1e-12,
+    "Running statistics should produce stable online mean, extrema and variance.",
+    failures);
+
+Assert(
+    runningStatistics.TryGetMean(out var runningMean) &&
+    Math.Abs(runningMean - 3) < 1e-12,
+    "Running statistics should expose a non-throwing mean query.",
+    failures);
+
+runningStatistics.Reset();
+Assert(
+    runningStatistics.Count == 0 &&
+    !runningStatistics.TryGetMean(out _),
+    "Running statistics reset should clear accumulated state.",
+    failures);
+
 var manyPercentiles = Percentiles.CalculateMany(
     new[] { 10d, 20d, 30d, 40d, 50d },
     new[] { 0d, 50d, 95d });
