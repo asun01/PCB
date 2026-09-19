@@ -218,3 +218,17 @@ Verification note:
 - The master plan uses deterministic hierarchy: 2,000 batches × 500 stages, 10,000 blocks × 100 stages, 100,000 micro-blocks × 10 stages.
 - The plan defines 20 engineering tracks, deterministic track rotation, acceptance requirements, stage-number continuity rules, and vendor-neutral continuation rules.
 - Stages 1–2,500 remain the only completed scope currently represented as repository evidence; 2501–1,002,500 are planned only.
+
+### 2501→3000 render and presentation invariant hardening — 2026-09-19
+
+- Completed stages 2501–3000 as five contiguous 100-stage blocks.
+- Added delivery-result validation covering generation, unit accounting, deferred/cancelled/failed state coherence, and deferred-work accounting.
+- Corrected ViewportRenderDeliveryTracker so LastGeneration is monotonic under out-of-order delivery results.
+- Added command-stream validation covering sequence, generation, kind mapping, finite bounds and category accounting.
+- Added render-surface validation covering transaction state, generation/sequence metadata, presentation state, units and regions.
+- Added presentation-buffer validation covering slot ownership, generation/sequence metadata, state transitions, units and regions.
+- Added presentation-queue validation covering enqueue/dequeue/pending/dropped accounting, token pairing, commit state and latest-sequence fences.
+- Registered five new exact 100-round Smoke matrices in the primary viewport smoke entry.
+- Added stage ledgers for 2501–2600, 2601–2700, 2701–2800, 2801–2900 and 2901–3000.
+- Static verification confirms all five new Smoke matrices use 10 loop groups × 10 Check calls with round == 100.
+- No local build/test/CI success is asserted without authoritative execution evidence.
