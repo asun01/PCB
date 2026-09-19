@@ -12,6 +12,7 @@
   <Project Path="src/Asun.Platform.RenderIntegration/Asun.Platform.RenderIntegration.csproj" />
   <Project Path="src/Asun.Platform.QualityIntegration/Asun.Platform.QualityIntegration.csproj" />
   <Project Path="src/Asun.Platform.SimulationIntegration/Asun.Platform.SimulationIntegration.csproj" />
+  <Project Path="src/Asun.Platform.ReleaseIntegration/Asun.Platform.ReleaseIntegration.csproj" />
   <Project Path="src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
   <Project Path="src/Asun.Domain.Hdi/Asun.Domain.Hdi.csproj" />
   <Project Path="src/Asun.Domain.Fpc/Asun.Domain.Fpc.csproj" />
@@ -35,5 +36,6 @@
   <Project Path="tests/Asun.Platform.RenderIntegration.Smoke/Asun.Platform.RenderIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Platform.QualityIntegration.Smoke/Asun.Platform.QualityIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Platform.SimulationIntegration.Smoke/Asun.Platform.SimulationIntegration.Smoke.csproj" />
+  <Project Path="tests/Asun.Platform.ReleaseIntegration.Smoke/Asun.Platform.ReleaseIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Quality.Smoke/Asun.Domain.Quality.Smoke.csproj" />
 </Solution>
