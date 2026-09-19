@@ -161,6 +161,24 @@ Assert(
     failures);
 
 var visible = panned.GetVisibleImageRectangle();
+var tileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
+    viewport.ImageSize,
+    new System.Numerics.Vector2(256, 256),
+    visible);
+
+Assert(
+    tileRange.Minimum.X >= 0 &&
+    tileRange.Minimum.Y >= 0 &&
+    tileRange.Maximum.X >= tileRange.Minimum.X &&
+    tileRange.Maximum.Y >= tileRange.Minimum.Y,
+    "Visible tile range should stay inside the image tile grid.",
+    failures);
+
+Assert(
+    tileRange.Count == tileRange.Enumerate().Count(),
+    "Visible tile range count should match enumeration.",
+    failures);
+
 Assert(
     visible.X >= 0 &&
     visible.Y >= 0 &&
