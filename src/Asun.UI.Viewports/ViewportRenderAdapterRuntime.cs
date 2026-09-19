@@ -29,6 +29,8 @@ public static class ViewportRenderAdapterRuntime
             .BeginFrameAsync(context, cancellationToken)
             .ConfigureAwait(false);
 
+        try
+        {
         var visibility = ViewportTileRoiVisibilityRuntime.Build(
             frame.Composite);
 
@@ -101,10 +103,13 @@ public static class ViewportRenderAdapterRuntime
             }
         }
 
-        await sink
-            .EndFrameAsync(context, cancellationToken)
-            .ConfigureAwait(false);
+
+        }
+        finally
+        {
+            await sink
+                .EndFrameAsync(context, cancellationToken)
+                .ConfigureAwait(false);
+        }
 
         return renderedTiles + renderedRoiIds.Count;
-    }
-}
