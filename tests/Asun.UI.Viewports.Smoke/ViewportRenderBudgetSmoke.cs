@@ -63,6 +63,45 @@ public static class ViewportRenderBudgetSmoke
                 limited.RoiWorkCount <= budget.MaxRoiWork,
                 $"Budget chain {i + 1} should enforce deterministic work ceilings.");
 
+            using var pipeline = new ViewportRenderPipelineRuntime<string>(
+                new Vector2(1600, 1200),
+                new Vector2(400, 300),
+                new Vector2(100, 100),
+                1,
+                64,
+                2,
+                new LocalTileSource(),
+                new ViewportRenderBudget(1, 4, 1, 1),
+                1000);
+
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            var fullFrame = await pipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1));
+
+            assert(
+                fullFrame is not null &&
+                fullFrame.HasDeferredWork &&
+                fullFrame.WorkPlan.Items.Any(item =>
+                    item.Kind == ViewportRenderWorkKind.FullSurface),
+                $"Budget chain {i + 1} should retain a deferred full-frame continuation.");
+
+            if (fullFrame is not null)
+            {
+                var continuation = await pipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(2));
+
+                assert(
+                    continuation is not null &&
+                    continuation.WorkPlan.Items.All(item =>
+                        item.Kind != ViewportRenderWorkKind.FullSurface) &&
+                    continuation.WorkPlan.Items.Any(item =>
+                        item.Kind == ViewportRenderWorkKind.Tile),
+                    $"Budget chain {i + 1} should continue with tile work after the one-time full clear.");
+            }
+
             assert(
                 batch.Generation == frame.Generation &&
                 batch.ItemCount == limited.Items.Count &&
