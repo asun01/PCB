@@ -1052,6 +1052,42 @@ Assert(
     "Ellipse resize should replace radii deterministically.",
     failures);
 
+var hull = Asun.Vision.Contracts.ConvexHull2D.Compute(new[]
+{
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(10, 0),
+    new System.Numerics.Vector2(10, 10),
+    new System.Numerics.Vector2(0, 10),
+    new System.Numerics.Vector2(5, 5),
+    new System.Numerics.Vector2(10, 0)
+});
+
+Assert(
+    hull.Count == 4 &&
+    hull.SequenceEqual(new[]
+    {
+        new System.Numerics.Vector2(0, 0),
+        new System.Numerics.Vector2(10, 0),
+        new System.Numerics.Vector2(10, 10),
+        new System.Numerics.Vector2(0, 10)
+    }),
+    "Convex hull ordering should be deterministic and exclude interior/duplicate points.",
+    failures);
+
+var hullPolygon = Asun.Vision.Contracts.ConvexHull2D.ComputePolygon(new[]
+{
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(10, 0),
+    new System.Numerics.Vector2(10, 10),
+    new System.Numerics.Vector2(0, 10),
+    new System.Numerics.Vector2(5, 5)
+});
+
+Assert(
+    Math.Abs(hullPolygon.Area - 100) < 1e-12,
+    "Convex hull polygon should preserve the outer area.",
+    failures);
+
 var polygon = new Asun.Vision.Contracts.Polygon2D(new[]
 {
     new System.Numerics.Vector2(0, 0),
