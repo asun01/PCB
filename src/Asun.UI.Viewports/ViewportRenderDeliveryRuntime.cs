@@ -12,10 +12,15 @@ public static class ViewportRenderDeliveryRuntime
     public static async ValueTask<ViewportRenderDeliveryResult> TryDeliverAsync<TTile>(
         ViewportRenderPipelineFrame<TTile> frame,
         IViewportRenderSink<TTile> sink,
+        ViewportRenderDeliveryTracker? tracker = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(frame);
         ArgumentNullException.ThrowIfNull(sink);
+
+        var started = Stopwatch.GetTimestamp();
+
+        ViewportRenderDeliveryResult result;
 
         try
         {
@@ -23,7 +28,7 @@ public static class ViewportRenderDeliveryRuntime
                 .RenderAsync(frame, sink, cancellationToken)
                 .ConfigureAwait(false);
 
-            return new ViewportRenderDeliveryResult(
+            result = new ViewportRenderDeliveryResult(
                 true,
                 false,
                 frame.Composite.Generation,
@@ -32,7 +37,7 @@ public static class ViewportRenderDeliveryRuntime
         }
         catch (OperationCanceledException)
         {
-            return new ViewportRenderDeliveryResult(
+            result = new ViewportRenderDeliveryResult(
                 false,
                 true,
                 frame.Composite.Generation,
@@ -41,12 +46,18 @@ public static class ViewportRenderDeliveryRuntime
         }
         catch (Exception exception)
         {
-            return new ViewportRenderDeliveryResult(
+            result = new ViewportRenderDeliveryResult(
                 false,
                 false,
                 frame.Composite.Generation,
                 0,
                 exception);
         }
+
+        tracker?.Record(
+            result,
+            Stopwatch.GetElapsedTime(started));
+
+        return result;
     }
 }
