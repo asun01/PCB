@@ -60,61 +60,38 @@ public static class ViewportReplaySessionBundleWindowRuntime
             .Where(key => !string.IsNullOrEmpty(key))
             .ToHashSet(StringComparer.Ordinal);
 
-        var evidence = bundle.Evidence
-            .Where(item => referencedEvidenceKeys.Contains(item.StableKey))
-            .Take(maxEvidence)
-            .ToList();
+        var required = referencedEvidenceKeys.Count;
 
-        if (evidence.Count < referencedEvidenceKeys.Count)
+        if (required > maxEvidence)
         {
-            var missing = referencedEvidenceKeys
-                .Where(key =>
-                    !evidence.Any(item =>
-                        string.Equals(
-                            item.StableKey,
-                            key,
-                            StringComparison.Ordinal)))
-                .ToArray();
-
-            foreach (var key in missing)
-            {
-                var match = bundle.Evidence.FirstOrDefault(item =>
-                    string.Equals(
-                        item.StableKey,
-                        key,
-                        StringComparison.Ordinal));
-
-                if (match.StableKey.Length != 0)
-                    evidence.Add(match);
-            }
+            throw new InvalidOperationException(
+                "maxEvidence is too small to retain all evidence referenced by the selected audit window.");
         }
 
-        evidence = evidence
+        var recentEvidence = bundle.Evidence
+            .TakeLast(maxEvidence)
+            .ToList();
+
+        var requiredEvidence = bundle.Evidence
+            .Where(item => referencedEvidenceKeys.Contains(item.StableKey))
+            .ToList();
+
+        var evidence = requiredEvidence
+            .Concat(
+                recentEvidence.Where(item =>
+                    !referencedEvidenceKeys.Contains(item.StableKey)))
             .OrderBy(item => item.Generation)
             .ThenBy(item => item.SubmissionSequence)
             .ToList();
 
         if (evidence.Count > maxEvidence)
         {
-            var required = referencedEvidenceKeys.Count;
-
-            if (required > maxEvidence)
-            {
-                throw new InvalidOperationException(
-                    "maxEvidence is too small to retain all evidence referenced by the selected audit window.");
-            }
-
-            var optional = evidence
-                .Where(item => !referencedEvidenceKeys.Contains(item.StableKey))
-                .Take(maxEvidence - required)
-                .ToList();
-
-            var requiredEvidence = evidence
+            evidence = evidence
                 .Where(item => referencedEvidenceKeys.Contains(item.StableKey))
-                .ToList();
-
-            evidence = requiredEvidence
-                .Concat(optional)
+                .Concat(
+                    evidence
+                        .Where(item => !referencedEvidenceKeys.Contains(item.StableKey))
+                        .Take(maxEvidence - required))
                 .OrderBy(item => item.Generation)
                 .ThenBy(item => item.SubmissionSequence)
                 .ToList();
