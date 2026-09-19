@@ -292,6 +292,16 @@ Assert(
     "Image points should resolve to their containing tile.",
     failures);
 
+var boundaryTile = Asun.UI.Viewports.ImageTileGeometry.GetTileIndexAtImagePoint(
+    new System.Numerics.Vector2(1024, 512),
+    new System.Numerics.Vector2(256, 256),
+    new System.Numerics.Vector2(256, 256));
+
+Assert(
+    boundaryTile == new Asun.UI.Viewports.TileIndex(1, 1),
+    "Tile boundaries should use the tile on the right and bottom for interior boundary points.",
+    failures);
+
 var exactTile = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     new System.Numerics.Vector2(1024, 512),
     new System.Numerics.Vector2(256, 256),
