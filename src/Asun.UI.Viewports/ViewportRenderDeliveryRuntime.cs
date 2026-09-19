@@ -92,10 +92,12 @@ public static class ViewportRenderDeliveryRuntime
         var started = System.Diagnostics.Stopwatch.GetTimestamp();
 
         ViewportRenderDeliveryResult result;
+        ViewportRenderSurfaceTransaction? transaction = null;
 
         try
         {
-            surface?.Begin(frame.Composite.Generation);
+            if (surface is not null)
+                transaction = surface.Begin(frame.Composite.Generation);
 
             var units = await ViewportRenderAdapterRuntime
                 .RenderAsync(frame, sink, cancellationToken)
@@ -132,18 +134,21 @@ public static class ViewportRenderDeliveryRuntime
                         cancellationToken).ConfigureAwait(false);
 
                     surface.Commit(
-                        frame.Composite.Generation,
+                        transaction!.Value,
                         frame.Batch.ItemCount,
                         units,
                         frame.Batch.Regions);
                 }
                 catch (Exception exception)
                 {
-                    surface.Discard(
-                        frame.Composite.Generation,
-                        exception is OperationCanceledException
-                            ? ViewportRenderDeliveryStatus.Cancelled
-                            : ViewportRenderDeliveryStatus.Failed);
+                    if (transaction is ViewportRenderSurfaceTransaction activeTransaction)
+                    {
+                        surface.Discard(
+                            activeTransaction,
+                            exception is OperationCanceledException
+                                ? ViewportRenderDeliveryStatus.Cancelled
+                                : ViewportRenderDeliveryStatus.Failed);
+                    }
 
                     await TryDiscardAsync(
                         sink,
@@ -173,10 +178,11 @@ public static class ViewportRenderDeliveryRuntime
         }
         catch (OperationCanceledException)
         {
-            if (surface is not null)
+            if (surface is not null &&
+                transaction is ViewportRenderSurfaceTransaction cancelledTransaction)
             {
                 surface.Discard(
-                    frame.Composite.Generation,
+                    cancelledTransaction,
                     ViewportRenderDeliveryStatus.Cancelled);
                 await TryDiscardAsync(
                     sink,
@@ -203,10 +209,11 @@ public static class ViewportRenderDeliveryRuntime
         }
         catch (ViewportRenderWorkUnavailableException exception)
         {
-            if (surface is not null)
+            if (surface is not null &&
+                transaction is ViewportRenderSurfaceTransaction deferredTransaction)
             {
                 surface.Discard(
-                    frame.Composite.Generation,
+                    deferredTransaction,
                     ViewportRenderDeliveryStatus.Deferred);
                 await TryDiscardAsync(
                     sink,
@@ -233,10 +240,11 @@ public static class ViewportRenderDeliveryRuntime
         }
         catch (Exception exception)
         {
-            if (surface is not null)
+            if (surface is not null &&
+                transaction is ViewportRenderSurfaceTransaction failedTransaction)
             {
                 surface.Discard(
-                    frame.Composite.Generation,
+                    failedTransaction,
                     ViewportRenderDeliveryStatus.Failed);
                 await TryDiscardAsync(
                     sink,
