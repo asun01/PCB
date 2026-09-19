@@ -54,6 +54,9 @@ public readonly record struct Angle2D(double Radians)
         return Math.Abs(ShortestDeltaTo(other)) <= toleranceRadians;
     }
 
+    public Angle2D Subtract(double radians) =>
+        Add(-radians);
+
     public Angle2D Add(double radians)
     {
         if (!double.IsFinite(radians))
