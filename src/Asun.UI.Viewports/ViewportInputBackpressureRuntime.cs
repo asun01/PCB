@@ -75,7 +75,6 @@ public sealed class ViewportInputBackpressureRuntime
                         if (kind == ViewportInputEventKind.PointerMove)
                         {
                             input.TryReplaceLatestMove(position);
-                            _coalesced++;
                             return true;
                         }
 
