@@ -18,6 +18,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly TimeSpan _idleDelay;
     private readonly ViewportCompositeInputRuntime<TTile> _interaction;
     private readonly ViewportRenderDeliveryTracker _delivery = new();
+    private readonly ViewportRenderSurfaceRuntime _surface;
     private readonly object _deliveryStateSync = new();
     private ViewportRenderDeliveryResult? _lastDelivery;
     private long _loopCount;
@@ -29,12 +30,14 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     public ViewportContinuousFrameRuntime(
         ViewportRenderPipelineRuntime<TTile> pipeline,
         ViewportInputSubmissionRuntime? input = null,
-        TimeSpan? idleDelay = null)
+        TimeSpan? idleDelay = null,
+        ViewportRenderSurfaceRuntime? surface = null)
     {
         ArgumentNullException.ThrowIfNull(pipeline);
 
         _pipeline = pipeline;
         _input = input ?? new ViewportInputSubmissionRuntime();
+        _surface = surface ?? new ViewportRenderSurfaceRuntime();
         _interaction = new ViewportCompositeInputRuntime<TTile>(_pipeline.Composite);
 
         _idleDelay = idleDelay ?? TimeSpan.FromMilliseconds(4);
@@ -48,6 +51,8 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     public ViewportInputSubmissionRuntime Input => _input;
 
     public ViewportRenderDeliveryTracker Delivery => _delivery;
+
+    public ViewportRenderSurfaceRuntime Surface => _surface;
 
     public ViewportRenderDeliveryResult? LastDelivery
     {
@@ -81,6 +86,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _input.ResetLifecycle();
         _interaction.Reset();
         _delivery.Reset();
+        _surface.Reset();
 
         lock (_deliveryStateSync)
             _lastDelivery = null;
@@ -162,7 +168,8 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                                 frame,
                                 sink,
                                 _delivery,
-                                cancellationToken)
+                                cancellationToken,
+                                _surface)
                             .ConfigureAwait(false);
 
                         lock (_deliveryStateSync)
