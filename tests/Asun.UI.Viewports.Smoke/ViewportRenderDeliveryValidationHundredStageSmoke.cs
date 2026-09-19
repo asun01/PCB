@@ -150,6 +150,75 @@ public static class ViewportRenderDeliveryValidationHundredStageSmoke
                 $"failed-without-error mutation {i + 1} should fail.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            using var pipeline = new ViewportRenderPipelineRuntime<string>(
+                new System.Numerics.Vector2(800, 600),
+                new System.Numerics.Vector2(400, 300),
+                new System.Numerics.Vector2(100, 100),
+                1, 16, 2, new LocalTileSource());
+            using var surface = new ViewportRenderSurfaceRuntime();
+            var tracker = new ViewportRenderDeliveryTracker();
+            var sink = new ViewportRenderReplaySink<string>();
+
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            var first =
+                pipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(1))
+                    .GetAwaiter()
+                    .GetResult();
+
+            var interaction =
+                new ViewportCompositeInputRuntime<string>(
+                    pipeline.Composite);
+
+            interaction.Apply(
+                new ViewportInputEvent(
+                    1,
+                    ViewportInputEventKind.Wheel,
+                    new System.Numerics.Vector2(100, 100),
+                    120,
+                    ViewportMouseButton.Left));
+
+            pipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                pipeline.Composite.Generation);
+
+            var second =
+                pipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(1))
+                    .GetAwaiter()
+                    .GetResult();
+
+            var newer =
+                ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                    second!,
+                    sink,
+                    tracker,
+                    default,
+                    surface)
+                .GetAwaiter()
+                .GetResult();
+
+            var older =
+                ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                    first!,
+                    sink,
+                    tracker,
+                    default,
+                    surface)
+                .GetAwaiter()
+                .GetResult();
+
+            Check(
+                newer.Generation >= older.Generation &&
+                tracker.Statistics.LastGeneration == newer.Generation,
+                $"delivery tracker generation monotonicity {i + 1} should hold.");
+        }
+
         assert(
             round == 100,
             $"Render delivery validation smoke should execute exactly 100 numbered rounds; actual {round}.");
