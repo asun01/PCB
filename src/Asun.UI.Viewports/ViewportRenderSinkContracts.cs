@@ -35,7 +35,12 @@ public readonly record struct ViewportRenderCommitContext(
     int PlannedUnits,
     int RenderedUnits,
     int RegionCount,
-    IReadOnlyList<RectangleF> Regions);
+    IReadOnlyList<RectangleF> Regions,
+    int TileCount,
+    int RoiCount,
+    int OverlayCount,
+    int InvalidationCount,
+    int FullSurfaceCount);
 
 public readonly record struct ViewportRenderDiscardContext(
     long Generation,
