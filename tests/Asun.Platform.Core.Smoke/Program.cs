@@ -107,6 +107,15 @@ catch (TimeoutException)
 }
 Assert(timeoutObserved, "Operation timeout should surface as TimeoutException.", failures);
 
+var simulatedSource = new Asun.Device.Impl.SimulatedFrameSource(1920, 1080);
+var request = new Asun.Device.Contracts.AcquisitionRequest(
+    "SIM",
+    new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
+var frame1 = await simulatedSource.AcquireAsync(request);
+var frame2 = await simulatedSource.AcquireAsync(request);
+Assert(frame1.Sequence == 1 && frame2.Sequence == 2, "Simulated source should produce monotonic sequences.", failures);
+Assert(frame1.Width == 1920 && frame1.Height == 1080, "Simulated source should preserve configured dimensions.", failures);
+
 var queue = new BoundedWorkQueue<int>(2);
 Assert(queue.TryEnqueue(1), "First enqueue should succeed.", failures);
 Assert(queue.TryEnqueue(2), "Second enqueue should succeed.", failures);
