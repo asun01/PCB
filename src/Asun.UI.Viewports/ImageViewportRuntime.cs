@@ -185,8 +185,21 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
         }
     }
 
-    public async ValueTask<ViewportTileFrame<TTile>> RefreshAsync(
-        CancellationToken cancellationToken = default)
+    public ValueTask<ViewportTileFrame<TTile>> RefreshAsync(
+        CancellationToken cancellationToken = default) =>
+        RefreshCoreAsync(
+            includePrefetch: false,
+            cancellationToken);
+
+    public ValueTask<ViewportTileFrame<TTile>> RefreshAndPrefetchAsync(
+        CancellationToken cancellationToken = default) =>
+        RefreshCoreAsync(
+            includePrefetch: true,
+            cancellationToken);
+
+    private async ValueTask<ViewportTileFrame<TTile>> RefreshCoreAsync(
+        bool includePrefetch,
+        CancellationToken cancellationToken)
     {
         var operation = BeginRefresh(cancellationToken);
 
@@ -194,6 +207,10 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
         {
             var visible = operation.Requests
                 .Where(request => request.IsVisible)
+                .ToArray();
+
+            var prefetch = operation.Requests
+                .Where(request => request.IsPrefetch)
                 .ToArray();
 
             var loaded = new Dictionary<TileIndex, TTile>();
@@ -206,6 +223,17 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
                 failures);
 
             operation.Token.ThrowIfCancellationRequested();
+
+            if (includePrefetch)
+            {
+                await LoadRequestsAsync(
+                    operation,
+                    prefetch,
+                    loaded,
+                    failures);
+
+                operation.Token.ThrowIfCancellationRequested();
+            }
 
             return CreateFrame(
                 operation.Transform,
