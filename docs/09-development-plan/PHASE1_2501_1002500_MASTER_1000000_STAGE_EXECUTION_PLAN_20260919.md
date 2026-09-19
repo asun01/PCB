@@ -2216,3 +2216,12 @@ The one-million-stage plan is an active execution program rather than a planning
 - Vendor-authoritative gates remain external; execution must continue around them rather than invent authority.
 - Every completed 500-stage block requires five 100-stage ledgers plus an integration checkpoint and progress synchronization.
 - This document continues to govern stage numbering and non-blocked execution until the one-million-stage horizon is exhausted.
+
+
+### Execution checkpoint: Stage 14000 — 2026-09-19
+
+- Completed live non-blocked execution through stage 14,000.
+- Next natural stage: 14,001.
+- The 1,000,000-stage horizon remains unchanged at 2501–1,002,500.
+- Evidence platform work is now organized as a deterministic snapshot integrity chain: descriptor → snapshot → fingerprint → envelope → window → diff → transition.
+- The active execution lane remains vendor-neutral and continues to preserve external authority gates for HALCON, DevExpress, hardware SDKs, and unresolved production schemas.
