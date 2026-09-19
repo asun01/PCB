@@ -181,6 +181,25 @@ public sealed class RoiDocumentRuntime
         }
     }
 
+    public bool TranslateSelected(Vector2 delta)
+    {
+        ValidateFinite(delta);
+
+        lock (_sync)
+        {
+            var entry = FindEntryUnsafe(_selectedId);
+            if (entry is null || entry.Editor.Geometry is null)
+                return false;
+
+            var before = CreateSnapshotUnsafe();
+            entry.Editor.SetGeometry(
+                entry.Editor.Geometry.Translate(delta),
+                commit: true);
+            PushUndoUnsafe(before);
+            return true;
+        }
+    }
+
     public bool DeleteSelected()
     {
         lock (_sync)
