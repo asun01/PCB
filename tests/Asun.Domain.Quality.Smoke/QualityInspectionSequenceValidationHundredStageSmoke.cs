@@ -13,23 +13,38 @@ public static class QualityInspectionSequenceValidationHundredStageSmoke
         var first=new QualityInspectionSnapshot(Guid.NewGuid(),100,findings,evidence);
         var second=new QualityInspectionSnapshot(Guid.NewGuid(),101,findings,evidence);
         var reset=new QualityInspectionSnapshot(Guid.NewGuid(),99,findings,evidence);
+        var orphan=new QualityInspectionSnapshot(
+            Guid.NewGuid(),
+            102,
+            findings,
+            new QualityFindingEvidenceSet(new[]{
+                new QualityFindingEvidenceLink(
+                    QualityFindingId.Create("F-999"),
+                    QualityEvidenceKey.Create("frame://999"))
+            }));
 
-        var monotonic=true;
-        var nonMonotonic=false;
+        var forward=QualityInspectionSequenceRuntime.Observe(first,second);
+        var backward=QualityInspectionSequenceRuntime.Observe(first,reset);
+        var invalidRejected=false;
+        try
+        {
+            _=QualityInspectionSequenceRuntime.Observe(first,orphan);
+        }
+        catch(ArgumentException)
+        {
+            invalidRejected=true;
+        }
 
-        if(second.Sequence<first.Sequence) monotonic=false;
-        if(reset.Sequence<first.Sequence) nonMonotonic=true;
-
-        for(var i=0;i<10;i++) Check(monotonic,$"forward sequence round {i+1} should be monotonic.");
-        for(var i=0;i<10;i++) Check(nonMonotonic,$"backward sequence round {i+1} should be detectable.");
-        for(var i=0;i<10;i++) Check(second.Sequence==first.Sequence+1,$"sequence increment round {i+1} should be one.");
-        for(var i=0;i<10;i++) Check(reset.Sequence<first.Sequence,$"backward sequence state round {i+1} should remain explicit.");
-        for(var i=0;i<10;i++) Check(QualityInspectionSnapshotValidationRuntime.IsValid(first),$"first snapshot validity round {i+1} should pass.");
-        for(var i=0;i<10;i++) Check(QualityInspectionSnapshotValidationRuntime.IsValid(second),$"second snapshot validity round {i+1} should pass.");
-        for(var i=0;i<10;i++) Check(QualityInspectionSnapshotValidationRuntime.IsValid(reset),$"sequence validator should not encode monotonicity policy into snapshot validity round {i+1}.");
-        for(var i=0;i<10;i++) Check(first.SnapshotId!=second.SnapshotId,$"snapshot identity round {i+1} should remain unique.");
-        for(var i=0;i<10;i++) Check(first.Findings.Find(finding.Id)==finding,$"snapshot content round {i+1} should remain stable.");
-        for(var i=0;i<10;i++) Check(first.Evidence.Count==0 && second.Evidence.Count==0,$"empty evidence state round {i+1} should remain valid.");
+        for(var i=0;i<10;i++) Check(forward.IsForwardOrEqual,$"forward relation round {i+1} should be accepted.");
+        for(var i=0;i<10;i++) Check(forward.Delta==1,$"forward delta round {i+1} should equal one.");
+        for(var i=0;i<10;i++) Check(forward.IsConsecutive,$"forward consecutive relation round {i+1} should be explicit.");
+        for(var i=0;i<10;i++) Check(QualityInspectionSequenceValidationRuntime.IsValid(forward),$"forward relation validation round {i+1} should pass.");
+        for(var i=0;i<10;i++) Check(backward.IsBackward,$"backward relation round {i+1} should be detectable.");
+        for(var i=0;i<10;i++) Check(backward.Delta==-1,$"backward delta round {i+1} should equal negative one.");
+        for(var i=0;i<10;i++) Check(!backward.IsConsecutive,$"backward consecutive relation round {i+1} should be false.");
+        for(var i=0;i<10;i++) Check(QualityInspectionSequenceValidationRuntime.IsValid(first,reset),$"backward pair validation round {i+1} should allow policy-neutral comparison.");
+        for(var i=0;i<10;i++) Check(first.SnapshotId!=second.SnapshotId && first.SnapshotId!=reset.SnapshotId,$"snapshot identity round {i+1} should remain distinct.");
+        for(var i=0;i<10;i++) Check(invalidRejected,$"invalid snapshot rejection round {i+1} should be deterministic.");
 
         assert(round==100,$"Quality inspection sequence smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
