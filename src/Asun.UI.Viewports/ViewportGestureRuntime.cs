@@ -196,14 +196,18 @@ public sealed class ViewportGestureRuntime
         {
             if (!_pointerDown)
             {
+                var hoverEvent = _viewport.PointerMove(
+                    viewportPoint,
+                    _handleTolerancePixels);
+
                 _pointerPosition = viewportPoint;
 
                 return CreateEventUnsafe(
                     ViewportGestureKind.Idle,
                     viewportPoint,
                     false,
-                    false,
-                    false);
+                    hoverEvent.DocumentEventChanged(),
+                    hoverEvent.SelectionChanged);
             }
 
             if (_kind is ViewportGestureKind.RoiEditing or
