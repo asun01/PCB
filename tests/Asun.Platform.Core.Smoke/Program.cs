@@ -1045,6 +1045,41 @@ Assert(
     "Ellipse resize should replace radii deterministically.",
     failures);
 
+var polyline = new Asun.Vision.Contracts.Polyline2D(new[]
+{
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(3, 4),
+    new System.Numerics.Vector2(6, 4)
+});
+
+Assert(
+    polyline.Count == 3 &&
+    Math.Abs(polyline.Length - 8) < 1e-12 &&
+    polyline.Bounds == new RectangleF(0, 0, 6, 4),
+    "Polyline count, length and bounds should be deterministic.",
+    failures);
+
+Assert(
+    polyline.PointAtFraction(0.5) == polyline.PointAtDistance(4),
+    "Polyline fraction sampling should map to cumulative distance.",
+    failures);
+
+Assert(
+    polyline.PointAtDistance(5) == new System.Numerics.Vector2(4, 4),
+    "Polyline distance sampling should interpolate across segments.",
+    failures);
+
+Assert(
+    polyline.ClosestPoint(new System.Numerics.Vector2(3, 0)) ==
+        new System.Numerics.Vector2(1.08f, 1.44f),
+    "Polyline closest-point calculation should minimize distance over all segments.",
+    failures);
+
+Assert(
+    Math.Abs(polyline.DistanceSquaredTo(new System.Numerics.Vector2(3, 0)) - 7.2) < 1e-5,
+    "Polyline distance should be deterministic.",
+    failures);
+
 var circle = new Asun.Vision.Contracts.Circle2D(
     new System.Numerics.Vector2(10, 20),
     5);
