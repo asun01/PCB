@@ -2257,3 +2257,11 @@ The one-million-stage plan is an active execution program rather than a planning
 - Next natural stage: 16,501.
 - Evidence now has factual catalog statistics and a consistency report over snapshot, statistics, and opaque reference closure.
 - The one-million-stage horizon remains 2501–1,002,500.
+
+
+### Execution checkpoint: Stage 17000 — 2026-09-19
+
+- Completed live non-blocked execution through stage 17,000.
+- Next natural stage: 17,001.
+- Evidence now has a top-level diagnostic bundle composing snapshot, statistics, query-batch, and opaque reference facts.
+- The one-million-stage horizon remains 2501–1,002,500.
