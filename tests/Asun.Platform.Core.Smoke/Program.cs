@@ -12,6 +12,13 @@ var tolerance = new Asun.Vision.Contracts.NumericTolerance(1e-6, 1e-6);
 Assert(tolerance.IsValid, "Default numeric tolerance values should be valid.", failures);
 
 Assert(
+    Asun.Vision.Contracts.NumericTolerance.AbsoluteOnly(1e-6).Relative == 0 &&
+    Asun.Vision.Contracts.NumericTolerance.RelativeOnly(1e-6).Absolute == 0 &&
+    Asun.Vision.Contracts.NumericTolerance.Create(1e-6, 2e-6).IsValid,
+    "Numeric tolerance factories should produce validated configurations.",
+    failures);
+
+Assert(
     tolerance.AreEqual(1, 1 + 5e-7) &&
     !tolerance.AreEqual(1, 1 + 1e-3),
     "Numeric tolerance should combine absolute and relative comparisons deterministically.",
