@@ -116,6 +116,7 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
         }
 
         ViewportPresentationBufferTransaction? bufferTransaction = null;
+        var commitWindowStarted = false;
         using var supersedeCancellation =
             CancellationTokenSource.CreateLinkedTokenSource(
                 cancellationToken,
@@ -159,7 +160,15 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                     _delivery,
                     supersedeCancellation.Token,
                     _surface,
-                    () => _queue.IsCurrent(packet.Token))
+                    () => _queue.IsCommitCurrent(packet.Token),
+                    () =>
+                    {
+                        if (!_queue.TryBeginCommit(packet.Token))
+                            return false;
+
+                        commitWindowStarted = true;
+                        return true;
+                    })
                 .ConfigureAwait(false);
 
             if (delivery.Succeeded)
@@ -185,14 +194,21 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                     frame.CommandStream.Regions,
                     () => _queue.IsCurrent(packet.Token));
 
-                if (_queue.TryAcknowledgePresented(packet.Token))
+                if (_queue.TryCompleteCommit(packet.Token))
                 {
+                    commitWindowStarted = false;
                     return Complete(new(
                         true,
                         true,
                         false,
                         packet,
                         delivery));
+                }
+
+                if (commitWindowStarted)
+                {
+                    _queue.TryAbortCommit(packet.Token);
+                    commitWindowStarted = false;
                 }
 
                 _queue.TryCancel(packet.Token);
@@ -212,6 +228,12 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                 delivery.Cancelled &&
                 !_queue.IsCurrent(packet.Token);
 
+            if (commitWindowStarted)
+            {
+                _queue.TryAbortCommit(packet.Token);
+                commitWindowStarted = false;
+            }
+
             _queue.TryCancel(packet.Token);
 
             return Complete(new(
@@ -225,6 +247,12 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
         {
             if (bufferTransaction is ViewportPresentationBufferTransaction activeBuffer)
                 _buffers.Discard(activeBuffer);
+
+            if (commitWindowStarted)
+            {
+                _queue.TryAbortCommit(packet.Token);
+                commitWindowStarted = false;
+            }
 
             _queue.TryCancel(packet.Token);
 
