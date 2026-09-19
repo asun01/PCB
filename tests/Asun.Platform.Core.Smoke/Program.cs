@@ -668,6 +668,23 @@ Assert(
     "Pipeline dependency collections should be snapshotted at construction.",
     failures);
 
+var invalidMarginRejected = false;
+try
+{
+    _ = Asun.UI.Viewports.ImageTileGeometry.ExpandTileRange(
+        new System.Numerics.Vector2(1000, 500),
+        new System.Numerics.Vector2(256, 256),
+        tileRange,
+        marginX: -1,
+        marginY: 0);
+}
+catch (ArgumentOutOfRangeException)
+{
+    invalidMarginRejected = true;
+}
+
+Assert(invalidMarginRejected, "Negative tile prefetch margins should be rejected.", failures);
+
 var invalidGraphRejected = false;
 try
 {
