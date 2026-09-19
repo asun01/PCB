@@ -204,6 +204,16 @@ catch (TimeoutException)
 
 Assert(timeoutObserved, "Operation timeout should surface as TimeoutException.", failures);
 
+var timedResult = await OperationTimeout.ExecuteAsync(
+    async token =>
+    {
+        await Task.Delay(1, token);
+        return 42;
+    },
+    TimeSpan.FromSeconds(1));
+
+Assert(timedResult == 42, "Generic operation timeout should return the operation result.", failures);
+
 var viewport = Asun.UI.Viewports.ViewportTransform.Fit(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(1200, 800));
