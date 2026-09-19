@@ -84,7 +84,8 @@ public static class ViewportRenderDeliveryRuntime
         IViewportRenderSink<TTile> sink,
         ViewportRenderDeliveryTracker? tracker = null,
         CancellationToken cancellationToken = default,
-        ViewportRenderSurfaceRuntime? surface = null)
+        ViewportRenderSurfaceRuntime? surface = null,
+        Func<bool>? presentationFence = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
         ArgumentNullException.ThrowIfNull(sink);
@@ -119,6 +120,10 @@ public static class ViewportRenderDeliveryRuntime
             {
                 try
                 {
+                    if (presentationFence is not null &&
+                        !presentationFence())
+                        throw new ViewportPresentationFenceRejectedException();
+
                     await sink.CommitFrameAsync(
                         new ViewportRenderCommitContext(
                             frame.Composite.Generation,
@@ -133,11 +138,16 @@ public static class ViewportRenderDeliveryRuntime
                             frame.Batch.FullSurfaceCount),
                         cancellationToken).ConfigureAwait(false);
 
+                    if (presentationFence is not null &&
+                        !presentationFence())
+                        throw new ViewportPresentationFenceRejectedException();
+
                     surface.Commit(
                         transaction!.Value,
                         frame.Batch.ItemCount,
                         units,
-                        frame.Batch.Regions);
+                        frame.Batch.Regions,
+                        presentationFence);
                 }
                 catch (Exception exception)
                 {
