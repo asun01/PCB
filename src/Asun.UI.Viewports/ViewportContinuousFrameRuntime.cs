@@ -221,6 +221,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                                 }
                                 else
                                 {
+                                    _presentationQueue.TryCancel(packet.Token);
                                     Interlocked.Increment(ref _supersededFrames);
                                     _pipeline.Invalidate(
                                         presentedFrame.Submission.DirtyFlags,
