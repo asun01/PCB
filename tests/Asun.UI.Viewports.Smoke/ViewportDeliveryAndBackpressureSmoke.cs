@@ -39,6 +39,7 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
             assert(
                 success.Succeeded &&
+                success.Status == ViewportRenderDeliveryStatus.Succeeded &&
                 !success.Cancelled &&
                 success.Error is null &&
                 success.RenderedUnits > 0,
@@ -51,6 +52,7 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
             assert(
                 !failure.Succeeded &&
+                failure.Status == ViewportRenderDeliveryStatus.Failed &&
                 !failure.Cancelled &&
                 failure.Error is not null,
                 $"Delivery chain {i + 1} should isolate sink exceptions.");
@@ -62,6 +64,7 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
             assert(
                 !cancellation.Succeeded &&
+                cancellation.Status == ViewportRenderDeliveryStatus.Cancelled &&
                 cancellation.Cancelled &&
                 cancellation.Error is null,
                 $"Delivery chain {i + 1} should classify cancellation separately.");
