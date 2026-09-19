@@ -2614,11 +2614,27 @@ runtime.ZoomFactor(
 var runtimeFrame = await runtime.RefreshAsync();
 
 Assert(
-    runtimeFrame.Requests.Any(request => request.IsVisible) &&
-    runtimeFrame.LoadedCount == runtimeFrame.RequestedCount &&
+    runtimeFrame.RequestedVisibleCount > 0 &&
+    runtimeFrame.LoadedCount == runtimeFrame.RequestedVisibleCount &&
     runtimeFrame.Failures.Count == 0 &&
-    runtimeFrame.IsComplete,
+    runtimeFrame.IsComplete &&
+    runtimeFrame.IsCompleteForVisible,
     "Viewport runtime refresh should load every visible tile into a stable display frame.",
+    failures);
+
+var fullFrame = await runtime.RefreshAndPrefetchAsync();
+
+Assert(
+    fullFrame.RequestedPrefetchCount > 0 &&
+    fullFrame.LoadedCount == fullFrame.RequestedCount &&
+    fullFrame.Failures.Count == 0 &&
+    fullFrame.IsCompleteForAllRequests,
+    "One-call viewport refresh should complete both visible and prefetch tiles.",
+    failures);
+
+Assert(
+    runtimeSource.MaxConcurrentLoads <= 4,
+    "Viewport runtime loading should respect the configured concurrency limit.",
     failures);
 
 var prefetchCount = await runtime.PrefetchAsync();
@@ -2633,7 +2649,7 @@ var loadCountBeforeCachedRefresh = runtimeSource.LoadCount;
 var cachedFrame = await runtime.RefreshAsync();
 
 Assert(
-    cachedFrame.IsComplete &&
+    cachedFrame.IsCompleteForVisible &&
     runtimeSource.LoadCount == loadCountBeforeCachedRefresh,
     "Refreshing an unchanged viewport should be satisfied by the tile cache.",
     failures);
