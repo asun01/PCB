@@ -313,6 +313,18 @@ Assert(
     "A tile-aligned visible rectangle should resolve to exactly one tile.",
     failures);
 
+var rangeRectangle = Asun.UI.Viewports.ImageTileGeometry.GetTileRangeRectangle(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new Asun.UI.Viewports.VisibleTileRange(
+        new Asun.UI.Viewports.TileIndex(2, 0),
+        new Asun.UI.Viewports.TileIndex(3, 1)));
+
+Assert(
+    rangeRectangle == new RectangleF(512, 0, 488, 500),
+    "Tile range rectangle should cover every requested tile without exceeding image bounds.",
+    failures);
+
 var visibleTileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     viewport.ImageSize,
     new System.Numerics.Vector2(256, 256),
