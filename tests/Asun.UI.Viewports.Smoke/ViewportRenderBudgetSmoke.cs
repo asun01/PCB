@@ -17,11 +17,12 @@ public static class ViewportRenderBudgetSmoke
                 4,
                 new LocalTileSource());
 
-            runtime.AddRoi(
+            var roiId = runtime.AddRoi(
                 RoiGeometry.CreateRectangle(
                     new Vector2(300 + i % 13 * 17, 250 + i % 7 * 13),
                     new Vector2(100, 70)));
 
+            runtime.SelectRoi(roiId);
             runtime.DuplicateSelected(new Vector2(140, 100));
 
             var frame = await runtime.RefreshAsync(
@@ -70,6 +71,37 @@ public static class ViewportRenderBudgetSmoke
                 empty.IsEmpty &&
                 empty.Generation == frame.Generation,
                 $"Budget chain {i + 1} should expose an explicit empty batch.");
+
+            runtime.TranslateSelected(new Vector2(9, 6));
+
+            var incremental = await runtime.RefreshAsync();
+
+            var incrementalPlan = ViewportRenderWorkRuntime.Plan(
+                incremental,
+                incremental.DirtyFlags);
+
+            assert(
+                incrementalPlan.Items.Any(item => item.IsInvalidation) &&
+                incrementalPlan.Items.Any(item =>
+                    item.Kind == ViewportRenderWorkKind.Roi &&
+                    !item.IsInvalidation),
+                $"Budget chain {i + 1} should produce both old-region invalidation and current ROI work.");
+
+            var constrained = ViewportRenderBudgetRuntime.Apply(
+                incrementalPlan,
+                new ViewportRenderBudget(
+                    MaxTileWork: 0,
+                    MaxRoiWork: 1,
+                    MaxOverlayWork: 0,
+                    MaxTotalWork: 2));
+
+            assert(
+                constrained.Items.Any(item => item.IsInvalidation) &&
+                constrained.Items.Any(item =>
+                    item.Kind == ViewportRenderWorkKind.Roi &&
+                    !item.IsInvalidation) &&
+                constrained.Items.Count <= 2,
+                $"Budget chain {i + 1} should preserve invalidation before normal ROI work.");
         }
     }
 
