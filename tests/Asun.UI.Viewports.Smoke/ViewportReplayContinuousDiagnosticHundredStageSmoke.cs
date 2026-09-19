@@ -156,14 +156,12 @@ public static class ViewportReplayContinuousDiagnosticHundredStageSmoke
             var snapshot =
                 runtime.CreateReplayDiagnosticSnapshot();
 
-            var exported =
+            var manifest =
                 ViewportReplayDiagnosticManifestRuntime.Create(
                     ViewportReplayDiagnosticSnapshotRuntime.Capture(
-                        snapshot.StateFingerprint is not null
-                            ? CreateExecutionFromFacade(
-                                snapshot,
-                                runtime)
-                            : throw new InvalidOperationException(),
+                        CreateExecutionFromFacade(
+                            snapshot,
+                            runtime),
                         snapshot.ReplayBundle,
                         ViewportReplayCheckpointRuntime.Capture(
                             CreateExecutionFromFacade(
@@ -172,9 +170,10 @@ public static class ViewportReplayContinuousDiagnosticHundredStageSmoke
                             snapshot.ReplayBundle.Inputs)));
 
             Check(
-                exported.FormatVersion ==
-                ViewportReplayDiagnosticManifest.CurrentFormatVersion,
-                $"facade export {i + 1} should preserve manifest version.");
+                manifest.FormatVersion ==
+                ViewportReplayDiagnosticManifest.CurrentFormatVersion &&
+                manifest.DiagnosticHash.Length == 64,
+                $"facade export {i + 1} should preserve diagnostic manifest integrity.");
         }
 
         for (var i = 0; i < 10; i++)
