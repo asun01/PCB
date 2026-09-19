@@ -73,13 +73,25 @@ public static class ViewportPresentationQueueSmoke
 
         var inFlightCancellation =
             queue.GetInFlightCancellationToken(inFlightLatest.Token);
+        var cancellationObservedAfterEnqueue = false;
+
+        using var cancellationObservation =
+            inFlightCancellation.Register(() =>
+            {
+                var snapshot = queue.Statistics;
+                cancellationObservedAfterEnqueue =
+                    snapshot.Pending > 0 &&
+                    snapshot.LatestSubmissionSequence >
+                    inFlightLatest.Token.Sequence;
+            });
 
         assert(
             queue.TryEnqueue(second, out var newerPacket) &&
             newerPacket.Token.Sequence > inFlightLatest.Token.Sequence &&
             !queue.IsCurrent(inFlightLatest.Token) &&
-            inFlightCancellation.IsCancellationRequested,
-            "A newer presentation submission must invalidate and cancel the older in-flight execution token.");
+            inFlightCancellation.IsCancellationRequested &&
+            cancellationObservedAfterEnqueue,
+            "A newer submission must invalidate the older in-flight token only after the new pending frame is visible.");
 
         queue.TryCancel(inFlightLatest.Token);
 
