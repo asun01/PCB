@@ -193,3 +193,17 @@ Verification note:
 Verification note:
 - No local build/test execution result is asserted from this environment.
 - GitHub status checks and workflow runs for the active HEAD are still empty; no CI success is inferred.
+### Latest asynchronous presentation execution / stale-frame fence hardening — 2026-09-19
+- Added framework-neutral `ViewportPresentationExecutionRuntime` as the logical render-worker boundary. Continuous frame production now enqueues frames while the execution worker independently consumes and presents them.
+- `ViewportPresentationQueueRuntime` now exposes activity signaling, in-flight cancellation tokens, current-submission checks, and a monotonic latest submission sequence.
+- A newer submission cancels an older in-flight presentation. The cancellation token is linked into Render Delivery so slow render/sink work can be interrupted instead of presenting stale content.
+- Surface and Backbuffer Commit now accept the presentation fence and reject superseded submissions before publishing a new Presented state.
+- Execution validates the Queue fence before Buffer commit and ACK. Queue ACK itself now rejects any token whose submission sequence is no longer the latest.
+- Control-loop activity waiting now includes the presentation worker task, so an unexpected worker exit cannot leave the UI/control loop permanently idle.
+- Continuous Runtime smoke now verifies input generation can advance while the render worker is blocked, proving frame production is decoupled from slow presentation execution.
+- Added execution-worker smoke for Queue -> Worker wake-up -> Surface/Backbuffer commit -> Queue ACK, plus a stale in-flight supersede scenario where the older frame is cancelled and the newer generation becomes Presented.
+- Main smoke entry includes the asynchronous execution coverage.
+
+Verification note:
+- No local build/test execution result is asserted from this environment.
+- GitHub commit status and workflow runs for the active HEAD remain empty; no CI success is inferred.
