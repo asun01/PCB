@@ -49,3 +49,16 @@ Implemented in the framework-neutral presentation/rendering preparation path:
 Verification note:
 - These changes are repository edits and smoke-test wiring. No local build/test execution result is being asserted from this environment.
 - GitHub Actions status for the latest branch commits remains unverified when no workflow run/status is associated with the commit.
+
+
+### Latest viewport presentation/runtime continuation — 2026-09-19
+- Deferred pages are discarded immediately when a newer composite generation is invalidated.
+- Delivery retry keeps failed/deferred work at the front of the pending render sequence.
+- Render invalidation regions are merged at the adapter boundary; corner-only contacts are intentionally not merged.
+- EndFrame finalization remains guaranteed on render failure/cancellation paths.
+- Presentation snapshots now retry sampling and expose `IsGenerationStable` instead of claiming atomicity they do not have.
+- Smoke coverage now includes touching-region merge behavior, corner-only rejection, failure-path EndFrame finalization, and stable snapshot sampling.
+
+Verification note:
+- No local build/test execution result is asserted from this environment.
+- Latest commit has no associated GitHub Actions run or commit status at the time of this update.
