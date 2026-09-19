@@ -30,6 +30,11 @@ public readonly record struct OrientedRectangle2D(
             ? ((double)Size.X * Size.X + (double)Size.Y * Size.Y) / 4d
             : throw new InvalidOperationException("The oriented rectangle is invalid.");
 
+    public double DiagonalLength =>
+        IsValid
+            ? Math.Sqrt(4d * HalfDiagonalSquared)
+            : throw new InvalidOperationException("The oriented rectangle is invalid.");
+
     public Vector2 LocalXAxis =>
         new((float)Math.Cos(AngleRadians), (float)Math.Sin(AngleRadians));
 
