@@ -33,7 +33,7 @@ round == 90;
         for(var i=0;i<10;i++) Check(!wrongReport.IsValid,$"wrong round validation round {i+1} should fail.");
         for(var i=0;i<10;i++) Check(wrongReport.LoopGroups==10,$"loop preservation round {i+1} should remain ten.");
         for(var i=0;i<10;i++) Check(wrongReport.CheckCalls==10,$"check-site preservation round {i+1} should remain ten.");
-        for(var i=0;i<10;i++) Check(!wrongReport.BalancedDelimiters?false:true,$"balanced source round {i+1} should remain balanced.");
+        for(var i=0;i<10;i++) Check(wrongReport.BalancedDelimiters,$"balanced source round {i+1} should remain balanced.");
         for(var i=0;i<10;i++) Check(!wrongReport.HasPlaceholderMarkers,$"placeholder state round {i+1} should remain clean.");
         for(var i=0;i<10;i++) Check(wrongReport.Errors.Any(error=>error.Contains("round == 100",StringComparison.Ordinal)),$"round mismatch diagnostic round {i+1} should be explicit.");
 
