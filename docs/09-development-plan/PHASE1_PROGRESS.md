@@ -160,3 +160,19 @@ Verification note:
 Verification note:
 - The verification smoke is 10 loop groups × 10 iterations × 1 Check = 100 numbered rounds, with the final `round == 100` assertion outside the Check counter.
 - Static source review is used for this pass; no build/test/CI success is asserted without authoritative execution evidence.
+
+### 1001→1500 continuous five-hundred-round replay hardening — 2026-09-19
+
+- Completed stages 1001–1500 as five contiguous 100-stage blocks.
+- Added Bundle-level replay verification with component match flags and structured differences.
+- Added internal Replay Bundle format versioning and malformed-array validation.
+- Added bounded Replay Checkpoint runtime/store for prefix and stage-boundary verification.
+- Added Presentation Evidence/Audit verification gate with ordering checks.
+- Added integrated Replay Diagnostic Gate combining execution, state, bundle, checkpoint, and presentation evidence verification.
+- Corrected `ViewportInputReplayRuntime.EvidenceHash()` to use a valid deterministic `"\n"` separator.
+- Registered five new 100-round smoke matrices, giving a 500-round continuous hardening sequence.
+- Added `PHASE1_1001_1500_STAGE_LEDGER_20260919.md` with exactly 500 consecutive stage entries.
+
+Verification boundary:
+- Static source verification confirms the new C# files are structurally balanced and the five smoke matrices each use 10 loops × 10 Check calls with an explicit `round == 100` assertion.
+- No local build/test/CI success is asserted without authoritative execution evidence.
