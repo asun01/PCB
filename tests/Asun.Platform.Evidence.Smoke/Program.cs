@@ -63,8 +63,16 @@ EvidenceCatalogSnapshotHundredStageSmoke.Run((condition,message)=>
     Check(condition,message));
 
 
-await EvidenceCatalogHundredStageSmoke.Run((condition,message)=>Check(condition,message));
-EvidenceDescriptorFingerprintHundredStageSmoke.Run((condition,message)=>Check(condition,message));
+await EvidenceCatalogHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
+EvidenceDescriptorFingerprintHundredStageSmoke.Run((condition,message)=>
+{
+    if(!condition)
+        failures.Add(message);
+});
 
 if(failures.Count>0)
 {
