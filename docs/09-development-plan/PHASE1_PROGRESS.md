@@ -232,3 +232,15 @@ Verification note:
 - Added stage ledgers for 2501–2600, 2601–2700, 2701–2800, 2801–2900 and 2901–3000.
 - Static verification confirms all five new Smoke matrices use 10 loop groups × 10 Check calls with round == 100.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+### 3001→3500 render strategy and bounded cache hardening — 2026-09-19
+
+- Completed stages 3001–3500 as five contiguous 100-stage blocks.
+- Added reusable Render Budget validation for total/category ceilings, source membership and generation preservation.
+- Added Render Priority validation for work preservation, deterministic ordering, invalidation prefix and generation coherence.
+- Added Render Reuse validation for presented-frame reuse, generation identity, clearing and deferred-frame exclusion.
+- Added Tile Cache validation for bounded count, LRU recency, unique keys and statistics coherence.
+- Added Tile Prefetch validation for maximum size, source membership, visible-first ordering, distinct indices and deterministic policy boundaries.
+- Added five exact 100-round Smoke matrices and registered them in the primary viewport smoke entry.
+- Completed 3001–3500 with five dedicated stage ledgers.
+- No local build/test/CI success is asserted without authoritative execution evidence.
