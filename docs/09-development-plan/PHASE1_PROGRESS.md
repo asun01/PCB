@@ -39,3 +39,14 @@ Continue all non-blocked repository, tooling, dependency-boundary, simulation-bo
 Verification note:
 - No local build/test execution result is asserted.
 - Latest branch workflow/status lookup returned no associated GitHub Actions run/status; authoritative build/test verification remains pending external execution.
+
+### 300-round continuous continuation — 2026-09-19
+- Added a deterministic 300-round verification matrix and registered it in the main viewport smoke entry.
+- Added Render Evidence Manifest, Presentation Audit Trace, deterministic Input Replay Runtime, and Replay Session JSON evidence bundle.
+- Centralized structural invariants now validate the new evidence/replay state in addition to render, presentation, input, scene, workflow, and metric state.
+- Concrete platform defects previously found in AsyncPipeline and AsyncSignal remain fixed.
+- The implementation remains vendor-neutral; Skia/WPF/DevExpress/HALCON/hardware-specific authority is still isolated behind the existing boundaries.
+
+Verification note:
+- No local C# build/test result is asserted.
+- No GitHub Actions success is inferred without an associated workflow run/status.
