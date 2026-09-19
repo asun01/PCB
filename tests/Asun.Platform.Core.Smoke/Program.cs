@@ -1030,6 +1030,20 @@ Assert(
     failures);
 
 Assert(resources.Capacity("camera") == 1, "Configured resource capacity should be exposed.", failures);
+Assert(
+    resources.TryGetCapacity("camera", out var knownCapacity) &&
+    knownCapacity == 1 &&
+    !resources.TryGetCapacity("missing", out _),
+    "Resource capacity lookup should distinguish configured and unknown resources.",
+    failures);
+
+Assert(
+    resources.TryGetAvailable("gpu", out var knownAvailable) &&
+    knownAvailable == 2 &&
+    !resources.TryGetAvailable("missing", out _),
+    "Resource availability lookup should distinguish configured and unknown resources.",
+    failures);
+
 Assert(resources.Available("gpu") == 2, "Independent resource capacity should start available.", failures);
 
 Assert(resources.TryAcquire("camera", out var cameraLease), "The first lease should be granted.", failures);
