@@ -42,7 +42,7 @@ public static class ViewportRenderAdapterRuntime
             .ToDictionary(group => group.Key, group => group.ToArray());
 
         var renderedRoiIds = new HashSet<Guid>();
-        var renderedTiles = 0;
+        var renderedUnits = 0;
 
         foreach (var work in frame.WorkPlan.Items)
         {
@@ -59,7 +59,7 @@ public static class ViewportRenderAdapterRuntime
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                renderedTiles++;
+                renderedUnits++;
                 continue;
             }
 
@@ -127,6 +127,6 @@ public static class ViewportRenderAdapterRuntime
                 .ConfigureAwait(false);
         }
 
-        return renderedTiles + renderedRoiIds.Count;
+        return renderedUnits + renderedRoiIds.Count;
     }
 }
