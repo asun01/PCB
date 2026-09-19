@@ -547,6 +547,12 @@ Assert(
     failures);
 
 Assert(
+    Math.Abs(viewport.FitScale - viewport.Scale) < 1e-9 &&
+    Math.Abs(viewport.ZoomRatioToFit - 1) < 1e-9,
+    "Fit scale metadata should identify the current fit state.",
+    failures);
+
+Assert(
     viewport.IsImageFullyVisible,
     "Fit transform should keep the rendered image fully visible.",
     failures);
