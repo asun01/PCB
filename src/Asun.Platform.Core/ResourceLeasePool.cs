@@ -56,6 +56,8 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
     public IReadOnlyList<TKey> ResourceKeys =>
         _resources.Keys.ToArray();
 
+    public int ResourceCount => _resources.Count;
+
     public bool TryGetCapacity(TKey resource, out int capacity)
     {
         if (IsDisposed)
