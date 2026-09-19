@@ -110,6 +110,8 @@ public sealed class AsyncPipeline<TContext>
 
         foreach (var node in nodes)
         {
+            ArgumentNullException.ThrowIfNull(node.Dependencies);
+
             if (string.IsNullOrWhiteSpace(node.Id))
             {
                 throw new ArgumentException("Every pipeline node requires a non-empty identifier.", nameof(nodes));

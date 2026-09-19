@@ -245,6 +245,27 @@ Assert(
     "Viewport rectangle conversion should round-trip.",
     failures);
 
+var nullDependenciesRejected = false;
+try
+{
+    _ = new AsyncPipeline<object>(new[]
+    {
+        new AsyncPipeline<object>.Node(
+            "NullDependencies",
+            null!,
+            (_, _) => ValueTask.CompletedTask)
+    });
+}
+catch (ArgumentNullException)
+{
+    nullDependenciesRejected = true;
+}
+
+Assert(
+    nullDependenciesRejected,
+    "Pipeline nodes should reject null dependency collections.",
+    failures);
+
 var invalidGraphRejected = false;
 try
 {
