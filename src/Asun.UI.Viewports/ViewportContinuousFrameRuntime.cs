@@ -19,6 +19,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly ViewportCompositeInputRuntime<TTile> _interaction;
     private readonly ViewportRenderDeliveryTracker _delivery = new();
     private readonly ViewportRenderSurfaceRuntime _surface;
+    private readonly ViewportPresentationQueueRuntime<TTile> _presentationQueue;
     private readonly object _deliveryStateSync = new();
     private ViewportRenderDeliveryResult? _lastDelivery;
     private long _loopCount;
@@ -38,6 +39,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _pipeline = pipeline;
         _input = input ?? new ViewportInputSubmissionRuntime();
         _surface = surface ?? new ViewportRenderSurfaceRuntime();
+        _presentationQueue = new ViewportPresentationQueueRuntime<TTile>();
         _interaction = new ViewportCompositeInputRuntime<TTile>(_pipeline.Composite);
 
         _idleDelay = idleDelay ?? TimeSpan.FromMilliseconds(4);
@@ -53,6 +55,9 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     public ViewportRenderDeliveryTracker Delivery => _delivery;
 
     public ViewportRenderSurfaceRuntime Surface => _surface;
+
+    public ViewportPresentationQueueRuntime<TTile> PresentationQueue =>
+        _presentationQueue;
 
     public ViewportRenderDeliveryResult? LastDelivery
     {
@@ -87,6 +92,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _interaction.Reset();
         _delivery.Reset();
         _surface.Reset();
+        _presentationQueue.Reset();
 
         lock (_deliveryStateSync)
             _lastDelivery = null;
@@ -163,9 +169,20 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                             continue;
                         }
 
+                        if (!_presentationQueue.TryEnqueue(
+                                frame,
+                                out var packet) ||
+                            !_presentationQueue.TryTakeLatest(out packet))
+                        {
+                            Interlocked.Increment(ref _skippedLoops);
+                            continue;
+                        }
+
+                        var presentedFrame = packet.Frame;
+
                         var delivery = await ViewportRenderDeliveryRuntime
                             .TryDeliverAsync(
-                                frame,
+                                presentedFrame,
                                 sink,
                                 _delivery,
                                 cancellationToken,
@@ -177,23 +194,36 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
                         if (delivery.Succeeded)
                         {
-                            _pipeline.MarkPresented(frame);
-                            Interlocked.Increment(ref _renderedFrames);
+                            if (_presentationQueue.TryAcknowledgePresented(
+                                    packet.Token))
+                            {
+                                _pipeline.MarkPresented(presentedFrame);
+                                Interlocked.Increment(ref _renderedFrames);
+                            }
+                            else
+                            {
+                                Interlocked.Increment(ref _supersededFrames);
+                                _pipeline.Invalidate(
+                                    presentedFrame.Submission.DirtyFlags,
+                                    _pipeline.Composite.Generation);
+                            }
                         }
                         else
                         {
+                            _presentationQueue.TryCancel(packet.Token);
+
                             if (delivery.Status is
                                 ViewportRenderDeliveryStatus.Failed or
                                 ViewportRenderDeliveryStatus.Deferred)
                             {
                                 _pipeline.RequeueFrame(
-                                    frame,
+                                    presentedFrame,
                                     delivery.Deferred
                                         ? delivery.DeferredWorkItems
                                         : null);
                                 _pipeline.Invalidate(
-                                    frame.Submission.DirtyFlags,
-                                    frame.Composite.Generation);
+                                    presentedFrame.Submission.DirtyFlags,
+                                    presentedFrame.Composite.Generation);
                             }
 
                             Interlocked.Increment(ref _skippedLoops);
