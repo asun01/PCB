@@ -44,6 +44,9 @@ public readonly record struct ViewportInteractionState(
     public ViewportInteractionState EndPan() =>
         this with { IsPanning = false };
 
+    public ViewportInteractionState CancelPan() =>
+        this with { IsPanning = false };
+
     public ViewportInteractionState ApplyZoom(
         double requestedScale,
         double minScale,
