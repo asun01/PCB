@@ -88,6 +88,17 @@ public static class ViewportRenderPrioritySmoke
                     Math.Abs(region.Width - 70) < 1e-4f),
                 $"Priority chain {i + 1} should merge touching render regions.");
 
+            var cornerOnly = ViewportRenderRegionRuntime.Merge(
+                new[]
+                {
+                    new RectangleF(10, 10, 20, 20),
+                    new RectangleF(30, 30, 20, 20)
+                });
+
+            assert(
+                cornerOnly.Count == 2,
+                $"Priority chain {i + 1} should not merge corner-only touching regions.");
+
             var budget = ViewportRenderBudgetRuntime.Apply(
                 prioritized,
                 new ViewportRenderBudget(4, 4, 1, 8));
