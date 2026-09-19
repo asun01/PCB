@@ -1244,6 +1244,14 @@ Assert(
     "Pixel rectangle expansion should include the requested point.",
     failures);
 
+var degenerate = new Asun.Vision.Contracts.PixelRect(10, 10, 0, 0);
+Assert(
+    degenerate.IsEmpty &&
+    degenerate.IsDegenerate &&
+    degenerate.Perimeter == 0,
+    "Zero-size pixel rectangles should be classified as degenerate.",
+    failures);
+
 var inflated = roi.Inflate(10, 20);
 Assert(
     inflated == new Asun.Vision.Contracts.PixelRect(90, 30, 220, 140),
