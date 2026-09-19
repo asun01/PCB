@@ -1054,9 +1054,17 @@ var polyline = new Asun.Vision.Contracts.Polyline2D(new[]
 
 Assert(
     polyline.Count == 3 &&
+    polyline.StartPoint == new System.Numerics.Vector2(0, 0) &&
+    polyline.EndPoint == new System.Numerics.Vector2(6, 4) &&
     Math.Abs(polyline.Length - 8) < 1e-12 &&
     polyline.Bounds == new RectangleF(0, 0, 6, 4),
-    "Polyline count, length and bounds should be deterministic.",
+    "Polyline endpoints, length and bounds should be deterministic.",
+    failures);
+
+Assert(
+    polyline.GetSegments().Count == 2 &&
+    polyline.GetSegments()[0].Start == polyline.StartPoint,
+    "Polyline segment decomposition should preserve point order.",
     failures);
 
 Assert(
