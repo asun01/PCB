@@ -135,6 +135,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
 
                 var queueStable =
                     beforeQueue.Pending == afterQueue.Pending &&
+                    beforeQueue.LatestSubmissionSequence ==
+                    afterQueue.LatestSubmissionSequence &&
                     beforeQueue.LatestGeneration ==
                     afterQueue.LatestGeneration &&
                     beforeQueue.PresentedGeneration ==
