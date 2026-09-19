@@ -68,13 +68,29 @@ public static class ViewportReplayDiagnosticGateRuntime
         foreach (var difference in bundleComparison.Differences)
             differences.Add($"Bundle.{difference}");
 
+        var expectedCheckpointErrors =
+            ViewportReplayCheckpointRuntime.Validate(
+                expectedCheckpoint);
+
+        var actualCheckpointErrors =
+            ViewportReplayCheckpointRuntime.Validate(
+                actualCheckpoint);
+
         var checkpointComparison =
             ViewportReplayCheckpointRuntime.Compare(
                 expectedCheckpoint,
                 actualCheckpoint);
 
         var checkpointMatches =
+            expectedCheckpointErrors.Count == 0 &&
+            actualCheckpointErrors.Count == 0 &&
             checkpointComparison.IsEquivalent;
+
+        foreach (var error in expectedCheckpointErrors)
+            differences.Add($"Checkpoint.Expected.{error}");
+
+        foreach (var error in actualCheckpointErrors)
+            differences.Add($"Checkpoint.Actual.{error}");
 
         foreach (var difference in checkpointComparison.Differences)
             differences.Add($"Checkpoint.{difference}");
