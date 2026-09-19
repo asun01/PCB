@@ -102,6 +102,9 @@ public readonly record struct ViewportTransform(
         RenderedImageRectangle.Right <= ViewportSize.X &&
         RenderedImageRectangle.Bottom <= ViewportSize.Y;
 
+    public Vector2 ImagePointAtViewportCenter =>
+        ViewportToImage(ViewportCenter);
+
     public ViewportTransform WithZoomFactor(
         double zoomFactor,
         Vector2 viewportAnchor)
