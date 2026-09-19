@@ -31,7 +31,7 @@ public static class ViewportRenderAdapterRuntime
 
         try
         {
-        var visibility = ViewportTileRoiVisibilityRuntime.Build(
+            var visibility = ViewportTileRoiVisibilityRuntime.Build(
             frame.Composite);
 
         var visibleRoiIds = visibility.VisibleRoiIds;
@@ -47,6 +47,20 @@ public static class ViewportRenderAdapterRuntime
         foreach (var work in frame.WorkPlan.Items)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            if (work.Kind == ViewportRenderWorkKind.FullSurface)
+            {
+                await sink
+                    .ClearInvalidatedRegionAsync(
+                        new ViewportRenderInvalidationContext(
+                            viewportBounds,
+                            frame.Composite.Generation),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                renderedUnits++;
+                continue;
+            }
 
             if (work.IsInvalidation)
             {
@@ -138,9 +152,6 @@ public static class ViewportRenderAdapterRuntime
                         cancellationToken)
                     .ConfigureAwait(false);
             }
-        }
-
-
         }
         finally
         {
