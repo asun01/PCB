@@ -30,6 +30,20 @@ public readonly record struct ViewportRenderInvalidationContext(
     RectangleF Bounds,
     long Generation);
 
+public readonly record struct ViewportRenderCommitContext(
+    long Generation,
+    int PlannedUnits,
+    int RenderedUnits,
+    int RegionCount);
+
+public readonly record struct ViewportRenderDiscardContext(
+    long Generation,
+    ViewportRenderDeliveryStatus Status,
+    int PlannedUnits,
+    int RenderedUnits,
+    int DeferredUnits,
+    Exception? Error);
+
 /// <summary>
 /// Rendering target contract intentionally contains no Skia, WPF, DevExpress,
 /// HALCON, or hardware types. A Skia adapter can implement this interface later.
@@ -61,4 +75,14 @@ public interface IViewportRenderSink<TTile>
     ValueTask EndFrameAsync(
         ViewportRenderFrameContext context,
         CancellationToken cancellationToken = default);
+
+    ValueTask CommitFrameAsync(
+        ViewportRenderCommitContext context,
+        CancellationToken cancellationToken = default) =>
+        ValueTask.CompletedTask;
+
+    ValueTask DiscardFrameAsync(
+        ViewportRenderDiscardContext context,
+        CancellationToken cancellationToken = default) =>
+        ValueTask.CompletedTask;
 }
