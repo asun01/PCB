@@ -220,3 +220,19 @@ Verification note:
 - Changes are implemented and smoke wiring is updated on the active branch.
 - No local build/test execution result is asserted from this environment.
 - GitHub Actions status/workflow execution remains unverified unless a run is explicitly associated with the current commit.
+
+### Latest presentation commit-window hardening — 2026-09-19
+- Presentation Queue now exposes an explicit commit window: a current InFlight submission must enter TryBeginCommit before backend publication.
+- Once the commit window is active, newer submissions remain visible as Pending but do not cancel the active backend commit; they are scheduled for the next presentation cycle.
+- Added IsCommitCurrent, TryCompleteCommit, and TryAbortCommit so Surface/Backbuffer publication and Queue acknowledgement share the same submission token.
+- Render Delivery now accepts a begin-commit callback immediately before the backend CommitFrameAsync boundary; the execution worker uses this callback to establish the commit window and then fences Surface/Backbuffer publication against the commit token.
+- Existing TryAcknowledgePresented semantics remain backward compatible for callers that do not use the explicit commit window.
+- Queue lifecycle cancellation during Reset/Dispose is now performed outside the Queue monitor so cancellation callbacks cannot re-enter Queue state while cleanup is still holding the monitor.
+- Queue diagnostics expose commit-window generation/sequence and Presentation Snapshot stability now samples that state.
+- Added queue-level and end-to-end execution smoke coverage proving that a newer frame arriving during a stalled backend commit cannot cancel the active publication; it remains Pending and is presented afterward.
+- Commit-window smoke also verifies reset clears the active commit diagnostics without resetting the monotonic submission-token domain.
+
+Verification note:
+- Repository implementation and smoke wiring are updated on the active branch.
+- Local repository build could not be executed because the execution environment has neither repository network access nor the dotnet CLI.
+- No GitHub Actions success is inferred; external workflow/status execution remains unverified unless an associated run exists.
