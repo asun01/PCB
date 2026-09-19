@@ -8,6 +8,7 @@ public static class ViewportPresentationExecutionSmoke
     {
         await VerifySuccessfulExecutionAsync(assert);
         await VerifySupersededExecutionAsync(assert);
+        await VerifyCommitWindowExecutionAsync(assert);
     }
 
     private static async ValueTask VerifySuccessfulExecutionAsync(
@@ -263,6 +264,171 @@ public static class ViewportPresentationExecutionSmoke
         }
     }
 
+    private static async ValueTask VerifyCommitWindowExecutionAsync(
+        Action<bool, string> assert)
+    {
+        using var pipeline = new ViewportRenderPipelineRuntime<string>(
+            new Vector2(300, 100),
+            new Vector2(200, 100),
+            new Vector2(100, 100),
+            0,
+            16,
+            2,
+            new StableTileSource(),
+            new ViewportRenderBudget(8, 8, 4, 16),
+            1000);
+
+        var first = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(40));
+
+        if (first is null)
+        {
+            assert(false, "Commit-window execution smoke should create the first frame.");
+            return;
+        }
+
+        pipeline.Composite.PanBy(new Vector2(20, 0));
+
+        var second = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(41));
+
+        assert(
+            second is not null &&
+            second.Composite.Generation > first.Composite.Generation,
+            "Commit-window execution smoke should create a newer generation.");
+
+        if (second is null)
+            return;
+
+        using var queue = new ViewportPresentationQueueRuntime<string>();
+        using var buffers = new ViewportPresentationBufferRuntime();
+        using var surface = new ViewportRenderSurfaceRuntime();
+        var delivery = new ViewportRenderDeliveryTracker();
+        var execution = new ViewportPresentationExecutionRuntime<string>(
+            queue,
+            buffers,
+            surface,
+            delivery);
+
+        var commitStarted =
+            new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseCommit =
+            new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+        var results =
+            new List<ViewportPresentationExecutionResult<string>>();
+        var resultsLock = new object();
+        var twoResults =
+            new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var sink = new CommitWindowSink(
+            commitStarted,
+            releaseCommit);
+
+        using var cancellation = new CancellationTokenSource();
+
+        var worker = execution
+            .RunAsync(
+                sink,
+                result =>
+                {
+                    lock (resultsLock)
+                    {
+                        results.Add(result);
+
+                        if (results.Count >= 2)
+                            twoResults.TrySetResult(true);
+                    }
+
+                    return ValueTask.CompletedTask;
+                },
+                cancellation.Token)
+            .AsTask();
+
+        assert(
+            queue.TryEnqueue(first, out var firstPacket),
+            "Commit-window execution smoke should enqueue the first frame.");
+
+        var started = await Task.WhenAny(
+            commitStarted.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        assert(
+            started == commitStarted.Task,
+            "The execution worker should reach the backend commit boundary.");
+
+        if (started != commitStarted.Task)
+        {
+            cancellation.Cancel();
+
+            try
+            {
+                await worker;
+            }
+            catch (OperationCanceledException)
+            {
+            }
+
+            return;
+        }
+
+        var inFlightCancellation = queue.GetInFlightCancellationToken(
+            firstPacket.Token);
+
+        assert(
+            queue.Statistics.CommitInProgress &&
+            queue.Statistics.CommittingSequence == firstPacket.Token.Sequence &&
+            queue.IsCommitCurrent(firstPacket.Token),
+            "Queue should expose the first frame as inside the commit window.");
+
+        assert(
+            queue.TryEnqueue(second, out var secondPacket) &&
+            !inFlightCancellation.IsCancellationRequested &&
+            !queue.IsCurrent(firstPacket.Token) &&
+            queue.IsCommitCurrent(firstPacket.Token),
+            "A newer frame arriving during backend commit must not cancel the active commit.");
+
+        releaseCommit.TrySetResult(true);
+
+        var completed = await Task.WhenAny(
+            twoResults.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        assert(
+            completed == twoResults.Task,
+            "Execution should finish the current commit and continue with the pending newer frame.");
+
+        ViewportPresentationExecutionResult<string>[] snapshot;
+
+        lock (resultsLock)
+            snapshot = results.ToArray();
+
+        assert(
+            snapshot.Length >= 2 &&
+            snapshot[0].Presented &&
+            snapshot[0].Packet?.Token == firstPacket.Token &&
+            snapshot[1].Presented &&
+            snapshot[1].Packet?.Token == secondPacket.Token &&
+            execution.Statistics.Presented == 2 &&
+            queue.Statistics.PresentedSequence == secondPacket.Token.Sequence &&
+            buffers.Snapshot.PresentedSequence == secondPacket.Token.Sequence &&
+            surface.Snapshot.PresentationSequence == 2 &&
+            !queue.Statistics.CommitInProgress,
+            "Commit-window execution should publish the first frame atomically before the newer queued frame is presented.");
+
+        cancellation.Cancel();
+
+        try
+        {
+            await worker;
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
     private sealed class StableTileSource : ITileSource<string>
     {
         public ValueTask<string> LoadAsync(
@@ -271,6 +437,50 @@ public static class ViewportPresentationExecutionSmoke
             CancellationToken cancellationToken = default) =>
             ValueTask.FromResult(
                 $"tile:{request.Index.X},{request.Index.Y}");
+    }
+
+    private sealed class CommitWindowSink : IViewportRenderSink<string>
+    {
+        private readonly TaskCompletionSource<bool> _commitStarted;
+        private readonly TaskCompletionSource<bool> _releaseCommit;
+
+        public CommitWindowSink(
+            TaskCompletionSource<bool> commitStarted,
+            TaskCompletionSource<bool> releaseCommit)
+        {
+            _commitStarted = commitStarted;
+            _releaseCommit = releaseCommit;
+        }
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public async ValueTask CommitFrameAsync(
+            ViewportRenderCommitContext context,
+            CancellationToken cancellationToken = default)
+        {
+            if (_commitStarted.TrySetResult(true))
+                await _releaseCommit.Task
+                    .WaitAsync(cancellationToken)
+                    .ConfigureAwait(false);
+        }
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
     }
 
     private sealed class SupersedingSink : IViewportRenderSink<string>
