@@ -207,6 +207,29 @@ public static class ViewportPresentationReplayDiagnosticHundredStageSmoke
                 $"repeated presentation capture {i + 1} should be deterministic.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            using var runtime = CreateRuntime();
+
+            runtime.Submit(
+                ViewportInputEventKind.Wheel,
+                new Vector2(200, 150),
+                120);
+
+            runtime.Continuous.ProcessInputs();
+            runtime.Reset();
+
+            var snapshot =
+                ViewportPresentationReplayDiagnosticRuntime.Capture(
+                    runtime);
+
+            Check(
+                snapshot.ReplayBundle.Inputs.Count == 0 &&
+                snapshot.ReplayBundle.Manifest.InputEventCount == 0 &&
+                snapshot.StateFingerprint.StateHash.Length == 64,
+                $"reset presentation diagnostic {i + 1} should clear replay inputs and remain valid.");
+        }
+
         assert(
             round == 100,
             $"Presentation replay diagnostic smoke should execute exactly 100 numbered rounds; actual {round}.");
