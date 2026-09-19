@@ -623,6 +623,25 @@ Assert(
     "Tile range union should cover both grid windows.",
     failures);
 
+var emptyIntersection = Asun.UI.Viewports.ImageTileGeometry.IntersectRanges(
+    new Asun.UI.Viewports.VisibleTileRange(
+        new Asun.UI.Viewports.TileIndex(0, 0),
+        new Asun.UI.Viewports.TileIndex(1, 1)),
+    new Asun.UI.Viewports.VisibleTileRange(
+        new Asun.UI.Viewports.TileIndex(3, 3),
+        new Asun.UI.Viewports.TileIndex(3, 3)));
+
+Assert(
+    emptyIntersection.IsEmpty && emptyIntersection.Count == 0,
+    "Disjoint tile ranges should intersect to an empty range.",
+    failures);
+
+Assert(
+    firstRange.Contains(secondRange) == false &&
+    firstRange.Contains(new Asun.UI.Viewports.TileIndex(1, 1)),
+    "Tile range containment should distinguish contained and non-contained tiles.",
+    failures);
+
 var exactTile = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     new System.Numerics.Vector2(1024, 512),
     new System.Numerics.Vector2(256, 256),
