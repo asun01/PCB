@@ -6,20 +6,13 @@ namespace Asun.Vision.Contracts;
 /// Vendor-neutral image geometry primitives. Pixel interpretation remains the
 /// responsibility of the concrete image backend.
 /// </summary>
-public readonly record struct ImageSize
+public readonly record struct ImageSize(int Width, int Height)
 {
-    public ImageSize(int width, int height)
+    public ImageSize
     {
-        if (width <= 0) throw new ArgumentOutOfRangeException(nameof(width));
-        if (height <= 0) throw new ArgumentOutOfRangeException(nameof(height));
-
-        Width = width;
-        Height = height;
+        if (Width <= 0) throw new ArgumentOutOfRangeException(nameof(Width));
+        if (Height <= 0) throw new ArgumentOutOfRangeException(nameof(Height));
     }
-
-    public int Width { get; }
-
-    public int Height { get; }
 
     public Vector2 Center => new(Width / 2f, Height / 2f);
 }
