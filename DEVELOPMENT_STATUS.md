@@ -207,3 +207,16 @@ Verification note:
 Verification note:
 - No local build/test execution result is asserted from this environment.
 - GitHub commit status and workflow runs for the active HEAD remain empty; no CI success is inferred.
+
+### Latest presentation queue / execution diagnostics hardening — 2026-09-19
+- Presentation queue supersede cancellation is now triggered outside the queue monitor; cancellation callbacks therefore cannot re-enter queue state mutation while the enqueue transaction is still open.
+- Queue diagnostics now expose the monotonic latest submission sequence, allowing presentation stability sampling to distinguish same-generation submissions instead of relying on generation alone.
+- Presentation execution now exposes framework-neutral counters for Executed, Presented, Superseded, Cancelled, Deferred, Failed, RenderedUnits, and the last generation/sequence.
+- Presentation Snapshot now carries execution diagnostics and an explicit IsExecutionStable flag; IsPresentationStable requires Generation, Surface, Buffer, Queue, and Execution stability together.
+- Execution diagnostics reset with the continuous presentation runtime so a new session does not inherit prior execution counters.
+- Smoke coverage now verifies supersede cancellation observes the newer pending submission only after enqueue visibility, execution outcome counters, execution stability, and reset clearing of execution diagnostics.
+
+Verification note:
+- Changes are implemented and smoke wiring is updated on the active branch.
+- No local build/test execution result is asserted from this environment.
+- GitHub Actions status/workflow execution remains unverified unless a run is explicitly associated with the current commit.
