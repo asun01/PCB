@@ -15,7 +15,11 @@ public readonly record struct ViewportRenderSurfaceSnapshot(
     long? PresentedGeneration,
     long PresentationSequence,
     int LastRenderedUnits,
-    int LastPlannedUnits);
+    int LastPlannedUnits,
+    IReadOnlyList<System.Drawing.RectangleF> PresentedRegions)
+{
+    public int PresentedRegionCount => PresentedRegions.Count;
+};
 
 public sealed class ViewportRenderSurfaceRuntime : IDisposable
 {
@@ -27,6 +31,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
     private long _presentationSequence;
     private int _lastRenderedUnits;
     private int _lastPlannedUnits;
+    private IReadOnlyList<System.Drawing.RectangleF> _presentedRegions =
+        Array.Empty<System.Drawing.RectangleF>();
 
     public ViewportRenderSurfaceState State
     {
@@ -49,7 +55,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
                     _presentedGeneration,
                     _presentationSequence,
                     _lastRenderedUnits,
-                    _lastPlannedUnits);
+                    _lastPlannedUnits,
+                    _presentedRegions);
             }
         }
     }
@@ -77,7 +84,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
     public void Commit(
         long generation,
         int plannedUnits,
-        int renderedUnits)
+        int renderedUnits,
+        IReadOnlyList<System.Drawing.RectangleF>? regions = null)
     {
         if (plannedUnits < 0)
             throw new ArgumentOutOfRangeException(nameof(plannedUnits));
@@ -96,6 +104,9 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
 
             _lastPlannedUnits = plannedUnits;
             _lastRenderedUnits = renderedUnits;
+            _presentedRegions = regions is null
+                ? Array.Empty<System.Drawing.RectangleF>()
+                : regions.ToArray();
             _presentedGeneration = generation;
             _presentationSequence++;
             _renderingGeneration = null;
@@ -125,6 +136,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             ThrowIfDisposed();
 
             _renderingGeneration = null;
+            _presentedRegions = Array.Empty<System.Drawing.RectangleF>();
             _state = ViewportRenderSurfaceState.Idle;
         }
     }
