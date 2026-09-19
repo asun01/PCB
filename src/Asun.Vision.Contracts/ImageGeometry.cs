@@ -36,6 +36,9 @@ public readonly record struct PixelPoint(double X, double Y)
         return dx * dx + dy * dy;
     }
 
+    public double DistanceTo(PixelPoint other) =>
+        Math.Sqrt(DistanceSquaredTo(other));
+
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
 {
     public static PixelRect FromPoints(PixelPoint first, PixelPoint second)
