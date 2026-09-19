@@ -69,3 +69,17 @@ Verification note:
 - Deferred delivery keeps the concrete unavailable-work exception for diagnostics instead of returning a reasonless deferred result.
 - Explicit frame requeue now deduplicates WorkItems before rebuilding the deferred queue.
 - Smoke coverage extends to begin-frame failure finalization, deferred error preservation, and repeated explicit requeue.
+
+### Latest viewport runtime closure — 2026-09-19
+- Render delivery now supports partial success: unavailable tile work is collected instead of aborting the whole frame at the first missing tile.
+- Deferred delivery preserves the concrete deferred WorkItems and the number of units already rendered in the same attempt.
+- Continuous retry requeues only the deferred WorkItems; generic hard failures still retain the full-frame retry path.
+- Deferred retry therefore avoids replaying already-rendered tiles while keeping the recovered tile in the same generation.
+- Input submission activity is edge-triggered rather than one signal per queued event, reducing stale wakeups after batched input draining.
+- The scheduler exposes awaitable render activity; the continuous presentation loop now waits on either input activity or render activity instead of polling during idle periods.
+- Added smoke coverage for partial tile delivery/recovery and idle-to-active input wakeup through the Presentation Runtime.
+
+Verification note:
+- Repository edits and smoke wiring were completed through the GitHub repository workflow; no local build/test execution result is asserted from this environment.
+- The latest branch commits still require external CI/build execution for authoritative compile/test verification.
+
