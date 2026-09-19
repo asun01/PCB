@@ -146,3 +146,17 @@ Verification note:
 - State fingerprint smoke is 10 loop groups × 10 iterations × 1 Check = 100 numbered rounds, with the final `round == 100` assertion outside the Check counter.
 - New C# sources have balanced delimiters and no placeholder implementation.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+### 900→1000 deterministic replay verification gate — 2026-09-19
+
+- Completed stages 901–1000 and recorded them in `PHASE1_900_1000_STAGE_LEDGER_20260919.md`.
+- Added `ViewportReplayVerificationRuntime` for full replay verification across input hash, execution result hash, and final state fingerprint.
+- Added an explicitly scoped `VerifyInputAgainstBundle` gate so Bundle verification does not claim result/state equivalence when the Bundle only provides input evidence.
+- Added exact 100-round verification smoke covering clean gates, input mutation, final-state mutation, bundle input matching/mismatch, malformed bundles, empty replay, structured state comparison, selection mismatch, and repeated clean verification.
+- Repaired `ViewportInputReplayRuntime.EvidenceHash()` so its deterministic newline separator is valid C# string syntax.
+- Registered the verification smoke in the primary viewport smoke entry.
+- No vendor-specific renderer, HALCON, DevExpress, or hardware contracts were introduced.
+
+Verification note:
+- The verification smoke is 10 loop groups × 10 iterations × 1 Check = 100 numbered rounds, with the final `round == 100` assertion outside the Check counter.
+- Static source review is used for this pass; no build/test/CI success is asserted without authoritative execution evidence.
