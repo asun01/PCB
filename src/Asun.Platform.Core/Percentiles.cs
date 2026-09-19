@@ -6,6 +6,36 @@ namespace Asun.Platform.Core;
 /// </summary>
 public static class Percentiles
 {
+    public static IReadOnlyList<double> CalculateMany(
+        IEnumerable<double> samples,
+        IEnumerable<double> percentiles)
+    {
+        ArgumentNullException.ThrowIfNull(samples);
+        ArgumentNullException.ThrowIfNull(percentiles);
+
+        var requested = percentiles.ToArray();
+        foreach (var percentile in requested)
+        {
+            if (!double.IsFinite(percentile) || percentile < 0 || percentile > 100)
+                throw new ArgumentOutOfRangeException(nameof(percentiles), percentile, "Percentile must be between 0 and 100.");
+        }
+
+        var values = samples.ToArray();
+        if (values.Length == 0)
+            throw new ArgumentException("At least one sample is required.", nameof(samples));
+
+        if (values.Any(value => !double.IsFinite(value)))
+            throw new ArgumentException("Samples must contain only finite values.", nameof(samples));
+
+        Array.Sort(values);
+
+        var results = new double[requested.Length];
+        for (var index = 0; index < requested.Length; index++)
+            results[index] = CalculateSorted(values, requested[index]);
+
+        return results;
+    }
+
     public static double Calculate(IEnumerable<double> samples, double percentile)
     {
         ArgumentNullException.ThrowIfNull(samples);
