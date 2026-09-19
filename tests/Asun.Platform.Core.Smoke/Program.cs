@@ -127,6 +127,18 @@ Assert(
     "Viewport and image centers should be derived from their sizes.",
     failures);
 
+var sourceRect = new RectangleF(100, 50, 200, 100);
+var viewportRect = viewport.ImageToViewportRectangle(sourceRect);
+var sourceRoundTripRect = viewport.ViewportToImageRectangle(viewportRect);
+
+Assert(
+    Math.Abs(sourceRoundTripRect.X - sourceRect.X) < 1e-4f &&
+    Math.Abs(sourceRoundTripRect.Y - sourceRect.Y) < 1e-4f &&
+    Math.Abs(sourceRoundTripRect.Width - sourceRect.Width) < 1e-4f &&
+    Math.Abs(sourceRoundTripRect.Height - sourceRect.Height) < 1e-4f,
+    "Viewport rectangle conversion should round-trip.",
+    failures);
+
 var invalidGraphRejected = false;
 try
 {

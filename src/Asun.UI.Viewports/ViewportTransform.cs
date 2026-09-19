@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Drawing;
 
 namespace Asun.UI.Viewports;
 
@@ -60,6 +61,20 @@ public readonly record struct ViewportTransform(
 
     public Vector2 ViewportToImage(Vector2 viewportPoint) =>
         (viewportPoint - Translation) / (float)Scale;
+
+    public RectangleF ImageToViewportRectangle(RectangleF imageRectangle) =>
+        new(
+            Translation.X + imageRectangle.X * (float)Scale,
+            Translation.Y + imageRectangle.Y * (float)Scale,
+            imageRectangle.Width * (float)Scale,
+            imageRectangle.Height * (float)Scale);
+
+    public RectangleF ViewportToImageRectangle(RectangleF viewportRectangle) =>
+        new(
+            (viewportRectangle.X - Translation.X) / (float)Scale,
+            (viewportRectangle.Y - Translation.Y) / (float)Scale,
+            viewportRectangle.Width / (float)Scale,
+            viewportRectangle.Height / (float)Scale);
 
     public Vector2 RenderedImageSize =>
         ImageSize * (float)Scale;
