@@ -1200,6 +1200,17 @@ catch (ArgumentException)
 
 Assert(missingNodeValidationRejected, "Standalone validation should reject unknown dependencies.", failures);
 
+var invalidDependencyLookupRejected = false;
+try
+{
+    _ = pipeline.GetDependencies("Missing");
+}
+catch (KeyNotFoundException)
+{
+    invalidDependencyLookupRejected = true;
+}
+Assert(invalidDependencyLookupRejected, "Unknown pipeline dependency lookup should fail explicitly.", failures);
+
 var invalidGraphRejected = false;
 try
 {
