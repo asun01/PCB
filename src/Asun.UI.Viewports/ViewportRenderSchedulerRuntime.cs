@@ -124,6 +124,9 @@ public sealed class ViewportRenderSchedulerRuntime
         }
     }
 
+    public TimeSpan GetNextFrameDelay(DateTimeOffset now) =>
+        _rateGate.GetDelay(now);
+
     public bool TryTakePointer(
         out CoalescedPointer pointer) =>
         _pointerCoalescer.TryTakeLatest(out pointer);
