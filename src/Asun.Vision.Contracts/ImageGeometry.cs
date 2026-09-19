@@ -332,6 +332,17 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
             newHeight);
     }
 
+    public PixelRect ExpandToInclude(PixelRect other)
+    {
+        if (!IsValid)
+            throw new InvalidOperationException("The current rectangle is invalid.");
+
+        if (!other.IsValid)
+            throw new ArgumentException("The other rectangle is invalid.", nameof(other));
+
+        return Union(other);
+    }
+
     public PixelRect ExpandToInclude(PixelPoint point)
     {
         if (!IsValid)
