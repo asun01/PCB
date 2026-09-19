@@ -1469,6 +1469,12 @@ Assert(
     "Saturated resources should time out deterministically for synchronous lease acquisition.",
     failures);
 
+var infiniteLeaseTask = resources.AcquireAsync(
+    "camera",
+    Timeout.InfiniteTimeSpan).AsTask();
+
+Assert(!infiniteLeaseTask.IsCompleted, "Infinite lease waits should remain pending while capacity is saturated.", failures);
+
 var waitingLeaseTask = resources.AcquireAsync("camera").AsTask();
 Assert(!waitingLeaseTask.IsCompleted, "A saturated resource should apply bounded waiting.", failures);
 
