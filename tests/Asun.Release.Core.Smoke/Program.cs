@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 ReleaseManifestHundredStageSmoke.Run(Check);
+ReleaseManifestInvalidInputHundredStageSmoke.Run(Check);
 
 if(failures.Count>0)
 {
