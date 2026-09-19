@@ -16,6 +16,24 @@ public readonly record struct TileRequest(
 
 public static class TileRequestPlanner
 {
+    public static IReadOnlyList<TileRequest> PlanForViewport(
+        ViewportTransform transform,
+        Vector2 tileSize,
+        int marginTiles)
+    {
+        ArgumentNullException.ThrowIfNull(transform);
+
+        var visibleRange = transform.GetVisibleTileRange(tileSize);
+        var prefetchRange = transform.GetPrefetchTileRange(tileSize, marginTiles);
+
+        return Plan(
+            transform.ImageSize,
+            tileSize,
+            visibleRange,
+            prefetchRange,
+            transform.ImagePointAtViewportCenter);
+    }
+
     public static IReadOnlyList<TileRequest> Plan(
         Vector2 imageSize,
         Vector2 tileSize,
