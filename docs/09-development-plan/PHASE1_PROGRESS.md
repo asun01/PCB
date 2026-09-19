@@ -1614,3 +1614,30 @@ Current continuous execution position:
 - completed through Stage 29500;
 - next natural stage: 29501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 29501→30000 end-to-end replay integration — 2026-09-20
+
+Completed stages 29501–30000.
+
+Implemented:
+- Asun.Platform.ReplayIntegration;
+- ProductionQualityEvidenceReplayBundle;
+- reconstruction/validation of the real Production → Quality factual projection;
+- validation of the real opaque Evidence projection;
+- deterministic aggregate replay fingerprint;
+- dedicated exact 100-round end-to-end Smoke registered through AsunVision.slnx.
+
+Real correction:
+- the first replay Smoke construction failed the static delimiter gate; the test was rewritten and re-audited before closure.
+
+Boundary:
+- Quality remains factual/structural and does not define customer acceptance policy;
+- Evidence remains opaque and storage-independent;
+- no renderer/HALCON/DevExpress/hardware authority was introduced;
+- replay bundle is an in-memory logical projection, not a persistence claim.
+
+Current continuous execution position:
+- completed through Stage 30000;
+- next natural stage: 30001;
+- global one-million-stage horizon remains 2501–1002500.
