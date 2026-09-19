@@ -29,6 +29,12 @@ public static class QualityInspectionDiffValidationHundredStageSmoke
         {
             RelinkedEvidenceKeys = new[]{keyAdded}
         };
+        var invalidKey = new QualityInspectionDiff(
+            Array.Empty<QualityFindingId>(),
+            Array.Empty<QualityFindingId>(),
+            Array.Empty<QualityFindingId>(),
+            new[]{new QualityEvidenceKey("")},
+            Array.Empty<QualityEvidenceKey>());
 
         for(var i=0;i<10;i++) Check(!diff.IsEmpty,$"non-empty diff round {i+1} should remain explicit.");
         for(var i=0;i<10;i++) Check(QualityInspectionDiffValidationRuntime.IsValid(diff),$"diff validation round {i+1} should pass.");
@@ -39,7 +45,7 @@ public static class QualityInspectionDiffValidationHundredStageSmoke
         for(var i=0;i<10;i++) Check(diff.RemovedEvidenceKeys.Single()==keyRemoved,$"removed evidence round {i+1} should be stable.");
         for(var i=0;i<10;i++) Check(!QualityInspectionDiffValidationRuntime.IsValid(invalidOverlap),$"overlap diff round {i+1} should be rejected.");
         for(var i=0;i<10;i++) Check(QualityInspectionDiffValidationRuntime.Validate(invalidOverlap).Count>0,$"invalid diff diagnostics round {i+1} should be non-empty.");
-        for(var i=0;i<10;i++) Check(diff.AddedFindingIds.Distinct().Count()==diff.AddedFindingIds.Count && diff.RelinkedEvidenceKeys.Distinct().Count()==diff.RelinkedEvidenceKeys.Count,$"diff uniqueness round {i+1} should remain stable.");
+        for(var i=0;i<10;i++) Check(diff.AddedFindingIds.Distinct().Count()==diff.AddedFindingIds.Count && diff.RelinkedEvidenceKeys.Distinct().Count()==diff.RelinkedEvidenceKeys.Count && !QualityInspectionDiffValidationRuntime.IsValid(invalidKey),$"diff uniqueness and identifier validation round {i+1} should remain stable.");
 
         assert(round==100,$"Quality inspection diff smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
