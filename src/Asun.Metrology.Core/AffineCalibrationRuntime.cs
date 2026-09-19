@@ -49,8 +49,7 @@ public static class AffineCalibrationRuntime
             Accumulate(normal,rhs,rowY,point.Target.Y);
         }
 
-        var coefficients=Solve(normal,rhs,deter
-minantThreshold);
+        var coefficients=Solve(normal,rhs,determinantThreshold);
 
         var transform=new AffineTransform2D(
             coefficients[0],
