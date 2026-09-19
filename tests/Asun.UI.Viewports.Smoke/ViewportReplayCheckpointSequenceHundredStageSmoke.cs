@@ -12,7 +12,7 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
             new ViewportInputEvent(40, ViewportInputEventKind.Wheel, new Vector2(30, 40), 120, ViewportMouseButton.Left)
         };
 
-        static ViewportCompositeInputRuntime<string> CreateInput()
+        static ViewportCompositeRuntime<string> CreateComposite()
         {
             var composite = new ViewportCompositeRuntime<string>(
                 new Vector2(1200, 900),
@@ -23,7 +23,7 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
                 2,
                 new LocalTileSource());
 
-            return new ViewportCompositeInputRuntime<string>(composite);
+            return composite;
         }
 
         var round = 0;
@@ -36,7 +36,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var report = ViewportReplayExecutionStateRuntime.Execute(input, sparse);
             Check(
                 report.Execution.LastInputSequence == 40,
@@ -45,7 +46,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var report = ViewportReplayExecutionStateRuntime.Execute(input, sparse);
             var checkpoint = ViewportReplayCheckpointRuntime.Capture(report);
             Check(
@@ -56,7 +58,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var report = ViewportReplayExecutionStateRuntime.Execute(input, sparse);
             var checkpoint = ViewportReplayCheckpointRuntime.Capture(report, sparse);
             Check(
@@ -109,7 +112,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var prefix = sparse.Take(2).ToArray();
             var report = ViewportReplayExecutionStateRuntime.Execute(input, prefix);
             var checkpoint = ViewportReplayCheckpointRuntime.Capture(report);
@@ -121,7 +125,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var report = ViewportReplayExecutionStateRuntime.Execute(input, Array.Empty<ViewportInputEvent>());
             var checkpoint = ViewportReplayCheckpointRuntime.Capture(report);
             Check(
@@ -133,7 +138,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var report = ViewportReplayExecutionStateRuntime.Execute(input, sparse);
             var checkpoint = ViewportReplayCheckpointRuntime.Capture(report);
             Check(
@@ -145,7 +151,8 @@ public static class ViewportReplayCheckpointSequenceHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            using var input = CreateInput();
+            using var composite = CreateComposite();
+            var input = new ViewportCompositeInputRuntime<string>(composite);
             var report = ViewportReplayExecutionStateRuntime.Execute(input, sparse);
             var first = ViewportReplayCheckpointRuntime.Capture(report);
             var second = first with { Ordinal = first.Ordinal };
