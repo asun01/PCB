@@ -22,6 +22,8 @@ public readonly record struct ImageSize
 
     public double AspectRatio => (double)Width / Height;
 
+    public double InverseAspectRatio => (double)Height / Width;
+
     public Vector2 Vector => new(Width, Height);
 
     public double DiagonalLength =>
