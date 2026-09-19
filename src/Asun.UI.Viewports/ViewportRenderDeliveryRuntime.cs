@@ -143,7 +143,8 @@ public static class ViewportRenderDeliveryRuntime
                 {
                     if (transaction is ViewportRenderSurfaceTransaction activeTransaction)
                     {
-                        surface.Discard(
+                        TryDiscardSurface(
+                            surface,
                             activeTransaction,
                             exception is OperationCanceledException
                                 ? ViewportRenderDeliveryStatus.Cancelled
@@ -181,7 +182,8 @@ public static class ViewportRenderDeliveryRuntime
             if (surface is not null &&
                 transaction is ViewportRenderSurfaceTransaction cancelledTransaction)
             {
-                surface.Discard(
+                TryDiscardSurface(
+                    surface,
                     cancelledTransaction,
                     ViewportRenderDeliveryStatus.Cancelled);
                 await TryDiscardAsync(
@@ -212,7 +214,8 @@ public static class ViewportRenderDeliveryRuntime
             if (surface is not null &&
                 transaction is ViewportRenderSurfaceTransaction deferredTransaction)
             {
-                surface.Discard(
+                TryDiscardSurface(
+                    surface,
                     deferredTransaction,
                     ViewportRenderDeliveryStatus.Deferred);
                 await TryDiscardAsync(
@@ -243,7 +246,8 @@ public static class ViewportRenderDeliveryRuntime
             if (surface is not null &&
                 transaction is ViewportRenderSurfaceTransaction failedTransaction)
             {
-                surface.Discard(
+                TryDiscardSurface(
+                    surface,
                     failedTransaction,
                     ViewportRenderDeliveryStatus.Failed);
                 await TryDiscardAsync(
@@ -275,6 +279,21 @@ public static class ViewportRenderDeliveryRuntime
             System.Diagnostics.Stopwatch.GetElapsedTime(started));
 
         return result;
+    }
+
+    private static void TryDiscardSurface<TTile>(
+        ViewportRenderSurfaceRuntime surface,
+        ViewportRenderSurfaceTransaction transaction,
+        ViewportRenderDeliveryStatus status)
+    {
+        try
+        {
+            surface.Discard(transaction, status);
+        }
+        catch
+        {
+            // Surface rollback is best effort; the original delivery result remains authoritative.
+        }
     }
 
     private static async ValueTask TryDiscardAsync<TTile>(
