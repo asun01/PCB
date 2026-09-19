@@ -40,6 +40,16 @@ public sealed class ViewportRenderEvidenceStore
     {
         lock (_sync)
         {
+            if (_entries.Any(
+                    existing => string.Equals(
+                        existing.StableKey,
+                        manifest.StableKey,
+                        StringComparison.Ordinal)))
+            {
+                throw new InvalidOperationException(
+                    $"Evidence manifest '{manifest.StableKey}' has already been recorded.");
+            }
+
             if (_entries.Count != 0)
             {
                 var last = _entries[^1];
@@ -98,6 +108,7 @@ public sealed class ViewportRenderEvidenceStore
             var errors = new List<string>();
             long previousGeneration = -1;
             long previousSequence = -1;
+            var stableKeys = new HashSet<string>(StringComparer.Ordinal);
 
             foreach (var manifest in _entries)
             {
@@ -107,6 +118,12 @@ public sealed class ViewportRenderEvidenceStore
                 {
                     errors.Add(
                         "Evidence history must remain monotonic.");
+                }
+
+                if (!stableKeys.Add(manifest.StableKey))
+                {
+                    errors.Add(
+                        "Evidence history must not contain duplicate stable keys.");
                 }
 
                 errors.AddRange(
