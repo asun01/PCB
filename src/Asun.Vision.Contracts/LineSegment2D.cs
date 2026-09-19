@@ -84,6 +84,9 @@ public readonly record struct LineSegment2D(
         return Start + Delta * clamped;
     }
 
+    public double DistanceTo(Vector2 point) =>
+        Math.Sqrt(DistanceSquaredTo(point));
+
     public double DistanceSquaredTo(Vector2 point)
     {
         var closest = ClosestPoint(point);
