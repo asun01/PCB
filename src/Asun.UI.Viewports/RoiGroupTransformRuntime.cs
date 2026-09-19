@@ -47,7 +47,7 @@ public static class RoiGroupTransformRuntime
                 default,
                 Vector2.Zero);
 
-        var center = pivot ?? GetUnionBounds(source).Center.ToVector2();
+        var center = pivot ?? GetBoundsCenter(GetUnionBounds(source));
         var transformed = source
             .Select(item => item with
             {
@@ -158,8 +158,14 @@ public static class RoiGroupTransformRuntime
         return new RoiGroupTransformResult(
             items,
             bounds,
-            pivot ?? bounds.Center.ToVector2());
+            pivot ?? GetBoundsCenter(bounds));
     }
+
+
+    private static Vector2 GetBoundsCenter(RectangleF bounds) =>
+        new(
+            bounds.X + bounds.Width / 2f,
+            bounds.Y + bounds.Height / 2f);
 
     private static void Validate(Vector2 value)
     {
