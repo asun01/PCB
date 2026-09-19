@@ -31,10 +31,10 @@ public readonly record struct ViewportWorkflowCommand(
     Guid? RoiId)
 {
     public static ViewportWorkflowCommand Fit() =>
-        new(ViewportWorkflowOperation.Fit, default, 0, 0, null);
+        new(ViewportWorkflowOperation.Fit, default, 0, 0, 0, null);
 
     public static ViewportWorkflowCommand Resize(Vector2 size) =>
-        new(ViewportWorkflowOperation.ResizeViewport, size, 0, 0, null);
+        new(ViewportWorkflowOperation.ResizeViewport, size, 0, 0, 0, null);
 
     public static ViewportWorkflowCommand Pan(Vector2 delta, bool clamp = true) =>
         new(
@@ -59,30 +59,30 @@ public readonly record struct ViewportWorkflowCommand(
             null) with { SecondaryValue = maxScale };
 
     public static ViewportWorkflowCommand Center(Vector2 imagePoint) =>
-        new(ViewportWorkflowOperation.CenterOnImagePoint, imagePoint, 0, 0, null);
+        new(ViewportWorkflowOperation.CenterOnImagePoint, imagePoint, 0, 0, 0, null);
 
     public static ViewportWorkflowCommand AddRectangle(
         Vector2 center,
         Vector2 size) =>
-        new(ViewportWorkflowOperation.AddRectangle, center, size.X, size.Y, null);
+        new(ViewportWorkflowOperation.AddRectangle, center, size.X, size.Y, 0, null);
 
     public static ViewportWorkflowCommand AddEllipse(
         Vector2 center,
         Vector2 size) =>
-        new(ViewportWorkflowOperation.AddEllipse, center, size.X, size.Y, null);
+        new(ViewportWorkflowOperation.AddEllipse, center, size.X, size.Y, 0, null);
 
     public static ViewportWorkflowCommand Select(Guid? id) =>
-        new(ViewportWorkflowOperation.Select, default, 0, 0, id);
+        new(ViewportWorkflowOperation.Select, default, 0, 0, 0, id);
 
     public static ViewportWorkflowCommand Translate(Vector2 delta) =>
-        new(ViewportWorkflowOperation.TranslateSelected, delta, 0, 0, null);
+        new(ViewportWorkflowOperation.TranslateSelected, delta, 0, 0, 0, null);
 
     public static ViewportWorkflowCommand Duplicate(Vector2 offset) =>
-        new(ViewportWorkflowOperation.DuplicateSelected, offset, 0, 0, null);
+        new(ViewportWorkflowOperation.DuplicateSelected, offset, 0, 0, 0, null);
 
     public static ViewportWorkflowCommand Simple(
         ViewportWorkflowOperation operation) =>
-        new(operation, default, 0, 0, null);
+        new(operation, default, 0, 0, 0, null);
 }
 
 public readonly record struct ViewportWorkflowRecord(
