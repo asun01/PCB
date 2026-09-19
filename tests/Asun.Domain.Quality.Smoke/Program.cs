@@ -26,6 +26,7 @@ QualityInspectionEvidenceDiffHundredStageSmoke.Run(Assert);
 QualityInspectionAuditHundredStageSmoke.Run(Assert);
 QualityInspectionChainValidationHundredStageSmoke.Run(Assert);
 QualityInspectionAuditDiffHundredStageSmoke.Run(Assert);
+QualityInspectionEvidenceManifestHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
