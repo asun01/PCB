@@ -134,6 +134,39 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         return new Lease(resource, entry);
     }
 
+    public async ValueTask<Lease?> AcquireAsync(
+        TKey resource,
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
+    {
+        ThrowIfDisposed();
+
+        if (timeout <= TimeSpan.Zero && timeout != Timeout.InfiniteTimeSpan)
+            throw new ArgumentOutOfRangeException(nameof(timeout));
+
+        var entry = GetEntry(resource);
+
+        using var timeoutSource = timeout == Timeout.InfiniteTimeSpan
+            ? null
+            : new CancellationTokenSource(timeout);
+
+        using var linkedSource = timeoutSource is null
+            ? null
+            : CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken,
+                timeoutSource.Token);
+
+        var token = linkedSource?.Token ?? cancellationToken;
+
+        var acquired = await entry.Semaphore
+            .WaitAsync(token)
+            .ConfigureAwait(false);
+
+        return acquired
+            ? new Lease(resource, entry)
+            : null;
+    }
+
     public void Dispose()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
