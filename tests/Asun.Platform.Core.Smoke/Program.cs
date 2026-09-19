@@ -127,6 +127,18 @@ Assert(
 interaction = interaction.EndPan();
 Assert(!interaction.IsPanning, "Viewport pan should end explicitly.", failures);
 
+var roiZoom = viewport.ZoomToImageRectangle(
+    new RectangleF(100, 100, 200, 100));
+
+var roiScreenCenter = roiZoom.ImageToViewport(
+    new System.Numerics.Vector2(200, 150));
+
+Assert(
+    Math.Abs(roiScreenCenter.X - viewport.ViewportCenter.X) < 1e-4f &&
+    Math.Abs(roiScreenCenter.Y - viewport.ViewportCenter.Y) < 1e-4f,
+    "Zoom-to-rectangle should center the selected image region.",
+    failures);
+
 var zoomInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
     .ApplyZoom(
         requestedScale: 10,

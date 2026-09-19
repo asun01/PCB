@@ -120,6 +120,47 @@ public readonly record struct ViewportTransform(
                imagePoint.Y <= ImageSize.Y;
     }
 
+    public ViewportTransform ZoomToImageRectangle(
+        RectangleF imageRectangle,
+        double paddingFactor = 0.9)
+    {
+        if (!double.IsFinite(paddingFactor) || paddingFactor <= 0 || paddingFactor > 1)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(paddingFactor),
+                paddingFactor,
+                "Padding factor must be greater than zero and at most one.");
+        }
+
+        if (!IsFiniteRectangle(imageRectangle) ||
+            imageRectangle.Width <= 0 ||
+            imageRectangle.Height <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(imageRectangle),
+                "Image rectangle must contain finite positive dimensions.");
+        }
+
+        var scale = Math.Min(
+            ViewportSize.X / imageRectangle.Width,
+            ViewportSize.Y / imageRectangle.Height) * paddingFactor;
+
+        if (!double.IsFinite(scale) || scale <= 0)
+            throw new InvalidOperationException("Unable to compute a valid viewport scale.");
+
+        var imageCenter = new Vector2(
+            imageRectangle.X + imageRectangle.Width / 2f,
+            imageRectangle.Y + imageRectangle.Height / 2f);
+
+        var translation = ViewportCenter - imageCenter * (float)scale;
+
+        return this with
+        {
+            Scale = scale,
+            Translation = translation
+        };
+    }
+
     public ViewportTransform WithScaleAround(
         double newScale,
         Vector2 viewportAnchor)
@@ -216,4 +257,10 @@ public readonly record struct ViewportTransform(
 
     private static bool IsFinite(Vector2 value) =>
         float.IsFinite(value.X) && float.IsFinite(value.Y);
+
+    private static bool IsFiniteRectangle(RectangleF rectangle) =>
+        float.IsFinite(rectangle.X) &&
+        float.IsFinite(rectangle.Y) &&
+        float.IsFinite(rectangle.Width) &&
+        float.IsFinite(rectangle.Height);
 }
