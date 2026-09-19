@@ -271,6 +271,10 @@ public readonly record struct ViewportTransform(
         return WithScaleAround(clampedScale, viewportAnchor);
     }
 
+    public ViewportTransform PanByClamped(Vector2 viewportDelta) =>
+        WithTranslationClamped(
+            Translation + ValidateAndReturnDelta(viewportDelta));
+
     public ViewportTransform PanBy(Vector2 viewportDelta)
     {
         if (!IsFinite(viewportDelta))
