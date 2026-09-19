@@ -8,6 +8,11 @@ public readonly record struct NumericTolerance(
     double Absolute,
     double Relative)
 {
+    public static NumericTolerance Create(double absolute, double relative) =>
+        new(
+            ValidateNonNegativeFinite(absolute, nameof(absolute)),
+            ValidateNonNegativeFinite(relative, nameof(relative)));
+
     public static NumericTolerance Exact => new(0, 0);
 
     public static NumericTolerance Default => new(1e-9, 1e-9);
