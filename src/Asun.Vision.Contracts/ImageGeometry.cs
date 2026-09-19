@@ -171,6 +171,11 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
 
     public bool IsEmpty => IsValid && (Width == 0 || Height == 0);
 
+    public bool IsDegenerate => IsEmpty;
+
+    public double Perimeter =>
+        IsValid ? 2d * (Width + Height) : throw new InvalidOperationException("The rectangle is invalid.");
+
     public double Area =>
         IsValid ? Width * Height : throw new InvalidOperationException("The rectangle is invalid.");
 
