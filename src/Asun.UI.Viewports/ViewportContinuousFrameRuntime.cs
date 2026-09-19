@@ -154,8 +154,11 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                         }
                         else
                         {
-                            if (delivery.Status == ViewportRenderDeliveryStatus.Failed)
+                            if (delivery.Status is
+                                ViewportRenderDeliveryStatus.Failed or
+                                ViewportRenderDeliveryStatus.Deferred)
                             {
+                                _pipeline.RequeueFrame(frame);
                                 _pipeline.Invalidate(
                                     frame.Submission.DirtyFlags,
                                     frame.Composite.Generation);
