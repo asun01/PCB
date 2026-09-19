@@ -149,7 +149,13 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     beforeQueue.InFlightGeneration ==
                     afterQueue.InFlightGeneration &&
                     beforeQueue.InFlightSequence ==
-                    afterQueue.InFlightSequence;
+                    afterQueue.InFlightSequence &&
+                    beforeQueue.CommitInProgress ==
+                    afterQueue.CommitInProgress &&
+                    beforeQueue.CommittingGeneration ==
+                    afterQueue.CommittingGeneration &&
+                    beforeQueue.CommittingSequence ==
+                    afterQueue.CommittingSequence;
 
                 var executionStable =
                     beforeExecution.Executed == afterExecution.Executed &&
