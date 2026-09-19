@@ -62,6 +62,10 @@ if(!cancelledObserved) failures.Add("Evidence catalog lookup should honor cancel
 EvidenceCatalogSnapshotHundredStageSmoke.Run((condition,message)=>
     Check(condition,message));
 
+
+await EvidenceCatalogHundredStageSmoke.Run((condition,message)=>Check(condition,message));
+EvidenceDescriptorFingerprintHundredStageSmoke.Run((condition,message)=>Check(condition,message));
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
