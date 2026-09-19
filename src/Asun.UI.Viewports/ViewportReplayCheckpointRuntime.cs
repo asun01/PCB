@@ -28,9 +28,7 @@ public static class ViewportReplayCheckpointRuntime
         ArgumentNullException.ThrowIfNull(report);
 
         var lastSequence =
-            report.Execution.Results.Count == 0
-                ? 0
-                : report.Execution.Results.Count;
+            report.Execution.LastInputSequence;
 
         return new ViewportReplayCheckpoint(
             report.Execution.Results.Count,
@@ -100,6 +98,13 @@ public static class ViewportReplayCheckpointRuntime
         {
             errors.Add(
                 "Empty checkpoint must have zero last input sequence.");
+        }
+
+        if (checkpoint.InputCount > 0 &&
+            checkpoint.LastInputSequence == 0)
+        {
+            errors.Add(
+                "Non-empty checkpoint must have a positive last input sequence.");
         }
 
         return errors;
@@ -193,7 +198,8 @@ public sealed class ViewportReplayCheckpointStore
 
                 if (checkpoint.Ordinal <= previous.Ordinal ||
                     checkpoint.InputCount < previous.InputCount ||
-                    checkpoint.LastInputSequence < previous.LastInputSequence)
+                    checkpoint.LastInputSequence < previous.LastInputSequence ||
+                    checkpoint.Generation < previous.Generation)
                 {
                     throw new InvalidOperationException(
                         "Replay checkpoints must increase monotonically.");
