@@ -95,6 +95,19 @@ public sealed class AsyncPipeline<TContext>
         return node is not null;
     }
 
+    public int GetExecutionLevel(string id)
+    {
+        var layers = GetExecutionLayers();
+
+        for (var level = 0; level < layers.Count; level++)
+        {
+            if (layers[level].Contains(id, StringComparer.Ordinal))
+                return level;
+        }
+
+        throw new KeyNotFoundException($"Pipeline node '{id}' is not configured.");
+    }
+
     public IReadOnlyList<IReadOnlyList<string>> GetExecutionLayers()
     {
         var pending = _nodes.ToDictionary(
