@@ -237,7 +237,9 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         return _scheduler.TryTakePointer(out pointer);
     }
 
-    public void RequeueFrame(ViewportRenderPipelineFrame<TTile> frame)
+    public void RequeueFrame(
+        ViewportRenderPipelineFrame<TTile> frame,
+        IReadOnlyList<ViewportRenderWorkItem>? retryItems = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
         ThrowIfDisposed();
@@ -249,10 +251,11 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             if (_composite.Generation != generation)
                 return;
 
+            var retry = retryItems ?? frame.WorkPlan.Items;
             var existing = _deferredWork;
             var items = (existing is null
-                    ? frame.WorkPlan.Items
-                    : frame.WorkPlan.Items.Concat(existing.Items))
+                    ? retry
+                    : retry.Concat(existing.Items))
                 .Distinct()
                 .ToArray();
 
