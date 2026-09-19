@@ -253,6 +253,7 @@ await ViewportContinuousAndDeferredSmoke.RunAsync(Assert);
 await ViewportRenderSurfaceSmoke.RunAsync(Assert);
 ViewportPresentationBufferSmoke.Run(Assert);
 await ViewportPresentationQueueSmoke.RunAsync(Assert);
+await ViewportPresentationExecutionSmoke.RunAsync(Assert);
 
 await ViewportPresentationLifecycleSmoke.RunAsync(Assert);
 
