@@ -179,3 +179,17 @@ Verification note:
 Verification note:
 - No local build/test execution result is asserted from this environment.
 - GitHub commit status and workflow runs for the active HEAD are currently empty; no CI success is inferred.
+### Latest double-buffer / frame-fence / region-commit hardening — 2026-09-19
+- Added framework-neutral `ViewportPresentationBufferRuntime` with two logical backbuffer slots: one Presented slot and one alternate Rendering slot.
+- Backbuffer Begin/Commit/Discard is fenced by the Queue submission Generation + Sequence token; stale generation or older same-generation sequence cannot acquire or commit.
+- Backbuffer reset clears presentation state but preserves a monotonic submission-sequence floor, preventing pre-reset callbacks from aliasing a new presentation session.
+- Continuous rendering now performs `Queue InFlight -> Backbuffer Begin -> Surface Delivery/Commit -> Backbuffer Commit -> Queue ACK`; failure and deferred paths discard the backbuffer and release the queue InFlight token.
+- Backbuffer commits retain the exact command-stream region set and expose region-commit statistics for incremental presentation diagnostics.
+- `ViewportPresentationSnapshot` now includes Queue and Buffer snapshots and requires Generation, Surface, Buffer, and Queue stability before reporting `IsPresentationStable`.
+- Queue statistics now expose InFlight generation/sequence to make render-thread handoff state observable.
+- Added `ViewportPresentationBufferSmoke` and extended continuous/facade smoke to verify Queue, Backbuffer, and Surface reach the same presented generation/sequence and reset together.
+- Hardened the Continuous ACK-rejected path so an externally invalidated presentation token cannot leave Queue InFlight permanently occupied.
+
+Verification note:
+- No local build/test execution result is asserted from this environment.
+- GitHub status checks and workflow runs for the active HEAD are still empty; no CI success is inferred.
