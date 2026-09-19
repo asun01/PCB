@@ -56,6 +56,7 @@ public static class QualityInspectionFindingAuditReplayBundleHundredStageSmoke
         for(var i=0;i<10;i++) Check(bundle.Diff.RemovedFindingIds.Single().Value=="F-001",$"finding audit replay removed round {i+1} should identify F-001.");
         for(var i=0;i<10;i++) Check(!QualityInspectionFindingAuditReplayBundleValidationRuntime.IsValid(current,tampered,previous),$"tampered finding audit replay bundle round {i+1} should be rejected.");
         for(var i=0;i<10;i++) Check(QualityInspectionFindingAuditReplayBundleValidationRuntime.Validate(current,bundle,previous).Count==0,$"finding audit replay diagnostics round {i+1} should remain empty.");
+        for(var i=0;i<10;i++) Check(bundle.Current.ContentFingerprint.Length==64,$"finding audit replay fingerprint round {i+1} should remain SHA-256 sized.");
 
         assert(round==100,$"Quality inspection finding audit replay bundle smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
