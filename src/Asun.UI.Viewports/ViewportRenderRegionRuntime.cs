@@ -66,15 +66,33 @@ public static class ViewportRenderRegionRuntime
     {
         const float epsilon = 0.01f;
 
-        var firstRight = first.Right;
-        var firstBottom = first.Bottom;
-        var secondRight = second.Right;
-        var secondBottom = second.Bottom;
+        var horizontalOverlap =
+            Math.Min(first.Right, second.Right) -
+            Math.Max(first.Left, second.Left);
 
-        return first.Left <= secondRight + epsilon &&
-            second.Left <= firstRight + epsilon &&
-            first.Top <= secondBottom + epsilon &&
-            second.Top <= firstBottom + epsilon;
+        var verticalOverlap =
+            Math.Min(first.Bottom, second.Bottom) -
+            Math.Max(first.Top, second.Top);
+
+        var areaOverlap =
+            horizontalOverlap > epsilon &&
+            verticalOverlap > epsilon;
+
+        var horizontalEdgeTouch =
+            horizontalOverlap > epsilon &&
+            Math.Abs(first.Bottom - second.Top) <= epsilon ||
+            horizontalOverlap > epsilon &&
+            Math.Abs(second.Bottom - first.Top) <= epsilon;
+
+        var verticalEdgeTouch =
+            verticalOverlap > epsilon &&
+            Math.Abs(first.Right - second.Left) <= epsilon ||
+            verticalOverlap > epsilon &&
+            Math.Abs(second.Right - first.Left) <= epsilon;
+
+        return areaOverlap ||
+            horizontalEdgeTouch ||
+            verticalEdgeTouch;
     }
 
     public static IReadOnlyList<RectangleF> ClipAndMerge(
