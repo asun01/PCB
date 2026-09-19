@@ -62,7 +62,7 @@ public static class ViewportSceneRuntime
                             ViewportSceneCommandKind.RoiBody,
                             item.Id,
                             RoiHandleKind.None,
-                            -1,
+                            i,
                             corners[i],
                             next,
                             item.IsSelected,
