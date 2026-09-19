@@ -58,15 +58,48 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
 
     public ViewportPresentationState State => _lifecycle.State;
 
-    public ViewportPresentationSnapshot Snapshot =>
-        _lifecycle.Capture(
-            _pipeline.Composite.Generation,
-            _input.PendingCount,
-            _pipeline.Scheduler.PendingFlags,
-            _backpressure.Capture(_input),
-            _pipeline.Scheduler.Statistics,
-            _continuous.Delivery.Statistics,
-            _continuous.Statistics);
+    public ViewportPresentationSnapshot Snapshot
+    {
+        get
+        {
+            for (var attempt = 0; attempt < 2; attempt++)
+            {
+                var beforeGeneration = _pipeline.Composite.Generation;
+
+                var snapshot = _lifecycle.Capture(
+                    beforeGeneration,
+                    _input.PendingCount,
+                    _pipeline.Scheduler.PendingFlags,
+                    _backpressure.Capture(_input),
+                    _pipeline.Scheduler.Statistics,
+                    _continuous.Delivery.Statistics,
+                    _continuous.Statistics,
+                    isGenerationStable: false);
+
+                var afterGeneration = _pipeline.Composite.Generation;
+
+                if (beforeGeneration == afterGeneration)
+                {
+                    return snapshot with
+                    {
+                        IsGenerationStable = true
+                    };
+                }
+            }
+
+            var generation = _pipeline.Composite.Generation;
+
+            return _lifecycle.Capture(
+                generation,
+                _input.PendingCount,
+                _pipeline.Scheduler.PendingFlags,
+                _backpressure.Capture(_input),
+                _pipeline.Scheduler.Statistics,
+                _continuous.Delivery.Statistics,
+                _continuous.Statistics,
+                isGenerationStable: false);
+        }
+    }
 
     public long Submit(
         ViewportInputEventKind kind,
