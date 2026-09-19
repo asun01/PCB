@@ -112,13 +112,32 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                 packet,
                 delivery);
         }
-        catch
+        catch (Exception exception)
         {
             if (bufferTransaction is ViewportPresentationBufferTransaction activeBuffer)
                 _buffers.Discard(activeBuffer);
 
             _queue.TryCancel(packet.Token);
-            throw;
+
+            var frame = packet.Frame;
+            var failure = new ViewportRenderDeliveryResult(
+                false,
+                exception is OperationCanceledException,
+                false,
+                frame.Composite.Generation,
+                0,
+                0,
+                Array.Empty<ViewportRenderWorkItem>(),
+                exception,
+                frame.Batch.ItemCount,
+                frame.Batch.RegionCount);
+
+            return new(
+                true,
+                false,
+                false,
+                packet,
+                failure);
         }
     }
 
