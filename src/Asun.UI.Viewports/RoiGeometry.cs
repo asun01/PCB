@@ -382,7 +382,12 @@ public sealed class RoiGeometry : IEquatable<RoiGeometry>
     private bool ContainsPolygon(Vector2 point, float boundaryTolerance)
     {
         var bounds = GetBounds(_vertices);
-        if (!bounds.Inflate(boundaryTolerance, boundaryTolerance).Contains(point))
+        var expandedBounds = RectangleF.Inflate(
+            bounds,
+            boundaryTolerance,
+            boundaryTolerance);
+
+        if (!expandedBounds.Contains(point))
             return false;
 
         for (var i = 0; i < _vertices.Length; i++)
