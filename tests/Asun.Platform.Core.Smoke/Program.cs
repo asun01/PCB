@@ -2595,6 +2595,51 @@ Assert(
     "A tile caller should be able to cancel its own wait.",
     failures);
 
+var sharedCancellationSource = new SimulatedTileSource(
+    TimeSpan.FromMilliseconds(40),
+    signalFirstLoad: true);
+
+using var sharedCancellationCoordinator =
+    new Asun.UI.Viewports.TileLoadCoordinator<string>(
+        sharedCancellationSource,
+        new Asun.UI.Viewports.TileCache<string>(4));
+
+using var sharedCancellation = new CancellationTokenSource();
+
+var cancellableSharedRequest = new Asun.UI.Viewports.TileRequest(
+    new Asun.UI.Viewports.TileIndex(2, 0),
+    true,
+    2);
+
+var cancellableWait = sharedCancellationCoordinator.LoadAsync(
+    cancellableSharedRequest,
+    new RectangleF(512, 0, 256, 256),
+    sharedCancellation.Token).AsTask();
+
+await sharedCancellationSource.FirstLoadStarted.Task;
+sharedCancellation.Cancel();
+
+var sharedCallerCancelled = false;
+try
+{
+    await cancellableWait;
+}
+catch (OperationCanceledException)
+{
+    sharedCallerCancelled = true;
+}
+
+var underlyingLoadResult = await sharedCancellationCoordinator.LoadAsync(
+    cancellableSharedRequest,
+    new RectangleF(512, 0, 256, 256));
+
+Assert(
+    sharedCallerCancelled &&
+    underlyingLoadResult == "tile:2,0" &&
+    sharedCancellationSource.LoadCount == 1,
+    "Caller cancellation should not cancel a shared underlying tile load.",
+    failures);
+
 var runtimeSource = new SimulatedTileSource(TimeSpan.FromMilliseconds(2));
 using var runtime = new Asun.UI.Viewports.ImageViewportRuntime<string>(
     imageSize: new System.Numerics.Vector2(2048, 1024),
