@@ -38,6 +38,8 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     private readonly ViewportRenderSchedulerRuntime _scheduler;
     private readonly ViewportRenderBudget _budget;
     private readonly ViewportRenderReuseRuntime<TTile> _reuse = new();
+    private ViewportRenderWorkPlan? _deferredWork;
+    private long _deferredGeneration = -1;
     private int _disposed;
 
     public ViewportRenderPipelineRuntime(
@@ -119,13 +121,26 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         if (!_scheduler.TryTakeFrame(now, out var submission, composite.Generation))
             return null;
 
-        var plan = ViewportRenderWorkRuntime.Plan(
-            composite,
-            submission.DirtyFlags);
+        ViewportRenderWorkPlan prioritized;
 
-        var prioritized = ViewportRenderPriorityRuntime.Prioritize(
-            plan,
-            composite);
+        lock (_sync)
+        {
+            if (_deferredWork is not null &&
+                _deferredGeneration == composite.Generation)
+            {
+                prioritized = _deferredWork;
+            }
+            else
+            {
+                var plan = ViewportRenderWorkRuntime.Plan(
+                    composite,
+                    submission.DirtyFlags);
+
+                prioritized = ViewportRenderPriorityRuntime.Prioritize(
+                    plan,
+                    composite);
+            }
+        }
 
         var budgeted = ViewportRenderBudgetRuntime.Apply(
             prioritized,
@@ -138,10 +153,28 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         var hasDeferredWork =
             budgeted.Items.Count < prioritized.Items.Count;
 
+        lock (_sync)
+        {
+            if (hasDeferredWork)
+            {
+                var remaining = GetRemainingWork(
+                    prioritized,
+                    budgeted);
+
+                _deferredWork = remaining;
+                _deferredGeneration = composite.Generation;
+            }
+            else
+            {
+                _deferredWork = null;
+                _deferredGeneration = -1;
+            }
+        }
+
         if (hasDeferredWork)
         {
             _scheduler.Submit(
-                GetDeferredDirtyFlags(submission.DirtyFlags),
+                submission.DirtyFlags,
                 composite.Generation);
         }
 
@@ -191,13 +224,26 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             return emptyResult;
         }
 
-        var plan = ViewportRenderWorkRuntime.Plan(
-            composite,
-            submission.DirtyFlags);
+        ViewportRenderWorkPlan prioritized;
 
-        var prioritized = ViewportRenderPriorityRuntime.Prioritize(
-            plan,
-            composite);
+        lock (_sync)
+        {
+            if (_deferredWork is not null &&
+                _deferredGeneration == composite.Generation)
+            {
+                prioritized = _deferredWork;
+            }
+            else
+            {
+                var plan = ViewportRenderWorkRuntime.Plan(
+                    composite,
+                    submission.DirtyFlags);
+
+                prioritized = ViewportRenderPriorityRuntime.Prioritize(
+                    plan,
+                    composite);
+            }
+        }
 
         var budgeted = ViewportRenderBudgetRuntime.Apply(
             prioritized,
@@ -206,10 +252,26 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         var hasDeferredWork =
             budgeted.Items.Count < prioritized.Items.Count;
 
+        lock (_sync)
+        {
+            if (hasDeferredWork)
+            {
+                _deferredWork = GetRemainingWork(
+                    prioritized,
+                    budgeted);
+                _deferredGeneration = composite.Generation;
+            }
+            else
+            {
+                _deferredWork = null;
+                _deferredGeneration = -1;
+            }
+        }
+
         if (hasDeferredWork)
         {
             _scheduler.Submit(
-                GetDeferredDirtyFlags(submission.DirtyFlags),
+                submission.DirtyFlags,
                 composite.Generation);
         }
 
@@ -230,20 +292,32 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     {
         _scheduler.Reset();
         _reuse.Clear();
+
+        lock (_sync)
+        {
+            _deferredWork = null;
+            _deferredGeneration = -1;
+        }
     }
 
-    private static ViewportDirtyFlags GetDeferredDirtyFlags(
-        ViewportDirtyFlags flags)
+    private static ViewportRenderWorkPlan GetRemainingWork(
+        ViewportRenderWorkPlan prioritized,
+        ViewportRenderWorkPlan budgeted)
     {
-        if (flags == ViewportDirtyFlags.All)
+        if (budgeted.IsEmpty)
         {
-            return ViewportDirtyFlags.Image |
-                ViewportDirtyFlags.Transform |
-                ViewportDirtyFlags.Roi |
-                ViewportDirtyFlags.Overlay;
+            return prioritized;
         }
 
-        return flags;
+        var selected = budgeted.Items.ToHashSet();
+        var remaining = prioritized.Items
+            .Where(item => !selected.Contains(item))
+            .ToArray();
+
+        return new ViewportRenderWorkPlan(
+            remaining,
+            prioritized.ConsumedFlags,
+            prioritized.Generation);
     }
 
     public void Dispose()
