@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using Asun.Device.Contracts;
 using Asun.Program.Core;
 using Asun.Platform.Pipeline;
@@ -77,22 +75,9 @@ public static class ProductionSessionRuntime
                     report));
         }
 
-        var builder=new StringBuilder();
-        builder.Append(definition.SessionId).Append('|')
-            .Append(definition.ProgramPlan.Fingerprint).Append('|')
-            .Append(definition.FrameCount).Append('|');
-
-        foreach(var execution in frameExecutions)
-        {
-            builder.Append(execution.Sequence.Value).Append('|')
-                .Append(execution.InputFingerprint).Append('|')
-                .Append(execution.PipelineReport.Fingerprint).Append('|');
-        }
-
-        var fingerprint=Convert.ToHexString(
-            SHA256.HashData(
-                Encoding.UTF8.GetBytes(builder.ToString())))
-            .ToLowerInvariant();
+        var fingerprint=ProductionSessionFingerprintRuntime.CreateFingerprint(
+            definition,
+            frameExecutions);
 
         return new ProductionSessionReport(
             definition.SessionId,
