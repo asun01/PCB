@@ -32,6 +32,13 @@ Assert(
 
 var latency = new LatencyStatistics(new[] { 10d, 20d, 30d, 40d, 50d });
 Assert(latency.Count == 5, "Latency count should be preserved.", failures);
+Assert(
+    latency.Median == latency.P50 &&
+    latency.Samples.Count == 5 &&
+    latency.Samples[0] == 10 &&
+    latency.Samples[^1] == 50,
+    "Latency statistics should expose deterministic median and ordered samples.",
+    failures);
 Assert(Math.Abs(latency.P50 - 30) < 1e-9, "Latency P50 should be deterministic.", failures);
 Assert(Math.Abs(latency.P95 - 48) < 1e-9, "Latency P95 should use interpolation.", failures);
 Assert(Math.Abs(latency.P99 - 49.6) < 1e-9, "Latency P99 should use interpolation.", failures);
