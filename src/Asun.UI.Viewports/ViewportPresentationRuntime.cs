@@ -94,6 +94,11 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 var afterSurface = _continuous.Surface.Snapshot;
 
                 if (beforeGeneration == afterGeneration &&
+                    beforeSurface.State == afterSurface.State &&
+                    beforeSurface.RenderingGeneration ==
+                    afterSurface.RenderingGeneration &&
+                    beforeSurface.RenderingSequence ==
+                    afterSurface.RenderingSequence &&
                     beforeSurface.PresentationSequence ==
                     afterSurface.PresentationSequence)
                 {
