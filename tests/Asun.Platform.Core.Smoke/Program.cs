@@ -188,6 +188,24 @@ using (var signalCancellation = new CancellationTokenSource())
     Assert(cancelledObserved, "Async signal waits should honor cancellation.", failures);
 }
 
+var timedSignal = new Asun.Platform.Core.AsyncSignal();
+var signalTimeoutObserved = false;
+try
+{
+    await timedSignal.WaitAsync(TimeSpan.FromMilliseconds(5));
+}
+catch (TimeoutException)
+{
+    signalTimeoutObserved = true;
+}
+
+Assert(signalTimeoutObserved, "Timed signal waits should surface TimeoutException.", failures);
+
+var timedSignalTask = timedSignal.WaitAsync(TimeSpan.FromSeconds(1)).AsTask();
+timedSignal.Signal();
+await timedSignalTask;
+Assert(timedSignal.IsSignaled, "Signaling should satisfy an already pending timed wait.", failures);
+
 var execution = new List<string>();
 var pipeline = new AsyncPipeline<List<string>>(new[]
 {
