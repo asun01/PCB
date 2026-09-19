@@ -40,7 +40,15 @@ public sealed class LatencyStatistics
 
     public double Average { get; }
 
-    public double P50 => Percentiles.Calculate(_samples, 50);
+    public double Median => Percentiles.Calculate(_samples, 50);
+
+    public IReadOnlyList<double> Samples =>
+        Array.AsReadOnly(_samples);
+
+    public IReadOnlyList<double> GetPercentiles(params double[] percentiles) =>
+        Percentiles.CalculateMany(_samples, percentiles);
+
+    public double P50 => Median;
 
     public double P95 => Percentiles.Calculate(_samples, 95);
 
