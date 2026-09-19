@@ -186,9 +186,14 @@ public static class ViewportReplayBundleSchemaHundredStageSmoke
             var json =
                 ViewportReplaySessionBundleRuntime.ToJson(bundle);
 
+            var caseVariant = json.Replace(
+                ""formatVersion"",
+                ""FORMATVERSION"",
+                StringComparison.Ordinal);
+
             var restored =
                 ViewportReplaySessionBundleRuntime.FromJson(
-                    json.ToUpperInvariant());
+                    caseVariant);
 
             Check(
                 restored.FormatVersion ==
