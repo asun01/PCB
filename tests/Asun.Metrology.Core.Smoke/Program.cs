@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 MetrologyCoreHundredStageSmoke.Run(Check);
+AffineCalibrationHundredStageSmoke.Run(Check);
 
 if(failures.Count>0)
 {
