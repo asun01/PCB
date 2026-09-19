@@ -1267,3 +1267,40 @@ Current continuous execution position:
 - completed through Stage 17500 in the active 4501–104500 window;
 - next natural stage: 17501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 17501→18000 Evidence window-wide opaque reference closure — 2026-09-19
+
+Completed stages 17501–18000.
+
+Implemented:
+- EvidenceCatalogSnapshotWindowReferenceResolutionEntry;
+- EvidenceCatalogSnapshotWindowReferenceResolution;
+- deterministic per-sequence opaque EvidenceHandle resolution across a snapshot window;
+- validation for complete reference accounting, sequence closure, source-window identity, and per-entry resolution validity;
+- deterministic window reference-resolution SHA-256 fingerprint and validation;
+- four dedicated exact 100-round Smokes plus integration.
+
+Boundary:
+- Evidence handles remain opaque and vendor-neutral;
+- no Quality dependency, persistence provider, storage schema, transport, serialization, HALCON, DevExpress, renderer, or hardware authority introduced.
+
+Closed acceptance asset:
+- PHASE1_17501_18000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_17501-17600_STAGE_LEDGER_20260919.md
+- PHASE1_17601-17700_STAGE_LEDGER_20260919.md
+- PHASE1_17701-17800_STAGE_LEDGER_20260919.md
+- PHASE1_17801-17900_STAGE_LEDGER_20260919.md
+- PHASE1_17901-18000_STAGE_LEDGER_20260919.md
+
+Verification:
+- static audits confirm balanced delimiters and no TODO/NotImplementedException in changed window-reference assets;
+- all four new 100-round Smokes use 10 loop groups and explicit round == 100 assertions;
+- workflow lookup for checkpoint commit f957f93eb138d0adc5720a6d59c59a99a7b396c4 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 18000 in the active 4501–104500 window;
+- next natural stage: 18001;
+- global one-million-stage horizon remains 2501–1002500.
