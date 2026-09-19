@@ -47,8 +47,11 @@ public static class ViewportContinuousAndDeferredSmoke
             first.Status == ViewportRenderDeliveryStatus.Deferred &&
             first.DeferredWorkItems.Count == 1 &&
             first.RenderedUnits > 0 &&
-            first.DeferredUnits == 1,
-            "A partially available tile set should report partial delivery plus exactly one deferred work item.");
+            first.DeferredUnits == 1 &&
+            first.FrameState.IsPartial &&
+            first.FrameState.PlannedUnits == frame.Batch.ItemCount &&
+            first.FrameState.RegionCount == frame.Batch.RegionCount,
+            "A partially available tile set should report partial delivery plus an accurate frame state.");
 
         assert(
             firstSink.TileIndices.Count == 1 &&
@@ -120,8 +123,9 @@ public static class ViewportContinuousAndDeferredSmoke
         var initialRendered = initialCompleted == sink.FirstFrame.Task;
 
         assert(
-            initialRendered,
-            "Continuous runtime should render its initial frame before entering the idle wait.");
+            initialRendered &&
+            presentation.LastFrameState is { IsComplete: true },
+            "Continuous runtime should render its initial frame and publish a complete presentation frame state.");
 
         var before = presentation.Composite.Generation;
         var started = System.Diagnostics.Stopwatch.StartNew();
