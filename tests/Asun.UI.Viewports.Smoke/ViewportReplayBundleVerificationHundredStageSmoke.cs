@@ -304,6 +304,32 @@ public static class ViewportReplayBundleVerificationHundredStageSmoke
                 $"component flags {i + 1} should all be true on clean verification.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            var expected = CreateBundle(inputs);
+            var actual = CreateBundle(inputs) with
+            {
+                Manifest =
+                    CreateBundle(inputs).Manifest with
+                    {
+                        SessionId = $"bundle-verification-{i}"
+                    }
+            };
+
+            var result =
+                ViewportReplayBundleVerificationRuntime.Verify(
+                    expected,
+                    actual);
+
+            Check(
+                !result.IsEquivalent &&
+                !result.ManifestMatches &&
+                result.InputMatches &&
+                result.EvidenceMatches &&
+                result.AuditMatches,
+                $"session identity difference {i + 1} should be detected.");
+        }
+
         assert(
             round == 100,
             $"Bundle verification smoke should execute exactly 100 numbered rounds; actual {round}.");
