@@ -991,6 +991,51 @@ Assert(
     "Axis-aligned factory should convert pixel rectangle geometry deterministically.",
     failures);
 
+var circle = new Asun.Vision.Contracts.Circle2D(
+    new System.Numerics.Vector2(10, 20),
+    5);
+
+Assert(
+    circle.IsValid &&
+    Math.Abs(circle.Diameter - 10) < 1e-12 &&
+    Math.Abs(circle.Area - Math.PI * 25) < 1e-12 &&
+    Math.Abs(circle.Circumference - Math.PI * 10) < 1e-12,
+    "Circle geometry metrics should be deterministic.",
+    failures);
+
+Assert(
+    circle.Contains(new System.Numerics.Vector2(10, 24)) &&
+    !circle.ContainsStrict(new System.Numerics.Vector2(10, 25)),
+    "Circle containment should distinguish boundary points from strict interior points.",
+    failures);
+
+Assert(
+    circle.PointAtAngle(0) == new System.Numerics.Vector2(15, 20),
+    "Circle angle sampling should be deterministic.",
+    failures);
+
+Assert(
+    circle.Bounds == new RectangleF(5, 15, 10, 10),
+    "Circle bounds should match center and radius.",
+    failures);
+
+Assert(
+    circle.ClosestPoint(new System.Numerics.Vector2(20, 20)) == new System.Numerics.Vector2(15, 20),
+    "Circle closest-point projection should return a point on the circumference.",
+    failures);
+
+var translatedCircle = circle.Translate(new System.Numerics.Vector2(-2, 3));
+Assert(
+    translatedCircle.Center == new System.Numerics.Vector2(8, 23),
+    "Circle translation should preserve radius.",
+    failures);
+
+var resizedCircle = circle.Resize(8);
+Assert(
+    resizedCircle.Radius == 8,
+    "Circle resize should replace radius deterministically.",
+    failures);
+
 var segment = new Asun.Vision.Contracts.LineSegment2D(
     new System.Numerics.Vector2(0, 0),
     new System.Numerics.Vector2(3, 4));
