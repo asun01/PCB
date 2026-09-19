@@ -2202,3 +2202,17 @@ The plan is fully complete only when:
 - [x] The first completed future window under this master plan now ends at stage 7500.
 - [>] Active requested execution window: stages 4501–104500 (exactly 100,000 stages); only 4501–7500 are currently recorded as completed.
 - [ ] Stages 7501–1,002,500 remain planned and are not represented as completed work.
+
+
+## Live execution state — 2026-09-19
+
+The one-million-stage plan is an active execution program rather than a planning-only artifact.
+
+- Global horizon: stages 2501–1,002,500.
+- Current completed boundary: stage 13,500.
+- Next executable stage: 13,501.
+- Active non-blocked automation window: 4,501–104,500.
+- Completed batches remain represented by repository code, Smoke assets, stage ledgers, integration checkpoints, and progress records.
+- Vendor-authoritative gates remain external; execution must continue around them rather than invent authority.
+- Every completed 500-stage block requires five 100-stage ledgers plus an integration checkpoint and progress synchronization.
+- This document continues to govern stage numbering and non-blocked execution until the one-million-stage horizon is exhausted.
