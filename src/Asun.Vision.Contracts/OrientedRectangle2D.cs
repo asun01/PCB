@@ -115,6 +115,22 @@ public readonly record struct OrientedRectangle2D(
                Math.Abs(local.Y) <= Size.Y / 2f;
     }
 
+    public Vector2 ClosestPoint(Vector2 point)
+    {
+        EnsureValid();
+
+        if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        var local = ToLocalPoint(point);
+
+        var clampedLocal = new Vector2(
+            Math.Clamp(local.X, -Size.X / 2f, Size.X / 2f),
+            Math.Clamp(local.Y, -Size.Y / 2f, Size.Y / 2f));
+
+        return ToWorldPoint(clampedLocal);
+    }
+
     public double DistanceSquaredToCenter(Vector2 point)
     {
         EnsureValid();
