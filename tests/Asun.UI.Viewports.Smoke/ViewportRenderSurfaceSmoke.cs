@@ -204,7 +204,7 @@ public static class ViewportRenderSurfaceSmoke
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask CommitFrameAsync(
+        public virtual ValueTask CommitFrameAsync(
             ViewportRenderCommitContext context,
             CancellationToken cancellationToken = default)
         {
@@ -212,7 +212,7 @@ public static class ViewportRenderSurfaceSmoke
             return ValueTask.CompletedTask;
         }
 
-        public ValueTask DiscardFrameAsync(
+        public virtual ValueTask DiscardFrameAsync(
             ViewportRenderDiscardContext context,
             CancellationToken cancellationToken = default)
         {
@@ -246,7 +246,7 @@ public static class ViewportRenderSurfaceSmoke
             return ValueTask.CompletedTask;
         }
 
-        public new ValueTask DiscardFrameAsync(
+        public override ValueTask DiscardFrameAsync(
             ViewportRenderDiscardContext context,
             CancellationToken cancellationToken = default)
         {
