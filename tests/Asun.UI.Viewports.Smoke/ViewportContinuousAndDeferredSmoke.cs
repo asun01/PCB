@@ -157,6 +157,7 @@ public static class ViewportContinuousAndDeferredSmoke
             initialRendered &&
             presentation.LastFrameState is { IsComplete: true } &&
             initialSnapshot.LastFrameState is { IsComplete: true } &&
+            initialSnapshot.IsPresentationStable &&
             initialSnapshot.Surface.State == ViewportRenderSurfaceState.Presented &&
             initialSnapshot.Surface.PresentedGeneration == presentation.Composite.Generation,
             "Continuous runtime should render its initial frame and publish a complete presentation frame state.");
