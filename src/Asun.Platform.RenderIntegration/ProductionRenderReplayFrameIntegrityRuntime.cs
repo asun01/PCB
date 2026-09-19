@@ -34,7 +34,7 @@ public static class ProductionRenderReplayFrameIntegrityRuntime
                 new ProductionRenderReplayFrameIntegrity(
                     productionFrames[index].Sequence.Value,
                     productionFrames[index].InputFingerprint,
-                    summary.Generation,
+                    summary,
                     ViewportRenderFrameFingerprintRuntime.CreateFingerprint(summary)));
         }
 
@@ -71,7 +71,7 @@ public static class ProductionRenderReplayFrameIntegrityRuntime
             if(actual.ProductionInputFingerprint!=production.InputFingerprint)
                 errors.Add($"Render replay frame {index} input fingerprint mismatch.");
 
-            if(actual.RenderGeneration<0)
+            if(actual.RenderSummary.Generation<0)
                 errors.Add($"Render replay frame {index} render generation cannot be negative.");
 
             if(actual.RenderFingerprint.Length!=64 ||
@@ -80,6 +80,10 @@ public static class ProductionRenderReplayFrameIntegrityRuntime
                    char.ToLowerInvariant(character)==character))
             {
                 errors.Add($"Render replay frame {index} render fingerprint is invalid.");
+            }
+            else if(ViewportRenderFrameFingerprintRuntime.CreateFingerprint(actual.RenderSummary)!=actual.RenderFingerprint)
+            {
+                errors.Add($"Render replay frame {index} render fingerprint does not match the summary.");
             }
         }
 
