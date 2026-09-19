@@ -141,6 +141,13 @@ public static class TileCacheWarmupValidationHundredStageSmoke
                 $"final warmup validation round {i + 1} should pass.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            Check(
+                secondHealth.InFlight == 0,
+                $"final in-flight health round {i + 1} should remain zero.");
+        }
+
         assert(
             round == 100,
             $"Tile cache warmup smoke should execute exactly 100 numbered rounds; actual {round}.");
