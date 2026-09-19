@@ -108,6 +108,25 @@ Assert(
     "Zoom should preserve the viewport anchor.",
     failures);
 
+var doubled = viewport.WithZoomFactor(2, new System.Numerics.Vector2(600, 400));
+Assert(
+    Math.Abs(doubled.Scale - zoomed.Scale) < 1e-9,
+    "Zoom factor should compose with the current scale.",
+    failures);
+
+var outside = viewport.ClampViewportPointToImage(new System.Numerics.Vector2(-100, 1000));
+Assert(
+    Math.Abs(outside.X - viewport.Translation.X) < 1e-4f &&
+    Math.Abs(outside.Y - (viewport.Translation.Y + viewport.RenderedImageSize.Y)) < 1e-4f,
+    "Viewport point clamping should map to the nearest image boundary.",
+    failures);
+
+Assert(
+    viewport.ViewportCenter == new System.Numerics.Vector2(600, 400) &&
+    viewport.ImageCenter == new System.Numerics.Vector2(500, 250),
+    "Viewport and image centers should be derived from their sizes.",
+    failures);
+
 var invalidGraphRejected = false;
 try
 {
