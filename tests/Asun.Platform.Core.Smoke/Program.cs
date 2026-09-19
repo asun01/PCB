@@ -544,6 +544,20 @@ var dragRoi = Asun.Vision.Contracts.PixelRect.FromPoints(
     new Asun.Vision.Contracts.PixelPoint(300, 200),
     new Asun.Vision.Contracts.PixelPoint(100, 50));
 
+var hugeRejected = false;
+try
+{
+    _ = Asun.Vision.Contracts.PixelRect.FromPoints(
+        new Asun.Vision.Contracts.PixelPoint(double.MaxValue, 0),
+        new Asun.Vision.Contracts.PixelPoint(-double.MaxValue, 0));
+}
+catch (ArgumentOutOfRangeException)
+{
+    hugeRejected = true;
+}
+
+Assert(hugeRejected, "Pixel rectangles with non-finite derived dimensions should be rejected.", failures);
+
 Assert(
     dragRoi == new Asun.Vision.Contracts.PixelRect(100, 50, 200, 150),
     "ROI creation from drag endpoints should normalize axis direction.",
