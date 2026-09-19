@@ -98,6 +98,7 @@ public static class ViewportRenderWorkRuntime
             diff => diff.Kind == ViewportSceneDiffKind.TransformChanged);
 
         var canIncrementallyRedrawScene =
+            dirtyFlags != ViewportDirtyFlags.All &&
             frame.SceneDiff.Count > 0 &&
             !hasTransformDiff;
 
