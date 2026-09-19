@@ -175,8 +175,18 @@ public static class ViewportDeliveryAndBackpressureSmoke
                         new PassiveSink());
 
                     assert(
-                        retryDelivered.Succeeded,
+                        retryDelivered.Succeeded &&
+                        retryDelivered.Status == ViewportRenderDeliveryStatus.Succeeded,
                         $"Delivery chain {i + 1} should succeed once the tile source recovers.");
+                }
+
+                var deferredStats = retryPipeline
+                    .Scheduler
+                    .Statistics;
+
+                assert(
+                    deferredStats.Submissions >= 2,
+                    $"Delivery chain {i + 1} should resubmit deferred render work.");
                 }
             }
 
