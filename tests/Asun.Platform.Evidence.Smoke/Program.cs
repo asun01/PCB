@@ -15,6 +15,7 @@ var descriptor=new EvidenceDescriptor(handle,EvidenceKind.Image,"image/raw",1024
 var invalidHandle=new EvidenceDescriptor(new EvidenceHandle(""),EvidenceKind.Image,"image/raw",1024,"invalid");
 var invalidLength=descriptor with {ByteLength=-1};
 var invalidKind=descriptor with {Kind=(EvidenceKind)99};
+var fingerprint=EvidenceDescriptorFingerprintRuntime.CreateFingerprint(descriptor);
 
 for(var i=0;i<10;i++) Check(handle.IsValid,"Evidence handle should remain valid.");
 for(var i=0;i<10;i++) Check(handle.Value=="frame://001","Evidence handle value should remain stable.");
