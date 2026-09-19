@@ -12,10 +12,11 @@ public static class RoiStatusRuntime
     public static RoiStatus Capture(
         IEnumerable<RoiDocumentItem> items,
         RoiLayerRuntime layers,
+        IEnumerable<Guid>? selectedIds,
         bool hasChanges)
     {
         var array = items.ToArray();
-        var selected = new HashSet<Guid>();
+        var selected = selectedIds?.ToHashSet() ?? new HashSet<Guid>();
         var layerMap = layers.Snapshot().ToDictionary(x => x.RoiId);
         return new RoiStatus(
             array.Length,
