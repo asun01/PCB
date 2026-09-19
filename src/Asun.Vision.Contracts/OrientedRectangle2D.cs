@@ -36,6 +36,17 @@ public readonly record struct OrientedRectangle2D(
     public Vector2 LocalYAxis =>
         new(-(float)Math.Sin(AngleRadians), (float)Math.Cos(AngleRadians));
 
+    public static OrientedRectangle2D FromAxisAligned(
+        PixelRect rectangle) =>
+        new(
+            new Vector2(
+                (float)rectangle.Center.X,
+                (float)rectangle.Center.Y),
+            new Vector2(
+                (float)rectangle.Width,
+                (float)rectangle.Height),
+            0);
+
     public Vector2[] GetCorners()
     {
         EnsureValid();
