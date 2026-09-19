@@ -13,32 +13,49 @@ public static class QualityInspectionDeterminismHundredStageSmoke
         var a=Make("F-002","b");
         var b=Make("F-001","a");
 
-        QualityInspectionSnapshot MakeSnapshot() =>
+        QualityInspectionSnapshot MakeSnapshot(
+            long sequence,
+            bool reverseOrder,
+            string evidenceForA="z") =>
             new(
                 Guid.NewGuid(),
-                1,
-                new QualityFindingSet(new[]{a,b}),
-                new QualityFindingEvidenceSet(new[]{
-                    new QualityFindingEvidenceLink(a.Id,QualityEvidenceKey.Create("z")),
-                    new QualityFindingEvidenceLink(b.Id,QualityEvidenceKey.Create("a"))
-                }));
+                sequence,
+                new QualityFindingSet(
+                    reverseOrder ? new[]{b,a} : new[]{a,b}),
+                new QualityFindingEvidenceSet(
+                    reverseOrder
+                        ? new[]{
+                            new QualityFindingEvidenceLink(b.Id,QualityEvidenceKey.Create("a")),
+                            new QualityFindingEvidenceLink(a.Id,QualityEvidenceKey.Create(evidenceForA))
+                        }
+                        : new[]{
+                            new QualityFindingEvidenceLink(a.Id,QualityEvidenceKey.Create(evidenceForA)),
+                            new QualityFindingEvidenceLink(b.Id,QualityEvidenceKey.Create("a"))
+                        }));
 
-        var first=MakeSnapshot();
-        var second=MakeSnapshot();
+        var first=MakeSnapshot(1,false);
+        var second=MakeSnapshot(2,true);
+        var changedFinding=new QualityInspectionSnapshot(
+            Guid.NewGuid(),
+            3,
+            new QualityFindingSet(new[]{a,b with {Message="changed"}}),
+            first.Evidence);
+        var changedEvidence=MakeSnapshot(4,false,"changed");
+        var firstFingerprint=QualityInspectionDeterminismRuntime.CreateContentFingerprint(first);
+        var secondFingerprint=QualityInspectionDeterminismRuntime.CreateContentFingerprint(second);
+        var changedFindingFingerprint=QualityInspectionDeterminismRuntime.CreateContentFingerprint(changedFinding);
+        var changedEvidenceFingerprint=QualityInspectionDeterminismRuntime.CreateContentFingerprint(changedEvidence);
 
-        var normalizedFirst=QualityInspectionDiffRuntime.Diff(first,first);
-        var normalizedSecond=QualityInspectionDiffRuntime.Diff(second,second);
-
-        for(var i=0;i<10;i++) Check(normalizedFirst.IsEmpty,$"self-diff first round {i+1} should be empty.");
-        for(var i=0;i<10;i++) Check(normalizedSecond.IsEmpty,$"self-diff second round {i+1} should be empty.");
-        for(var i=0;i<10;i++) Check(first.Findings.Findings.Count==2,$"finding order preservation round {i+1} should remain explicit.");
-        for(var i=0;i<10;i++) Check(first.Evidence.Links.Count==2,$"evidence order preservation round {i+1} should remain explicit.");
-        for(var i=0;i<10;i++) Check(first.Findings.Findings.Select(item=>item.Id).SequenceEqual(new[]{a.Id,b.Id}),$"finding insertion order round {i+1} should be stable.");
-        for(var i=0;i<10;i++) Check(first.Evidence.Links.Select(item=>item.EvidenceKey).SequenceEqual(new[]{new QualityEvidenceKey("z"),new QualityEvidenceKey("a")}),$"evidence insertion order round {i+1} should be stable.");
-        for(var i=0;i<10;i++) Check(QualityInspectionSnapshotValidationRuntime.IsValid(first) && QualityInspectionSnapshotValidationRuntime.IsValid(second),$"snapshot validation round {i+1} should pass.");
-        for(var i=0;i<10;i++) Check(QualityInspectionDiffValidationRuntime.IsValid(normalizedFirst) && QualityInspectionDiffValidationRuntime.IsValid(normalizedSecond),$"diff validation round {i+1} should pass.");
-        for(var i=0;i<10;i++) Check(first.SnapshotId!=second.SnapshotId,$"independent snapshot ids round {i+1} should remain distinct.");
-        for(var i=0;i<10;i++) Check(first.Sequence==second.Sequence,$"independent snapshot sequence round {i+1} should remain equal for comparison.");
+        for(var i=0;i<10;i++) Check(firstFingerprint.Length==64,$"first fingerprint length round {i+1} should be SHA-256 sized.");
+        for(var i=0;i<10;i++) Check(secondFingerprint.Length==64,$"second fingerprint length round {i+1} should be SHA-256 sized.");
+        for(var i=0;i<10;i++) Check(firstFingerprint==secondFingerprint,$"canonical content round {i+1} should ignore insertion order, identity and sequence.");
+        for(var i=0;i<10;i++) Check(QualityInspectionDeterminismRuntime.AreContentEquivalent(first,second),$"content equivalence round {i+1} should be deterministic.");
+        for(var i=0;i<10;i++) Check(QualityInspectionDeterminismValidationRuntime.IsValidFingerprint(firstFingerprint),$"fingerprint validation round {i+1} should pass.");
+        for(var i=0;i<10;i++) Check(firstFingerprint.All(character=>Uri.IsHexDigit(character) && char.ToLowerInvariant(character)==character),$"fingerprint casing round {i+1} should remain normalized lowercase hex.");
+        for(var i=0;i<10;i++) Check(firstFingerprint!=changedFindingFingerprint,$"finding mutation round {i+1} should change content fingerprint.");
+        for(var i=0;i<10;i++) Check(firstFingerprint!=changedEvidenceFingerprint,$"evidence mutation round {i+1} should change content fingerprint.");
+        for(var i=0;i<10;i++) Check(QualityInspectionDeterminismValidationRuntime.IsValidSnapshot(first) && QualityInspectionDeterminismValidationRuntime.IsValidSnapshot(second),$"snapshot fingerprint validation round {i+1} should pass.");
+        for(var i=0;i<10;i++) Check(QualityInspectionDiffRuntime.Diff(first,first).IsEmpty,$"deterministic self-diff round {i+1} should remain empty.");
 
         assert(round==100,$"Quality inspection determinism smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
