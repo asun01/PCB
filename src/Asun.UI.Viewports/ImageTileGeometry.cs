@@ -206,6 +206,33 @@ public static class ImageTileGeometry
         return tileIndex;
     }
 
+    public static RectangleF GetTileRangeRectangle(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        VisibleTileRange range)
+    {
+        ValidatePositiveFinite(imageSize, nameof(imageSize));
+        ValidatePositiveFinite(tileSize, nameof(tileSize));
+
+        if (range.IsEmpty)
+            return new RectangleF();
+
+        if (!ContainsTile(imageSize, tileSize, range.Minimum) ||
+            !ContainsTile(imageSize, tileSize, range.Maximum))
+        {
+            throw new ArgumentOutOfRangeException(nameof(range), range, "Tile range is outside the image grid.");
+        }
+
+        var first = GetTileRectangle(imageSize, tileSize, range.Minimum);
+        var last = GetTileRectangle(imageSize, tileSize, range.Maximum);
+
+        return new RectangleF(
+            first.X,
+            first.Y,
+            last.Right - first.X,
+            last.Bottom - first.Y);
+    }
+
     public static RectangleF GetTileRectangle(
         Vector2 imageSize,
         Vector2 tileSize,
