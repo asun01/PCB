@@ -266,11 +266,8 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
         public ValueTask EndFrameAsync(
             ViewportRenderFrameContext context,
-            CancellationToken cancellationToken = default)
-        {
-            EndCount++;
-            return ValueTask.CompletedTask;
-        }
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
     }
 
 
@@ -318,7 +315,10 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
         public ValueTask EndFrameAsync(
             ViewportRenderFrameContext context,
-            CancellationToken cancellationToken = default) =>
-            ValueTask.CompletedTask;
+            CancellationToken cancellationToken = default)
+        {
+            EndCount++;
+            return ValueTask.CompletedTask;
+        }
     }
 }
