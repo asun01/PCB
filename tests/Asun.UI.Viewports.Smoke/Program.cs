@@ -273,6 +273,11 @@ ViewportReplayWindowHundredStageSmoke.Run(Assert);
 ViewportReplayExecutionHundredStageSmoke.Run(Assert);
 ViewportReplayStateFingerprintHundredStageSmoke.Run(Assert);
 ViewportReplayVerificationHundredStageSmoke.Run(Assert);
+ViewportReplayBundleVerificationHundredStageSmoke.Run(Assert);
+ViewportReplayBundleSchemaHundredStageSmoke.Run(Assert);
+ViewportReplayCheckpointHundredStageSmoke.Run(Assert);
+ViewportReplayPresentationEvidenceGateHundredStageSmoke.Run(Assert);
+ViewportReplayDiagnosticGateHundredStageSmoke.Run(Assert);
 ViewportThreeHundredRoundSmoke.Run(Assert);
 ViewportEvidenceHistorySmoke.Run(Assert);
 
