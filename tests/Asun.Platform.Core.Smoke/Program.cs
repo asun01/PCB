@@ -8,6 +8,31 @@ static void Assert(bool condition, string message, List<string> failures)
         failures.Add(message);
 }
 
+var angle = new Asun.Vision.Contracts.Angle2D(3 * Math.PI);
+Assert(
+    Math.Abs(angle.NormalizedRadians - Math.PI) < 1e-12,
+    "Angle normalization should map full turns to the canonical interval.",
+    failures);
+
+var ninetyDegrees = Asun.Vision.Contracts.Angle2D.FromDegrees(90);
+Assert(
+    Math.Abs(ninetyDegrees.Degrees - 90) < 1e-12 &&
+    Math.Abs(ninetyDegrees.Radians - Math.PI / 2) < 1e-12,
+    "Angle degree/radian conversion should be deterministic.",
+    failures);
+
+var shortestDelta = new Asun.Vision.Contracts.Angle2D(Math.PI - 0.1)
+    .ShortestDeltaTo(new Asun.Vision.Contracts.Angle2D(-Math.PI + 0.1));
+Assert(
+    Math.Abs(shortestDelta - 0.2) < 1e-12,
+    "Angle shortest-delta calculation should cross the ±PI boundary correctly.",
+    failures);
+
+Assert(
+    angle.Add(Math.PI).NormalizedRadians == 0,
+    "Angle addition should compose and normalize deterministically.",
+    failures);
+
 var tolerance = new Asun.Vision.Contracts.NumericTolerance(1e-6, 1e-6);
 Assert(tolerance.IsValid, "Default numeric tolerance values should be valid.", failures);
 
