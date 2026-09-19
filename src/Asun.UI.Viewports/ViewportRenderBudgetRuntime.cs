@@ -34,12 +34,26 @@ public static class ViewportRenderBudgetRuntime
 
         var selected = new List<ViewportRenderWorkItem>();
 
+        if (budget.MaxTotalWork > 0)
+        {
+            AddUpTo(
+                selected,
+                plan.Items.Where(item =>
+                    !item.IsInvalidation &&
+                    item.Kind == ViewportRenderWorkKind.FullSurface),
+                1);
+        }
+
+        var remaining = Math.Max(
+            0,
+            budget.MaxTotalWork - selected.Count);
+
         AddUpTo(
             selected,
             plan.Items.Where(item => item.IsInvalidation),
-            budget.MaxTotalWork);
+            remaining);
 
-        var remaining = Math.Max(
+        remaining = Math.Max(
             0,
             budget.MaxTotalWork - selected.Count);
 
@@ -64,8 +78,7 @@ public static class ViewportRenderBudgetRuntime
             plan.Items.Where(item =>
                 !item.IsInvalidation &&
                 item.Kind is ViewportRenderWorkKind.Overlay
-                    or ViewportRenderWorkKind.Selection
-                    or ViewportRenderWorkKind.FullSurface),
+                    or ViewportRenderWorkKind.Selection),
             Math.Min(budget.MaxOverlayWork, remaining));
 
         return new ViewportRenderWorkPlan(
