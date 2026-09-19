@@ -981,6 +981,21 @@ Assert(queue.TryComplete(), "The first queue completion should succeed.", failur
 Assert(!queue.TryComplete(), "Repeated queue completion should be idempotent.", failures);
 Assert(!queue.TryEnqueue(3), "Completed queue should reject new work.", failures);
 Assert(queue.IsCompleted, "Completed queue should report completion after draining.", failures);
+
+var faultedQueue = new BoundedWorkQueue<int>(1);
+var queueFailure = new InvalidOperationException("expected queue failure");
+Assert(faultedQueue.TryComplete(queueFailure), "Faulted queue should accept its first completion.", failures);
+var queueFaultObserved = false;
+try
+{
+    await faultedQueue.Completion;
+}
+catch (InvalidOperationException)
+{
+    queueFaultObserved = true;
+}
+
+Assert(queueFaultObserved, "Faulted queue completion should propagate its completion error.", failures);
 await queue.Completion;
 
 var cancelledReadQueue = new BoundedWorkQueue<int>(1);
