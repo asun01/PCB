@@ -14,5 +14,6 @@
     <ProjectReference Include="../../src/Asun.Device.Contracts/Asun.Device.Contracts.csproj" />
     <ProjectReference Include="../../src/Asun.Device.Impl/Asun.Device.Impl.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.Contracts/Asun.Platform.Contracts.csproj" />
+    <ProjectReference Include="../../src/Asun.UI.Viewports/Asun.UI.Viewports.csproj" />
   </ItemGroup>
 </Project>

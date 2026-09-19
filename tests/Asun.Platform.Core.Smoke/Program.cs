@@ -10,6 +10,19 @@ static void Assert(bool condition, string message, List<string> failures)
 Assert(Math.Abs(Percentiles.Calculate(new[] { 10d, 20d, 30d, 40d, 50d }, 50) - 30) < 1e-9, "P50 should be the median.", failures);
 Assert(Math.Abs(Percentiles.Calculate(new[] { 10d, 20d, 30d, 40d }, 25) - 17.5) < 1e-9, "Percentile interpolation should be deterministic.", failures);
 
+var viewport = Asun.UI.Viewports.ViewportTransform.Fit(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(1200, 800));
+var imagePoint = new System.Numerics.Vector2(250, 125);
+var viewportPoint = viewport.ImageToViewport(imagePoint);
+var roundTrip = viewport.ViewportToImage(viewportPoint);
+Assert(Math.Abs(roundTrip.X - imagePoint.X) < 1e-4f && Math.Abs(roundTrip.Y - imagePoint.Y) < 1e-4f, "Viewport coordinate conversion should round-trip.", failures);
+Assert(viewport.ContainsViewportPoint(viewport.ImageToViewport(new System.Numerics.Vector2(0, 0))), "Viewport should contain the rendered image origin.", failures);
+var zoomed = viewport.WithScaleAround(2, new System.Numerics.Vector2(600, 400));
+var anchorBefore = viewport.ViewportToImage(new System.Numerics.Vector2(600, 400));
+var anchorAfter = zoomed.ViewportToImage(new System.Numerics.Vector2(600, 400));
+Assert(Math.Abs(anchorBefore.X - anchorAfter.X) < 1e-4f && Math.Abs(anchorBefore.Y - anchorAfter.Y) < 1e-4f, "Zoom should preserve the viewport anchor.", failures);
+
 var imageSize = new Asun.Vision.Contracts.ImageSize(1920, 1080);
 Assert(imageSize.Center.X == 960 && imageSize.Center.Y == 540, "Image center should be deterministic.", failures);
 
