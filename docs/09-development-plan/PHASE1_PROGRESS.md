@@ -259,3 +259,18 @@ Verification note:
 - Added stage ledgers for 3501–3600, 3601–3700, 3701–3800, 3801–3900 and 3901–4000.
 - Static verification confirms each new 100-stage Smoke uses 10 loop groups × 10 Check calls with round == 100, and the new C# sources have balanced delimiters with no placeholder implementation.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+
+### 4001→4500 input capture, routing and ROI lifecycle hardening — 2026-09-19
+
+- Completed stages 4001–4500 as five contiguous 100-stage blocks.
+- Corrected a real `ViewportInputRouterRuntime` ownership defect: failed capture acquisition can no longer leak PointerUp/Escape release into another input owner; right-button input no longer occupies ROI capture; foreign-owner pointer moves are isolated.
+- Added input-capture and router validators plus exact 100-round lifecycle Smokes covering ownership, blocking, release symmetry and foreign-input isolation.
+- Added `ViewportInputSubmissionValidationRuntime` and a 100-round Smoke covering move coalescing, completion, reset lifecycle, cancellation and post-reset submission.
+- Corrected a real `RoiTeachingGuide.Start(false)` terminal-state defect: a completed non-repeatable guide no longer re-enters an active/null-step dead state.
+- Added ROI editor validation covering committed/preview convergence, cancel restoration and create-cancel semantics.
+- Added ROI teaching validation covering terminal completion, non-repeatable Start, explicit restart and step identity.
+- Registered all five new Smokes in the primary viewport smoke entry.
+- Added ledgers for 4001–4100, 4101–4200, 4201–4300, 4301–4400 and 4401–4500.
+- Static verification confirms each new 100-stage Smoke uses 10 loop groups × 10 Check calls with `round == 100`; delimiters are balanced and no placeholder implementation was introduced in the new validation/Smoke files.
+- No local build/test/CI success is asserted without authoritative execution evidence.
