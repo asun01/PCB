@@ -35,6 +35,10 @@ public sealed class Polyline2D
 
     public int Count => _points.Length;
 
+    public Vector2 StartPoint => _points[0];
+
+    public Vector2 EndPoint => _points[^1];
+
     public double Length => _cumulativeLengths[^1];
 
     public bool IsClosed =>
