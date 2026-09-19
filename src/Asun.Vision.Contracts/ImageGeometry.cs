@@ -25,7 +25,16 @@ public readonly record struct PixelPoint(double X, double Y)
     public double LengthSquared => X * X + Y * Y;
 
     public double Length => Math.Sqrt(LengthSquared);
-}
+
+    public double DistanceSquaredTo(PixelPoint other)
+    {
+        if (!IsFinite || !other.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(other));
+
+        var dx = X - other.X;
+        var dy = Y - other.Y;
+        return dx * dx + dy * dy;
+    }
 
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
 {
