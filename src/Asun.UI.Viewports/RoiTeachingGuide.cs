@@ -83,7 +83,13 @@ public sealed class RoiTeachingGuide
         lock (_sync)
         {
             if (restart)
+            {
                 _currentIndex = 0;
+            }
+            else if (_currentIndex >= _steps.Count)
+            {
+                return;
+            }
 
             _active = true;
         }
