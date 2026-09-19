@@ -72,7 +72,7 @@ public static class ViewportPresentationQueueValidationHundredStageSmoke
         {
             var statistics = new ViewportPresentationQueueStatistics(
                 1, 1, 0, 0, 0, 0, 0,
-                1, null, null, 1, 2,
+                1, null, null, null, 2,
                 2, false, null, null);
             Check(
                 ViewportPresentationQueueValidationRuntime.Validate(statistics).Any(
