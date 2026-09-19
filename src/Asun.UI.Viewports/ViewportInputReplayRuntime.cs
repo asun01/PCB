@@ -85,13 +85,24 @@ public sealed class ViewportInputReplayRuntime
         lock (_sync)
             events = _events.ToArray();
 
-        var results = new List<ViewportCompositeInputResult>(
-            events.Length);
+        return ViewportReplayExecutionRuntime
+            .Execute(input, events)
+            .Results;
+    }
 
-        foreach (var item in events)
-            results.Add(input.Apply(item));
+    public ViewportReplayExecutionReport ReplayReport<TTile>(
+        ViewportCompositeInputRuntime<TTile> input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
 
-        return results;
+        ViewportInputEvent[] events;
+
+        lock (_sync)
+            events = _events.ToArray();
+
+        return ViewportReplayExecutionRuntime.Execute(
+            input,
+            events);
     }
 
     public string EvidenceHash()
