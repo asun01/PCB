@@ -387,7 +387,7 @@ public sealed class RoiGeometry : IEquatable<RoiGeometry>
             boundaryTolerance,
             boundaryTolerance);
 
-        if (!expandedBounds.Contains(point))
+        if (!expandedBounds.Contains(point.X, point.Y))
             return false;
 
         for (var i = 0; i < _vertices.Length; i++)
