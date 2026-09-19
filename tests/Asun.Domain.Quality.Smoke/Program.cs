@@ -43,6 +43,7 @@ QualityInspectionRuleSummaryHundredStageSmoke.Run(Assert);
 QualityInspectionRuleSummaryDiffHundredStageSmoke.Run(Assert);
 QualityInspectionRuleFindingIndexHundredStageSmoke.Run(Assert);
 QualityInspectionRuleEvidenceIndexHundredStageSmoke.Run(Assert);
+QualityInspectionRuleAuditProjectionHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
