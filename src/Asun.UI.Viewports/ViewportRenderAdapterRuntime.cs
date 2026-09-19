@@ -42,7 +42,32 @@ public static class ViewportRenderAdapterRuntime
             .ToDictionary(group => group.Key, group => group.ToArray());
 
         var renderedRoiIds = new HashSet<Guid>();
+        var pendingInvalidations = new List<RectangleF>();
         var renderedUnits = 0;
+
+        async ValueTask FlushInvalidationsAsync()
+        {
+            if (pendingInvalidations.Count == 0)
+                return;
+
+            var merged = ViewportRenderRegionRuntime.Merge(
+                pendingInvalidations);
+
+            pendingInvalidations.Clear();
+
+            foreach (var bounds in merged)
+            {
+                await sink
+                    .ClearInvalidatedRegionAsync(
+                        new ViewportRenderInvalidationContext(
+                            bounds,
+                            frame.Composite.Generation),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                renderedUnits++;
+            }
+        }
 
         foreach (var work in frame.WorkPlan.Items)
         {
@@ -158,6 +183,10 @@ public static class ViewportRenderAdapterRuntime
                         cancellationToken)
                     .ConfigureAwait(false);
             }
+        }
+
+        await FlushInvalidationsAsync().ConfigureAwait(false);
+
         }
         finally
         {
