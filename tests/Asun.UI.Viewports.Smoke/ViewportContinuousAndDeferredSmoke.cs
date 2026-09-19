@@ -270,6 +270,8 @@ public static class ViewportContinuousAndDeferredSmoke
             failed.Status == ViewportRenderDeliveryStatus.Failed &&
             discarded.State == ViewportRenderSurfaceState.Discarded &&
             discarded.PresentedGeneration is null &&
+            discarded.DiscardedGeneration == frame.Composite.Generation &&
+            discarded.LastDiscardStatus == ViewportRenderDeliveryStatus.Failed &&
             failingSink.Events.SequenceEqual(
                 new[] { "Begin", "End", "Commit", "Discard" }) &&
             failingSink.DiscardCount == 1,
