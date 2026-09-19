@@ -72,6 +72,9 @@ public sealed class Polyline2D
     public IReadOnlyList<Vector2> Points =>
         Array.AsReadOnly(_points);
 
+    public IReadOnlyList<double> CumulativeLengths =>
+        Array.AsReadOnly(_cumulativeLengths);
+
     public RectangleF Bounds
     {
         get
