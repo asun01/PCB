@@ -117,7 +117,21 @@ public static class ViewportRenderSurfaceSmoke
             sink.CommitCount == 0 &&
             sink.DiscardCount == 1,
             "Deferred delivery should discard the incomplete rendering transaction.");
-    }
+
+
+        var secondSurface = new ViewportRenderSurfaceRuntime();
+        var discardFailureSink = new DiscardFailureSink();
+
+        var secondResult = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+            frame,
+            discardFailureSink,
+            surface: secondSurface);
+
+        assert(
+            secondResult.Status == ViewportRenderDeliveryStatus.Deferred &&
+            secondSurface.Snapshot.State == ViewportRenderSurfaceState.Discarded &&
+            discardFailureSink.DiscardCount == 1,
+            "A failing discard callback must not replace the original deferred delivery result.");    }
 
     private static ViewportRenderPipelineRuntime<string> CreatePipeline(
         ITileSource<string> source) =>
@@ -204,6 +218,40 @@ public static class ViewportRenderSurfaceSmoke
         {
             DiscardCount++;
             return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class DiscardFailureSink : TrackingSink
+    {
+        public override ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            BeginCount++;
+            return ValueTask.CompletedTask;
+        }
+
+        public override ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default)
+        {
+            throw new InvalidOperationException("synthetic deferred work");
+        }
+
+        public override ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            EndCount++;
+            return ValueTask.CompletedTask;
+        }
+
+        public new ValueTask DiscardFrameAsync(
+            ViewportRenderDiscardContext context,
+            CancellationToken cancellationToken = default)
+        {
+            DiscardCount++;
+            throw new InvalidOperationException("synthetic discard cleanup failure");
         }
     }
 
