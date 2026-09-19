@@ -13,6 +13,7 @@ await BoardProductionSessionHundredStageSmoke.RunAsync(Check);
 await ProductionProgramPipelineBindingHundredStageSmoke.RunAsync(Check);
 await ProductionQualityInspectionProjectionHundredStageSmoke.RunAsync(Check);
 await ProductionEvidenceReferenceProjectionHundredStageSmoke.RunAsync(Check);
+await ProductionFrameProvenanceHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
