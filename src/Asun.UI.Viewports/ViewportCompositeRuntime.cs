@@ -11,12 +11,14 @@ public sealed class ViewportCompositeFrame<TTile>
         IReadOnlyList<RoiRenderCommand> roiCommands,
         IReadOnlyList<ViewportSceneCommand> sceneCommands,
         ViewportDirtyFlags dirtyFlags,
-        long generation)
+        long generation,
+        IReadOnlyList<ViewportSceneDiff> sceneDiff)
     {
         Tiles = tiles;
         Roi = roi;
         RoiCommands = roiCommands.ToImmutableArray();
         SceneCommands = sceneCommands.ToImmutableArray();
+        SceneDiff = sceneDiff.ToImmutableArray();
         DirtyFlags = dirtyFlags;
         Generation = generation;
     }
@@ -28,6 +30,8 @@ public sealed class ViewportCompositeFrame<TTile>
     public IReadOnlyList<RoiRenderCommand> RoiCommands { get; }
 
     public IReadOnlyList<ViewportSceneCommand> SceneCommands { get; }
+
+    public IReadOnlyList<ViewportSceneDiff> SceneDiff { get; }
 
     public ViewportDirtyFlags DirtyFlags { get; }
 
@@ -48,6 +52,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
     private readonly ViewportRenderDirtyRuntime _dirty = new();
 
     private long _generation;
+    private ViewportSceneSnapshot? _lastScene;
     private int _disposed;
 
     public ViewportCompositeRuntime(
@@ -428,6 +433,11 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
     {
         var roiCommands = RoiRenderCommandBuilder.Build(roiSnapshot);
         var scene = ViewportSceneRuntime.Build(roiSnapshot);
+        var sceneDiff = _lastScene is null
+            ? Array.Empty<ViewportSceneDiff>()
+            : ViewportSceneDiffRuntime.Diff(_lastScene, scene);
+
+        _lastScene = scene;
 
         return new ViewportCompositeFrame<TTile>(
             tileFrame,
@@ -435,7 +445,8 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
             roiCommands,
             scene.Commands,
             dirtyFlags,
-            Generation);
+            Generation,
+            sceneDiff);
     }
 
     private void SyncRoiTransformUnsafe() =>
