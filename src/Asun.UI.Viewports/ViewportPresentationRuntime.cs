@@ -149,6 +149,16 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
 
     public void Stop() => _lifecycle.RequestStop();
 
+    public async ValueTask StopAsync(
+        CancellationToken cancellationToken = default)
+    {
+        ThrowIfDisposed();
+        _lifecycle.RequestStop();
+        await _lifecycle
+            .WaitForStopAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public void Reset()
     {
         ThrowIfDisposed();
