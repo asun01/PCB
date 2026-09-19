@@ -71,6 +71,16 @@ public readonly record struct Angle2D(double Radians)
     public static Angle2D operator -(Angle2D left, Angle2D right) =>
         new(left.Radians - right.Radians);
 
+    public System.Numerics.Vector2 ToUnitVector()
+    {
+        if (!double.IsFinite(Radians))
+            throw new InvalidOperationException("The angle is non-finite.");
+
+        return new System.Numerics.Vector2(
+            (float)Math.Cos(Radians),
+            (float)Math.Sin(Radians));
+    }
+
     public static double Normalize(double radians)
     {
         if (!double.IsFinite(radians))
