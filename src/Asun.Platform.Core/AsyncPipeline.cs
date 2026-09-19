@@ -77,14 +77,21 @@ public sealed class AsyncPipeline<TContext>
             var batch = ready.ToArray();
             ready.Clear();
 
-            await Task.WhenAll(
+            var completedNodes = await Task.WhenAll(
                 batch.Select(async node =>
                 {
                     var start = System.Diagnostics.Stopwatch.GetTimestamp();
                     await node.ExecuteAsync(context, cancellationToken);
-                    if (timings is not null)
-                        timings[node.Id] = System.Diagnostics.Stopwatch.GetElapsedTime(start);
+                    return (
+                        node.Id,
+                        Elapsed: System.Diagnostics.Stopwatch.GetElapsedTime(start));
                 }));
+
+            if (timings is not null)
+            {
+                foreach (var result in completedNodes)
+                    timings[result.Id] = result.Elapsed;
+            }
 
             completedCount += batch.Length;
 

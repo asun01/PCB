@@ -65,6 +65,22 @@ Assert(
     "Pipeline metrics should record node execution duration.",
     failures);
 
+var parallelMetricsPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("MetricA", async (_, token) =>
+        await Task.Delay(1, token)),
+    new AsyncPipeline<object>.Node("MetricB", async (_, token) =>
+        await Task.Delay(1, token))
+});
+
+var parallelMetrics = await parallelMetricsPipeline.ExecuteWithMetricsAsync(new object());
+Assert(
+    parallelMetrics.Count == 2 &&
+    parallelMetrics["MetricA"] > TimeSpan.Zero &&
+    parallelMetrics["MetricB"] > TimeSpan.Zero,
+    "Parallel pipeline metrics should record every node without concurrent dictionary writes.",
+    failures);
+
 using var cancelled = new CancellationTokenSource();
 cancelled.Cancel();
 
