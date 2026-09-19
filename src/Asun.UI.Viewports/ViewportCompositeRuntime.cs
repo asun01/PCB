@@ -12,7 +12,8 @@ public sealed class ViewportCompositeFrame<TTile>
         IReadOnlyList<ViewportSceneCommand> sceneCommands,
         ViewportDirtyFlags dirtyFlags,
         long generation,
-        IReadOnlyList<ViewportSceneDiff> sceneDiff)
+        IReadOnlyList<ViewportSceneDiff> sceneDiff,
+        long generation)
     {
         Tiles = tiles;
         Roi = roi;
@@ -159,6 +160,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
             SyncRoiTransformUnsafe();
+            _image.CancelPendingRefresh();
             var result = _roi.PointerDown(
                 viewportPoint,
                 handleTolerancePixels,
@@ -181,6 +183,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
             SyncRoiTransformUnsafe();
+            _image.CancelPendingRefresh();
             var result = _roi.PointerMove(
                 viewportPoint,
                 handleTolerancePixels);
@@ -196,6 +199,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
             SyncRoiTransformUnsafe();
+            _image.CancelPendingRefresh();
             var result = _roi.PointerUp(viewportPoint);
             _dirty.Mark(ViewportDirtyFlags.Roi);
             Interlocked.Increment(ref _generation);
@@ -209,6 +213,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
             SyncRoiTransformUnsafe();
+            _image.CancelPendingRefresh();
             var result = _roi.Cancel(viewportPoint);
             _dirty.Mark(ViewportDirtyFlags.Roi);
             Interlocked.Increment(ref _generation);
@@ -224,6 +229,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         {
             ThrowIfDisposed();
             SyncRoiTransformUnsafe();
+            _image.CancelPendingRefresh();
             var result = _roi.Document.Add(geometry, id);
             _dirty.Mark(ViewportDirtyFlags.Roi | ViewportDirtyFlags.Selection);
             Interlocked.Increment(ref _generation);
@@ -236,6 +242,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+            _image.CancelPendingRefresh();
             var changed = _roi.Document.Select(id);
             if (changed)
             {
@@ -252,6 +259,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+            _image.CancelPendingRefresh();
             var changed = _roi.Document.TranslateSelected(delta);
             if (changed)
             {
@@ -268,6 +276,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+            _image.CancelPendingRefresh();
             var id = _roi.Document.DuplicateSelected(offset);
             if (id is not null)
             {
@@ -284,6 +293,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+            _image.CancelPendingRefresh();
             var changed = _roi.Document.DeleteSelected();
             if (changed)
             {
@@ -300,6 +310,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+            _image.CancelPendingRefresh();
             var changed = _roi.Undo();
             if (changed)
             {
@@ -316,6 +327,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         lock (_sync)
         {
             ThrowIfDisposed();
+            _image.CancelPendingRefresh();
             var changed = _roi.Redo();
             if (changed)
             {
@@ -347,6 +359,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
         ViewportTransform transform;
         RoiViewportSnapshot roiSnapshot;
         ViewportDirtyFlags dirtyAtStart;
+        long generationAtStart;
 
         lock (_sync)
         {
@@ -355,6 +368,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
             transform = _image.Transform;
             roiSnapshot = _roi.CreateSnapshot();
             dirtyAtStart = _dirty.Flags;
+            generationAtStart = Generation;
         }
 
         var tileFrame = includePrefetch
@@ -373,7 +387,8 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
             return BuildFrameUnsafe(
                 tileFrame,
                 roiSnapshot,
-                dirtyAtStart);
+                dirtyAtStart,
+                generationAtStart);
         }
     }
 
@@ -445,7 +460,7 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
             roiCommands,
             scene.Commands,
             dirtyFlags,
-            Generation,
+            generation,
             sceneDiff);
     }
 
