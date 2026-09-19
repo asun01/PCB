@@ -39,6 +39,9 @@ jobs:
       - name: Validate ContractCandidates
         run: python3 tools/validate_contract_candidates.py
 
+      - name: Validate planning cross-links
+        run: python3 tools/validate_planning_crosslinks.py
+
       - name: Report open gates
         run: python3 tools/task_gate_check.py
 
