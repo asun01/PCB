@@ -221,6 +221,9 @@ Assert(
 interaction = interaction.EndPan();
 Assert(!interaction.IsPanning, "Viewport pan should end explicitly.", failures);
 
+var cancelledInteraction = interaction.BeginPan(new System.Numerics.Vector2(200, 200)).CancelPan();
+Assert(!cancelledInteraction.IsPanning, "Viewport pan cancellation should end the active interaction.", failures);
+
 var idleInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport);
 var idleUpdated = idleInteraction.UpdatePan(new System.Numerics.Vector2(150, 175));
 Assert(
