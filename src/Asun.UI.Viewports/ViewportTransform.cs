@@ -132,6 +132,11 @@ public readonly record struct ViewportTransform(
     public ViewportTransform ResetToFit() =>
         Fit(ImageSize, ViewportSize);
 
+    public ViewportTransform WithFitScale(double fitMultiplier) =>
+        WithScaleAround(
+            FitScale * ValidatePositiveFinite(fitMultiplier, nameof(fitMultiplier)),
+            ViewportCenter);
+
     public ViewportTransform WithZoomFactorClamped(
         double zoomFactor,
         double minScale,
