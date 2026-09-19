@@ -734,6 +734,14 @@ Assert(
 var roi = new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100);
 
 Assert(
+    roi.TopLeft == new Asun.Vision.Contracts.PixelPoint(100, 50) &&
+    roi.TopRight == new Asun.Vision.Contracts.PixelPoint(300, 50) &&
+    roi.BottomLeft == new Asun.Vision.Contracts.PixelPoint(100, 150) &&
+    roi.BottomRight == new Asun.Vision.Contracts.PixelPoint(300, 150),
+    "Pixel rectangle corner helpers should match its bounds.",
+    failures);
+
+Assert(
     imageBounds.Contains(roi) &&
     roi.Contains(roi.Center),
     "Pixel rectangle containment should be deterministic.",
