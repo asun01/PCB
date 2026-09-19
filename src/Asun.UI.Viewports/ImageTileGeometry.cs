@@ -171,6 +171,23 @@ public static class ImageTileGeometry
                 Math.Min(gridSize.Y - 1, visibleRange.Maximum.Y + marginY)));
     }
 
+    public static (int X, int Y) GetGridSize(
+        Vector2 imageSize,
+        Vector2 tileSize)
+    {
+        ValidatePositiveFinite(imageSize, nameof(imageSize));
+        ValidatePositiveFinite(tileSize, nameof(tileSize));
+        return CalculateGridSize(imageSize, tileSize);
+    }
+
+    public static bool IsRangeWithinGrid(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        VisibleTileRange range) =>
+        range.IsEmpty ||
+        (ContainsTile(imageSize, tileSize, range.Minimum) &&
+         ContainsTile(imageSize, tileSize, range.Maximum));
+
     public static bool ContainsTile(
         Vector2 imageSize,
         Vector2 tileSize,
