@@ -1052,6 +1052,52 @@ Assert(
     "Ellipse resize should replace radii deterministically.",
     failures);
 
+var polygon = new Asun.Vision.Contracts.Polygon2D(new[]
+{
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(10, 0),
+    new System.Numerics.Vector2(10, 10),
+    new System.Numerics.Vector2(0, 10)
+});
+
+Assert(
+    polygon.VertexCount == 4 &&
+    Math.Abs(polygon.Area - 100) < 1e-12 &&
+    Math.Abs(polygon.Perimeter - 40) < 1e-12 &&
+    polygon.Centroid == new System.Numerics.Vector2(5, 5),
+    "Polygon area, perimeter and centroid should be deterministic.",
+    failures);
+
+Assert(
+    polygon.Contains(new System.Numerics.Vector2(5, 5)) &&
+    !polygon.Contains(new System.Numerics.Vector2(15, 5)),
+    "Polygon point containment should distinguish interior from exterior points.",
+    failures);
+
+Assert(
+    polygon.Bounds == new RectangleF(0, 0, 10, 10) &&
+    !polygon.IsClockwise,
+    "Polygon bounds and winding should be deterministic.",
+    failures);
+
+var reversedPolygon = polygon.Reverse();
+Assert(
+    reversedPolygon.IsClockwise &&
+    Math.Abs(reversedPolygon.Area - polygon.Area) < 1e-12,
+    "Polygon reversal should preserve area and invert winding.",
+    failures);
+
+var translatedPolygon = polygon.Translate(new System.Numerics.Vector2(2, -3));
+Assert(
+    translatedPolygon.Centroid == new System.Numerics.Vector2(7, 2),
+    "Polygon translation should move the centroid without changing area.",
+    failures);
+
+Assert(
+    polygon.GetVertex(2) == new System.Numerics.Vector2(10, 10),
+    "Polygon vertex access should preserve source order.",
+    failures);
+
 var polyline = new Asun.Vision.Contracts.Polyline2D(new[]
 {
     new System.Numerics.Vector2(0, 0),
