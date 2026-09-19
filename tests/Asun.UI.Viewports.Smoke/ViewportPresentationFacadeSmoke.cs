@@ -1,0 +1,182 @@
+using System.Drawing;
+using System.Numerics;
+using Asun.UI.Viewports;
+
+public static class ViewportPresentationFacadeSmoke
+{
+    public static async ValueTask RunAsync(Action<bool, string> assert)
+    {
+        for (var i = 0; i < 500; i++)
+        {
+            using var presentation = new ViewportPresentationRuntime<string>(
+                new Vector2(2000 + i % 7 * 31, 1500 + i % 9 * 23),
+                new Vector2(640 + i % 5 * 20, 480 + i % 3 * 25),
+                new Vector2(100, 100),
+                1,
+                64,
+                4,
+                new LocalTileSource(),
+                new ViewportRenderBudget(8, 12, 2, 20),
+                120);
+
+            var center = new Vector2(
+                320 + i % 11 * 10,
+                240 + i % 7 * 8);
+
+            presentation.Composite.AddRoi(
+                RoiGeometry.CreateRectangle(
+                    center,
+                    new Vector2(90, 60)));
+
+            presentation.Submit(
+                ViewportInputEventKind.PointerMove,
+                new Vector2(100, 100));
+
+            presentation.Submit(
+                ViewportInputEventKind.PointerMove,
+                new Vector2(104, 103));
+
+            presentation.Submit(
+                ViewportInputEventKind.Wheel,
+                center,
+                wheelDelta: 120);
+
+            var frame = await presentation.Pipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1));
+
+            assert(
+                frame is not null,
+                $"Presentation facade {i + 1} should create an initial render frame.");
+
+            if (frame is null)
+                continue;
+
+            var sink = new RecordingSink();
+            var delivery = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                frame,
+                sink);
+
+            assert(
+                delivery.Succeeded &&
+                !delivery.Cancelled &&
+                delivery.Error is null &&
+                delivery.RenderedUnits > 0,
+                $"Presentation facade {i + 1} should deliver an initial render frame.");
+
+            var before = presentation.Composite.Generation;
+            var processed = presentation.Continuous.ProcessInputs();
+
+            assert(
+                processed == 2 &&
+                presentation.Composite.Generation > before,
+                $"Presentation facade {i + 1} should process coalesced input through the facade.");
+
+            var cts = new CancellationTokenSource();
+            var continuousSink = new CancellingSink(cts);
+
+            try
+            {
+                await presentation.RunAsync(
+                    continuousSink,
+                    cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+
+            assert(
+                presentation.Statistics.RenderedFrames >= 1 &&
+                continuousSink.BeginCount >= 1 &&
+                continuousSink.EndCount >= 1,
+                $"Presentation facade {i + 1} should own the complete continuous render lifecycle.");
+
+            presentation.Reset();
+
+            assert(
+                !presentation.Input.HasPending &&
+                presentation.Pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None,
+                $"Presentation facade {i + 1} reset should clear input and render scheduling state.");
+        }
+    }
+
+    private sealed class LocalTileSource : ITileSource<string>
+    {
+        public ValueTask<string> LoadAsync(
+            TileRequest request,
+            RectangleF imageRectangle,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.FromResult($"tile:{request.Index.X},{request.Index.Y}");
+    }
+
+    private sealed class RecordingSink : IViewportRenderSink<string>
+    {
+        public int BeginCount { get; private set; }
+        public int EndCount { get; private set; }
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            BeginCount++;
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            EndCount++;
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class CancellingSink : IViewportRenderSink<string>
+    {
+        private readonly CancellationTokenSource _source;
+
+        public CancellingSink(CancellationTokenSource source)
+        {
+            _source = source;
+        }
+
+        public int BeginCount { get; private set; }
+        public int EndCount { get; private set; }
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            BeginCount++;
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            EndCount++;
+            _source.Cancel();
+            return ValueTask.CompletedTask;
+        }
+    }
+}
