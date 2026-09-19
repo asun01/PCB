@@ -142,6 +142,15 @@ public static class ViewportReplaySessionSmoke
             session.Validate().Count == 0,
             "A well-formed replay session should validate without sequence, counter, or hash errors.");
 
+        var bundle = session.SnapshotBundle();
+
+        assert(
+            bundle.Manifest == manifest &&
+            bundle.Inputs.Length == 4 &&
+            bundle.Evidence.Length == 1 &&
+            bundle.Audit.Length == 1 &&
+            ViewportReplaySessionBundleRuntime.Validate(bundle).Count == 0,
+            "Replay session should expose an immutable self-validating evidence bundle.");
         assert(
             json.Contains("\"manifest\":") &&
             json.Contains("\"inputs\":") &&
