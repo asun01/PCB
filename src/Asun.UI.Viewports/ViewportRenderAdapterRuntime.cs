@@ -119,35 +119,33 @@ public static class ViewportRenderAdapterRuntime
             }
 
             if (work.Kind == ViewportRenderWorkKind.Tile &&
-                work.Tile is TileIndex tileIndex &&
-                frame.Composite.Tiles.TryGetTile(tileIndex, out var tile))
+                work.Tile is TileIndex tileIndex)
             {
-                var request = frame.Composite.Tiles.Requests
-                    .FirstOrDefault(item => item.Index == tileIndex);
+                if (!visibility.TryGetTile(tileIndex, out var tileVisibility))
+                    continue;
 
-                var imageRectangle = TileRequestPlanner.GetRequestRectangle(
-                    transform.ImageSize,
-                    frame.Composite.Tiles.TileSize,
-                    request);
+                if (frame.Composite.Tiles.TryGetTile(
+                    tileIndex,
+                    out var tile))
+                {
+                    var request = frame.Composite.Tiles.Requests
+                        .FirstOrDefault(item => item.Index == tileIndex);
 
-                await sink
-                    .DrawTileAsync(
-                        new ViewportRenderTileContext<TTile>(
-                            tileIndex,
-                            request,
-                            tile,
-                            transform.ImageToViewportRectangle(imageRectangle),
-                            frame.Composite.Generation),
-                        cancellationToken)
-                    .ConfigureAwait(false);
+                    await sink
+                        .DrawTileAsync(
+                            new ViewportRenderTileContext<TTile>(
+                                tileIndex,
+                                request,
+                                tile,
+                                tileVisibility.ViewportBounds,
+                                frame.Composite.Generation),
+                            cancellationToken)
+                        .ConfigureAwait(false);
 
-                renderedUnits++;
-                continue;
-            }
+                    renderedUnits++;
+                    continue;
+                }
 
-            if (work.Kind == ViewportRenderWorkKind.Tile &&
-                work.Tile is TileIndex)
-            {
                 deferredWork.Add(work);
                 continue;
             }
