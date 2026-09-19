@@ -991,6 +991,60 @@ Assert(
     "Axis-aligned factory should convert pixel rectangle geometry deterministically.",
     failures);
 
+var ellipse = new Asun.Vision.Contracts.Ellipse2D(
+    new System.Numerics.Vector2(20, 30),
+    new System.Numerics.Vector2(10, 5),
+    0);
+
+Assert(
+    ellipse.IsValid &&
+    Math.Abs(ellipse.Area - Math.PI * 50) < 1e-12,
+    "Ellipse validity and area should be deterministic.",
+    failures);
+
+Assert(
+    ellipse.Bounds == new RectangleF(10, 25, 20, 10),
+    "Axis-aligned ellipse bounds should match its radii.",
+    failures);
+
+Assert(
+    ellipse.Contains(new System.Numerics.Vector2(20, 30)) &&
+    ellipse.Contains(new System.Numerics.Vector2(30, 30)) &&
+    !ellipse.Contains(new System.Numerics.Vector2(31, 30)),
+    "Ellipse containment should use local normalized coordinates.",
+    failures);
+
+var ellipsePoint = ellipse.PointAtParameter(0);
+Assert(
+    ellipsePoint == new System.Numerics.Vector2(30, 30),
+    "Ellipse parameter sampling should be deterministic.",
+    failures);
+
+var rotatedEllipse = ellipse.Rotate(Math.PI / 2);
+Assert(
+    rotatedEllipse.ToWorldPoint(new System.Numerics.Vector2(0, 10)) ==
+        new System.Numerics.Vector2(10, 30),
+    "Ellipse local-to-world mapping should honor rotation.",
+    failures);
+
+var ellipseLocal = rotatedEllipse.ToLocalPoint(new System.Numerics.Vector2(10, 30));
+Assert(
+    ellipseLocal == new System.Numerics.Vector2(0, 10),
+    "Ellipse world-to-local mapping should round-trip.",
+    failures);
+
+var translatedEllipse = ellipse.Translate(new System.Numerics.Vector2(-2, 4));
+Assert(
+    translatedEllipse.Center == new System.Numerics.Vector2(18, 34),
+    "Ellipse translation should preserve its radii and angle.",
+    failures);
+
+var resizedEllipse = ellipse.Resize(new System.Numerics.Vector2(20, 8));
+Assert(
+    resizedEllipse.Radii == new System.Numerics.Vector2(20, 8),
+    "Ellipse resize should replace radii deterministically.",
+    failures);
+
 var circle = new Asun.Vision.Contracts.Circle2D(
     new System.Numerics.Vector2(10, 20),
     5);
