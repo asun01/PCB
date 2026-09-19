@@ -368,3 +368,28 @@ Closed acceptance assets:
 Verification status:
 - static structure audits passed for the five new 100-round Smokes: 10 loop groups, exact `round == 100`, balanced delimiters, no placeholder markers;
 - no local build/test/CI success is claimed without authoritative execution evidence.
+
+
+### 6001→6500 metrology/PCB geometry-contract hardening — 2026-09-19
+
+Completed stages 6001–6500 inside the active 100,000-stage execution window.
+
+Real defect corrected:
+- `AffineTransform2D.TryInvert` now follows the public `IsInvertible` stability threshold and rejects non-finite inverse matrices, preventing contradictory inversion decisions at ill-conditioned transforms.
+
+Validation added:
+- `NumericToleranceValidationRuntime`
+- `AffineTransform2DValidationRuntime`
+- `ImageGeometryValidationRuntime`
+- `PointSet2DValidationRuntime`
+- `Polygon2DValidationRuntime`
+
+Added dedicated `Asun.Vision.Contracts.Smoke` project, added it to `AsunVision.slnx`, and registered five exact 100-round Smokes.
+
+Closed acceptance assets:
+- stage ledgers 6001–6100, 6101–6200, 6201–6300, 6301–6400, 6401–6500;
+- integration checkpoint `PHASE1_6001_6500_INTEGRATION_CHECKPOINT_20260919.md`.
+
+Verification status:
+- static structure audits passed: five Smokes × 10 loop groups, exact `round == 100`, balanced delimiters, no placeholder markers;
+- no local build/test/CI success is claimed without authoritative execution evidence.
