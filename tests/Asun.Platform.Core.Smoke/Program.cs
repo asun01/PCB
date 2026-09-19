@@ -127,6 +127,19 @@ Assert(
 interaction = interaction.EndPan();
 Assert(!interaction.IsPanning, "Viewport pan should end explicitly.", failures);
 
+var idleInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport);
+var idleUpdated = idleInteraction.UpdatePan(new System.Numerics.Vector2(150, 175));
+Assert(
+    idleUpdated == idleInteraction,
+    "Updating a non-panning viewport interaction should be a no-op.",
+    failures);
+
+var endedInteraction = interaction.EndPan().UpdatePan(new System.Numerics.Vector2(180, 200));
+Assert(
+    endedInteraction == interaction,
+    "Updating after pan end should remain a no-op.",
+    failures);
+
 var roiZoom = viewport.ZoomToImageRectangle(
     new RectangleF(100, 100, 200, 100));
 
@@ -223,6 +236,30 @@ Assert(
 Assert(
     tileRange.Count == tileRange.Enumerate().Count(),
     "Visible tile range count should match enumeration.",
+    failures);
+
+var prefetchTileRange = panned.GetPrefetchTileRange(
+    new System.Numerics.Vector2(256, 256),
+    marginTiles: 1);
+
+Assert(
+    !prefetchTileRange.IsEmpty &&
+    prefetchTileRange.Count >= tileRange.Count &&
+    prefetchTileRange.Minimum.X <= tileRange.Minimum.X &&
+    prefetchTileRange.Minimum.Y <= tileRange.Minimum.Y &&
+    prefetchTileRange.Maximum.X >= tileRange.Maximum.X &&
+    prefetchTileRange.Maximum.Y >= tileRange.Maximum.Y,
+    "Tile prefetch range should contain the visible tile range.",
+    failures);
+
+var emptyTileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
+    viewport.ImageSize,
+    new System.Numerics.Vector2(256, 256),
+    new RectangleF(-100, 0, 50, 50));
+
+Assert(
+    emptyTileRange.IsEmpty && emptyTileRange.Count == 0,
+    "A fully outside tile window should remain an empty range.",
     failures);
 
 Assert(
@@ -417,15 +454,27 @@ Assert(
     failures);
 
 var mutableDependencies = new List<string>();
+var snapshotExecution = new List<string>();
 var snapshotPipeline = new AsyncPipeline<object>(new[]
 {
-    new AsyncPipeline<object>.Node("Root", (_, _) => ValueTask.CompletedTask),
-    new AsyncPipeline<object>.Node("Child", mutableDependencies, (_, _) => ValueTask.CompletedTask)
+    new AsyncPipeline<object>.Node("Root", (_, _) =>
+    {
+        snapshotExecution.Add("Root");
+        return ValueTask.CompletedTask;
+    }),
+    new AsyncPipeline<object>.Node("Child", mutableDependencies, (_, _) =>
+    {
+        snapshotExecution.Add("Child");
+        return ValueTask.CompletedTask;
+    })
 });
 
 mutableDependencies.Add("Unknown");
 await snapshotPipeline.ExecuteAsync(new object());
-Assert(true, "Pipeline dependency collections should be snapshotted at construction.", failures);
+Assert(
+    snapshotExecution.SequenceEqual(new[] { "Root", "Child" }),
+    "Pipeline dependency collections should be snapshotted at construction.",
+    failures);
 
 var invalidGraphRejected = false;
 try
@@ -521,6 +570,22 @@ Assert(!queue.TryEnqueue(3), "A full queue should apply backpressure.", failures
 Assert(queue.TryDequeue(out var first) && first == 1, "FIFO dequeue should preserve order.", failures);
 Assert(queue.TryDequeue(out var second) && second == 2, "FIFO dequeue should preserve order.", failures);
 Assert(!queue.TryDequeue(out _), "An empty queue should not produce a value.", failures);
+
+var batchQueue = new BoundedWorkQueue<int>(4);
+Assert(batchQueue.TryEnqueue(10), "Batch queue should accept the first item.", failures);
+Assert(batchQueue.TryEnqueue(20), "Batch queue should accept the second item.", failures);
+Assert(batchQueue.TryEnqueue(30), "Batch queue should accept the third item.", failures);
+
+var batchBuffer = new int[2];
+var batchCount = batchQueue.TryDequeueBatch(batchBuffer);
+Assert(
+    batchCount == 2 &&
+    batchBuffer[0] == 10 &&
+    batchBuffer[1] == 20,
+    "Batch dequeue should preserve FIFO order and the requested batch size.",
+    failures);
+
+Assert(batchQueue.TryDequeue(out var batchTail) && batchTail == 30, "Batch dequeue should leave remaining work intact.", failures);
 
 Assert(queue.TryComplete(), "The first queue completion should succeed.", failures);
 Assert(!queue.TryComplete(), "Repeated queue completion should be idempotent.", failures);
