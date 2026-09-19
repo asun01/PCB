@@ -740,3 +740,58 @@ Verification:
 Current continuous execution position:
 - completed through Stage 10000 in the active 4501–104500 window;
 - next natural stage: 10001.
+
+
+### 10001→10500 inspection neutral summaries — 2026-09-19
+
+Completed stages 10001–10500.
+
+Implemented:
+- QualityInspectionOutcomeSummary;
+- QualityInspectionSeveritySummary;
+- QualityInspectionEvidenceSummary;
+- combined QualityInspectionSummary;
+- QualityInspectionSummaryDiff.
+
+Real correction:
+- removed a tautological Outcome Summary Smoke assertion;
+- corrected Summary Diff runtime after detecting an invalid attempt to reconstruct summaries through an empty Result; added standalone Summary shape validation instead.
+
+Boundary:
+- summaries are observational only and do not define customer acceptance policy or outcome aggregation rules.
+
+Closed acceptance asset:
+- PHASE1_10001_10500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- exact 10-loop/10-Check/round==100 Smokes;
+- balanced delimiters on changed assets;
+- no TODO/NotImplementedException placeholder;
+- no build/test/CI success claimed without authoritative execution evidence.
+
+### 10501→11000 rule-level audit chain — 2026-09-19
+
+Completed stages 10501–11000.
+
+Implemented:
+- QualityInspectionRuleSummary and RuleSummaryDiff;
+- QualityInspectionRuleFindingIndex;
+- QualityInspectionRuleEvidenceIndex;
+- QualityInspectionRuleAuditProjection;
+- deterministic RuleAuditProjection SHA-256 fingerprint and validation.
+
+Boundary:
+- RuleCode remains an opaque domain value;
+- rule-level projections provide factual traceability only and do not encode customer policy, AOI/SPI acceptance thresholds, or vendor semantics.
+
+Closed acceptance asset:
+- PHASE1_10501_11000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- exact 100-round Smokes registered for all five 10501–11000 blocks;
+- static source audits balanced delimiters and found no TODO/NotImplementedException placeholder;
+- no build/test/CI success claimed without authoritative execution evidence.
+
+Current continuous execution position:
+- completed through Stage 11000 in the active 4501–104500 window;
+- next natural stage: 11001.
