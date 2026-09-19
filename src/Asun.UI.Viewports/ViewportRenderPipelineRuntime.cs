@@ -39,6 +39,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     private readonly ViewportRenderBudget _budget;
     private readonly ViewportRenderReuseRuntime<TTile> _reuse = new();
     private ViewportRenderWorkPlan? _deferredWork;
+    private ViewportCompositeFrame<TTile>? _deferredComposite;
     private long _deferredGeneration = -1;
     private int _disposed;
 
@@ -194,6 +195,35 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     {
         ThrowIfDisposed();
         return _scheduler.TryTakePointer(out pointer);
+    }
+
+    public void RequeueFrame(ViewportRenderPipelineFrame<TTile> frame)
+    {
+        ArgumentNullException.ThrowIfNull(frame);
+        ThrowIfDisposed();
+
+        var generation = frame.Composite.Generation;
+
+        lock (_sync)
+        {
+            if (_composite.Generation != generation)
+                return;
+
+            var existing = _deferredWork;
+            var items = existing is null
+                ? frame.WorkPlan.Items.ToArray()
+                : frame.WorkPlan.Items
+                    .Concat(existing.Items)
+                    .ToArray();
+
+            _deferredWork = new ViewportRenderWorkPlan(
+                items,
+                frame.WorkPlan.ConsumedFlags |
+                (existing?.ConsumedFlags ?? ViewportDirtyFlags.None),
+                generation);
+            _deferredComposite = frame.Composite;
+            _deferredGeneration = generation;
+        }
     }
 
     public ViewportRenderPipelineFrame<TTile> BuildFromFrame(
