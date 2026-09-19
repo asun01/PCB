@@ -107,17 +107,6 @@ public static class ViewportRenderWorkRuntime
         {
             foreach (var diff in frame.SceneDiff)
             {
-                if (diff.Current is { } current)
-                {
-                    items.Add(
-                        new ViewportRenderWorkItem(
-                            ViewportRenderWorkKind.Roi,
-                            ViewportSceneRuntime.GetCommandBounds(current),
-                            diff.RoiId,
-                            null,
-                            frame.Generation));
-                }
-
                 if (diff.Previous is { } previous)
                 {
                     items.Add(
@@ -128,6 +117,17 @@ public static class ViewportRenderWorkRuntime
                             null,
                             frame.Generation,
                             IsInvalidation: true));
+                }
+
+                if (diff.Current is { } current)
+                {
+                    items.Add(
+                        new ViewportRenderWorkItem(
+                            ViewportRenderWorkKind.Roi,
+                            ViewportSceneRuntime.GetCommandBounds(current),
+                            diff.RoiId,
+                            null,
+                            frame.Generation));
                 }
             }
         }
