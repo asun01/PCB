@@ -167,6 +167,19 @@ public static class ViewportReplayBundleSerializationBoundaryHundredStageSmoke
                 $"pre-serialization validation {i + 1} should remain clean.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            var bundle = CreateBundle();
+            var json = ViewportReplaySessionBundleRuntime.ToJson(bundle);
+            var errors =
+                ViewportReplaySessionBundleRuntime.Validate(
+                    ViewportReplaySessionBundleRuntime.FromJson(json));
+
+            Check(
+                errors.Count == 0,
+                $"post-roundtrip validation {i + 1} should remain clean.");
+        }
+
         assert(
             round == 100,
             $"Bundle serialization boundary smoke should execute exactly 100 numbered rounds; actual {round}.");
