@@ -29,23 +29,16 @@ public static class ProductionEvidenceReleaseProjectionValidationRuntime
         if(errors.Count>0)
             return errors;
 
-        var productionArtifact=manifest.Artifacts.FirstOrDefault(
-            artifact=>string.Equals(
-                artifact.Path,
-                manifest.Artifacts.Single(item=>item.Path.Contains("production",StringComparison.Ordinal)).Path,
-                StringComparison.Ordinal));
-
+        var productionArtifacts=manifest.Artifacts.Where(
+            artifact=>artifact.Path.Contains("production",StringComparison.OrdinalIgnoreCase)).ToArray();
         var evidenceArtifacts=manifest.Artifacts.Where(
             artifact=>artifact.Path.Contains("evidence",StringComparison.OrdinalIgnoreCase)).ToArray();
 
+        if(productionArtifacts.Length!=1)
+            errors.Add("Release manifest must contain exactly one production artifact.");
+
         if(evidenceArtifacts.Length!=1)
             errors.Add("Release manifest must contain exactly one evidence-reference projection artifact.");
-
-        if(productionArtifact is null)
-            errors.Add("Release manifest must contain a production artifact.");
-
-        if(errors.Count>0)
-            return errors;
 
         return errors;
     }
