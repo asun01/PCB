@@ -7,6 +7,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
     private readonly ViewportRenderPipelineRuntime<TTile> _pipeline;
     private readonly ViewportInputSubmissionRuntime _input;
     private readonly ViewportContinuousFrameRuntime<TTile> _continuous;
+    private readonly ViewportPresentationLifecycleRuntime _lifecycle = new();
     private int _disposed;
 
     public ViewportPresentationRuntime(
@@ -51,6 +52,16 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
 
     public ViewportRenderDeliveryTracker Delivery => _continuous.Delivery;
 
+    public ViewportPresentationState State => _lifecycle.State;
+
+    public ViewportPresentationSnapshot Snapshot =>
+        _lifecycle.Capture(
+            _pipeline.Composite.Generation,
+            _input.PendingCount,
+            _pipeline.Scheduler.PendingFlags,
+            _continuous.Delivery.Statistics,
+            _continuous.Statistics);
+
     public long Submit(
         ViewportInputEventKind kind,
         Vector2 position,
@@ -86,10 +97,26 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
         CancellationToken cancellationToken = default)
     {
         ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(sink);
 
-        await _continuous
-            .RunAsync(sink, cancellationToken)
-            .ConfigureAwait(false);
+        if (!_lifecycle.TryStart(out var lifecycleToken))
+            throw new InvalidOperationException(
+                "The presentation runtime is already running.");
+
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(
+            lifecycleToken,
+            cancellationToken);
+
+        try
+        {
+            await _continuous
+                .RunAsync(sink, linked.Token)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _lifecycle.MarkStopped();
+        }
     }
 
     public ViewportContinuousFrameStatistics Statistics =>
@@ -98,9 +125,12 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
     public ViewportRenderDeliveryStatistics DeliveryStatistics =>
         _continuous.Delivery.Statistics;
 
+    public void Stop() => _lifecycle.RequestStop();
+
     public void Reset()
     {
         ThrowIfDisposed();
+        _lifecycle.Reset();
         _continuous.Reset();
         _pipeline.Reset();
     }
@@ -116,8 +146,10 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
 
+        _lifecycle.RequestStop();
         _input.Dispose();
         _pipeline.Dispose();
+        _lifecycle.Dispose();
     }
 
     private void ThrowIfDisposed() =>
