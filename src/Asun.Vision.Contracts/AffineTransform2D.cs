@@ -54,6 +54,44 @@ public readonly record struct AffineTransform2D
         return Vector2.Transform(point, _matrix);
     }
 
+    public Vector2 TransformDirection(Vector2 direction)
+    {
+        ValidateFinite(direction, nameof(direction));
+
+        var transformed = Vector2.TransformNormal(direction, _matrix);
+
+        if (!IsFinite(transformed))
+            throw new InvalidOperationException("The transformed direction is non-finite.");
+
+        return transformed;
+    }
+
+    public RectangleF TransformRectangle(System.Drawing.RectangleF rectangle)
+    {
+        if (!float.IsFinite(rectangle.X) ||
+            !float.IsFinite(rectangle.Y) ||
+            !float.IsFinite(rectangle.Width) ||
+            !float.IsFinite(rectangle.Height) ||
+            rectangle.Width < 0 ||
+            rectangle.Height < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(rectangle));
+        }
+
+        var p1 = TransformPoint(new Vector2(rectangle.Left, rectangle.Top));
+        var p2 = TransformPoint(new Vector2(rectangle.Right, rectangle.Top));
+        var p3 = TransformPoint(new Vector2(rectangle.Right, rectangle.Bottom));
+        var p4 = TransformPoint(new Vector2(rectangle.Left, rectangle.Bottom));
+
+        return new System.Drawing.RectangleF(
+            Math.Min(Math.Min(p1.X, p2.X), Math.Min(p3.X, p4.X)),
+            Math.Min(Math.Min(p1.Y, p2.Y), Math.Min(p3.Y, p4.Y)),
+            Math.Max(Math.Max(p1.X, p2.X), Math.Max(p3.X, p4.X)) -
+                Math.Min(Math.Min(p1.X, p2.X), Math.Min(p3.X, p4.X)),
+            Math.Max(Math.Max(p1.Y, p2.Y), Math.Max(p3.Y, p4.Y)) -
+                Math.Min(Math.Min(p1.Y, p2.Y), Math.Min(p3.Y, p4.Y)));
+    }
+
     /// <summary>
     /// Returns a transform that applies this transform first and <paramref name="next"/> second.
     /// </summary>
