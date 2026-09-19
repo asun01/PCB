@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Asun.UI.Viewports;
 
 public static class TileRangeValidationRuntime
