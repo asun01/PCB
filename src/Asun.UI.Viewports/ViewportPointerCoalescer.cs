@@ -10,11 +10,19 @@ public sealed class ViewportPointerCoalescer
 {
     private readonly object _sync = new();
     private long _nextSequence;
+    private long _submittedCount;
+    private long _coalescedCount;
     private CoalescedPointer? _latest;
 
-    public long SubmittedCount { get; private set; }
+    public long SubmittedCount
+    {
+        get { lock (_sync) return _submittedCount; }
+    }
 
-    public long CoalescedCount { get; private set; }
+    public long CoalescedCount
+    {
+        get { lock (_sync) return _coalescedCount; }
+    }
 
     public void Submit(Vector2 position)
     {
@@ -23,10 +31,10 @@ public sealed class ViewportPointerCoalescer
 
         lock (_sync)
         {
-            SubmittedCount++;
+            _submittedCount++;
 
             if (_latest is not null)
-                CoalescedCount++;
+                _coalescedCount++;
 
             _latest = new CoalescedPointer(
                 ++_nextSequence,
