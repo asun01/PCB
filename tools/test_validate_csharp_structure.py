@@ -85,6 +85,36 @@ public sealed class Example
         errors = validate_csharp_structure.validate_file(path, self.root)
         self.assertTrue(any("unbalanced delimiters" in error for error in errors))
 
+    def test_multiline_verbatim_and_raw_strings_are_ignored(self) -> None:
+        path = self.write(
+            '''namespace Demo;
+
+public sealed class Example
+{
+    private const string Verbatim = @"{
+        // braces stay inside the string
+        }";
+
+    private const string Raw = $"""
+        {{
+            "value": 123
+        }}
+        """;
+
+    public void Run()
+    {
+        _ = Verbatim;
+        _ = Raw;
+    }
+}
+'''
+        )
+
+        self.assertEqual(
+            validate_csharp_structure.validate_file(path, self.root),
+            [],
+        )
+
     def test_class_scope_executable_statement_is_reported(self) -> None:
         path = self.write(
             """
