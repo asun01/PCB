@@ -141,7 +141,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         if (hasDeferredWork)
         {
             _scheduler.Submit(
-                submission.DirtyFlags,
+                GetDeferredDirtyFlags(submission.DirtyFlags),
                 composite.Generation);
         }
 
@@ -209,7 +209,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         if (hasDeferredWork)
         {
             _scheduler.Submit(
-                submission.DirtyFlags,
+                GetDeferredDirtyFlags(submission.DirtyFlags),
                 composite.Generation);
         }
 
@@ -230,6 +230,20 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     {
         _scheduler.Reset();
         _reuse.Clear();
+    }
+
+    private static ViewportDirtyFlags GetDeferredDirtyFlags(
+        ViewportDirtyFlags flags)
+    {
+        if (flags == ViewportDirtyFlags.All)
+        {
+            return ViewportDirtyFlags.Image |
+                ViewportDirtyFlags.Transform |
+                ViewportDirtyFlags.Roi |
+                ViewportDirtyFlags.Overlay;
+        }
+
+        return flags;
     }
 
     public void Dispose()
