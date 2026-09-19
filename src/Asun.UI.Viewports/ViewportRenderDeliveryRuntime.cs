@@ -93,6 +93,7 @@ public static class ViewportRenderDeliveryRuntime
                 frame.Composite.Generation,
                 units,
                 0,
+                Array.Empty<ViewportRenderWorkItem>(),
                 null);
         }
         catch (OperationCanceledException)
@@ -104,6 +105,7 @@ public static class ViewportRenderDeliveryRuntime
                 frame.Composite.Generation,
                 0,
                 0,
+                Array.Empty<ViewportRenderWorkItem>(),
                 null);
         }
         catch (ViewportRenderWorkUnavailableException exception)
@@ -113,8 +115,9 @@ public static class ViewportRenderDeliveryRuntime
                 false,
                 true,
                 frame.Composite.Generation,
-                0,
-                1,
+                exception.RenderedUnits,
+                exception.WorkItems.Count,
+                exception.WorkItems,
                 exception);
         }
         catch (Exception exception)
@@ -126,6 +129,7 @@ public static class ViewportRenderDeliveryRuntime
                 frame.Composite.Generation,
                 0,
                 0,
+                Array.Empty<ViewportRenderWorkItem>(),
                 exception);
         }
 
