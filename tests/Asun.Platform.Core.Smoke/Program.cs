@@ -2646,6 +2646,21 @@ Assert(
     failures);
 
 var loadCountBeforeCachedRefresh = runtimeSource.LoadCount;
+var cachedSnapshot = runtime.CreateCachedFrame();
+
+Assert(
+    cachedSnapshot.IsCompleteForVisible &&
+    runtimeSource.LoadCount == loadCountBeforeCachedRefresh,
+    "A cached viewport snapshot should render immediately without loading new tiles.",
+    failures);
+
+var cachedRuntimeStats = runtime.GetStatistics();
+Assert(
+    cachedRuntimeStats.Cache.Count == runtime.Cache.Count &&
+    cachedRuntimeStats.PlannedRequestCount > 0,
+    "Viewport runtime statistics should expose cache and planning state.",
+    failures);
+
 var cachedFrame = await runtime.RefreshAsync();
 
 Assert(
