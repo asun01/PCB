@@ -4,6 +4,8 @@ public readonly record struct MetrologyPoint2D(
     double X,
     double Y)
 {
+    public static MetrologyPoint2D Zero=>new(0,0);
+
     public bool IsFinite=>
         double.IsFinite(X) &&
         double.IsFinite(Y);
