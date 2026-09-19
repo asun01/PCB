@@ -13,6 +13,8 @@ public readonly record struct ViewportRenderSurfaceSnapshot(
     ViewportRenderSurfaceState State,
     long? RenderingGeneration,
     long? PresentedGeneration,
+    long? DiscardedGeneration,
+    ViewportRenderDeliveryStatus? LastDiscardStatus,
     long PresentationSequence,
     int LastRenderedUnits,
     int LastPlannedUnits,
@@ -28,6 +30,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
     private ViewportRenderSurfaceState _state = ViewportRenderSurfaceState.Idle;
     private long? _renderingGeneration;
     private long? _presentedGeneration;
+    private long? _discardedGeneration;
+    private ViewportRenderDeliveryStatus? _lastDiscardStatus;
     private long _presentationSequence;
     private int _lastRenderedUnits;
     private int _lastPlannedUnits;
@@ -53,6 +57,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
                     _state,
                     _renderingGeneration,
                     _presentedGeneration,
+                    _discardedGeneration,
+                    _lastDiscardStatus,
                     _presentationSequence,
                     _lastRenderedUnits,
                     _lastPlannedUnits,
@@ -114,7 +120,9 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
         }
     }
 
-    public void Discard(long generation)
+    public void Discard(
+        long generation,
+        ViewportRenderDeliveryStatus status = ViewportRenderDeliveryStatus.Failed)
     {
         lock (_sync)
         {
@@ -125,6 +133,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
                 return;
 
             _renderingGeneration = null;
+            _discardedGeneration = generation;
+            _lastDiscardStatus = status;
             _state = ViewportRenderSurfaceState.Discarded;
         }
     }
@@ -136,6 +146,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             ThrowIfDisposed();
 
             _renderingGeneration = null;
+            _discardedGeneration = null;
+            _lastDiscardStatus = null;
             _presentedRegions = Array.Empty<System.Drawing.RectangleF>();
             _state = ViewportRenderSurfaceState.Idle;
         }
