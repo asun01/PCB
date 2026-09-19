@@ -250,7 +250,7 @@ await ViewportPresentationFacadeSmoke.RunAsync(Assert);
 
 await ViewportDeliveryAndBackpressureSmoke.RunAsync(Assert);
 
-ViewportPresentationLifecycleSmoke.Run(Assert);
+await ViewportPresentationLifecycleSmoke.RunAsync(Assert);
 
 ViewportRenderSchedulerGenerationSmoke.Run(Assert);
 
