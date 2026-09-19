@@ -1,3 +1,4 @@
+using Asun.Production.Runtime;
 using Asun.Simulation.Core;
 
 namespace Asun.Platform.SimulationIntegration;
@@ -56,13 +57,8 @@ public static class ProductionSimulationReplayBindingValidationRuntime
             if(actual.SimulationObservationFingerprint!=simulation.Fingerprint)
                 errors.Add($"Simulation binding frame {index} simulation fingerprint mismatch.");
 
-            if(!SimulationObservationIntegrityRuntime.IsValid(
-                new SimulatedBoardScenarioPlaceholder(),
-                simulation))
-            {
-                // Integrity requires a real scenario and is therefore deliberately not
-                // recomputed here; the binding validates the opaque observation fingerprint.
-            }
+            if(!SimulationObservationValidationRuntime.IsValid(simulation))
+                errors.Add($"Simulation binding frame {index} contains an invalid observation structure.");
         }
 
         if(binding.Fingerprint.Length!=64 ||
@@ -93,11 +89,4 @@ public static class ProductionSimulationReplayBindingValidationRuntime
         ProductionSimulationReplayBinding binding)=>
         Validate(productionReport,observations,binding).Count==0;
 
-    private sealed class SimulatedBoardScenarioPlaceholder : SimulatedBoardScenario
-    {
-        public SimulatedBoardScenarioPlaceholder()
-            : base(null!,0)
-        {
-        }
-    }
 }
