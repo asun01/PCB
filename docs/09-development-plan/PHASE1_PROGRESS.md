@@ -85,3 +85,19 @@ Verification note:
 - No local C# build/test result is asserted.
 - Latest GitHub workflow/status lookup is still required before claiming CI success.
 - The branch remains in the non-blocked automation lane; unresolved vendor/authoritative Contract/Schema/Owner/State gates remain unchanged.
+
+### 500→600 bounded replay integration — 2026-09-19
+
+- Completed stages 501–600 and recorded them in `PHASE1_500_600_STAGE_LEDGER_20260919.md`.
+- Added bounded input replay history with capacity and dropped-event diagnostics.
+- Continuous Presentation Runtime now exposes a validated diagnostic Replay Bundle assembled from bounded input, Evidence, and Audit windows.
+- Presentation facade exposes ReplayBundle and ReplayBundleValidation.
+- Added validated Replay Bundle JSON serialize/deserialize roundtrip.
+- Added 100-round Replay Integration smoke and registered it in the main viewport smoke entry.
+- The integration smoke exercises reset/recovery, bounded input history, JSON roundtrip, evidence/audit linkage, repeated mutation comparisons, and requires exactly 100 numbered rounds.
+- Existing vendor-neutral replay/evidence boundaries remain unchanged.
+
+Verification note:
+- Static source-structure checks were performed on the newly touched files; no local compiler/test success is asserted.
+- Latest branch workflow/status lookup must remain the authority for CI; no success is inferred without an associated run/status.
+- HALCON/DevExpress/hardware and unresolved authoritative Contract/Schema/Owner/State gates remain unchanged.
