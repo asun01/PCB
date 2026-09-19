@@ -1,1 +1,3 @@
-<Application x:Class="Asun.App.Shell.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><Application.Resources /></Application>
+<Application x:Class="Asun.App.Shell.App" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"><Application.Resources />
+  <Application.StartupUri>Bootstrap/MainWindow.xaml</Application.StartupUri>
+</Application>
