@@ -4,7 +4,10 @@ public readonly record struct ViewportContinuousFrameStatistics(
     long LoopCount,
     long RenderedFrames,
     long SkippedLoops,
-    long ProcessedInputs);
+    long ProcessedInputs,
+    long DeliveryFailures,
+    long DeliveryCancellations,
+    long DeliveredUnits);
 
 public sealed class ViewportContinuousFrameRuntime<TTile>
 {
@@ -12,6 +15,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly ViewportInputSubmissionRuntime _input;
     private readonly TimeSpan _idleDelay;
     private readonly ViewportCompositeInputRuntime<TTile> _interaction;
+    private readonly ViewportRenderDeliveryTracker _delivery = new();
     private long _loopCount;
     private long _renderedFrames;
     private long _skippedLoops;
@@ -38,17 +42,29 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
     public ViewportInputSubmissionRuntime Input => _input;
 
-    public ViewportContinuousFrameStatistics Statistics =>
-        new(
-            Interlocked.Read(ref _loopCount),
-            Interlocked.Read(ref _renderedFrames),
-            Interlocked.Read(ref _skippedLoops),
-            Interlocked.Read(ref _processedInputs));
+    public ViewportRenderDeliveryTracker Delivery => _delivery;
+
+    public ViewportContinuousFrameStatistics Statistics
+    {
+        get
+        {
+            var delivery = _delivery.Statistics;
+            return new(
+                Interlocked.Read(ref _loopCount),
+                Interlocked.Read(ref _renderedFrames),
+                Interlocked.Read(ref _skippedLoops),
+                Interlocked.Read(ref _processedInputs),
+                delivery.Failed,
+                delivery.Cancelled,
+                delivery.RenderedUnits);
+        }
+    }
 
     public void Reset()
     {
         _input.Clear();
         _interaction.Reset();
+        _delivery.Reset();
         Interlocked.Exchange(ref _loopCount, 0);
         Interlocked.Exchange(ref _renderedFrames, 0);
         Interlocked.Exchange(ref _skippedLoops, 0);
@@ -65,54 +81,65 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
             ViewportDirtyFlags.All,
             _pipeline.Composite.Generation);
 
-        while (!cancellationToken.IsCancellationRequested)
+        try
         {
-            Interlocked.Increment(ref _loopCount);
-
-            var processed = ProcessInputs();
-            Interlocked.Add(ref _processedInputs, processed);
-
-            if (_pipeline.Scheduler.PendingFlags != ViewportDirtyFlags.None)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                try
-                {
-                    var frame = await _pipeline
-                        .RefreshAsync(
-                            DateTimeOffset.UtcNow,
-                            includePrefetch: false,
-                            cancellationToken)
-                        .ConfigureAwait(false);
+                Interlocked.Increment(ref _loopCount);
 
-                    if (frame is not null && frame.Accepted)
+                var processed = ProcessInputs();
+                Interlocked.Add(ref _processedInputs, processed);
+
+                if (_pipeline.Scheduler.PendingFlags != ViewportDirtyFlags.None)
+                {
+                    try
                     {
-                        await ViewportRenderAdapterRuntime
-                            .RenderAsync(
-                                frame,
-                                sink,
+                        var frame = await _pipeline
+                            .RefreshAsync(
+                                DateTimeOffset.UtcNow,
+                                includePrefetch: false,
                                 cancellationToken)
                             .ConfigureAwait(false);
 
-                        Interlocked.Increment(ref _renderedFrames);
+                        if (frame is not null && frame.Accepted)
+                        {
+                            var delivery = await ViewportRenderDeliveryRuntime
+                                .TryDeliverAsync(
+                                    frame,
+                                    sink,
+                                    _delivery,
+                                    cancellationToken)
+                                .ConfigureAwait(false);
+
+                            if (delivery.Succeeded)
+                                Interlocked.Increment(ref _renderedFrames);
+                            else
+                                Interlocked.Increment(ref _skippedLoops);
+                        }
+                        else
+                        {
+                            Interlocked.Increment(ref _skippedLoops);
+                        }
                     }
-                    else
+                    catch (OperationCanceledException) when (
+                        !cancellationToken.IsCancellationRequested)
                     {
                         Interlocked.Increment(ref _skippedLoops);
                     }
                 }
-                catch (OperationCanceledException) when (
-                    !cancellationToken.IsCancellationRequested)
+                else
                 {
                     Interlocked.Increment(ref _skippedLoops);
+                    await Task.Delay(
+                        _idleDelay,
+                        cancellationToken)
+                        .ConfigureAwait(false);
                 }
             }
-            else
-            {
-                Interlocked.Increment(ref _skippedLoops);
-                await Task.Delay(
-                    _idleDelay,
-                    cancellationToken)
-                    .ConfigureAwait(false);
-            }
+        }
+        finally
+        {
+            _input.Complete(cancelPending: true);
         }
     }
 
