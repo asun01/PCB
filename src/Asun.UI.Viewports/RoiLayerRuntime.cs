@@ -9,8 +9,28 @@ public sealed class RoiLayerRuntime
 
     public void Ensure(Guid id, string name, int order = 0)
     {
-        if (id == Guid.Empty || string.IsNullOrWhiteSpace(name)) throw new ArgumentException();
-        lock (_sync) _layers[id] = new RoiLayer(id, name, order, true, false);
+        if (id == Guid.Empty || string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException();
+
+        lock (_sync)
+        {
+            if (_layers.TryGetValue(id, out var existing))
+            {
+                _layers[id] = existing with
+                {
+                    Name = name,
+                    Order = order
+                };
+                return;
+            }
+
+            _layers[id] = new RoiLayer(
+                id,
+                name,
+                order,
+                Visible: true,
+                Locked: false);
+        }
     }
 
     public bool Remove(Guid id) { lock (_sync) return _layers.Remove(id); }
