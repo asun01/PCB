@@ -2497,7 +2497,7 @@ using (var disposablePool = new ResourceLeasePool<string>(
            new[] { new KeyValuePair<string, int>("single", 1) }))
 {
     Assert(disposablePool.ResourceCount == 1, "Single-resource pool should expose its configured count.", failures);
-{
+
     Assert(
         disposablePool.TryAcquire("single", out var activeLease),
         "A disposable pool should grant its active lease.",
@@ -2516,6 +2516,201 @@ resources.Dispose();
 Assert(resources.IsDisposed, "Disposed resource pools should report their lifecycle state.", failures);
 Assert(!resources.TryGetCapacity("camera", out _), "Disposed resource pools should reject metadata reads safely.", failures);
 
+// Complete tiled-viewport runtime chain --------------------------------------
+var lruCache = new Asun.UI.Viewports.TileCache<string>(2);
+lruCache.Set(new Asun.UI.Viewports.TileIndex(0, 0), "A");
+lruCache.Set(new Asun.UI.Viewports.TileIndex(1, 0), "B");
+
+Assert(
+    lruCache.TryGet(new Asun.UI.Viewports.TileIndex(0, 0), out var cacheA) && cacheA == "A",
+    "Tile cache should return stored values.",
+    failures);
+
+lruCache.Set(new Asun.UI.Viewports.TileIndex(2, 0), "C");
+Assert(
+    !lruCache.TryGet(new Asun.UI.Viewports.TileIndex(1, 0), out _) &&
+    lruCache.GetMostRecentFirst().SequenceEqual(new[]
+    {
+        new Asun.UI.Viewports.TileIndex(2, 0),
+        new Asun.UI.Viewports.TileIndex(0, 0)
+    }),
+    "LRU tile cache should evict the least-recently-used tile.",
+    failures);
+
+Assert(
+    lruCache.Statistics.Evictions == 1 &&
+    lruCache.Statistics.Hits >= 1 &&
+    lruCache.Statistics.Misses >= 1,
+    "Tile cache statistics should track hits, misses and evictions.",
+    failures);
+
+var coordinatorSource = new SimulatedTileSource(TimeSpan.FromMilliseconds(15));
+using var coordinator = new Asun.UI.Viewports.TileLoadCoordinator<string>(
+    coordinatorSource,
+    new Asun.UI.Viewports.TileCache<string>(8));
+
+var sharedRequest = new Asun.UI.Viewports.TileRequest(
+    new Asun.UI.Viewports.TileIndex(0, 0),
+    true,
+    0);
+
+var sharedRectangle = new RectangleF(0, 0, 256, 256);
+var sharedLoad1 = coordinator.LoadAsync(
+    sharedRequest,
+    sharedRectangle).AsTask();
+var sharedLoad2 = coordinator.LoadAsync(
+    sharedRequest,
+    sharedRectangle).AsTask();
+
+var sharedResults = await Task.WhenAll(sharedLoad1, sharedLoad2);
+
+Assert(
+    sharedResults[0] == sharedResults[1] &&
+    coordinatorSource.LoadCount == 1 &&
+    coordinator.Cache.Count == 1,
+    "Concurrent requests for the same tile should share one underlying load and cache the result.",
+    failures);
+
+var callerCancellationSource = new CancellationTokenSource();
+callerCancellationSource.Cancel();
+
+var cancelledSharedLoad = false;
+try
+{
+    await coordinator.LoadAsync(
+        new Asun.UI.Viewports.TileRequest(
+            new Asun.UI.Viewports.TileIndex(1, 0),
+            true,
+            1),
+        new RectangleF(256, 0, 256, 256),
+        callerCancellationSource.Token);
+}
+catch (OperationCanceledException)
+{
+    cancelledSharedLoad = true;
+}
+
+Assert(
+    cancelledSharedLoad,
+    "A tile caller should be able to cancel its own wait.",
+    failures);
+
+var runtimeSource = new SimulatedTileSource(TimeSpan.FromMilliseconds(2));
+using var runtime = new Asun.UI.Viewports.ImageViewportRuntime<string>(
+    imageSize: new System.Numerics.Vector2(2048, 1024),
+    viewportSize: new System.Numerics.Vector2(512, 512),
+    tileSize: new System.Numerics.Vector2(256, 256),
+    prefetchMarginTiles: 1,
+    cacheCapacity: 32,
+    maxConcurrency: 4,
+    tileSource: runtimeSource);
+
+runtime.ZoomFactor(
+    zoomFactor: 4,
+    minScale: 0.25,
+    maxScale: 8,
+    viewportAnchor: new System.Numerics.Vector2(256, 256));
+
+var runtimeFrame = await runtime.RefreshAsync();
+
+Assert(
+    runtimeFrame.Requests.Any(request => request.IsVisible) &&
+    runtimeFrame.LoadedCount == runtimeFrame.RequestedCount &&
+    runtimeFrame.Failures.Count == 0 &&
+    runtimeFrame.IsComplete,
+    "Viewport runtime refresh should load every visible tile into a stable display frame.",
+    failures);
+
+var prefetchCount = await runtime.PrefetchAsync();
+
+Assert(
+    prefetchCount > 0 &&
+    runtime.Cache.Count > runtimeFrame.LoadedCount,
+    "Viewport runtime prefetch should load tiles outside the visible set into cache.",
+    failures);
+
+var loadCountBeforeCachedRefresh = runtimeSource.LoadCount;
+var cachedFrame = await runtime.RefreshAsync();
+
+Assert(
+    cachedFrame.IsComplete &&
+    runtimeSource.LoadCount == loadCountBeforeCachedRefresh,
+    "Refreshing an unchanged viewport should be satisfied by the tile cache.",
+    failures);
+
+Assert(
+    cachedFrame.LoadedTiles is not System.Collections.IDictionary,
+    "Viewport display frames should not expose a mutable tile dictionary.",
+    failures);
+
+var failingSource = new SimulatedTileSource(
+    TimeSpan.FromMilliseconds(1),
+    request => request.Index == new Asun.UI.Viewports.TileIndex(0, 0));
+
+using var failingRuntime = new Asun.UI.Viewports.ImageViewportRuntime<string>(
+    imageSize: new System.Numerics.Vector2(1024, 512),
+    viewportSize: new System.Numerics.Vector2(512, 512),
+    tileSize: new System.Numerics.Vector2(256, 256),
+    prefetchMarginTiles: 0,
+    cacheCapacity: 16,
+    maxConcurrency: 2,
+    tileSource: failingSource);
+
+var failingFrame = await failingRuntime.RefreshAsync();
+
+Assert(
+    failingFrame.Failures.Count > 0 &&
+    !failingFrame.IsComplete &&
+    failingFrame.MissingVisibleRequests().Count == failingFrame.Failures.Count,
+    "Viewport runtime should preserve load failures without publishing an incomplete frame as complete.",
+    failures);
+
+var cancellationSource = new SimulatedTileSource(
+    TimeSpan.FromMilliseconds(100),
+    signalFirstLoad: true);
+
+using var cancellationRuntime = new Asun.UI.Viewports.ImageViewportRuntime<string>(
+    imageSize: new System.Numerics.Vector2(4096, 2048),
+    viewportSize: new System.Numerics.Vector2(512, 512),
+    tileSize: new System.Numerics.Vector2(256, 256),
+    prefetchMarginTiles: 1,
+    cacheCapacity: 64,
+    maxConcurrency: 2,
+    tileSource: cancellationSource);
+
+cancellationRuntime.ZoomFactor(
+    zoomFactor: 8,
+    minScale: 0.25,
+    maxScale: 16,
+    viewportAnchor: new System.Numerics.Vector2(256, 256));
+
+var firstRefresh = cancellationRuntime.RefreshAsync().AsTask();
+await cancellationSource.FirstLoadStarted.Task;
+
+cancellationRuntime.PanBy(new System.Numerics.Vector2(-128, 0));
+var secondRefresh = cancellationRuntime.RefreshAsync().AsTask();
+
+var firstRefreshCancelled = false;
+try
+{
+    await firstRefresh;
+}
+catch (OperationCanceledException)
+{
+    firstRefreshCancelled = true;
+}
+
+var secondFrame = await secondRefresh;
+
+Assert(
+    firstRefreshCancelled &&
+    secondFrame.Transform == cancellationRuntime.Transform &&
+    secondFrame.Requests.Count > 0,
+    "A newer viewport refresh should cancel the stale refresh and publish the latest transform snapshot.",
+    failures);
+
+// ------------------------------------------------------------------------------
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
@@ -2526,3 +2721,85 @@ if (failures.Count > 0)
 
 Console.WriteLine("Asun.Platform.Core smoke tests passed.");
 return 0;
+
+file sealed class SimulatedTileSource : Asun.UI.Viewports.ITileSource<string>
+{
+    private readonly TimeSpan _delay;
+    private readonly Func<Asun.UI.Viewports.TileRequest, bool>? _shouldFail;
+    private readonly bool _signalFirstLoad;
+    private int _loadCount;
+    private int _activeLoads;
+    private int _maxConcurrentLoads;
+    private int _firstLoadSignaled;
+
+    public SimulatedTileSource(
+        TimeSpan delay,
+        Func<Asun.UI.Viewports.TileRequest, bool>? shouldFail = null,
+        bool signalFirstLoad = false)
+    {
+        if (delay < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(delay));
+
+        _delay = delay;
+        _shouldFail = shouldFail;
+        _signalFirstLoad = signalFirstLoad;
+    }
+
+    public int LoadCount => Volatile.Read(ref _loadCount);
+
+    public int MaxConcurrentLoads => Volatile.Read(ref _maxConcurrentLoads);
+
+    public TaskCompletionSource<bool> FirstLoadStarted { get; } =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    public async ValueTask<string> LoadAsync(
+        Asun.UI.Viewports.TileRequest request,
+        RectangleF imageRectangle,
+        CancellationToken cancellationToken = default)
+    {
+        Interlocked.Increment(ref _loadCount);
+
+        var active = Interlocked.Increment(ref _activeLoads);
+        UpdateMaximum(active);
+
+        try
+        {
+            if (_signalFirstLoad &&
+                Interlocked.Exchange(ref _firstLoadSignaled, 1) == 0)
+            {
+                FirstLoadStarted.TrySetResult(true);
+            }
+
+            if (_shouldFail?.Invoke(request) == true)
+                throw new InvalidOperationException(
+                    $"Simulated load failure for tile {request.Index}.");
+
+            await Task.Delay(_delay, cancellationToken);
+
+            return $"tile:{request.Index.X},{request.Index.Y}";
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _activeLoads);
+        }
+    }
+
+    private void UpdateMaximum(int active)
+    {
+        while (true)
+        {
+            var current = Volatile.Read(ref _maxConcurrentLoads);
+
+            if (active <= current)
+                return;
+
+            if (Interlocked.CompareExchange(
+                    ref _maxConcurrentLoads,
+                    active,
+                    current) == current)
+            {
+                return;
+            }
+        }
+    }
+}
