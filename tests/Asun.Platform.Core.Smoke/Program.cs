@@ -8,6 +8,9 @@ static void Assert(bool condition, string message, List<string> failures)
         failures.Add(message);
 }
 
+void AssertWithFailures(bool condition, string message) =>
+    Assert(condition, message, failures);
+
 var angle = new Asun.Vision.Contracts.Angle2D(3 * Math.PI);
 Assert(
     Math.Abs(angle.NormalizedRadians - Math.PI) < 1e-12,
@@ -2788,6 +2791,11 @@ Assert(
 // ------------------------------------------------------------------------------
 
 await PlatformInvariantSmoke.RunAsync((condition, message) => Assert(condition, message, failures));
+await ResourceLeasePoolValidationHundredStageSmoke.RunAsync((condition, message) => Assert(condition, message, failures));
+await BoundedWorkQueueValidationHundredStageSmoke.RunAsync((condition, message) => Assert(condition, message, failures));
+await AsyncPipelineValidationHundredStageSmoke.RunAsync((condition, message) => Assert(condition, message, failures));
+StatisticsValidationHundredStageSmoke.Run(AssertWithFailures);
+await AsyncSignalValidationHundredStageSmoke.RunAsync((condition, message) => Assert(condition, message, failures));
 
 if (failures.Count > 0)
 {
