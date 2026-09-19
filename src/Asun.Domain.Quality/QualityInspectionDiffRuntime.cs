@@ -9,6 +9,13 @@ public static class QualityInspectionDiffRuntime
         ArgumentNullException.ThrowIfNull(previous);
         ArgumentNullException.ThrowIfNull(current);
 
+        if (!QualityInspectionSnapshotValidationRuntime.IsValid(previous) ||
+            !QualityInspectionSnapshotValidationRuntime.IsValid(current))
+        {
+            throw new ArgumentException(
+                "Quality inspection diff requires valid snapshots.");
+        }
+
         var previousFindings = previous.Findings.Findings
             .ToDictionary(finding => finding.Id);
         var currentFindings = current.Findings.Findings
