@@ -139,7 +139,11 @@ public static class ViewportRenderDeliveryRuntime
                 }
                 catch (Exception exception)
                 {
-                    surface.Discard(frame.Composite.Generation);
+                    surface.Discard(
+                        frame.Composite.Generation,
+                        exception is OperationCanceledException
+                            ? ViewportRenderDeliveryStatus.Cancelled
+                            : ViewportRenderDeliveryStatus.Failed);
 
                     await TryDiscardAsync(
                         sink,
@@ -171,7 +175,9 @@ public static class ViewportRenderDeliveryRuntime
         {
             if (surface is not null)
             {
-                surface.Discard(frame.Composite.Generation);
+                surface.Discard(
+                    frame.Composite.Generation,
+                    ViewportRenderDeliveryStatus.Cancelled);
                 await TryDiscardAsync(
                     sink,
                     new ViewportRenderDiscardContext(
@@ -199,7 +205,9 @@ public static class ViewportRenderDeliveryRuntime
         {
             if (surface is not null)
             {
-                surface.Discard(frame.Composite.Generation);
+                surface.Discard(
+                    frame.Composite.Generation,
+                    ViewportRenderDeliveryStatus.Deferred);
                 await TryDiscardAsync(
                     sink,
                     new ViewportRenderDiscardContext(
@@ -227,7 +235,9 @@ public static class ViewportRenderDeliveryRuntime
         {
             if (surface is not null)
             {
-                surface.Discard(frame.Composite.Generation);
+                surface.Discard(
+                    frame.Composite.Generation,
+                    ViewportRenderDeliveryStatus.Failed);
                 await TryDiscardAsync(
                     sink,
                     new ViewportRenderDiscardContext(
