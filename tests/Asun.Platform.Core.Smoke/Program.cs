@@ -59,6 +59,21 @@ Assert(
     "Pipeline dependencies should be honored.",
     failures);
 
+using var cancelled = new CancellationTokenSource();
+cancelled.Cancel();
+
+var cancellationObserved = false;
+try
+{
+    await pipeline.ExecuteAsync(execution, cancelled.Token);
+}
+catch (OperationCanceledException)
+{
+    cancellationObserved = true;
+}
+
+Assert(cancellationObserved, "Pipeline should honor cancellation before scheduling work.", failures);
+
 var queue = new BoundedWorkQueue<int>(2);
 Assert(queue.TryEnqueue(1), "First enqueue should succeed.", failures);
 Assert(queue.TryEnqueue(2), "Second enqueue should succeed.", failures);
