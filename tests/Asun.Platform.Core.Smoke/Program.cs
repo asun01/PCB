@@ -937,6 +937,17 @@ Assert(
     "Async batch dequeue should wait for the first item and drain already available work.",
     failures);
 
+using var readinessQueue = new BoundedWorkQueue<int>(1);
+Assert(readinessQueue.CanWrite, "A new queue should report writable readiness.", failures);
+var canWrite = await readinessQueue.WaitToWriteAsync();
+Assert(canWrite, "A non-full queue should report writable readiness.", failures);
+Assert(readinessQueue.TryEnqueue(7), "Readiness queue should accept work.", failures);
+var canRead = await readinessQueue.WaitToReadAsync();
+Assert(canRead, "A queued item should report readable readiness.", failures);
+Assert(readinessQueue.TryDequeue(out var readinessValue) && readinessValue == 7, "Readiness queue should preserve the queued value.", failures);
+readinessQueue.Complete();
+Assert(!readinessQueue.CanWrite, "A completed queue should not report writable readiness.", failures);
+
 Assert(queue.TryComplete(), "The first queue completion should succeed.", failures);
 Assert(!queue.TryComplete(), "Repeated queue completion should be idempotent.", failures);
 Assert(!queue.TryEnqueue(3), "Completed queue should reject new work.", failures);
