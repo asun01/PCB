@@ -101,9 +101,10 @@ public static class ViewportPresentationFacadeSmoke
 
             assert(
                 presentation.Statistics.RenderedFrames >= 1 &&
-                continuousSink.BeginCount >= 1 &&
+                presentation.Statistics.DeliveryFailures >= 1 &&
+                continuousSink.BeginCount >= 2 &&
                 continuousSink.EndCount >= 1,
-                $"Presentation facade {i + 1} should own the complete continuous render lifecycle.");
+                $"Presentation facade {i + 1} should retry a failed delivery and complete the continuous render lifecycle.");
 
             presentation.Reset();
 
@@ -167,6 +168,7 @@ public static class ViewportPresentationFacadeSmoke
     private sealed class CancellingSink : IViewportRenderSink<string>
     {
         private readonly CancellationTokenSource _source;
+        private bool _failed;
 
         public CancellingSink(CancellationTokenSource source)
         {
@@ -181,6 +183,13 @@ public static class ViewportPresentationFacadeSmoke
             CancellationToken cancellationToken = default)
         {
             BeginCount++;
+
+            if (!_failed)
+            {
+                _failed = true;
+                throw new InvalidOperationException("synthetic retryable render failure");
+            }
+
             return ValueTask.CompletedTask;
         }
 
