@@ -28,5 +28,6 @@
   <Project Path="tests/Asun.Platform.Pipeline.Smoke/Asun.Platform.Pipeline.Smoke.csproj" />
   <Project Path="tests/Asun.Simulation.Core.Smoke/Asun.Simulation.Core.Smoke.csproj" />
   <Project Path="tests/Asun.Release.Core.Smoke/Asun.Release.Core.Smoke.csproj" />
+  <Project Path="tests/Asun.Production.Runtime.Smoke/Asun.Production.Runtime.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Quality.Smoke/Asun.Domain.Quality.Smoke.csproj" />
 </Solution>
