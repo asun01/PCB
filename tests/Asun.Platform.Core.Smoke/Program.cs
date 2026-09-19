@@ -182,6 +182,15 @@ var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
 Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
 
 var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
+var dragRoi = Asun.Vision.Contracts.PixelRect.FromPoints(
+    new Asun.Vision.Contracts.PixelPoint(300, 200),
+    new Asun.Vision.Contracts.PixelPoint(100, 50));
+
+Assert(
+    dragRoi == new Asun.Vision.Contracts.PixelRect(100, 50, 200, 150),
+    "ROI creation from drag endpoints should normalize axis direction.",
+    failures);
+
 var roi = new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100);
 
 Assert(
