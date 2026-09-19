@@ -9,33 +9,15 @@ public static class QualityInspectionSummaryDiffRuntime
         ArgumentNullException.ThrowIfNull(previous);
         ArgumentNullException.ThrowIfNull(current);
 
-        if (!QualityInspectionSummaryValidationRuntime.IsValid(
-                new QualityInspectionResult(
-                    previous.ResultId,
-                    new QualityInspectionSnapshot(
-                        previous.SnapshotId,
-                        previous.Sequence,
-                        new QualityFindingSet(Array.Empty<QualityFinding>()),
-                        new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
-                previous))
-        {
+        if (!IsValidShape(previous))
             throw new ArgumentException(
-                "Previous inspection summary is not independently reconstructible.");
-        }
+                "Previous inspection summary is invalid.",
+                nameof(previous));
 
-        if (previous.ResultId == current.ResultId &&
-            previous.SnapshotId == current.SnapshotId &&
-            previous.Sequence == current.Sequence)
-        {
-            return new QualityInspectionSummaryDiff(
-                previous.Outcomes != current.Outcomes,
-                previous.Severities != current.Severities,
-                previous.Evidence != current.Evidence,
-                !string.Equals(
-                    previous.ContentFingerprint,
-                    current.ContentFingerprint,
-                    StringComparison.Ordinal));
-        }
+        if (!IsValidShape(current))
+            throw new ArgumentException(
+                "Current inspection summary is invalid.",
+                nameof(current));
 
         return new QualityInspectionSummaryDiff(
             previous.Outcomes != current.Outcomes,
@@ -46,4 +28,9 @@ public static class QualityInspectionSummaryDiffRuntime
                 current.ContentFingerprint,
                 StringComparison.Ordinal));
     }
+
+    private static bool IsValidShape(QualityInspectionSummary summary) =>
+        QualityInspectionSummaryValidationRuntime
+            .ValidateShape(summary)
+            .Count == 0;
 }
