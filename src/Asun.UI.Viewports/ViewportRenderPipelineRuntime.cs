@@ -1,0 +1,184 @@
+using System.Numerics;
+
+namespace Asun.UI.Viewports;
+
+public sealed class ViewportRenderPipelineFrame<TTile>
+{
+    internal ViewportRenderPipelineFrame(
+        ViewportCompositeFrame<TTile> composite,
+        ViewportRenderSubmission submission,
+        ViewportRenderWorkPlan workPlan,
+        ViewportRenderBatch batch)
+    {
+        Composite = composite;
+        Submission = submission;
+        WorkPlan = workPlan;
+        Batch = batch;
+    }
+
+    public ViewportCompositeFrame<TTile> Composite { get; }
+
+    public ViewportRenderSubmission Submission { get; }
+
+    public ViewportRenderWorkPlan WorkPlan { get; }
+
+    public ViewportRenderBatch Batch { get; }
+
+    public bool Accepted => Submission.Sequence > 0;
+}
+
+public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
+{
+    private readonly object _sync = new();
+    private readonly ViewportCompositeRuntime<TTile> _composite;
+    private readonly ViewportRenderSchedulerRuntime _scheduler;
+    private readonly ViewportRenderBudget _budget;
+    private int _disposed;
+
+    public ViewportRenderPipelineRuntime(
+        Vector2 imageSize,
+        Vector2 viewportSize,
+        Vector2 tileSize,
+        int prefetchMarginTiles,
+        int cacheCapacity,
+        int maxConcurrency,
+        ITileSource<TTile> tileSource,
+        ViewportRenderBudget? budget = null,
+        double framesPerSecond = 60,
+        RoiEditorMode roiMode = RoiEditorMode.Select)
+    {
+        _composite = new ViewportCompositeRuntime<TTile>(
+            imageSize,
+            viewportSize,
+            tileSize,
+            prefetchMarginTiles,
+            cacheCapacity,
+            maxConcurrency,
+            tileSource,
+            roiMode);
+
+        _scheduler = new ViewportRenderSchedulerRuntime(
+            framesPerSecond);
+
+        _budget = (budget ?? ViewportRenderBudget.Default)
+            .Validate();
+    }
+
+    public ViewportCompositeRuntime<TTile> Composite => _composite;
+
+    public ViewportRenderSchedulerRuntime Scheduler => _scheduler;
+
+    public ViewportRenderBudget Budget => _budget;
+
+    public void Invalidate(
+        ViewportDirtyFlags flags,
+        long generation)
+    {
+        ThrowIfDisposed();
+        _scheduler.Submit(flags, generation);
+    }
+
+    public void SubmitPointer(Vector2 viewportPoint)
+    {
+        ThrowIfDisposed();
+        _scheduler.SubmitPointer(viewportPoint);
+    }
+
+    public async ValueTask<ViewportRenderPipelineFrame<TTile>?> RefreshAsync(
+        DateTimeOffset now,
+        bool includePrefetch = false,
+        CancellationToken cancellationToken = default)
+    {
+        ThrowIfDisposed();
+
+        var composite = await _composite
+            .RefreshAsync(includePrefetch, cancellationToken)
+            .ConfigureAwait(false);
+
+        _scheduler.Submit(
+            composite.DirtyFlags,
+            composite.Generation);
+
+        if (!_scheduler.TryTakeFrame(now, out var submission))
+            return null;
+
+        var plan = ViewportRenderWorkRuntime.Plan(
+            composite,
+            submission.DirtyFlags);
+
+        var budgeted = ViewportRenderBudgetRuntime.Apply(
+            plan,
+            _budget);
+
+        var batch = ViewportRenderBatchRuntime.Create(
+            budgeted,
+            composite.Tiles.Transform);
+
+        return new ViewportRenderPipelineFrame<TTile>(
+            composite,
+            submission,
+            budgeted,
+            batch);
+    }
+
+    public bool TryTakePointer(
+        out CoalescedPointer pointer)
+    {
+        ThrowIfDisposed();
+        return _scheduler.TryTakePointer(out pointer);
+    }
+
+    public ViewportRenderPipelineFrame<TTile> BuildFromFrame(
+        ViewportCompositeFrame<TTile> composite,
+        DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(composite);
+        ThrowIfDisposed();
+
+        _scheduler.Submit(
+            composite.DirtyFlags,
+            composite.Generation);
+
+        if (!_scheduler.TryTakeFrame(now, out var submission))
+        {
+            return new ViewportRenderPipelineFrame<TTile>(
+                composite,
+                default,
+                ViewportRenderWorkRuntime.Plan(
+                    composite,
+                    ViewportDirtyFlags.None),
+                ViewportRenderBatchRuntime.Empty(
+                    composite.Generation));
+        }
+
+        var plan = ViewportRenderWorkRuntime.Plan(
+            composite,
+            submission.DirtyFlags);
+
+        var budgeted = ViewportRenderBudgetRuntime.Apply(
+            plan,
+            _budget);
+
+        return new ViewportRenderPipelineFrame<TTile>(
+            composite,
+            submission,
+            budgeted,
+            ViewportRenderBatchRuntime.Create(
+                budgeted,
+                composite.Tiles.Transform));
+    }
+
+    public void Reset() =>
+        _scheduler.Reset();
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return;
+
+        _composite.Dispose();
+    }
+
+    private void ThrowIfDisposed() =>
+        ObjectDisposedException.ThrowIf(_disposed != 0, this);
+}
