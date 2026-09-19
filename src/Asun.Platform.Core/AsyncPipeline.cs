@@ -149,6 +149,18 @@ public sealed class AsyncPipeline<TContext>
         };
     }
 
+    public static void Validate(IEnumerable<Node> nodes)
+    {
+        ArgumentNullException.ThrowIfNull(nodes);
+
+        var snapshot = nodes.Select(SnapshotNode).ToArray();
+
+        if (snapshot.Length == 0)
+            throw new ArgumentException("At least one pipeline node is required.", nameof(nodes));
+
+        ValidateGraph(snapshot);
+    }
+
     private static void ValidateGraph(IReadOnlyList<Node> nodes)
     {
         var ids = new HashSet<string>(StringComparer.Ordinal);
