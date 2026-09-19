@@ -2339,3 +2339,24 @@ Current completed boundary: **25,000**
 Next executable stage: **25,001**
 
 The one-million-stage program remains active. Product-chain completion now explicitly includes concrete cross-module handoff and integrity recomputation, not merely type creation.
+
+
+## Execution checkpoint: Stage 29500 — 2026-09-20
+
+Rotating multi-product execution has now closed the following real cross-chain windows after the Stage 25000 boundary:
+- 25001–25500 PCB Assembly → Production Runtime
+- 25501–26000 Program → Pipeline / Production binding
+- 26001–26500 Production → Quality factual alignment
+- 26501–27000 Production ↔ Evidence opaque references
+- 27001–27500 Production → Render / Presentation
+- 27501–28000 Metrology Calibration → PCB Placement
+- 28001–28500 PCB Placement → Quality Integration
+- 28501–29000 Production ↔ Simulation replay alignment
+- 29001–29500 Production evidence → Release projection
+
+The execution model is now explicitly cross-chain rather than subsystem-isolated: each 500-stage block requires concrete handoff behavior, independent validation, a real registered Smoke, five ledgers, and an integration checkpoint. No vendor-authoritative API was invented to close these chains.
+
+Current completed boundary: **29,500**
+Next executable stage: **29,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
