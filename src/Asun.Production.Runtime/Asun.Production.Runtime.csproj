@@ -12,5 +12,6 @@
     <ProjectReference Include="../../src/Asun.Release.Core/Asun.Release.Core.csproj" />
     <ProjectReference Include="../../src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
     <ProjectReference Include="../../src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.Evidence/Asun.Platform.Evidence.csproj" />
   </ItemGroup>
 </Project>
