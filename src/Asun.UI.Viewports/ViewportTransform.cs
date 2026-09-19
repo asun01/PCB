@@ -62,6 +62,18 @@ public readonly record struct ViewportTransform(
     public Vector2 ViewportToImage(Vector2 viewportPoint) =>
         (viewportPoint - Translation) / (float)Scale;
 
+    public bool TryViewportToImage(Vector2 viewportPoint, out Vector2 imagePoint)
+    {
+        if (!IsFinite(viewportPoint))
+        {
+            imagePoint = default;
+            return false;
+        }
+
+        imagePoint = ViewportToImage(viewportPoint);
+        return IsFinite(imagePoint);
+    }
+
     public RectangleF ImageToViewportRectangle(RectangleF imageRectangle) =>
         new(
             Translation.X + imageRectangle.X * (float)Scale,
