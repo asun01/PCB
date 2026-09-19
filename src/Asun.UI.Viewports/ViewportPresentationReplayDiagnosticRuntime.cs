@@ -27,6 +27,12 @@ public static class ViewportPresentationReplayDiagnosticRuntime
             ViewportReplayStateFingerprintRuntime.Capture(
                 runtime.Composite);
 
+        if (presentation.Generation != state.Generation)
+        {
+            throw new InvalidOperationException(
+                "Presentation generation changed while capturing the replay diagnostic snapshot.");
+        }
+
         var bundleErrors =
             ViewportReplaySessionBundleRuntime.Validate(
                 bundle);
@@ -86,7 +92,8 @@ public static class ViewportPresentationReplayDiagnosticRuntime
         ArgumentNullException.ThrowIfNull(expected);
         ArgumentNullException.ThrowIfNull(actual);
 
-        return string.Equals(
+        return expected.Presentation.Equals(actual.Presentation) &&
+            string.Equals(
                 expected.DiagnosticHash,
                 actual.DiagnosticHash,
                 StringComparison.Ordinal) &&
