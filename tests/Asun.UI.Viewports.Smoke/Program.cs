@@ -228,6 +228,8 @@ ViewportTenChainSmoke.Run(Assert);
 
 await ViewportFiftyChainSmoke.RunAsync(Assert);
 
+ViewportFiveHundredChainsSmoke.Run(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
