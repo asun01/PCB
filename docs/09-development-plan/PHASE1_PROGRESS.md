@@ -194,3 +194,5 @@ Verification note:
 - Each of the five new smoke matrices is structurally 10 loops × 10 Check calls with an explicit `round == 100` assertion.
 - The five ledgers contain exactly 100 consecutive stage entries each.
 - Static source checks were used; no build/test/CI success is asserted without authoritative execution evidence.
+
+- Final hardening after the 1501–2000 static audit: Diagnostic Manifest hash validation now rejects null/blank hashes cleanly; Presentation Diagnostic equivalence now includes the complete Presentation Snapshot; capture rejects Presentation/State generation drift.
