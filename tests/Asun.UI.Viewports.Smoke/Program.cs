@@ -220,6 +220,8 @@ Assert(
 
 RoiDocumentRuntimeSmoke.Run(Assert);
 
+RoiViewportRuntimeSmoke.Run(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
