@@ -32,6 +32,10 @@ public sealed class BoundedWorkQueue<T>
 
     public Task Completion => _channel.Reader.Completion;
 
+    public bool CanWrite => !_channel.Writer.Completion.IsCompleted;
+
+    public bool CanRead => !_channel.Reader.Completion.IsCompleted;
+
     public ValueTask EnqueueAsync(T item, CancellationToken cancellationToken = default) =>
         _channel.Writer.WriteAsync(item, cancellationToken);
 
