@@ -60,10 +60,12 @@ public static class ViewportWorkflowSmoke
             "Workflow duplication should create a distinct ROI while preserving document cardinality.");
 
         workflow.Execute(
-            ViewportWorkflowCommand.MoveSelectedToBack());
+            ViewportWorkflowCommand.Simple(
+                ViewportWorkflowOperation.MoveSelectedToBack));
 
         workflow.Execute(
-            ViewportWorkflowCommand.MoveSelectedToFront());
+            ViewportWorkflowCommand.Simple(
+                ViewportWorkflowOperation.MoveSelectedToFront));
 
         assert(
             workflow.Runtime.Document.Items
@@ -96,7 +98,9 @@ public static class ViewportWorkflowSmoke
             workflow.Runtime.SelectedId is null,
             "Workflow selection command should support explicit selection clearing.");
 
-        workflow.Execute(ViewportWorkflowCommand.DeleteSelected);
+        workflow.Execute(
+            ViewportWorkflowCommand.Simple(
+                ViewportWorkflowOperation.DeleteSelected));
 
         assert(
             workflow.Runtime.Document.Count == beforeUndo.Document.Items.Count,
