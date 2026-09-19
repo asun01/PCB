@@ -34,6 +34,9 @@ public static class ViewportPresentationFacadeSmoke
 
             assert(
                 initialSnapshot.IsGenerationStable &&
+                initialSnapshot.IsSurfaceStable &&
+                initialSnapshot.IsPresentationStable &&
+                initialSnapshot.Surface.PresentationSequence == 0 &&
                 initialSnapshot.Generation == presentation.Composite.Generation,
                 $"Presentation facade {i + 1} should expose a stable diagnostic snapshot when the generation is idle.");
 
