@@ -326,6 +326,18 @@ public static class ViewportReplayIntegrationHundredStageSmoke
                 "continuous-viewport",
             "continuous replay bundle should use a stable diagnostic session identity.");
 
+        Check(
+            runtime.ReplayBundle.Manifest.InputEventCount == 0,
+            "reset bundle manifest should report zero input events.");
+
+        Check(
+            runtime.ReplayBundle.Manifest.EvidenceManifestCount == 0,
+            "reset bundle manifest should report zero evidence manifests.");
+
+        Check(
+            runtime.ReplayBundle.Manifest.AuditEventCount == 0,
+            "reset bundle manifest should report zero audit events.");
+
         assert(
             round == 100,
             $"Replay integration smoke should execute exactly 100 numbered rounds; actual {round}.");
