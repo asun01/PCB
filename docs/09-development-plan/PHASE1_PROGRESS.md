@@ -1430,3 +1430,75 @@ Current continuous execution position:
 - completed through Stage 21500;
 - next natural stage: 21501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 21501→22000 Simulation / Digital Twin product chain — 2026-09-19
+
+Completed stages 21501–22000.
+
+Implemented:
+- Asun.Simulation.Core over real PCB Assembly and Metrology contracts;
+- seeded SimulatedBoardScenario;
+- deterministic-in-runtime simulated defect generation targeting actual PCB components;
+- SimulationObservation with sequence, board origin, defects and fingerprint;
+- contiguous SimulationSessionRuntime and validation;
+- dedicated Simulation Smoke project registered in AsunVision.slnx.
+
+Boundary:
+- simulation is a vendor-neutral digital-twin boundary and does not claim physical camera/HALCON behavior.
+
+Hardening note:
+- current seeded random derivation is deterministic within the present runtime contract but is not yet treated as cross-process golden determinism; stable explicit seed hashing remains a future hardening task.
+
+Closed acceptance asset:
+- PHASE1_21501_22000_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 22001→22500 Release / Compliance product chain — 2026-09-19
+
+Completed stages 22001–22500.
+
+Implemented:
+- Asun.Release.Core;
+- ReleaseIdentity, ReleaseArtifact, ReleaseManifest;
+- canonical artifact ordering and deterministic SHA-256 manifest fingerprint;
+- ReleaseReadinessReport;
+- dedicated Release Smoke project registered in AsunVision.slnx.
+
+Real correction:
+- ReleaseManifestValidationRuntime now fails safe on malformed identity/artifact/fingerprint state instead of invoking manifest reconstruction that could throw.
+- Added invalid-input Smoke covering malformed artifact, malformed identity and readiness behavior.
+
+Closed acceptance asset:
+- PHASE1_22001_22500_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 22501→23000 Production Runtime product chain — 2026-09-19
+
+Completed stages 22501–23000.
+
+Implemented:
+- Asun.Production.Runtime;
+- ProductionSessionDefinition;
+- real ProgramExecutionPlan validation;
+- real IFrameSource capture and CapturedFrame validation;
+- Pipeline execution per acquired frame;
+- ProductionFrameExecution;
+- ProductionSessionReport;
+- deterministic ProductionSessionFingerprintRuntime;
+- session-level validation and fingerprint tamper detection;
+- dedicated Production Smoke project registered in AsunVision.slnx.
+
+Cross-chain result:
+- Program → Simulated Device → CapturedFrame → Pipeline → Per-frame report → Production Session Report now executes as one actual runtime chain.
+
+Closed acceptance asset:
+- PHASE1_22501_23000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- static audits confirm balanced delimiters and no TODO/NotImplementedException in changed product-chain assets;
+- each new 100-round Smoke uses 10 loop groups and explicit round == 100;
+- workflow lookup for Production checkpoint commit ee6846281a6d0b4fff644ffc87ce26099cb3589a returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 23000;
+- next natural stage: 23001;
+- global one-million-stage horizon remains 2501–1002500.
