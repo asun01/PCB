@@ -1304,3 +1304,129 @@ Current continuous execution position:
 - completed through Stage 18000 in the active 4501–104500 window;
 - next natural stage: 18001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 18001→18500 PCB Component / Assembly product chain — 2026-09-19
+
+Completed stages 18001–18500.
+
+Implemented:
+- PcbComponentReference and board-aware validation;
+- deterministic component collection with duplicate-designator rejection;
+- designator and package lookup;
+- component side statistics;
+- PcbAssemblySnapshot and deterministic SHA-256 integrity;
+- four new PCB 100-round Smokes registered in the existing PCB Smoke project.
+
+Real correction:
+- Assembly snapshot validation initially attempted an invalid component-to-feature cast; corrected to validate PcbComponentReference directly.
+- Component collection Smoke was normalized to exactly ten loop groups.
+
+Closed acceptance asset:
+- PHASE1_18001_18500_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 18501→19000 Metrology product chain — 2026-09-19
+
+Completed stages 18501–19000.
+
+Implemented:
+- finite MetrologyPoint2D;
+- AffineTransform2D transform, composition and guarded inversion;
+- orthonormal MetrologyCoordinateSystem2D;
+- MetrologySegment2D length/midpoint;
+- DistanceMeasurementRuntime with explicit units and deterministic SHA-256 result fingerprint;
+- fail-safe measurement result validation;
+- new Metrology Smoke project registered in AsunVision.slnx.
+
+Closed acceptance asset:
+- PHASE1_18501_19000_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 19001→19500 Render / Presentation product chain — 2026-09-19
+
+Completed stages 19001–19500.
+
+Implemented:
+- ViewportRenderFrameSummary over the existing framework-neutral render command stream;
+- generation/count/category validation;
+- deterministic render-frame SHA-256 fingerprint and integrity validation;
+- Smoke derived from a real ViewportRenderPipelineRuntime frame.
+
+Real correction:
+- removed a stale helper after refactoring the render Smoke, restoring balanced C# structure before checkpoint closure.
+
+Closed acceptance asset:
+- PHASE1_19001_19500_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 19501→20000 Acquisition / Device product chain — 2026-09-19
+
+Completed stages 19501–20000.
+
+Implemented:
+- FrameSequence, FrameCaptureMetadata, CapturedFrame;
+- vendor-neutral IFrameSource;
+- deterministic SimulatedFrameSource;
+- CaptureSessionRuntime with frame validation, sequence bounds, payload fingerprints and cancellation;
+- new Device Smoke project registered in AsunVision.slnx.
+
+Closed acceptance asset:
+- PHASE1_19501_20000_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 20001→20500 Quality / Inspection Run product chain — 2026-09-19
+
+Completed stages 20001–20500.
+
+Implemented:
+- QualityInspectionRun;
+- canonical multi-result run ordering;
+- result/snapshot identity validation;
+- factual run summary with finding/evidence/fail/review/critical counts;
+- deterministic run summary and run fingerprint integrity;
+- new 100-round Smokes registered in the existing Quality Smoke project.
+
+Real correction:
+- Run summary fingerprinting was changed to use a concrete local SHA-256 computation instead of an undefined helper.
+
+Closed acceptance asset:
+- PHASE1_20001_20500_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 20501→21000 Program / Recipe product chain — 2026-09-19
+
+Completed stages 20501–21000.
+
+Implemented:
+- Asun.Program.Core;
+- InspectionProgram, ProgramStep, ProgramParameter;
+- step/order uniqueness and canonical ordering;
+- deterministic ProgramExecutionPlan and SHA-256 fingerprint;
+- two dedicated 100-round Smokes;
+- Program Smoke project registered in AsunVision.slnx.
+
+Closed acceptance asset:
+- PHASE1_20501_21000_STAGE ledgers included in combined Product-Chain checkpoint below.
+
+### 21001→21500 Pipeline / Orchestration product chain — 2026-09-19
+
+Completed stages 21001–21500.
+
+Implemented:
+- Asun.Platform.Pipeline;
+- generic PipelineStage<T> and PipelineDefinition<T>;
+- canonical stage validation;
+- real sequential execution runtime;
+- execution trace and cancellation;
+- execution report and deterministic SHA-256 fingerprint;
+- two dedicated 100-round Pipeline Smokes;
+- Pipeline Smoke project registered in AsunVision.slnx.
+
+Closed acceptance asset:
+- PHASE1_20501_21500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification boundary for 18001–21500:
+- static audits performed on changed assets;
+- no TODO/NotImplementedException placeholder introduced in the new product-chain assets;
+- no build/test/CI success claimed without authoritative workflow evidence.
+
+Current continuous execution position:
+- completed through Stage 21500;
+- next natural stage: 21501;
+- global one-million-stage horizon remains 2501–1002500.
