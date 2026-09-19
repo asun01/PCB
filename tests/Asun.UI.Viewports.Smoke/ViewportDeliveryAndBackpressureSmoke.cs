@@ -124,6 +124,36 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 trackedStats.Cancelled == 0 &&
                 trackedStats.RenderedUnits == trackedSuccess.RenderedUnits,
                 $"Delivery chain {i + 1} should expose delivery statistics.");
+
+            using var coalescingInput = new ViewportInputSubmissionRuntime();
+            var coalescing = new ViewportInputBackpressureRuntime(
+                2,
+                ViewportInputDropPolicy.CoalesceMoves);
+
+            coalescing.TrySubmit(
+                coalescingInput,
+                ViewportInputEventKind.PointerMove,
+                new Vector2(1, 1));
+
+            coalescing.TrySubmit(
+                coalescingInput,
+                ViewportInputEventKind.Wheel,
+                new Vector2(2, 2),
+                wheelDelta: 120);
+
+            assert(
+                coalescing.TrySubmit(
+                    coalescingInput,
+                    ViewportInputEventKind.PointerMove,
+                    new Vector2(3, 3)),
+                $"Delivery chain {i + 1} should accept a saturated move by preserving capacity.");
+
+            var coalescedFallback = coalescing.Capture(coalescingInput);
+
+            assert(
+                coalescedFallback.Pending == 2 &&
+                coalescedFallback.Dropped == 1,
+                $"Delivery chain {i + 1} should drop the oldest event when the saturated tail cannot be coalesced.");
         }
     }
 
