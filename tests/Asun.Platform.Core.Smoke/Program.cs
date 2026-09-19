@@ -745,6 +745,19 @@ Assert(
     "ROI creation from drag endpoints should normalize axis direction.",
     failures);
 
+var pointDistance = new Asun.Vision.Contracts.PixelPoint(3, 4);
+Assert(
+    Math.Abs(pointDistance.Length - 5) < 1e-12 &&
+    Math.Abs(pointDistance.LengthSquared - 25) < 1e-12,
+    "Pixel point magnitude should use Euclidean distance.",
+    failures);
+
+var translatedPoint = pointDistance.Translate(7, -4);
+Assert(
+    translatedPoint == new Asun.Vision.Contracts.PixelPoint(10, 0),
+    "Pixel point translation should be deterministic.",
+    failures);
+
 var roi = new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100);
 
 Assert(
