@@ -64,25 +64,33 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
             if (_pipeline.Scheduler.PendingFlags != ViewportDirtyFlags.None)
             {
-                var frame = await _pipeline
-                    .RefreshAsync(
-                        DateTimeOffset.UtcNow,
-                        includePrefetch: false,
-                        cancellationToken)
-                    .ConfigureAwait(false);
-
-                if (frame is not null && frame.Accepted)
+                try
                 {
-                    await ViewportRenderAdapterRuntime
-                        .RenderAsync(
-                            frame,
-                            sink,
+                    var frame = await _pipeline
+                        .RefreshAsync(
+                            DateTimeOffset.UtcNow,
+                            includePrefetch: false,
                             cancellationToken)
                         .ConfigureAwait(false);
 
-                    Interlocked.Increment(ref _renderedFrames);
+                    if (frame is not null && frame.Accepted)
+                    {
+                        await ViewportRenderAdapterRuntime
+                            .RenderAsync(
+                                frame,
+                                sink,
+                                cancellationToken)
+                            .ConfigureAwait(false);
+
+                        Interlocked.Increment(ref _renderedFrames);
+                    }
+                    else
+                    {
+                        Interlocked.Increment(ref _skippedLoops);
+                    }
                 }
-                else
+                catch (OperationCanceledException) when (
+                    !cancellationToken.IsCancellationRequested)
                 {
                     Interlocked.Increment(ref _skippedLoops);
                 }
