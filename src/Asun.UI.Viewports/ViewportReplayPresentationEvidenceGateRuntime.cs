@@ -34,6 +34,34 @@ public static class ViewportReplayPresentationEvidenceGateRuntime
         var auditMatches = true;
         var orderingMatches = true;
 
+        for (var index = 0; index < expectedEvidence.Count; index++)
+        {
+            var errors =
+                ViewportRenderDiagnosticsRuntime.ValidateManifest(
+                    expectedEvidence[index]);
+
+            foreach (var error in errors)
+            {
+                evidenceMatches = false;
+                differences.Add(
+                    $"ExpectedEvidence[{index}].{error}");
+            }
+        }
+
+        for (var index = 0; index < actualEvidence.Count; index++)
+        {
+            var errors =
+                ViewportRenderDiagnosticsRuntime.ValidateManifest(
+                    actualEvidence[index]);
+
+            foreach (var error in errors)
+            {
+                evidenceMatches = false;
+                differences.Add(
+                    $"ActualEvidence[{index}].{error}");
+            }
+        }
+
         if (expectedEvidence.Count != actualEvidence.Count)
         {
             evidenceMatches = false;
