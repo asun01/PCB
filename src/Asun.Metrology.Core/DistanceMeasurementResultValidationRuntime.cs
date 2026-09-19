@@ -18,15 +18,19 @@ public static class DistanceMeasurementResultValidationRuntime
             errors.Add("Measured distance must be finite and non-negative.");
 
         if(string.IsNullOrWhiteSpace(result.Unit))
+        {
             errors.Add("Measurement unit cannot be blank.");
-
-        if(result.ResultFingerprint.Length!=64 ||
+        }
+        else if(result.ResultFingerprint.Length!=64 ||
            !result.ResultFingerprint.All(character=>
                Uri.IsHexDigit(character) &&
                char.ToLowerInvariant(character)==character))
         {
             errors.Add("Measurement result fingerprint must be 64 lowercase hexadecimal characters.");
         }
+
+        if(string.IsNullOrWhiteSpace(result.Unit))
+            return errors;
 
         var expected=DistanceMeasurementRuntime.Measure(
             result.Start,
