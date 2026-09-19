@@ -1,5 +1,16 @@
 namespace Asun.UI.Viewports;
 
+public readonly record struct ViewportPresentationExecutionStatistics(
+    long Executed,
+    long Presented,
+    long Superseded,
+    long Cancelled,
+    long Deferred,
+    long Failed,
+    long RenderedUnits,
+    long? LastGeneration,
+    long? LastSequence);
+
 public readonly record struct ViewportPresentationExecutionResult<TTile>(
     bool Executed,
     bool Presented,
@@ -21,6 +32,16 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
     private readonly ViewportPresentationBufferRuntime _buffers;
     private readonly ViewportRenderSurfaceRuntime _surface;
     private readonly ViewportRenderDeliveryTracker _delivery;
+    private readonly object _statisticsSync = new();
+    private long _executed;
+    private long _presented;
+    private long _superseded;
+    private long _cancelled;
+    private long _deferred;
+    private long _failed;
+    private long _renderedUnits;
+    private long? _lastGeneration;
+    private long? _lastSequence;
 
     public ViewportPresentationExecutionRuntime(
         ViewportPresentationQueueRuntime<TTile> queue,
@@ -42,6 +63,42 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
 
     public ViewportRenderDeliveryTracker Delivery => _delivery;
 
+    public ViewportPresentationExecutionStatistics Statistics
+    {
+        get
+        {
+            lock (_statisticsSync)
+            {
+                return new(
+                    Interlocked.Read(ref _executed),
+                    Interlocked.Read(ref _presented),
+                    Interlocked.Read(ref _superseded),
+                    Interlocked.Read(ref _cancelled),
+                    Interlocked.Read(ref _deferred),
+                    Interlocked.Read(ref _failed),
+                    Interlocked.Read(ref _renderedUnits),
+                    _lastGeneration,
+                    _lastSequence);
+            }
+        }
+    }
+
+    public void Reset()
+    {
+        lock (_statisticsSync)
+        {
+            Interlocked.Exchange(ref _executed, 0);
+            Interlocked.Exchange(ref _presented, 0);
+            Interlocked.Exchange(ref _superseded, 0);
+            Interlocked.Exchange(ref _cancelled, 0);
+            Interlocked.Exchange(ref _deferred, 0);
+            Interlocked.Exchange(ref _failed, 0);
+            Interlocked.Exchange(ref _renderedUnits, 0);
+            _lastGeneration = null;
+            _lastSequence = null;
+        }
+    }
+
     public async ValueTask<ViewportPresentationExecutionResult<TTile>> ExecuteNextAsync(
         IViewportRenderSink<TTile> sink,
         CancellationToken cancellationToken = default)
@@ -49,8 +106,13 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
         ArgumentNullException.ThrowIfNull(sink);
 
         if (!_queue.TryTakeLatest(out var packet))
-        {
             return default;
+
+        ViewportPresentationExecutionResult<TTile> Complete(
+            ViewportPresentationExecutionResult<TTile> result)
+        {
+            Record(result);
+            return result;
         }
 
         ViewportPresentationBufferTransaction? bufferTransaction = null;
@@ -65,7 +127,7 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
             {
                 _queue.TryCancel(packet.Token);
 
-                return new(
+                return Complete(new(
                     true,
                     false,
                     true,
@@ -80,7 +142,7 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                         Array.Empty<ViewportRenderWorkItem>(),
                         new ViewportPresentationFenceRejectedException(),
                         packet.Frame.Batch.ItemCount,
-                        packet.Frame.Batch.RegionCount));
+                        packet.Frame.Batch.RegionCount)));
             }
 
             var frame = packet.Frame;
@@ -109,12 +171,12 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
 
                     _queue.TryCancel(packet.Token);
 
-                    return new(
+                    return Complete(new(
                         true,
                         false,
                         true,
                         packet,
-                        delivery);
+                        delivery));
                 }
 
                 _buffers.Commit(
@@ -125,22 +187,22 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
 
                 if (_queue.TryAcknowledgePresented(packet.Token))
                 {
-                    return new(
+                    return Complete(new(
                         true,
                         true,
                         false,
                         packet,
-                        delivery);
+                        delivery));
                 }
 
                 _queue.TryCancel(packet.Token);
 
-                return new(
+                return Complete(new(
                     true,
                     false,
                     true,
                     packet,
-                    delivery);
+                    delivery));
             }
 
             if (bufferTransaction is ViewportPresentationBufferTransaction activeBuffer)
@@ -152,12 +214,12 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
 
             _queue.TryCancel(packet.Token);
 
-            return new(
+            return Complete(new(
                 true,
                 false,
                 superseded,
                 packet,
-                delivery);
+                delivery));
         }
         catch (Exception exception)
         {
@@ -179,12 +241,52 @@ public sealed class ViewportPresentationExecutionRuntime<TTile>
                 frame.Batch.ItemCount,
                 frame.Batch.RegionCount);
 
-            return new(
+            return Complete(new(
                 true,
                 false,
                 false,
                 packet,
-                failure);
+                failure));
+        }
+    }
+
+    private void Record(ViewportPresentationExecutionResult<TTile> result)
+    {
+        if (!result.Executed)
+            return;
+
+        Interlocked.Increment(ref _executed);
+        Interlocked.Add(ref _renderedUnits, result.Delivery.RenderedUnits);
+
+        lock (_statisticsSync)
+        {
+            _lastGeneration = result.Generation;
+            _lastSequence = result.Packet?.Token.Sequence;
+        }
+
+        if (result.Presented)
+        {
+            Interlocked.Increment(ref _presented);
+            return;
+        }
+
+        if (result.Superseded)
+        {
+            Interlocked.Increment(ref _superseded);
+            return;
+        }
+
+        switch (result.Delivery.Status)
+        {
+            case ViewportRenderDeliveryStatus.Cancelled:
+                Interlocked.Increment(ref _cancelled);
+                break;
+            case ViewportRenderDeliveryStatus.Deferred:
+                Interlocked.Increment(ref _deferred);
+                break;
+            case ViewportRenderDeliveryStatus.Failed:
+                Interlocked.Increment(ref _failed);
+                break;
         }
     }
 
