@@ -575,6 +575,18 @@ Assert(
     "Pixel rectangle intersection should return the overlapping region.",
     failures);
 
+var scaledRoi = roi.ScaleAroundCenter(2, 0.5);
+Assert(
+    scaledRoi == new Asun.Vision.Contracts.PixelRect(0, 75, 400, 50),
+    "Pixel rectangle center scaling should preserve the center.",
+    failures);
+
+var expandedRoi = roi.ExpandToInclude(new Asun.Vision.Contracts.PixelPoint(50, 300));
+Assert(
+    expandedRoi == new Asun.Vision.Contracts.PixelRect(50, 50, 250, 250),
+    "Pixel rectangle expansion should include the requested point.",
+    failures);
+
 var inflated = roi.Inflate(10, 20);
 Assert(
     inflated == new Asun.Vision.Contracts.PixelRect(90, 30, 220, 140),
