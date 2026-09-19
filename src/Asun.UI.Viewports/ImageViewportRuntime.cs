@@ -63,6 +63,8 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
 
     public int CacheCapacity => _loader.Cache.Capacity;
 
+    public Vector2 TileSize => _viewport.TileSize;
+
     public bool IsPanning
     {
         get
@@ -436,6 +438,7 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
         IReadOnlyList<TileLoadFailure<TTile>> failures) =>
         new(
             transform,
+            _viewport.TileSize,
             requests,
             new Dictionary<TileIndex, TTile>(loaded),
             failures.ToArray());
