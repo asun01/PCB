@@ -313,6 +313,14 @@ Assert(
 
 Assert(transform.IsInvertible, "A non-singular affine transform should be invertible.", failures);
 
+var expectedComposedPoint = new System.Numerics.Vector2(20, 34);
+var actualComposedPoint = transform.TransformPoint(new System.Numerics.Vector2(5, 7));
+Assert(
+    Math.Abs(actualComposedPoint.X - expectedComposedPoint.X) < 1e-4f &&
+    Math.Abs(actualComposedPoint.Y - expectedComposedPoint.Y) < 1e-4f,
+    "Affine transform composition should apply transforms in declared order.",
+    failures);
+
 var clampedZoom = viewport.WithScaleAroundClamped(
     requestedScale: 100,
     minScale: 0.5,
