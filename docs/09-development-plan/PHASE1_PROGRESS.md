@@ -1641,3 +1641,25 @@ Current continuous execution position:
 - completed through Stage 30000;
 - next natural stage: 30001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 30001→30500 render replay integrity hardening — 2026-09-20
+
+Completed stages 30001–30500.
+
+Implemented:
+- ProductionRenderReplayFrameIntegrity;
+- creation from real ProductionSessionReport + ViewportRenderFrameSummary;
+- reuse of the existing ViewportRenderFrameFingerprintRuntime;
+- independent replay validation that recomputes render fingerprints from retained summaries;
+- dedicated exact 100-round Smoke using real ViewportRenderPipelineRuntime outputs.
+
+Boundary:
+- render bridge remains framework-neutral;
+- Production Runtime remains independent of Skia/WPF/DevExpress;
+- no pixel-golden or hardware authority was invented.
+
+Current continuous execution position:
+- completed through Stage 30500;
+- next natural stage: 30501;
+- global one-million-stage horizon remains 2501–1002500.
