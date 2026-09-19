@@ -543,3 +543,58 @@ Verification:
 Current continuous execution position:
 - completed through Stage 8700 in the active 4501–104500 window;
 - next natural stage: 8701.
+
+
+### 8701→8800 exact evidence-link diff hardening — 2026-09-19
+
+Completed stages 8701–8800.
+
+Implemented:
+- QualityInspectionEvidenceDiff;
+- QualityInspectionEvidenceDiffRuntime;
+- QualityInspectionEvidenceDiffValidationRuntime;
+- exact relationship-level evidence diff Smoke.
+
+Real semantic hardening:
+- evidence deltas are computed over (FindingId, EvidenceKey) pairs rather than projecting only the opaque evidence key;
+- the same evidence key moving from one Finding to another is now visible as one removed relationship plus one added relationship.
+
+Verification:
+- 10 loop groups and explicit round == 100;
+- balanced source delimiters;
+- no placeholder implementation or vendor-specific authority.
+
+### 8801→8900 deterministic audit projection — 2026-09-19
+
+Completed stages 8801–8900.
+
+Implemented:
+- QualityInspectionAuditRecord;
+- QualityInspectionAuditRuntime;
+- QualityInspectionAuditValidationRuntime;
+- exact 100-round audit Smoke.
+
+Audit boundary:
+- carries result identity, snapshot identity, sequence, finding count, evidence-link count, and canonical content fingerprint;
+- contains no timestamp and does not define persistence/storage semantics;
+- remains independent of AOI/SPI/customer acceptance policy.
+
+### 8901→9000 inspection chain integration — 2026-09-19
+
+Completed stages 8901–9000.
+
+Implemented:
+- QualityInspectionChainValidationRuntime;
+- exact 100-round chain Smoke integrating result validation, sequence relation, finding diff, exact evidence-link diff, and audit validation.
+
+Closed acceptance asset:
+- PHASE1_8501_9000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- static acceptance completed for the integrated chain assets;
+- no build/test/CI success is claimed without authoritative execution evidence;
+- GitHub workflow lookup returned no associated run for the latest checked commit.
+
+Current continuous execution position:
+- completed through Stage 9000 in the active 4501–104500 window;
+- next natural stage: 9001.
