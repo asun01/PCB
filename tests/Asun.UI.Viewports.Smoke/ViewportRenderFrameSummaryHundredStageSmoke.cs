@@ -59,24 +59,7 @@ public static class ViewportRenderFrameSummaryHundredStageSmoke
             TileRequest request,
             System.Drawing.RectangleF imageRectangle,
             CancellationToken cancellationToken=default)=>
-            ValueTask.FromResult($"tile:{request.Index.X},{request.Index.Y}");
-    }
-    }
-
-    private static ViewportRenderCommandStream CreateStream()
-    {
-        var workItems=new[]
-        {
-            ViewportRenderWorkItem.CreateTile(1,1,1),
-            ViewportRenderWorkItem.CreateRoi(2,false),
-            ViewportRenderWorkItem.CreateOverlay(3),
-            ViewportRenderWorkItem.CreateRoi(4,true)
-        };
-
-        var batch=ViewportRenderBatch.Create(42,workItems,new[]{
-            new System.Drawing.RectangleF(0,0,100,100)
-        });
-
-        return ViewportRenderCommandStreamRuntime.Build(batch);
+            ValueTask.FromResult(
+                $"tile:{request.Index.X},{request.Index.Y}");
     }
 }
