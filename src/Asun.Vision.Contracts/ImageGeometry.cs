@@ -39,6 +39,20 @@ public readonly record struct PixelPoint(double X, double Y)
     public double DistanceTo(PixelPoint other) =>
         Math.Sqrt(DistanceSquaredTo(other));
 
+    public PixelPoint Translate(double deltaX, double deltaY)
+    {
+        if (!double.IsFinite(deltaX) || !double.IsFinite(deltaY))
+            throw new ArgumentOutOfRangeException(nameof(deltaX));
+
+        var x = X + deltaX;
+        var y = Y + deltaY;
+
+        if (!double.IsFinite(x) || !double.IsFinite(y))
+            throw new ArgumentOutOfRangeException(nameof(deltaX));
+
+        return new PixelPoint(x, y);
+    }
+
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
 {
     public static PixelRect FromPoints(PixelPoint first, PixelPoint second)
