@@ -32,6 +32,17 @@ public static class ViewportRenderBudgetSmoke
                 frame,
                 ViewportDirtyFlags.All);
 
+            var prioritized = ViewportRenderPriorityRuntime.Prioritize(
+                plan,
+                frame);
+
+            assert(
+                prioritized.Items.Count > 0 &&
+                prioritized.Items[0].Kind == ViewportRenderWorkKind.FullSurface &&
+                prioritized.Items.Skip(1).Any(item =>
+                    item.Kind == ViewportRenderWorkKind.Tile),
+                $"Budget chain {i + 1} should clear the full surface before drawing tiles.");
+
             var budget = new ViewportRenderBudget(
                 MaxTileWork: 4 + i % 5,
                 MaxRoiWork: 4 + i % 7,
@@ -79,6 +90,15 @@ public static class ViewportRenderBudgetSmoke
             var incrementalPlan = ViewportRenderWorkRuntime.Plan(
                 incremental,
                 incremental.DirtyFlags);
+
+            var incrementalPrioritized = ViewportRenderPriorityRuntime.Prioritize(
+                incrementalPlan,
+                incremental);
+
+            assert(
+                incrementalPrioritized.Items.Count > 0 &&
+                incrementalPrioritized.Items[0].IsInvalidation,
+                $"Budget chain {i + 1} should invalidate stale ROI regions before redraw.");
 
             assert(
                 incrementalPlan.Items.Any(item => item.IsInvalidation) &&
