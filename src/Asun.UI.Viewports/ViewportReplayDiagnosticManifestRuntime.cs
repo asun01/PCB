@@ -171,8 +171,11 @@ public static class ViewportReplayDiagnosticManifestRuntime
         string name,
         string value)
     {
-        if (value.Length != 64)
+        if (string.IsNullOrWhiteSpace(value) ||
+            value.Length != 64)
+        {
             errors.Add(
                 $"{name} must be a SHA-256 length hash.");
+        }
     }
 }
