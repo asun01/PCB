@@ -8,93 +8,103 @@ public static class ViewportRenderPipelineSmoke
     {
         for (var i = 0; i < 500; i++)
         {
-            using var runtime = new ViewportCompositeRuntime<string>(
-                new Vector2(1600 + i % 11 * 37, 1200 + i % 13 * 31),
-                new Vector2(500 + i % 7 * 20, 400 + i % 5 * 15),
+            using var pipeline = new ViewportRenderPipelineRuntime<string>(
+                new Vector2(3000 + i % 13 * 29, 2200 + i % 17 * 23),
+                new Vector2(700 + i % 5 * 20, 500 + i % 7 * 15),
                 new Vector2(100, 100),
                 1,
-                64,
+                96,
                 4,
-                new LocalTileSource());
+                new LocalTileSource(),
+                new ViewportRenderBudget(
+                    8,
+                    16,
+                    2,
+                    24),
+                120);
 
-            runtime.AddRoi(
+            var center = new Vector2(
+                320 + i % 13 * 14,
+                260 + i % 11 * 12);
+
+            pipeline.Composite.AddRoi(
                 RoiGeometry.CreateRectangle(
-                    new Vector2(300 + i % 9 * 11, 240 + i % 7 * 9),
-                    new Vector2(90, 60)));
+                    center,
+                    new Vector2(110, 80)));
 
-            runtime.PanBy(
-                new Vector2(5 - i % 3, 3 - i % 2));
+            pipeline.Composite.DuplicateSelected(
+                new Vector2(130, 90));
 
-            var frame = await runtime.RefreshAsync(
+            pipeline.Composite.PanBy(
+                new Vector2(
+                    4 - i % 3,
+                    2 + i % 2));
+
+            pipeline.SubmitPointer(
+                new Vector2(
+                    100 + i % 20,
+                    80 + i % 15));
+
+            pipeline.SubmitPointer(
+                new Vector2(
+                    101 + i % 20,
+                    82 + i % 15));
+
+            var result = await pipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1),
                 includePrefetch: i % 2 == 0);
 
-            var scheduler = new ViewportRenderSchedulerRuntime(120);
-            scheduler.Submit(
-                ViewportDirtyFlags.Image |
-                ViewportDirtyFlags.Roi |
-                ViewportDirtyFlags.Selection,
-                frame.Generation);
+            assert(
+                result is not null &&
+                result.Accepted,
+                $"Pipeline chain {i + 1} should accept its first frame.");
 
-            scheduler.SubmitPointer(
-                new Vector2(i % 100, i % 80));
-            scheduler.SubmitPointer(
-                new Vector2(i % 100 + 1, i % 80 + 2));
-
-            var now = DateTimeOffset.UtcNow.AddSeconds(1);
-            var accepted = scheduler.TryTakeFrame(
-                now,
-                out var submission);
+            if (result is null)
+                continue;
 
             assert(
-                accepted &&
-                submission.DirtyFlags.HasFlag(ViewportDirtyFlags.Image) &&
-                submission.DirtyFlags.HasFlag(ViewportDirtyFlags.Roi) &&
-                submission.Generation == frame.Generation,
-                $"Render pipeline {i + 1} should schedule one coalesced frame.");
+                result.Composite.IsReady &&
+                result.Composite.Roi.Document.Items.Count == 2,
+                $"Pipeline chain {i + 1} should produce a ready composite frame.");
 
             assert(
-                scheduler.TryTakePointer(out var pointer) &&
-                pointer.Position == new Vector2(i % 100 + 1, i % 80 + 2),
-                $"Render pipeline {i + 1} should coalesce pointer input to the latest event.");
-
-            var plan = ViewportRenderWorkRuntime.Plan(
-                frame,
-                submission.DirtyFlags);
-
-            var regions = ViewportRenderRegionRuntime.ClipAndMerge(
-                plan.Items.Select(item => item.Bounds),
-                frame.Tiles.Transform);
+                result.WorkPlan.Generation == result.Composite.Generation &&
+                result.Batch.Generation == result.Composite.Generation &&
+                result.Batch.ItemCount == result.WorkPlan.Items.Count,
+                $"Pipeline chain {i + 1} should preserve generation across all layers.");
 
             assert(
-                plan.Items.Count > 0 &&
-                plan.Generation == frame.Generation &&
-                regions.Count > 0,
-                $"Render pipeline {i + 1} should produce clipped render work.");
-
-            var tileWork = plan.Items.Count(
-                item => item.Kind == ViewportRenderWorkKind.Tile);
-
-            var roiWork = plan.Items.Count(
-                item => item.Kind == ViewportRenderWorkKind.Roi);
+                result.Batch.RegionCount > 0 &&
+                result.Batch.Regions.All(region =>
+                    region.Left >= 0 &&
+                    region.Top >= 0 &&
+                    region.Right <= result.Composite.Tiles.Transform.ViewportSize.X + 1e-4f &&
+                    region.Bottom <= result.Composite.Tiles.Transform.ViewportSize.Y + 1e-4f),
+                $"Pipeline chain {i + 1} should return viewport-clipped render regions.");
 
             assert(
-                tileWork > 0 &&
-                roiWork > 0,
-                $"Render pipeline {i + 1} should combine tile and ROI render work.");
+                pipeline.TryTakePointer(out var pointer) &&
+                pointer.Position == new Vector2(
+                    101 + i % 20,
+                    82 + i % 15),
+                $"Pipeline chain {i + 1} should preserve the latest coalesced pointer.");
 
-            runtime.PanBy(new Vector2(4, 1));
-            var nextFrame = await runtime.RefreshAsync();
+            pipeline.Composite.PanBy(new Vector2(5, 1));
 
-            var nextPlan = ViewportRenderWorkRuntime.Plan(
-                nextFrame,
-                ViewportDirtyFlags.Image |
-                ViewportDirtyFlags.Transform |
-                ViewportDirtyFlags.Roi);
+            var second = await pipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(2));
 
             assert(
-                nextPlan.Generation == nextFrame.Generation &&
-                nextPlan.Items.Any(item => item.Kind == ViewportRenderWorkKind.Tile),
-                $"Render pipeline {i + 1} should rebuild tile work after navigation.");
+                second is not null &&
+                second.Composite.Tiles.Transform == second.Composite.Roi.Transform &&
+                second.Batch.Generation == second.Composite.Generation,
+                $"Pipeline chain {i + 1} should continue after navigation.");
+
+            pipeline.Reset();
+
+            assert(
+                pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None,
+                $"Pipeline chain {i + 1} reset should clear pending scheduler work.");
         }
     }
 
