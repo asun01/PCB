@@ -86,6 +86,26 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
             newHeight);
     }
 
+    public PixelRect ClampTo(PixelRect bounds)
+    {
+        if (!IsValid)
+            throw new InvalidOperationException("The current rectangle is invalid.");
+
+        if (!bounds.IsValid)
+            throw new ArgumentException("The bounds rectangle is invalid.", nameof(bounds));
+
+        var left = Math.Clamp(Left, bounds.Left, bounds.Right);
+        var top = Math.Clamp(Top, bounds.Top, bounds.Bottom);
+        var right = Math.Clamp(Right, bounds.Left, bounds.Right);
+        var bottom = Math.Clamp(Bottom, bounds.Top, bounds.Bottom);
+
+        return new PixelRect(
+            left,
+            top,
+            Math.Max(0, right - left),
+            Math.Max(0, bottom - top));
+    }
+
     public PixelRect Intersect(PixelRect other)
     {
         if (!IsValid)
