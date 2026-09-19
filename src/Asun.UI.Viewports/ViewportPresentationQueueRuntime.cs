@@ -32,7 +32,9 @@ public readonly record struct ViewportPresentationQueueStatistics(
     int Pending,
     long? LatestGeneration,
     long? PresentedGeneration,
-    long? PresentedSequence);
+    long? PresentedSequence,
+    long? InFlightGeneration,
+    long? InFlightSequence);
 
 public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 {
@@ -78,7 +80,9 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                     _pending.Count,
                     _latestGeneration,
                     _presentedGeneration,
-                    _presentedSequence);
+                    _presentedSequence,
+                    _inFlight?.Token.Generation,
+                    _inFlight?.Token.Sequence);
             }
         }
     }
