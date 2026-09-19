@@ -9,9 +9,14 @@ public enum ViewportRenderSurfaceState
     Disposed
 }
 
+public readonly record struct ViewportRenderSurfaceTransaction(
+    long Generation,
+    long Sequence);
+
 public readonly record struct ViewportRenderSurfaceSnapshot(
     ViewportRenderSurfaceState State,
     long? RenderingGeneration,
+    long? RenderingSequence,
     long? PresentedGeneration,
     long? DiscardedGeneration,
     ViewportRenderDeliveryStatus? LastDiscardStatus,
@@ -29,6 +34,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
     private int _disposed;
     private ViewportRenderSurfaceState _state = ViewportRenderSurfaceState.Idle;
     private long? _renderingGeneration;
+    private long? _renderingSequence;
     private long? _presentedGeneration;
     private long? _discardedGeneration;
     private ViewportRenderDeliveryStatus? _lastDiscardStatus;
@@ -56,6 +62,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
                 return new(
                     _state,
                     _renderingGeneration,
+                    _renderingSequence,
                     _presentedGeneration,
                     _discardedGeneration,
                     _lastDiscardStatus,
@@ -67,7 +74,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
         }
     }
 
-    public void Begin(long generation)
+    public ViewportRenderSurfaceTransaction Begin(long generation)
     {
         lock (_sync)
         {
@@ -81,21 +88,23 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             }
 
             if (_state == ViewportRenderSurfaceState.Rendering)
-            {
-                if (_renderingGeneration == generation)
-                    return;
-
                 throw new InvalidOperationException(
-                    "A different render generation is already in progress.");
-            }
+                    "A render surface transaction is already in progress.");
+
+            var transaction = new ViewportRenderSurfaceTransaction(
+                generation,
+                _presentationSequence + 1);
 
             _state = ViewportRenderSurfaceState.Rendering;
             _renderingGeneration = generation;
+            _renderingSequence = transaction.Sequence;
+
+            return transaction;
         }
     }
 
     public void Commit(
-        long generation,
+        ViewportRenderSurfaceTransaction transaction,
         int plannedUnits,
         int renderedUnits,
         IReadOnlyList<System.Drawing.RectangleF>? regions = null)
@@ -111,9 +120,10 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             ThrowIfDisposed();
 
             if (_state != ViewportRenderSurfaceState.Rendering ||
-                _renderingGeneration != generation)
+                _renderingGeneration != transaction.Generation ||
+                _renderingSequence != transaction.Sequence)
                 throw new InvalidOperationException(
-                    "Only the active rendering generation can be committed.");
+                    "Only the active surface transaction can be committed.");
 
             _lastPlannedUnits = plannedUnits;
             _lastRenderedUnits = renderedUnits;
@@ -128,7 +138,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
     }
 
     public void Discard(
-        long generation,
+        ViewportRenderSurfaceTransaction transaction,
         ViewportRenderDeliveryStatus status = ViewportRenderDeliveryStatus.Failed)
     {
         lock (_sync)
@@ -136,11 +146,13 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             ThrowIfDisposed();
 
             if (_state != ViewportRenderSurfaceState.Rendering ||
-                _renderingGeneration != generation)
+                _renderingGeneration != transaction.Generation ||
+                _renderingSequence != transaction.Sequence)
                 return;
 
             _renderingGeneration = null;
-            _discardedGeneration = generation;
+            _renderingSequence = null;
+            _discardedGeneration = transaction.Generation;
             _lastDiscardStatus = status;
             _state = ViewportRenderSurfaceState.Discarded;
         }
@@ -153,6 +165,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             ThrowIfDisposed();
 
             _renderingGeneration = null;
+            _renderingSequence = null;
             _presentedGeneration = null;
             _discardedGeneration = null;
             _lastDiscardStatus = null;
@@ -173,6 +186,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
         {
             _state = ViewportRenderSurfaceState.Disposed;
             _renderingGeneration = null;
+            _renderingSequence = null;
         }
     }
 
