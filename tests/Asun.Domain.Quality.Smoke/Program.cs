@@ -1,0 +1,24 @@
+var failures = new List<string>();
+
+void Assert(bool condition, string message)
+{
+    if (!condition)
+        failures.Add(message);
+}
+
+QualityOutcomeValidationHundredStageSmoke.Run(Assert);
+QualitySeverityValidationHundredStageSmoke.Run(Assert);
+QualityFindingIdValidationHundredStageSmoke.Run(Assert);
+QualityFindingValidationHundredStageSmoke.Run(Assert);
+QualityFindingSetValidationHundredStageSmoke.Run(Assert);
+
+if (failures.Count > 0)
+{
+    foreach (var failure in failures)
+        Console.Error.WriteLine($"FAIL: {failure}");
+
+    return 1;
+}
+
+Console.WriteLine("Asun.Domain.Quality smoke tests passed.");
+return 0;
