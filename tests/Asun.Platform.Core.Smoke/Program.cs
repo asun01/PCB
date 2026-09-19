@@ -507,6 +507,12 @@ Assert(
     failures);
 
 var expectedComposedPoint = new System.Numerics.Vector2(20, 34);
+
+var transformedDirection = transform.TransformDirection(new System.Numerics.Vector2(1, 2));
+Assert(
+    transformedDirection == new System.Numerics.Vector2(2, 4),
+    "Affine direction transforms should ignore translation.",
+    failures);
 var actualComposedPoint = transform.TransformPoint(new System.Numerics.Vector2(5, 7));
 Assert(
     Math.Abs(actualComposedPoint.X - expectedComposedPoint.X) < 1e-4f &&
