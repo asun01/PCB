@@ -15,6 +15,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Print runner diagnostics
+        run: |
+          set -euxo pipefail
+          python3 --version
+          pwd
+          git rev-parse --show-toplevel
+          find tools -maxdepth 1 -type f -name '*.py' -print | sort
+
+      - name: Validate CI prerequisites
+        run: python3 tools/validate_ci_prerequisites.py
+
       - name: Python syntax check
         run: python3 -m py_compile tools/*.py
 
