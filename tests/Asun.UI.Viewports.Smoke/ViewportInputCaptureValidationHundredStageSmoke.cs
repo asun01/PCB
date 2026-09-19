@@ -48,9 +48,13 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
                 capture.Owner == ViewportInputOwner.None,
                 $"right-button round {i + 1} should not acquire capture.");
 
-        Check(
-            capture.TryCapture(ViewportInputOwner.Overlay),
-            "external owner should acquire capture.");
+        var externalCaptured = capture.TryCapture(ViewportInputOwner.Overlay);
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                externalCaptured &&
+                capture.Owner == ViewportInputOwner.Overlay,
+                $"external ownership round {i + 1} should be established.");
 
         var blockedRouter = new ViewportInputRouterRuntime(
             gestures,
@@ -88,12 +92,18 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
             capture.Owner == ViewportInputOwner.Overlay,
             "foreign Escape should not release the overlay owner.");
 
-        Check(
-            ViewportInputCaptureValidationRuntime.IsOwnedBy(
-                capture.Owner,
-                ViewportInputOwner.Overlay) &&
-            blockedMove == default,
-            "capture validation should preserve foreign ownership.");
+        for (var i = 0; i < 10; i++)
+            Check(
+                ViewportInputCaptureValidationRuntime.IsOwnedBy(
+                    capture.Owner,
+                    ViewportInputOwner.Overlay) &&
+                blockedMove == default,
+                $"foreign ownership validation round {i + 1} should remain intact.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                blockedRouter.CapturedOwner == ViewportInputOwner.None,
+                $"blocked router ownership round {i + 1} should remain empty.");
 
         assert(
             round == 100,
