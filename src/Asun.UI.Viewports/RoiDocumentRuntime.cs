@@ -148,8 +148,17 @@ public sealed class RoiDocumentRuntime
 
         lock (_sync)
         {
+            var entryId = id ?? Guid.NewGuid();
+            if (entryId == Guid.Empty)
+                throw new ArgumentOutOfRangeException(nameof(id));
+
+            if (FindEntryUnsafe(entryId) is not null)
+                throw new ArgumentException(
+                    "The ROI id is already present in the document.",
+                    nameof(id));
+
             var before = CreateSnapshotUnsafe();
-            var entry = new Entry(id ?? Guid.NewGuid(), new RoiEditorRuntime());
+            var entry = new Entry(entryId, new RoiEditorRuntime());
             entry.Editor.SetGeometry(geometry, commit: true);
             _entries.Add(entry);
             _selectedId = entry.Id;
