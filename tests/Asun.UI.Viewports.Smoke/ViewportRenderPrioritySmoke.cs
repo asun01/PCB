@@ -44,13 +44,13 @@ public static class ViewportRenderPrioritySmoke
                 prioritized.Generation == frame.Generation,
                 $"Priority chain {i + 1} should preserve every work item and generation.");
 
-            var firstNonTile = prioritized.Items
-                .FirstOrDefault(item => item.Kind != ViewportRenderWorkKind.Tile);
+            var firstRoi = prioritized.Items
+                .FirstOrDefault(item => item.Kind == ViewportRenderWorkKind.Roi);
 
-            if (firstNonTile.Kind == ViewportRenderWorkKind.Roi)
+            if (firstRoi.RoiId != Guid.Empty)
             {
                 assert(
-                    firstNonTile.RoiId == first,
+                    firstRoi.RoiId == first,
                     $"Priority chain {i + 1} should promote selected ROI work.");
             }
 
