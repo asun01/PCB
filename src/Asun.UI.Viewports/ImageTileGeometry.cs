@@ -342,6 +342,42 @@ public static class ImageTileGeometry
             Math.Clamp(tileIndex.Y, 0, gridSize.Y - 1));
     }
 
+    public static IReadOnlyList<TileIndex> GetNeighbors(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        TileIndex tileIndex,
+        bool includeDiagonals = true)
+    {
+        if (!ContainsTile(imageSize, tileSize, tileIndex))
+            throw new ArgumentOutOfRangeException(nameof(tileIndex));
+
+        var neighbors = new List<TileIndex>();
+
+        for (var y = -1; y <= 1; y++)
+        {
+            for (var x = -1; x <= 1; x++)
+            {
+                if (x == 0 && y == 0)
+                    continue;
+
+                if (!includeDiagonals && x != 0 && y != 0)
+                    continue;
+
+                var candidate = new TileIndex(
+                    tileIndex.X + x,
+                    tileIndex.Y + y);
+
+                if (ContainsTile(imageSize, tileSize, candidate))
+                    neighbors.Add(candidate);
+            }
+        }
+
+        return neighbors
+            .OrderBy(item => item.Y)
+            .ThenBy(item => item.X)
+            .ToArray();
+    }
+
     public static RectangleF GetTileRectangle(
         Vector2 imageSize,
         Vector2 tileSize,
