@@ -51,6 +51,29 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         _resources = resources;
     }
 
+    public bool IsDisposed => Volatile.Read(ref _disposed) != 0;
+
+    public IReadOnlyList<TKey> ResourceKeys =>
+        _resources.Keys.ToArray();
+
+    public bool TryGetCapacity(TKey resource, out int capacity)
+    {
+        if (IsDisposed)
+        {
+            capacity = 0;
+            return false;
+        }
+
+        if (!_resources.TryGetValue(resource, out var entry))
+        {
+            capacity = 0;
+            return false;
+        }
+
+        capacity = entry.Capacity;
+        return true;
+    }
+
     public int Capacity(TKey resource)
     {
         ThrowIfDisposed();
