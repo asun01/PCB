@@ -230,6 +230,29 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         return new PixelRect(left, top, right - left, bottom - top);
     }
 
+    public bool TryIntersect(PixelRect other, out PixelRect intersection)
+    {
+        if (!IsValid)
+            throw new InvalidOperationException("The current rectangle is invalid.");
+
+        if (!other.IsValid)
+            throw new ArgumentException("The other rectangle is invalid.", nameof(other));
+
+        var left = Math.Max(Left, other.Left);
+        var top = Math.Max(Top, other.Top);
+        var right = Math.Min(Right, other.Right);
+        var bottom = Math.Min(Bottom, other.Bottom);
+
+        if (right < left || bottom < top)
+        {
+            intersection = default;
+            return false;
+        }
+
+        intersection = new PixelRect(left, top, right - left, bottom - top);
+        return true;
+    }
+
     public PixelRect Intersect(PixelRect other)
     {
         if (!IsValid)
