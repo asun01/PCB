@@ -47,12 +47,12 @@ public static class ViewportRenderPriorityRuntime
         IReadOnlySet<Guid> selectedIds)
     {
         if (isInvalidation)
-            return -1;
+            return -2;
 
         return kind switch
         {
+            ViewportRenderWorkKind.FullSurface => -1,
             ViewportRenderWorkKind.Tile => 0,
-            ViewportRenderWorkKind.FullSurface => 1,
             ViewportRenderWorkKind.Roi when selectedIds.Contains(roiId) => 2,
             ViewportRenderWorkKind.Roi => 3,
             ViewportRenderWorkKind.Selection => 4,
