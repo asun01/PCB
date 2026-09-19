@@ -250,11 +250,11 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                 return;
 
             var existing = _deferredWork;
-            var items = existing is null
-                ? frame.WorkPlan.Items.ToArray()
-                : frame.WorkPlan.Items
-                    .Concat(existing.Items)
-                    .ToArray();
+            var items = (existing is null
+                    ? frame.WorkPlan.Items
+                    : frame.WorkPlan.Items.Concat(existing.Items))
+                .Distinct()
+                .ToArray();
 
             _deferredWork = new ViewportRenderWorkPlan(
                 items,
