@@ -514,6 +514,12 @@ Assert(
     "Affine direction transforms should ignore translation.",
     failures);
 var actualComposedPoint = transform.TransformPoint(new System.Numerics.Vector2(5, 7));
+var transformedRectangle = transform.TransformRectangle(new RectangleF(0, 0, 10, 20));
+Assert(
+    transformedRectangle == new RectangleF(10, 20, 20, 40),
+    "Affine rectangle transform should return the axis-aligned transformed bounds.",
+    failures);
+
 Assert(
     Math.Abs(actualComposedPoint.X - expectedComposedPoint.X) < 1e-4f &&
     Math.Abs(actualComposedPoint.Y - expectedComposedPoint.Y) < 1e-4f,
