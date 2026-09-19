@@ -43,13 +43,3 @@ public interface IViewportRenderSink<TTile>
         ViewportRenderFrameContext context,
         CancellationToken cancellationToken = default);
 }
-
-public static class ViewportRenderSinkExtensions
-{
-    public static RectangleF GetViewportBounds(
-        ViewportRenderPipelineFrame<object> frame)
-    {
-        var size = frame.Composite.Tiles.Transform.ViewportSize;
-        return new RectangleF(0, 0, size.X, size.Y);
-    }
-}
