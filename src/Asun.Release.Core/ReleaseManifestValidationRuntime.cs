@@ -24,13 +24,17 @@ public static class ReleaseManifestValidationRuntime
             errors.Add("Release artifacts must use canonical path ordering.");
         }
 
-        if(manifest.Fingerprint.Length!=64 ||
-           !manifest.Fingerprint.All(character=>
-               Uri.IsHexDigit(character) &&
-               char.ToLowerInvariant(character)==character))
-        {
+        var fingerprintShapeValid=
+            manifest.Fingerprint.Length==64 &&
+            manifest.Fingerprint.All(character=>
+                Uri.IsHexDigit(character) &&
+                char.ToLowerInvariant(character)==character);
+
+        if(!fingerprintShapeValid)
             errors.Add("Release manifest fingerprint must be 64 lowercase hexadecimal characters.");
-        }
+
+        if(errors.Count>0)
+            return errors;
 
         var expected=ReleaseManifestRuntime.Create(
             manifest.Identity,
