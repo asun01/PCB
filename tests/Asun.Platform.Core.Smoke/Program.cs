@@ -1469,9 +1469,11 @@ Assert(
     "Saturated resources should time out deterministically for synchronous lease acquisition.",
     failures);
 
+using var infiniteLeaseCancellation = new CancellationTokenSource();
 var infiniteLeaseTask = resources.AcquireAsync(
     "camera",
-    Timeout.InfiniteTimeSpan).AsTask();
+    Timeout.InfiniteTimeSpan,
+    infiniteLeaseCancellation.Token).AsTask();
 
 Assert(!infiniteLeaseTask.IsCompleted, "Infinite lease waits should remain pending while capacity is saturated.", failures);
 
@@ -1505,6 +1507,19 @@ Assert(
 cameraLease!.Dispose();
 Assert(cameraLease.IsDisposed, "Disposed resource leases should report released state.", failures);
 using var secondCameraLease = await waitingLeaseTask;
+
+infiniteLeaseCancellation.Cancel();
+var infiniteLeaseCancelled = false;
+try
+{
+    await infiniteLeaseTask;
+}
+catch (OperationCanceledException)
+{
+    infiniteLeaseCancelled = true;
+}
+
+Assert(infiniteLeaseCancelled, "Infinite resource waits should honor cancellation.", failures);
 Assert(!secondCameraLease.IsDisposed, "A newly acquired resource lease should be active.", failures);
 Assert(resources.Available("camera") == 0, "Acquired lease should consume the available slot.", failures);
 
