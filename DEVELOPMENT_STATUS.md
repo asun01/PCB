@@ -96,3 +96,17 @@ Verification note:
 Verification note:
 - Repository implementation and smoke wiring are completed through the GitHub repository workflow.
 - No local build/test execution result is asserted from this environment; external CI/build execution remains the authoritative compile/test verification path.
+
+### Latest presentation transaction / reuse closure — 2026-09-19
+- Render sinks now have optional transactional Commit/Discard callbacks after EndFrame, keeping the framework-neutral contract compatible with existing sinks through default no-op methods.
+- Added ViewportRenderSurfaceRuntime with explicit Idle/Rendering/Presented/Discarded/Disposed state and generation-aware commit/discard semantics.
+- Continuous Presentation Runtime owns the render surface and commits it only after successful delivery; failed, cancelled, and deferred frames are discarded instead of being presented.
+- Presentation diagnostics now expose the last surface snapshot alongside the last frame state.
+- Rendered frames enter reusable-frame cache only after explicit presentation (MarkPresented); RefreshAsync no longer caches frames that have not reached the surface commit stage.
+- Reuse smoke coverage now proves an unpresented pipeline frame is not reusable and becomes reusable only after MarkPresented.
+- Added surface transaction smoke coverage for successful commit, render failure discard, deferred discard, presentation reset, and best-effort discard cleanup.
+
+Verification note:
+- Implementation, integration, and smoke wiring were completed through the repository workflow.
+- No local build/test execution result is asserted from this environment.
+- The latest branch commits still require actual local/CI build and test execution for authoritative verification.
