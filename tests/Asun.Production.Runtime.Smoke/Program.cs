@@ -9,6 +9,7 @@ void Check(bool condition,string message)
 await ProductionSessionHundredStageSmoke.RunAsync(Check);
 await ProductionCancellationHundredStageSmoke.RunAsync(Check);
 await ProductionReleaseCandidateHundredStageSmoke.RunAsync(Check);
+await BoardProductionSessionHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
