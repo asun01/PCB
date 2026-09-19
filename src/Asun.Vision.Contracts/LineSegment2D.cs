@@ -97,6 +97,26 @@ public readonly record struct LineSegment2D(
             End = Start
         };
 
+    public LineSegment2D WithStart(Vector2 start)
+    {
+        EnsureFinite();
+
+        if (!float.IsFinite(start.X) || !float.IsFinite(start.Y))
+            throw new ArgumentOutOfRangeException(nameof(start));
+
+        return this with { Start = start };
+    }
+
+    public LineSegment2D WithEnd(Vector2 end)
+    {
+        EnsureFinite();
+
+        if (!float.IsFinite(end.X) || !float.IsFinite(end.Y))
+            throw new ArgumentOutOfRangeException(nameof(end));
+
+        return this with { End = end };
+    }
+
     public LineSegment2D Translate(Vector2 delta)
     {
         EnsureFinite();
