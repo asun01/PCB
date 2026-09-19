@@ -26,6 +26,39 @@ Assert(Math.Abs(latency.P50 - 30) < 1e-9, "Latency P50 should be deterministic."
 Assert(Math.Abs(latency.P95 - 48) < 1e-9, "Latency P95 should use interpolation.", failures);
 Assert(Math.Abs(latency.P99 - 49.6) < 1e-9, "Latency P99 should use interpolation.", failures);
 
+var execution = new List<string>();
+var pipeline = new AsyncPipeline<List<string>>(new[]
+{
+    new AsyncPipeline<List<string>>.Node(
+        "Acquire",
+        (_, _) =>
+        {
+            execution.Add("Acquire");
+            return ValueTask.CompletedTask;
+        }),
+    new AsyncPipeline<List<string>>.Node(
+        "Inspect",
+        new[] { "Acquire" },
+        (_, _) =>
+        {
+            execution.Add("Inspect");
+            return ValueTask.CompletedTask;
+        }),
+    new AsyncPipeline<List<string>>.Node(
+        "Report",
+        new[] { "Inspect" },
+        (_, _) =>
+        {
+            execution.Add("Report");
+            return ValueTask.CompletedTask;
+        })
+});
+await pipeline.ExecuteAsync(execution);
+Assert(
+    execution.SequenceEqual(new[] { "Acquire", "Inspect", "Report" }),
+    "Pipeline dependencies should be honored.",
+    failures);
+
 var queue = new BoundedWorkQueue<int>(2);
 Assert(queue.TryEnqueue(1), "First enqueue should succeed.", failures);
 Assert(queue.TryEnqueue(2), "Second enqueue should succeed.", failures);
