@@ -708,6 +708,20 @@ Assert(
     "Pixel rectangle LTRB factory should normalize direction.",
     failures);
 
+var midpoint = new Asun.Vision.Contracts.PixelPoint(0, 0)
+    .Midpoint(new Asun.Vision.Contracts.PixelPoint(10, 20));
+Assert(
+    midpoint == new Asun.Vision.Contracts.PixelPoint(5, 10),
+    "Pixel point midpoint should be deterministic.",
+    failures);
+
+var interpolated = new Asun.Vision.Contracts.PixelPoint(0, 0)
+    .Lerp(new Asun.Vision.Contracts.PixelPoint(10, 20), 0.25);
+Assert(
+    interpolated == new Asun.Vision.Contracts.PixelPoint(2.5, 5),
+    "Pixel point interpolation should be deterministic.",
+    failures);
+
 var dragRoi = Asun.Vision.Contracts.PixelRect.FromPoints(
     new Asun.Vision.Contracts.PixelPoint(300, 200),
     new Asun.Vision.Contracts.PixelPoint(100, 50));
