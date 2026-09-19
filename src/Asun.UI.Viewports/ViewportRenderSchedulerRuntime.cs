@@ -11,7 +11,7 @@ public readonly record struct ViewportRenderSchedulerStatistics(
     long RateLimited,
     long StaleRejected);
 
-public sealed class ViewportRenderSchedulerRuntime
+public sealed class ViewportRenderSchedulerRuntime : IDisposable
 {
     private readonly object _sync = new();
     private readonly ViewportFrameRateGate _rateGate;
@@ -25,6 +25,7 @@ public sealed class ViewportRenderSchedulerRuntime
     private long _acceptedFrames;
     private long _rateLimited;
     private long _staleRejected;
+    private int _disposed;
 
     public ViewportRenderSchedulerRuntime(
         double framesPerSecond = 60)
@@ -62,6 +63,8 @@ public sealed class ViewportRenderSchedulerRuntime
         ViewportDirtyFlags flags,
         long generation)
     {
+        ThrowIfDisposed();
+
         if (flags == ViewportDirtyFlags.None)
             return;
 
@@ -94,6 +97,7 @@ public sealed class ViewportRenderSchedulerRuntime
     public void SubmitPointer(
         System.Numerics.Vector2 position)
     {
+        ThrowIfDisposed();
         _pointerCoalescer.Submit(position);
     }
 
@@ -102,6 +106,8 @@ public sealed class ViewportRenderSchedulerRuntime
         out ViewportRenderSubmission submission,
         long minimumGeneration = 0)
     {
+        ThrowIfDisposed();
+
         lock (_sync)
         {
             if (_pendingFlags == ViewportDirtyFlags.None)
@@ -144,6 +150,7 @@ public sealed class ViewportRenderSchedulerRuntime
     public async ValueTask WaitForActivityAsync(
         CancellationToken cancellationToken = default)
     {
+        ThrowIfDisposed();
         cancellationToken.ThrowIfCancellationRequested();
 
         await _activitySignal
@@ -152,10 +159,16 @@ public sealed class ViewportRenderSchedulerRuntime
     }
 
     public bool TryTakePointer(
-        out CoalescedPointer pointer) =>
-        _pointerCoalescer.TryTakeLatest(out pointer);
+        out CoalescedPointer pointer)
+    {
+        ThrowIfDisposed();
+        return _pointerCoalescer.TryTakeLatest(out pointer);
+    }
 
-    public void Reset() {
+    public void Reset()
+    {
+        ThrowIfDisposed();
+
         lock (_sync)
         {
             _pendingFlags = ViewportDirtyFlags.None;
@@ -174,4 +187,16 @@ public sealed class ViewportRenderSchedulerRuntime
             Interlocked.Exchange(ref _staleRejected, 0);
         }
     }
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+            return;
+
+        _activitySignal.Dispose();
+        _pointerCoalescer.Clear();
+    }
+
+    private void ThrowIfDisposed() =>
+        ObjectDisposedException.ThrowIf(_disposed != 0, this);
 }
