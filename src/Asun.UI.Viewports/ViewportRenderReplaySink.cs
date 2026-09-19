@@ -24,7 +24,7 @@ public readonly record struct ViewportRenderReplayOperation(
     int RenderedUnits,
     ViewportRenderDeliveryStatus? DeliveryStatus);
 
-public readonly record struct ViewportRenderReplaySnapshot(
+public readonly partial record struct ViewportRenderReplaySnapshot(
     int OperationCount,
     long? LastGeneration,
     int BeginCount,
