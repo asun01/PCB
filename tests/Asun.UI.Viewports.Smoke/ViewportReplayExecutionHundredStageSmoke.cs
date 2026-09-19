@@ -288,7 +288,7 @@ public static class ViewportReplayExecutionHundredStageSmoke
             }
         }
 
-        Check(
+        assert(
             round == 100,
             $"Replay execution smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
