@@ -65,6 +65,12 @@ public readonly record struct Angle2D(double Radians)
         return new Angle2D(Radians + radians);
     }
 
+    public static Angle2D operator +(Angle2D left, Angle2D right) =>
+        new(left.Radians + right.Radians);
+
+    public static Angle2D operator -(Angle2D left, Angle2D right) =>
+        new(left.Radians - right.Radians);
+
     public static double Normalize(double radians)
     {
         if (!double.IsFinite(radians))
