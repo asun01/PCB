@@ -85,6 +85,22 @@ public static class RoiEditorValidationHundredStageSmoke
                 RoiEditorValidationRuntime.IsValid(afterCommit),
                 $"final ROI state round {i + 1} should remain valid.");
 
+        for (var i = 0; i < 10; i++)
+            Check(
+                afterCommit.Interaction.Kind == RoiInteractionKind.Idle,
+                $"final interaction round {i + 1} should be idle.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                afterCommit.Geometry is not null &&
+                afterCommit.CommittedGeometry is not null,
+                $"final geometry round {i + 1} should remain committed.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                afterCommit.Mode == RoiEditorMode.Select,
+                $"final mode round {i + 1} should return to Select.");
+
         assert(
             round == 100,
             $"ROI editor validation smoke should execute exactly 100 numbered rounds; actual {round}.");
