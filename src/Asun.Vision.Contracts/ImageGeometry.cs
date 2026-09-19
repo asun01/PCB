@@ -241,6 +241,14 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         return new PixelRect(left, top, right - left, bottom - top);
     }
 
+    public PixelRect Translate(PixelPoint delta)
+    {
+        if (!delta.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(delta));
+
+        return Translate(delta.X, delta.Y);
+    }
+
     public PixelRect Translate(double deltaX, double deltaY)
     {
         ValidateFinite(deltaX, nameof(deltaX));
