@@ -20,6 +20,23 @@ public sealed class AsyncSignal
     public void Signal() =>
         _ = TrySignal();
 
+    public async ValueTask WaitAsync(
+        TimeSpan timeout,
+        CancellationToken cancellationToken = default)
+    {
+        if (timeout < TimeSpan.Zero && timeout != Timeout.InfiniteTimeSpan)
+            throw new ArgumentOutOfRangeException(nameof(timeout));
+
+        if (timeout == Timeout.InfiniteTimeSpan)
+        {
+            await WaitAsync(cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (!await _completion.Task.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
+            throw new TimeoutException($"The signal was not set within {timeout}.");
+    }
+
     public async ValueTask WaitAsync(CancellationToken cancellationToken = default)
     {
         if (!cancellationToken.CanBeCanceled)
