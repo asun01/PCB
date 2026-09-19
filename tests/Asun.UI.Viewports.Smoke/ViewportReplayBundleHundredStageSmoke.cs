@@ -319,6 +319,52 @@ public static class ViewportReplayBundleHundredStageSmoke
                 $"manifest reconstruction {i + 1} should remain deterministic.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            Check(
+                ViewportReplaySessionBundleRuntime.Validate(original).Count == 0,
+                $"repeated validation {i + 1} should remain clean.");
+        }
+
+        for (var i = 0; i < 10; i++)
+        {
+            var rebuilt = ViewportReplaySessionBundleRuntime.Capture(
+                ViewportReplaySessionBundleRuntime.CreateManifest(
+                    original.Manifest.SessionId,
+                    original.Manifest.CreatedAtUtc,
+                    original.Inputs,
+                    original.Evidence,
+                    original.Audit),
+                original.Inputs,
+                original.Evidence,
+                original.Audit);
+
+            Check(
+                ViewportReplaySessionBundleRuntime.AreEquivalent(
+                    original,
+                    rebuilt),
+                $"repeated bundle comparison {i + 1} should remain equivalent.");
+        }
+
+        for (var i = 0; i < 7; i++)
+        {
+            var empty = ViewportReplaySessionBundleRuntime.Capture(
+                ViewportReplaySessionBundleRuntime.CreateManifest(
+                    $"empty-{i}",
+                    DateTimeOffset.UnixEpoch,
+                    Array.Empty<ViewportInputEvent>(),
+                    Array.Empty<ViewportRenderEvidenceManifest>(),
+                    Array.Empty<ViewportPresentationAuditEvent>()),
+                Array.Empty<ViewportInputEvent>(),
+                Array.Empty<ViewportRenderEvidenceManifest>(),
+                Array.Empty<ViewportPresentationAuditEvent>());
+
+            Check(
+                empty.IsEmpty &&
+                ViewportReplaySessionBundleRuntime.Validate(empty).Count == 0,
+                $"empty bundle validation {i + 1} should remain clean.");
+        }
+
         assert(
             round == 100,
             $"Hundred-stage replay bundle smoke should execute exactly 100 numbered rounds; actual {round}.");
