@@ -46,6 +46,19 @@ var pipeline = new AsyncPipeline<List<string>>(new[]
 
 await pipeline.ExecuteAsync(execution);
 Assert(
+    pipeline.NodeCount == 3 &&
+    pipeline.ContainsNode("Inspect") &&
+    !pipeline.ContainsNode("Missing"),
+    "Pipeline metadata should expose its node graph deterministically.",
+    failures);
+
+Assert(
+    pipeline.TryGetNode("Report", out var reportNode) &&
+    reportNode!.Id == "Report",
+    "Pipeline node lookup should return the requested node.",
+    failures);
+
+Assert(
     execution.SequenceEqual(new[] { "Acquire", "Inspect", "Report" }),
     "Pipeline dependencies should be honored.",
     failures);
