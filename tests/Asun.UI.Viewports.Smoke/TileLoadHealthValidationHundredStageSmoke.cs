@@ -65,7 +65,7 @@ public static class TileLoadHealthValidationHundredStageSmoke
             Check(afterHitHealth.Evictions >= 0, $"eviction counter round {i + 1} should remain non-negative.");
 
         for (var i = 0; i < 10; i++)
-            Check(afterHitHealth.Misses >= afterHitHealth.Hits || afterHitHealth.Hits >= 0, $"cache accounting round {i + 1} should remain numerically valid.");
+            Check(afterHitHealth.Hits >= 0 && afterHitHealth.Misses >= 0, $"cache accounting round {i + 1} should remain numerically valid.");
 
         assert(round == 100, $"Tile load health validation smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
