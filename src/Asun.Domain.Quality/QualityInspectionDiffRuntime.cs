@@ -37,24 +37,41 @@ public static class QualityInspectionDiffRuntime
             .OrderBy(id => id.Value, StringComparer.Ordinal)
             .ToArray();
 
-        var previousEvidence = previous.Evidence.Links
-            .Select(link => (link.FindingId, link.EvidenceKey))
+        var previousLinks = previous.Evidence.Links.ToHashSet();
+        var currentLinks = current.Evidence.Links.ToHashSet();
+
+        var previousKeys = previousLinks
+            .Select(link => link.EvidenceKey)
             .ToHashSet();
-        var currentEvidence = current.Evidence.Links
-            .Select(link => (link.FindingId, link.EvidenceKey))
+        var currentKeys = currentLinks
+            .Select(link => link.EvidenceKey)
             .ToHashSet();
 
-        var addedEvidence = currentEvidence
-            .Except(previousEvidence)
-            .Select(pair => pair.EvidenceKey)
-            .Distinct()
+        var relinkedEvidence = previousKeys
+            .Intersect(currentKeys)
+            .Where(key =>
+            {
+                var previousFindingsForKey = previousLinks
+                    .Where(link => link.EvidenceKey == key)
+                    .Select(link => link.FindingId)
+                    .ToHashSet();
+                var currentFindingsForKey = currentLinks
+                    .Where(link => link.EvidenceKey == key)
+                    .Select(link => link.FindingId)
+                    .ToHashSet();
+
+                return !previousFindingsForKey.SetEquals(currentFindingsForKey);
+            })
             .OrderBy(key => key.Value, StringComparer.Ordinal)
             .ToArray();
 
-        var removedEvidence = previousEvidence
-            .Except(currentEvidence)
-            .Select(pair => pair.EvidenceKey)
-            .Distinct()
+        var addedEvidence = currentKeys
+            .Except(previousKeys)
+            .OrderBy(key => key.Value, StringComparer.Ordinal)
+            .ToArray();
+
+        var removedEvidence = previousKeys
+            .Except(currentKeys)
             .OrderBy(key => key.Value, StringComparer.Ordinal)
             .ToArray();
 
@@ -63,6 +80,9 @@ public static class QualityInspectionDiffRuntime
             removedFindings,
             changedFindings,
             addedEvidence,
-            removedEvidence);
+            removedEvidence)
+        {
+            RelinkedEvidenceKeys = relinkedEvidence
+        };
     }
 }
