@@ -1104,8 +1104,16 @@ Assert(
     failures);
 
 Assert(
-    Math.Abs(polyline.DistanceSquaredTo(new System.Numerics.Vector2(3, 0)) - 7.2) < 1e-5,
-    "Polyline distance should be deterministic.",
+    Math.Abs(polyline.DistanceSquaredTo(new System.Numerics.Vector2(3, 0)) - 7.2) < 1e-5 &&
+    Math.Abs(polyline.DistanceTo(new System.Numerics.Vector2(3, 0)) - Math.Sqrt(7.2)) < 1e-5,
+    "Polyline Euclidean distance should be deterministic.",
+    failures);
+
+var closestPair = polyline.ClosestPointWithDistance(new System.Numerics.Vector2(3, 0));
+Assert(
+    closestPair.Point == new System.Numerics.Vector2(1.08f, 1.44f) &&
+    Math.Abs(closestPair.DistanceSquared - 7.2) < 1e-5,
+    "Polyline closest-point pair should avoid recomputing the distance.",
     failures);
 
 var closedPolyline = new Asun.Vision.Contracts.Polyline2D(new[]
