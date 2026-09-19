@@ -65,6 +65,42 @@ public static class ViewportRenderReuseSmoke
                     second?.Composite.Generation ?? -1,
                     out _),
                 $"Reuse chain {i + 1} should clear cached frames explicitly.");
+
+            using var partialPipeline = new ViewportRenderPipelineRuntime<string>(
+                new Vector2(1200, 900),
+                new Vector2(400, 300),
+                new Vector2(100, 100),
+                1,
+                32,
+                2,
+                new LocalTileSource(),
+                new ViewportRenderBudget(1, 4, 1, 1),
+                1000);
+
+            partialPipeline.Invalidate(
+                ViewportDirtyFlags.All,
+                partialPipeline.Composite.Generation);
+
+            var partial = await partialPipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1));
+
+            assert(
+                partial is not null &&
+                partial.HasDeferredWork,
+                $"Reuse chain {i + 1} should expose a partial frame when budget truncates work.");
+
+            if (partial is not null)
+            {
+                var partialReuse = new ViewportRenderReuseRuntime<string>();
+                partialReuse.Store(partial);
+
+                assert(
+                    partialReuse.LatestGeneration is null &&
+                    !partialReuse.TryReuse(
+                        partial.Composite.Generation,
+                        out _),
+                    $"Reuse chain {i + 1} should never cache a deferred partial frame.");
+            }
         }
     }
 
