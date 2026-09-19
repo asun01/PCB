@@ -32,13 +32,20 @@ public static class ViewportRenderReuseSmoke
             if (first is null)
                 continue;
 
-            var reuse = new ViewportRenderReuseRuntime<string>();
-            reuse.Store(first);
+            assert(
+                !runtime.TryReuse(
+                    first.Composite.Generation,
+                    out _),
+                $"Reuse chain {i + 1} should not expose an unpresented pipeline frame.");
 
             assert(
-                reuse.TryReuse(first.Composite.Generation, out var reused) &&
+                runtime.MarkPresented(first),
+                $"Reuse chain {i + 1} should mark a completed frame as presented.");
+
+            assert(
+                runtime.TryReuse(first.Composite.Generation, out var reused) &&
                 ReferenceEquals(reused, first),
-                $"Reuse chain {i + 1} should return the same frame for an unchanged generation.");
+                $"Reuse chain {i + 1} should return the same frame only after presentation.");
 
             assert(
                 reuse.LatestGeneration == first.Composite.Generation,
