@@ -26,16 +26,6 @@ public static class RoiKeyboardCommandRuntime
         }
     }
 
-    private static bool Move(RoiDocumentRuntime document, Vector2 delta)
-    {
-        var id = document.SelectedId;
-        if (id is null) return false;
-        var item = document.Items.SingleOrDefault(x => x.Id == id.Value);
-        if (item.Id == Guid.Empty) return false;
-        var before = item.Geometry;
-        var after = before.Translate(delta);
-        var snap = document.CreateSnapshot();
-        document.RestoreSnapshot(snap with { });
-        return !after.Equals(before);
-    }
+    private static bool Move(RoiDocumentRuntime document, Vector2 delta) =>
+        document.TranslateSelected(delta);
 }
