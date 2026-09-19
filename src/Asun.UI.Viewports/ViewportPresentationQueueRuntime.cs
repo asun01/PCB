@@ -40,6 +40,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 {
     private readonly object _sync = new();
     private readonly Queue<ViewportPresentationPacket<TTile>> _pending = new();
+    private readonly SemaphoreSlim _activitySignal = new(0, 1);
     private readonly int _capacity;
     private long _submissionSequence;
     private long _enqueued;
@@ -128,8 +129,13 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                     ++_submissionSequence),
                 frame);
 
+            var wasEmpty = _pending.Count == 0;
             _pending.Enqueue(packet);
             _enqueued++;
+
+            if (wasEmpty)
+                _activitySignal.Release();
+
             return true;
         }
     }
@@ -156,10 +162,21 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                 _dropped++;
             }
 
+            _activitySignal.Wait(0);
             _inFlight = packet;
             _dequeued++;
             return true;
         }
+    }
+
+    public async ValueTask WaitForActivityAsync(
+        CancellationToken cancellationToken = default)
+    {
+        ThrowIfDisposed();
+
+        await _activitySignal
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public bool TryAcknowledgePresented(
@@ -214,6 +231,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
             _pending.Clear();
             _inFlight = null;
+            _activitySignal.Wait(0);
             _enqueued = 0;
             _dequeued = 0;
             _presented = 0;
@@ -235,6 +253,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
         {
             _pending.Clear();
             _inFlight = null;
+            _activitySignal.Dispose();
         }
     }
 
