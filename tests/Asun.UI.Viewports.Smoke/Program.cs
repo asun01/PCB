@@ -311,6 +311,12 @@ ViewportReplayDiagnosticIntegrityHundredStageSmoke.Run(Assert);
 ViewportThreeHundredRoundSmoke.Run(Assert);
 ViewportEvidenceHistorySmoke.Run(Assert);
 
+TileRangeValidationHundredStageSmoke.Run(Assert);
+await ViewportTileFrameValidationHundredStageSmoke.RunAsync(Assert);
+await TileViewportDiagnosticsValidationHundredStageSmoke.RunAsync(Assert);
+await TileLoadHealthValidationHundredStageSmoke.RunAsync(Assert);
+await SimulatedTileSourceValidationHundredStageSmoke.RunAsync(Assert);
+
 ViewportSceneDiffValidationHundredStageSmoke.Run(Assert);
 RoiLayerValidationHundredStageSmoke.Run(Assert);
 RoiSelectionValidationHundredStageSmoke.Run(Assert);
