@@ -1141,6 +1141,19 @@ Assert(
     "Pixel point translation should be deterministic.",
     failures);
 
+var translatedRoi = roi.Translate(new Asun.Vision.Contracts.PixelPoint(10, -5));
+Assert(
+    translatedRoi == new Asun.Vision.Contracts.PixelRect(110, 45, 200, 100),
+    "Pixel rectangle point translation should be deterministic.",
+    failures);
+
+Assert(
+    roi.SizePoint == new Asun.Vision.Contracts.PixelPoint(200, 100) &&
+    Math.Abs(roi.Perimeter - 600) < 1e-12 &&
+    !roi.IsDegenerate,
+    "Pixel rectangle size and perimeter metadata should be deterministic.",
+    failures);
+
 var roi = new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100);
 
 Assert(
