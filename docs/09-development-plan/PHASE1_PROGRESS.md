@@ -101,3 +101,19 @@ Verification note:
 - Static source-structure checks were performed on the newly touched files; no local compiler/test success is asserted.
 - Latest branch workflow/status lookup must remain the authority for CI; no success is inferred without an associated run/status.
 - HALCON/DevExpress/hardware and unresolved authoritative Contract/Schema/Owner/State gates remain unchanged.
+
+### 600→700 replay diagnostic windows — 2026-09-19
+
+- Completed stages 601–700 and recorded them in `PHASE1_600_700_STAGE_LEDGER_20260919.md`.
+- Added `ViewportReplaySessionBundleWindowRuntime` for bounded diagnostic tail projections.
+- Window projection preserves audit→evidence reference closure and rejects impossible evidence limits.
+- Added deterministic window descriptors for input/evidence/audit sequence boundaries.
+- Added exact 100-round replay-window smoke covering bounded tails, empty windows, negative-limit guards, nested containment, JSON roundtrip, tamper detection, and full-capacity equivalence.
+- Registered the new smoke in the primary viewport smoke entry.
+- Corrected the matrix to exactly ten loop groups with one Check per iteration, yielding exactly 100 numbered rounds.
+- No pixel-golden authority or vendor-specific renderer semantics were introduced.
+
+Verification note:
+- Static source checks confirm balanced C# delimiters in the newly touched runtime/smoke files.
+- The exact replay-window smoke structure is 10 loops × 10 iterations × 1 Check = 100 numbered rounds, with an explicit `round == 100` assertion.
+- No local build/test/CI success is asserted without authoritative execution evidence.
