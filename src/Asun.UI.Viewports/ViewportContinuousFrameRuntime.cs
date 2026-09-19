@@ -6,6 +6,7 @@ public readonly record struct ViewportContinuousFrameStatistics(
     long SkippedLoops,
     long ProcessedInputs,
     long DeliveryFailures,
+    long DeliveryDeferrals,
     long DeliveryCancellations,
     long SupersededFrames,
     long DeliveredUnits);
@@ -57,6 +58,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                 Interlocked.Read(ref _skippedLoops),
                 Interlocked.Read(ref _processedInputs),
                 delivery.Failed,
+                delivery.Deferred,
                 delivery.Cancelled,
                 Interlocked.Read(ref _supersededFrames),
                 delivery.RenderedUnits);
