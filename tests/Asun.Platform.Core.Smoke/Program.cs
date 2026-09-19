@@ -991,6 +991,49 @@ Assert(
     "Axis-aligned factory should convert pixel rectangle geometry deterministically.",
     failures);
 
+var segment = new Asun.Vision.Contracts.LineSegment2D(
+    new System.Numerics.Vector2(0, 0),
+    new System.Numerics.Vector2(3, 4));
+
+Assert(
+    segment.IsFinite &&
+    Math.Abs(segment.Length - 5) < 1e-12 &&
+    segment.Direction == new System.Numerics.Vector2(0.6f, 0.8f) &&
+    segment.Midpoint == new System.Numerics.Vector2(1.5f, 2f),
+    "Line segment length, direction and midpoint should be deterministic.",
+    failures);
+
+Assert(
+    segment.PointAt(0.5) == new System.Numerics.Vector2(1.5f, 2f) &&
+    segment.PointAt(1.5) == new System.Numerics.Vector2(4.5f, 6f),
+    "Line segment interpolation should support deterministic fractions.",
+    failures);
+
+Assert(
+    segment.ClosestPoint(new System.Numerics.Vector2(3, 0)) ==
+        new System.Numerics.Vector2(1.08f, 1.44f),
+    "Line segment closest-point projection should clamp to the segment.",
+    failures);
+
+Assert(
+    Math.Abs(segment.DistanceSquaredTo(new System.Numerics.Vector2(3, 0)) - 7.2) < 1e-5,
+    "Line segment squared distance should be deterministic.",
+    failures);
+
+Assert(
+    segment.Bounds == new RectangleF(0, 0, 3, 4) &&
+    segment.Reverse().Start == segment.End &&
+    segment.Reverse().End == segment.Start,
+    "Line segment bounds and reversal should be deterministic.",
+    failures);
+
+var translatedSegment = segment.Translate(new System.Numerics.Vector2(-1, 2));
+Assert(
+    translatedSegment.Start == new System.Numerics.Vector2(-1, 2) &&
+    translatedSegment.End == new System.Numerics.Vector2(2, 6),
+    "Line segment translation should preserve the segment vector.",
+    failures);
+
 var oriented = new Asun.Vision.Contracts.OrientedRectangle2D(
     new System.Numerics.Vector2(100, 50),
     new System.Numerics.Vector2(40, 20),
