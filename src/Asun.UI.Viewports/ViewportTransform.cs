@@ -79,6 +79,9 @@ public readonly record struct ViewportTransform(
     public Vector2 RenderedImageSize =>
         ImageSize * (float)Scale;
 
+    public RectangleF RenderedImageRectangle =>
+        new(Translation.X, Translation.Y, RenderedImageSize.X, RenderedImageSize.Y);
+
     public Vector2 ViewportCenter =>
         ViewportSize * 0.5f;
 
