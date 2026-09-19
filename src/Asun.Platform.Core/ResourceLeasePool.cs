@@ -86,6 +86,24 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         return GetEntry(resource).Semaphore.CurrentCount;
     }
 
+    public bool TryGetAvailable(TKey resource, out int available)
+    {
+        if (IsDisposed)
+        {
+            available = 0;
+            return false;
+        }
+
+        if (!_resources.TryGetValue(resource, out var entry))
+        {
+            available = 0;
+            return false;
+        }
+
+        available = entry.Semaphore.CurrentCount;
+        return true;
+    }
+
     public bool TryAcquire(TKey resource, out Lease? lease)
     {
         ThrowIfDisposed();
