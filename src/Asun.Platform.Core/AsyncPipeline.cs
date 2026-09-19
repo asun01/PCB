@@ -95,6 +95,40 @@ public sealed class AsyncPipeline<TContext>
         return node is not null;
     }
 
+    public IReadOnlyList<IReadOnlyList<string>> GetExecutionLayers()
+    {
+        var pending = _nodes.ToDictionary(
+            node => node.Id,
+            node => node.Dependencies.Count,
+            StringComparer.Ordinal);
+
+        var layers = new List<IReadOnlyList<string>>();
+
+        while (pending.Count > 0)
+        {
+            var layer = pending
+                .Where(pair => pair.Value == 0)
+                .Select(pair => pair.Key)
+                .OrderBy(id => id, StringComparer.Ordinal)
+                .ToArray();
+
+            if (layer.Length == 0)
+                throw new InvalidOperationException("Pipeline graph cannot produce an execution layer.");
+
+            layers.Add(layer);
+
+            foreach (var id in layer)
+            {
+                pending.Remove(id);
+
+                foreach (var dependent in _dependents[id])
+                    pending[dependent.Id]--;
+            }
+        }
+
+        return layers;
+    }
+
     public ValueTask ExecuteAsync(
         TContext context,
         CancellationToken cancellationToken = default) =>
