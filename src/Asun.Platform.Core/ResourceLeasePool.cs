@@ -168,20 +168,8 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
 
         var entry = GetEntry(resource);
 
-        using var timeoutSource = timeout == Timeout.InfiniteTimeSpan
-            ? null
-            : new CancellationTokenSource(timeout);
-
-        using var linkedSource = timeoutSource is null
-            ? null
-            : CancellationTokenSource.CreateLinkedTokenSource(
-                cancellationToken,
-                timeoutSource.Token);
-
-        var token = linkedSource?.Token ?? cancellationToken;
-
         var acquired = await entry.Semaphore
-            .WaitAsync(token)
+            .WaitAsync(timeout, cancellationToken)
             .ConfigureAwait(false);
 
         return acquired
