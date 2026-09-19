@@ -587,6 +587,19 @@ Assert(
 
 Assert(batchQueue.TryDequeue(out var batchTail) && batchTail == 30, "Batch dequeue should leave remaining work intact.", failures);
 
+var asyncBatchQueue = new BoundedWorkQueue<int>(4);
+Assert(asyncBatchQueue.TryEnqueue(40), "Async batch queue should accept the first item.", failures);
+Assert(asyncBatchQueue.TryEnqueue(50), "Async batch queue should accept the second item.", failures);
+
+var asyncBatchBuffer = new int[4];
+var asyncBatchCount = await asyncBatchQueue.DequeueBatchAsync(asyncBatchBuffer);
+Assert(
+    asyncBatchCount == 2 &&
+    asyncBatchBuffer[0] == 40 &&
+    asyncBatchBuffer[1] == 50,
+    "Async batch dequeue should wait for the first item and drain already available work.",
+    failures);
+
 Assert(queue.TryComplete(), "The first queue completion should succeed.", failures);
 Assert(!queue.TryComplete(), "Repeated queue completion should be idempotent.", failures);
 Assert(!queue.TryEnqueue(3), "Completed queue should reject new work.", failures);
