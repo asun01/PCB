@@ -137,3 +137,17 @@ Verification note:
 - Implementation and smoke wiring completed through the repository workflow.
 - No local build/test execution result is asserted from this environment.
 - GitHub commit status/workflow availability remains the authoritative external verification path.
+
+### Latest viewport generation/reuse/lifecycle hardening — 2026-09-19
+- Scheduler now rejects late submissions from older generations at the submission boundary, preventing stale DirtyFlags from contaminating a newer frame.
+- Render reuse is generation-monotonic: an older presented frame cannot overwrite a newer cached frame.
+- Pipeline refresh/invalidate/build entry points evict cached reuse as soon as a newer Composite generation enters the pipeline, before the newer frame is necessarily presented.
+- Presentation snapshots now track model-generation stability and surface-presentation-sequence stability separately; `IsPresentationStable` is true only when both remain unchanged across sampling.
+- Scheduler activity signaling is now disposed together with the render pipeline, completing the semaphore/resource lifecycle.
+- Reuse smoke now uses actual navigation-generated generations for older-frame overwrite checks.
+- Scheduler lifecycle smoke covers stale-generation rejection and explicit scheduler disposal.
+
+Verification note:
+- Repository implementation and smoke wiring are complete for this round.
+- No local build/test execution result is asserted from this environment.
+- The latest GitHub branch still requires external CI/build execution for authoritative compile/test verification.
