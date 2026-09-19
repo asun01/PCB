@@ -739,3 +739,12 @@ Stage 12000 is complete only when the repository contains 100 completed 100-stag
 - [x] 2301–2400: checkpoint store generation ordering.
 - [x] 2401–2500: replay diagnostic integration.
 - [ ] Stages 2501–12000 remain planned and are not represented as completed work.
+
+## Scope status
+
+> This 10,000-stage plan is now the initial planning slice of the larger 1,000,000-stage execution program.
+>
+> Superseded as the global master plan by:
+> PHASE1_2501_1002500_MASTER_1000000_STAGE_EXECUTION_PLAN_20260919.md
+>
+> The stages already completed through 2,500 remain authoritative. Planned stages are not treated as completed.
