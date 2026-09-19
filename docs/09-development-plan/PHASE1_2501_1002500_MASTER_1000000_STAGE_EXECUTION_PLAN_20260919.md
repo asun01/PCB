@@ -2382,3 +2382,13 @@ Current completed boundary: **30,500**
 Next executable stage: **30,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 31000 — 2026-09-20
+
+Closed Acquisition / Device → Production provenance hardening. Production can now retain source metadata and payload fingerprint facts through an explicit RecordingFrameSource boundary without binding the runtime to a vendor SDK.
+
+Current completed boundary: **31,000**
+Next executable stage: **31,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
