@@ -359,6 +359,20 @@ Assert(
     "Viewport and image centers should be derived from their sizes.",
     failures);
 
+var centeredPointTransform = viewport.CenterOnImagePoint(new System.Numerics.Vector2(250, 125));
+Assert(
+    centeredPointTransform.ViewportToImage(centeredPointTransform.ViewportCenter) ==
+        new System.Numerics.Vector2(250, 125),
+    "CenterOnImagePoint should place the requested image point at viewport center.",
+    failures);
+
+var centeredRectangleTransform = viewport.CenterOnImageRectangle(new RectangleF(100, 50, 200, 100));
+Assert(
+    centeredRectangleTransform.ViewportToImage(centeredRectangleTransform.ViewportCenter) ==
+        new System.Numerics.Vector2(200, 100),
+    "CenterOnImageRectangle should place the rectangle center at viewport center.",
+    failures);
+
 var translation = Asun.Vision.Contracts.AffineTransform2D.Translation(10, 20);
 var scale = Asun.Vision.Contracts.AffineTransform2D.UniformScale(2);
 var transform = scale.Combine(translation);
