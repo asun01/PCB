@@ -6,6 +6,13 @@ public static class ViewportPresentationExecutionSmoke
 {
     public static async ValueTask RunAsync(Action<bool, string> assert)
     {
+        await VerifySuccessfulExecutionAsync(assert);
+        await VerifySupersededExecutionAsync(assert);
+    }
+
+    private static async ValueTask VerifySuccessfulExecutionAsync(
+        Action<bool, string> assert)
+    {
         using var pipeline = new ViewportRenderPipelineRuntime<string>(
             new Vector2(200, 100),
             new Vector2(200, 100),
@@ -118,6 +125,137 @@ public static class ViewportPresentationExecutionSmoke
             "Presentation execution worker should stop cleanly after cancellation.");
     }
 
+    private static async ValueTask VerifySupersededExecutionAsync(
+        Action<bool, string> assert)
+    {
+        using var pipeline = new ViewportRenderPipelineRuntime<string>(
+            new Vector2(300, 100),
+            new Vector2(200, 100),
+            new Vector2(100, 100),
+            0,
+            16,
+            2,
+            new StableTileSource(),
+            new ViewportRenderBudget(8, 8, 4, 16),
+            1000);
+
+        var first = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(30));
+
+        if (first is null)
+        {
+            assert(false, "Supersede smoke should create the first frame.");
+            return;
+        }
+
+        var firstGeneration = first.Composite.Generation;
+        pipeline.Composite.PanBy(new Vector2(20, 0));
+
+        var second = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(31));
+
+        assert(
+            second is not null &&
+            second.Composite.Generation > firstGeneration,
+            "Supersede smoke should create a newer generation while the first frame is still eligible for rendering.");
+
+        if (second is null)
+            return;
+
+        using var queue = new ViewportPresentationQueueRuntime<string>();
+        using var buffers = new ViewportPresentationBufferRuntime();
+        using var surface = new ViewportRenderSurfaceRuntime();
+        var delivery = new ViewportRenderDeliveryTracker();
+
+        var execution = new ViewportPresentationExecutionRuntime<string>(
+            queue,
+            buffers,
+            surface,
+            delivery);
+
+        using var cancellation = new CancellationTokenSource();
+        var firstStarted =
+            new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+        var results =
+            new List<ViewportPresentationExecutionResult<string>>();
+        var resultsLock = new object();
+        var twoResults =
+            new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var sink = new SupersedingSink(firstStarted);
+
+        var worker = execution
+            .RunAsync(
+                sink,
+                result =>
+                {
+                    lock (resultsLock)
+                    {
+                        results.Add(result);
+
+                        if (results.Count >= 2)
+                            twoResults.TrySetResult(true);
+                    }
+
+                    return ValueTask.CompletedTask;
+                },
+                cancellation.Token)
+            .AsTask();
+
+        assert(
+            queue.TryEnqueue(first, out _),
+            "Supersede smoke should enqueue the older frame.");
+
+        var started = await Task.WhenAny(
+            firstStarted.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        assert(
+            started == firstStarted.Task,
+            "Supersede smoke should block the first in-flight render before introducing a newer frame.");
+
+        assert(
+            queue.TryEnqueue(second, out _),
+            "Supersede smoke should enqueue a newer frame while the first is rendering.");
+
+        var completed = await Task.WhenAny(
+            twoResults.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        assert(
+            completed == twoResults.Task,
+            "Execution worker should finish the superseded frame and continue with the newer frame.");
+
+        ViewportPresentationExecutionResult<string>[] snapshot;
+
+        lock (resultsLock)
+            snapshot = results.ToArray();
+
+        assert(
+            snapshot.Any(result =>
+                result.Superseded &&
+                result.Packet?.Frame.Composite.Generation == firstGeneration) &&
+            snapshot.Any(result =>
+                result.Presented &&
+                result.Packet?.Frame.Composite.Generation == second.Composite.Generation) &&
+            queue.Statistics.PresentedGeneration == second.Composite.Generation &&
+            buffers.Snapshot.PresentedGeneration == second.Composite.Generation &&
+            surface.Snapshot.PresentedGeneration == second.Composite.Generation,
+            "A newer submission should cancel the stale in-flight render and leave Queue, Backbuffer, and Surface on the newer generation.");
+
+        cancellation.Cancel();
+
+        try
+        {
+            await worker;
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
     private sealed class StableTileSource : ITileSource<string>
     {
         public ValueTask<string> LoadAsync(
@@ -126,6 +264,41 @@ public static class ViewportPresentationExecutionSmoke
             CancellationToken cancellationToken = default) =>
             ValueTask.FromResult(
                 $"tile:{request.Index.X},{request.Index.Y}");
+    }
+
+    private sealed class SupersedingSink : IViewportRenderSink<string>
+    {
+        private readonly TaskCompletionSource<bool> _started;
+
+        public SupersedingSink(TaskCompletionSource<bool> started)
+        {
+            _started = started;
+        }
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            _started.TrySetResult(true);
+
+            return new ValueTask(
+                Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken));
+        }
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
     }
 
     private sealed class TrackingSink : IViewportRenderSink<string>
