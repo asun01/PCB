@@ -76,6 +76,32 @@ public readonly record struct OrientedRectangle2D(
         return new RectangleF(left, top, right - left, bottom - top);
     }
 
+    public Vector2 ToLocalPoint(Vector2 point)
+    {
+        EnsureValid();
+
+        if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        var delta = point - Center;
+
+        return new Vector2(
+            Vector2.Dot(delta, LocalXAxis),
+            Vector2.Dot(delta, LocalYAxis));
+    }
+
+    public Vector2 ToWorldPoint(Vector2 localPoint)
+    {
+        EnsureValid();
+
+        if (!float.IsFinite(localPoint.X) || !float.IsFinite(localPoint.Y))
+            throw new ArgumentOutOfRangeException(nameof(localPoint));
+
+        return Center +
+               LocalXAxis * localPoint.X +
+               LocalYAxis * localPoint.Y;
+    }
+
     public bool Contains(Vector2 point)
     {
         EnsureValid();
@@ -83,12 +109,10 @@ public readonly record struct OrientedRectangle2D(
         if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
             return false;
 
-        var delta = point - Center;
-        var localX = Vector2.Dot(delta, LocalXAxis);
-        var localY = Vector2.Dot(delta, LocalYAxis);
+        var local = ToLocalPoint(point);
 
-        return Math.Abs(localX) <= Size.X / 2f &&
-               Math.Abs(localY) <= Size.Y / 2f;
+        return Math.Abs(local.X) <= Size.X / 2f &&
+               Math.Abs(local.Y) <= Size.Y / 2f;
     }
 
     public double DistanceSquaredToCenter(Vector2 point)
