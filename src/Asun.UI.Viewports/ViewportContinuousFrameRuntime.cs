@@ -110,13 +110,35 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                             .ConfigureAwait(false);
 
                         if (delivery.Succeeded)
+                        {
                             Interlocked.Increment(ref _renderedFrames);
+                        }
                         else
+                        {
+                            if (delivery.Status == ViewportRenderDeliveryStatus.Failed)
+                            {
+                                _pipeline.Invalidate(
+                                    frame.Submission.DirtyFlags,
+                                    frame.Composite.Generation);
+                            }
+
                             Interlocked.Increment(ref _skippedLoops);
+                        }
                     }
                     else
                     {
                         Interlocked.Increment(ref _skippedLoops);
+
+                        var pacingDelay = _pipeline.Scheduler
+                            .GetNextFrameDelay(DateTimeOffset.UtcNow);
+
+                        if (pacingDelay > TimeSpan.Zero)
+                        {
+                            await Task.Delay(
+                                pacingDelay,
+                                cancellationToken)
+                                .ConfigureAwait(false);
+                        }
                     }
                 }
                 catch (OperationCanceledException) when (
