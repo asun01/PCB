@@ -88,6 +88,23 @@ public static class ViewportInputSubmissionValidationHundredStageSmoke
                 ViewportInputSubmissionValidationRuntime.IsValid(input.Snapshot()),
                 $"post-drain round {i + 1} should close the queue cleanly.");
 
+        for (var i = 0; i < 10; i++)
+            Check(
+                input.SubmittedCount > 0 &&
+                input.CoalescedCount > 0,
+                $"submission accounting round {i + 1} should retain cumulative counters.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                input.SubmittedCount >= input.PendingCount,
+                $"submission bound round {i + 1} should remain coherent.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                ViewportInputSubmissionValidationRuntime.IsTerminal(
+                    input.Snapshot()) == false,
+                $"reopened submission round {i + 1} should not be terminal.");
+
         assert(
             round == 100,
             $"Input submission validation smoke should execute exactly 100 numbered rounds; actual {round}.");
