@@ -70,6 +70,12 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     public ViewportPresentationExecutionRuntime<TTile> PresentationExecution =>
         _continuous.PresentationExecution;
 
+    public ViewportRenderEvidenceStore EvidenceHistory =>
+        _continuous.EvidenceHistory;
+
+    public ViewportPresentationAuditTrace AuditTrace =>
+        _continuous.AuditTrace;
+
     public ViewportRenderFrameState? LastFrameState =>
         _continuous.LastDelivery?.FrameState;
 
