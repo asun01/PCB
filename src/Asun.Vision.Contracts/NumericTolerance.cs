@@ -12,6 +12,16 @@ public readonly record struct NumericTolerance(
 
     public static NumericTolerance Default => new(1e-9, 1e-9);
 
+    public static NumericTolerance AbsoluteOnly(double absolute) =>
+        new(
+            ValidateNonNegativeFinite(absolute, nameof(absolute)),
+            0);
+
+    public static NumericTolerance RelativeOnly(double relative) =>
+        new(
+            0,
+            ValidateNonNegativeFinite(relative, nameof(relative)));
+
     public bool IsValid =>
         double.IsFinite(Absolute) &&
         double.IsFinite(Relative) &&
