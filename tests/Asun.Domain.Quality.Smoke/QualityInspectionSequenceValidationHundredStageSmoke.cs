@@ -38,11 +38,11 @@ public static class QualityInspectionSequenceValidationHundredStageSmoke
         for(var i=0;i<10;i++) Check(forward.IsForwardOrEqual,$"forward relation round {i+1} should be accepted.");
         for(var i=0;i<10;i++) Check(forward.Delta==1,$"forward delta round {i+1} should equal one.");
         for(var i=0;i<10;i++) Check(forward.IsConsecutive,$"forward consecutive relation round {i+1} should be explicit.");
-        for(var i=0;i<10;i++) Check(QualityInspectionSequenceValidationRuntime.IsValid(forward),$"forward relation validation round {i+1} should pass.");
+        for(var i=0;i<10;i++) Check(QualityInspectionSequenceValidationRuntime.IsValid(first,second,forward),$"forward relation validation round {i+1} should pass.");
         for(var i=0;i<10;i++) Check(backward.IsBackward,$"backward relation round {i+1} should be detectable.");
         for(var i=0;i<10;i++) Check(backward.Delta==-1,$"backward delta round {i+1} should equal negative one.");
         for(var i=0;i<10;i++) Check(!backward.IsConsecutive,$"backward consecutive relation round {i+1} should be false.");
-        for(var i=0;i<10;i++) Check(QualityInspectionSequenceValidationRuntime.IsValid(first,reset),$"backward pair validation round {i+1} should allow policy-neutral comparison.");
+        for(var i=0;i<10;i++) Check(QualityInspectionSequenceValidationRuntime.IsValid(first,reset,backward),$"backward pair validation round {i+1} should allow policy-neutral comparison.");
         for(var i=0;i<10;i++) Check(first.SnapshotId!=second.SnapshotId && first.SnapshotId!=reset.SnapshotId,$"snapshot identity round {i+1} should remain distinct.");
         for(var i=0;i<10;i++) Check(invalidRejected,$"invalid snapshot rejection round {i+1} should be deterministic.");
 
