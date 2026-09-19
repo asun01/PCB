@@ -17,6 +17,23 @@ public static class ProductionSessionValidationRuntime
         if(report.SessionId!=definition.SessionId)
             errors.Add("Production report session id must match the definition.");
 
+        try
+        {
+            var binding=ProductionProgramPipelineBindingRuntime.Create(
+                definition.ProgramPlan,
+                definition.Pipeline);
+
+            errors.AddRange(
+                ProductionProgramPipelineBindingValidationRuntime.Validate(
+                    definition.ProgramPlan,
+                    definition.Pipeline,
+                    binding));
+        }
+        catch(Exception exception) when(exception is ArgumentException or InvalidOperationException)
+        {
+            errors.Add($"Production program/pipeline binding is invalid: {exception.Message}");
+        }
+
         if(report.FrameCount!=report.Frames.Count ||
            report.FrameCount!=definition.FrameCount)
         {
