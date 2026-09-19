@@ -73,22 +73,19 @@ public sealed class ViewportReplaySessionRuntime
         {
             var inputHash = Hash(
                 string.Join(
-                    "
-",
+                    "\n",
                     _inputs.Select(item =>
                         $"{item.Sequence}|{item.Kind}|{item.Position.X:R}|{item.Position.Y:R}|{item.WheelDelta}|{item.Button}")));
 
             var evidenceHash = Hash(
                 string.Join(
-                    "
-",
+                    "\n",
                     _evidence.Select(item =>
                         $"{item.Generation}|{item.SubmissionSequence}|{item.FrameHash}|{item.BatchHash}|{item.CommandHash}|{item.ReplayHash}")));
 
             var auditHash = Hash(
                 string.Join(
-                    "
-",
+                    "\n",
                     _audit.Select(item =>
                         $"{item.Sequence}|{item.Stage}|{item.Generation}|{item.SubmissionSequence}|{item.DeliveryStatus}|{item.RenderedUnits}|{item.DeferredUnits}|{item.EvidenceKey}")));
 
