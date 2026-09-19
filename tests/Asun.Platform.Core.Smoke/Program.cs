@@ -1073,6 +1073,19 @@ Assert(
     failures);
 
 Assert(
+    polyline.CumulativeLengths.Count == polyline.Count &&
+    polyline.CumulativeLengths[^1] == polyline.Length,
+    "Polyline cumulative lengths should be monotonic and terminate at total length.",
+    failures);
+
+Assert(
+    polyline.TryPointAtFraction(0.25, out var tryFractionPoint) &&
+    tryFractionPoint == polyline.PointAtFraction(0.25) &&
+    !polyline.TryPointAtFraction(2, out _),
+    "Polyline non-throwing fraction lookup should validate its input range.",
+    failures);
+
+Assert(
     polyline.PointAtDistance(5) == new System.Numerics.Vector2(4, 4),
     "Polyline distance sampling should interpolate across segments.",
     failures);
