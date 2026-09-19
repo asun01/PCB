@@ -139,6 +139,25 @@ public readonly record struct ViewportTransform(
         };
     }
 
+    public ViewportTransform WithScaleAroundClamped(
+        double requestedScale,
+        double minScale,
+        double maxScale,
+        Vector2 viewportAnchor)
+    {
+        if (!double.IsFinite(minScale) || minScale <= 0)
+            throw new ArgumentOutOfRangeException(nameof(minScale));
+
+        if (!double.IsFinite(maxScale) || maxScale < minScale)
+            throw new ArgumentOutOfRangeException(nameof(maxScale));
+
+        if (!double.IsFinite(requestedScale) || requestedScale <= 0)
+            throw new ArgumentOutOfRangeException(nameof(requestedScale));
+
+        var clampedScale = Math.Clamp(requestedScale, minScale, maxScale);
+        return WithScaleAround(clampedScale, viewportAnchor);
+    }
+
     public ViewportTransform WithTranslation(Vector2 translation)
     {
         if (!IsFinite(translation))

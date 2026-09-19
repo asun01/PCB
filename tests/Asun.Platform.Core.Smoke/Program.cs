@@ -153,6 +153,13 @@ Assert(
     "Pixel rectangle containment should be deterministic.",
     failures);
 
+var clipped = new Asun.Vision.Contracts.PixelRect(-50, 25, 200, 600)
+    .ClampTo(imageBounds);
+Assert(
+    clipped == new Asun.Vision.Contracts.PixelRect(0, 25, 150, 475),
+    "ROI clamping should keep the rectangle inside image bounds.",
+    failures);
+
 var overlap = roi.Intersect(new Asun.Vision.Contracts.PixelRect(250, 100, 200, 100));
 Assert(
     overlap == new Asun.Vision.Contracts.PixelRect(250, 100, 50, 50),
