@@ -20,11 +20,15 @@ public readonly record struct ViewportPresentationSnapshot(
     ViewportContinuousFrameStatistics Frames,
     ViewportRenderFrameState? LastFrameState,
     ViewportRenderSurfaceSnapshot Surface,
+    ViewportPresentationBufferSnapshot Buffer,
     bool IsGenerationStable,
-    bool IsSurfaceStable)
+    bool IsSurfaceStable,
+    bool IsBufferStable)
 {
     public bool IsPresentationStable =>
-        IsGenerationStable && IsSurfaceStable;
+        IsGenerationStable &&
+        IsSurfaceStable &&
+        IsBufferStable;
 }
 
 public sealed class ViewportPresentationLifecycleRuntime : IDisposable
@@ -50,8 +54,10 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         ViewportContinuousFrameStatistics frames,
         ViewportRenderFrameState? lastFrameState,
         ViewportRenderSurfaceSnapshot surface,
+        ViewportPresentationBufferSnapshot buffer,
         bool isGenerationStable,
-        bool isSurfaceStable) =>
+        bool isSurfaceStable,
+        bool isBufferStable) =>
         new(
             State,
             generation,
@@ -63,8 +69,10 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
             frames,
             lastFrameState,
             surface,
+            buffer,
             isGenerationStable,
-            isSurfaceStable);
+            isSurfaceStable,
+            isBufferStable);
 
     public bool TryStart(out CancellationToken token)
     {
