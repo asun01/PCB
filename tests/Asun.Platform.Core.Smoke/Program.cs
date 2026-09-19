@@ -1517,6 +1517,29 @@ Assert(
     "Polyline translation should preserve topology and move all points.",
     failures);
 
+Assert(
+    pointSet.TryGetCentroid(out var safeCentroid) &&
+    safeCentroid == pointSet.Centroid,
+    "Point-set safe centroid query should match the throwing centroid path.",
+    failures);
+
+Assert(
+    Math.Abs(circle.DistanceToCircumference(new System.Numerics.Vector2(20, 20)) - 5) < 1e-12,
+    "Circle circumference distance should be deterministic.",
+    failures);
+
+Assert(
+    new Asun.Vision.Contracts.Ellipse2D(
+        new System.Numerics.Vector2(0, 0),
+        new System.Numerics.Vector2(10, 5),
+        0).IsAxisAligned &&
+    !new Asun.Vision.Contracts.Ellipse2D(
+        new System.Numerics.Vector2(0, 0),
+        new System.Numerics.Vector2(10, 5),
+        Math.PI / 4).IsAxisAligned,
+    "Ellipse axis-aligned classification should be deterministic.",
+    failures);
+
 var circle = new Asun.Vision.Contracts.Circle2D(
     new System.Numerics.Vector2(10, 20),
     5);
