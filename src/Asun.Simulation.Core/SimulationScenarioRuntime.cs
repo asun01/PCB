@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using Asun.Metrology.Core;
 
 namespace Asun.Simulation.Core;
@@ -27,7 +25,10 @@ public static class SimulationScenarioRuntime
         if(sequence<=0)
             throw new ArgumentOutOfRangeException(nameof(sequence));
 
-        var random=new Random(HashCode.Combine(scenario.Seed,sequence));
+        var random=new Random(
+            StableSimulationSeedRuntime.CreateSeed(
+                scenario,
+                sequence));
         var defects=new List<SimulatedDefect>();
 
         if(scenario.Assembly.Components.Count>0 &&
@@ -49,26 +50,18 @@ public static class SimulationScenarioRuntime
                 $"SIM-{(int)kind}-{component.Designator}"));
         }
 
-        var canonical=new StringBuilder();
-        canonical.Append(sequence).Append('|')
-            .Append(scenario.Assembly.Fingerprint).Append('|')
-            .Append(scenario.Seed).Append('|');
+        var observation=new SimulationObservation(
+            FrameSequence.Create(sequence),
+            MetrologyPoint2D.Zero,
+            defects,
+            string.Empty);
 
-        foreach(var defect in defects)
+        return observation with
         {
-            canonical.Append((int)defect.Kind).Append('|')
-                .Append(defect.TargetDesignator).Append('|')
-                .Append(defect.Position.X.ToString("R")).Append('|')
-                .Append(defect.Position.Y.ToString("R")).Append('|')
-                .Append(defect.Magnitude.ToString("R")).Append('|')
-                .Append(defect.Code).Append('|');
-        }
-
-        var fingerprint=Convert.ToHexString(
-            SHA256.HashData(
-                Encoding.UTF8.GetBytes(canonical.ToString())))
-            .ToLowerInvariant();
-
+            Fingerprint=SimulationObservationFingerprintRuntime.CreateFingerprint(
+                scenario,
+                observation)
+        };
         return new SimulationObservation(
             FrameSequence.Create(sequence),
             MetrologyPoint2D.Zero,
