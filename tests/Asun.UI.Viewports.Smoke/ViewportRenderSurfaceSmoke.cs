@@ -138,8 +138,10 @@ public static class ViewportRenderSurfaceSmoke
         assert(
             overlay is not null &&
             overlay.Batch.FullSurfaceCount == 0 &&
-            overlay.Batch.OverlayCount == 1,
-            "Overlay invalidation should create an overlay-only batch.");
+            overlay.Batch.OverlayCount == 1 &&
+            overlay.Batch.TileCount == 0 &&
+            overlay.Batch.RoiCount == 0,
+            "Overlay invalidation should create an overlay-only batch without replaying tiles or ROI.");
 
         if (overlay is null)
             return;
@@ -159,6 +161,8 @@ public static class ViewportRenderSurfaceSmoke
             overlaySnapshot.PresentationSequence == 3 &&
             overlaySink.CommitContext is not null &&
             overlaySink.CommitContext.Value.OverlayCount == 1 &&
+            overlaySink.CommitContext.Value.TileCount == 0 &&
+            overlaySink.CommitContext.Value.RoiCount == 0 &&
             overlaySink.CommitContext.Value.FullSurfaceCount == 0 &&
             overlaySink.CommitContext.Value.InvalidationCount == 0,
             "Overlay-only presentation should advance the surface without replaying image or ROI layers.");
