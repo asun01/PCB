@@ -856,6 +856,16 @@ Assert(
     "Affine linear scale metadata and self-equality should be deterministic.",
     failures);
 
+var orientedFromAxisAligned = Asun.Vision.Contracts.OrientedRectangle2D.FromAxisAligned(
+    new Asun.Vision.Contracts.PixelRect(80, 40, 40, 20));
+
+Assert(
+    orientedFromAxisAligned.Center == new System.Numerics.Vector2(100, 50) &&
+    orientedFromAxisAligned.Size == new System.Numerics.Vector2(40, 20) &&
+    orientedFromAxisAligned.AngleRadians == 0,
+    "Axis-aligned factory should convert pixel rectangle geometry deterministically.",
+    failures);
+
 var oriented = new Asun.Vision.Contracts.OrientedRectangle2D(
     new System.Numerics.Vector2(100, 50),
     new System.Numerics.Vector2(40, 20),
@@ -891,6 +901,17 @@ var rotatedOriented = oriented.Rotate(Math.PI / 2);
 Assert(
     Math.Abs(rotatedOriented.AngleRadians - Math.PI / 2) < 1e-12,
     "Oriented rectangle rotation should accumulate angle.",
+    failures);
+
+var localPoint = oriented.ToLocalPoint(new System.Numerics.Vector2(120, 60));
+Assert(
+    localPoint == new System.Numerics.Vector2(20, 10),
+    "Oriented rectangle world-to-local conversion should be deterministic.",
+    failures);
+
+Assert(
+    oriented.ToWorldPoint(localPoint) == new System.Numerics.Vector2(120, 60),
+    "Oriented rectangle local-to-world conversion should round-trip.",
     failures);
 
 var translatedOriented = oriented.Translate(new System.Numerics.Vector2(5, -10));
