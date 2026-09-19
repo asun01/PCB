@@ -116,8 +116,10 @@ public static class ViewportPresentationQueueSmoke
             queue.Statistics.Pending == 0 &&
             queue.Statistics.LatestGeneration is null &&
             queue.Statistics.PresentedGeneration is null &&
-            queue.Statistics.PresentedSequence is null,
-            "Queue reset should clear presentation state without invalidating the monotonic token domain.");
+            queue.Statistics.PresentedSequence is null &&
+            !queue.Statistics.CommitInProgress &&
+            queue.Statistics.CommittingSequence is null,
+            "Queue reset should clear presentation state and commit-window state without invalidating the monotonic token domain.");
 
         assert(
             queue.TryEnqueue(first, out var postResetPacket) &&
