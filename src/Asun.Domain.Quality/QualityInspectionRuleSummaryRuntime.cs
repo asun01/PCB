@@ -18,14 +18,16 @@ public static class QualityInspectionRuleSummaryRuntime
                 group.Key,
                 group.Count(),
                 result.Evidence.Links
-                    .Count(link =>
+                    .Where(link =>
                     {
                         var ids = group
                             .Select(finding => finding.Id)
                             .ToHashSet();
 
                         return ids.Contains(link.FindingId);
-                    })))
+                    })
+                    .Distinct()
+                    .Count()))
             .OrderBy(entry => entry.RuleCode, StringComparer.Ordinal)
             .ToArray();
 
