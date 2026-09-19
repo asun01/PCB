@@ -55,6 +55,17 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 failure.Error is not null,
                 $"Delivery chain {i + 1} should isolate sink exceptions.");
 
+            var cancelledSink = new CancelledSink();
+            var cancellation = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                frame,
+                cancelledSink);
+
+            assert(
+                !cancellation.Succeeded &&
+                cancellation.Cancelled &&
+                cancellation.Error is null,
+                $"Delivery chain {i + 1} should classify cancellation separately.");
+
             var input = new ViewportInputSubmissionRuntime();
             var backpressure = new ViewportInputBackpressureRuntime(
                 4,
@@ -128,6 +139,30 @@ public static class ViewportDeliveryAndBackpressureSmoke
             ViewportRenderFrameContext context,
             CancellationToken cancellationToken = default) =>
             ValueTask.CompletedTask;
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+    }
+
+
+    private sealed class CancelledSink : IViewportRenderSink<string>
+    {
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            throw new OperationCanceledException();
 
         public ValueTask DrawTileAsync(
             ViewportRenderTileContext<string> tile,
