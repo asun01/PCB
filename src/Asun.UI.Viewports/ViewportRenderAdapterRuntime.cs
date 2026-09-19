@@ -48,6 +48,21 @@ public static class ViewportRenderAdapterRuntime
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            if (work.Kind == ViewportRenderWorkKind.Overlay)
+            {
+                await sink
+                    .DrawOverlayAsync(
+                        new ViewportRenderOverlayContext(
+                            work.Bounds,
+                            frame.Composite.DirtyFlags,
+                            frame.Composite.Generation),
+                        cancellationToken)
+                    .ConfigureAwait(false);
+
+                renderedTiles++;
+                continue;
+            }
+
             if (work.Kind == ViewportRenderWorkKind.Tile &&
                 work.Tile is TileIndex tileIndex &&
                 frame.Composite.Tiles.TryGetTile(tileIndex, out var tile))
@@ -108,7 +123,7 @@ public static class ViewportRenderAdapterRuntime
         finally
         {
             await sink
-                .EndFrameAsync(context, cancellationToken)
+                .EndFrameAsync(context, CancellationToken.None)
                 .ConfigureAwait(false);
         }
 
