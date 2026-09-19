@@ -6,8 +6,8 @@ PAGE_DIR = ROOT / "docs" / "14-page-contracts"
 
 REQUIRED_MARKERS = (
     "PageContract",
-    "Commands",
-    "Queries",
+    "Command",
+    "Query",
     "八态",
     "AutomationId",
 )
