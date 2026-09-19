@@ -62,7 +62,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
     public void Reset()
     {
-        _input.Clear();
+        _input.ResetLifecycle();
         _interaction.Reset();
         _delivery.Reset();
         Interlocked.Exchange(ref _loopCount, 0);
