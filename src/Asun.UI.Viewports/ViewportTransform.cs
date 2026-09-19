@@ -122,6 +122,8 @@ public readonly record struct ViewportTransform(
 
     public Vector2 ClampViewportPointToImage(Vector2 viewportPoint)
     {
+        if (!IsFinite(viewportPoint))
+            throw new ArgumentOutOfRangeException(nameof(viewportPoint));
         var imagePoint = ViewportToImage(viewportPoint);
         var clamped = new Vector2(
             Math.Clamp(imagePoint.X, 0f, ImageSize.X),
