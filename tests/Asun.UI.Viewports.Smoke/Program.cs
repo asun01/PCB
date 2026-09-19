@@ -311,6 +311,12 @@ ViewportReplayDiagnosticIntegrityHundredStageSmoke.Run(Assert);
 ViewportThreeHundredRoundSmoke.Run(Assert);
 ViewportEvidenceHistorySmoke.Run(Assert);
 
+ViewportSceneDiffValidationHundredStageSmoke.Run(Assert);
+RoiLayerValidationHundredStageSmoke.Run(Assert);
+RoiSelectionValidationHundredStageSmoke.Run(Assert);
+RoiDocumentValidationHundredStageSmoke.Run(Assert);
+ViewportTileRoiVisibilityValidationHundredStageSmoke.Run(Assert);
+
 await ViewportPresentationLifecycleSmoke.RunAsync(Assert);
 
 await ViewportPresentationDisposeSmoke.RunAsync(Assert);
