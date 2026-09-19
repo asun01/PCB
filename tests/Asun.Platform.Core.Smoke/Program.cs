@@ -449,6 +449,25 @@ Assert(
     "A viewport region outside the image should request no tiles.",
     failures);
 
+var gridSize = Asun.UI.Viewports.ImageTileGeometry.GetGridSize(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256));
+
+Assert(
+    gridSize.X == 4 && gridSize.Y == 2,
+    "Tile grid size should ceil-divide the image dimensions by tile size.",
+    failures);
+
+Assert(
+    Asun.UI.Viewports.ImageTileGeometry.IsRangeWithinGrid(
+        new System.Numerics.Vector2(1000, 500),
+        new System.Numerics.Vector2(256, 256),
+        new Asun.UI.Viewports.VisibleTileRange(
+            new Asun.UI.Viewports.TileIndex(0, 0),
+            new Asun.UI.Viewports.TileIndex(3, 1))),
+    "A range inside the tile grid should validate successfully.",
+    failures);
+
 var tileRange = panned.GetVisibleTileRange(
     new System.Numerics.Vector2(256, 256));
 
