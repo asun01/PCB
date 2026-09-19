@@ -14,6 +14,7 @@ public readonly record struct ViewportPresentationSnapshot(
     long Generation,
     int PendingInput,
     ViewportDirtyFlags PendingDirtyFlags,
+    ViewportInputBackpressureSnapshot Backpressure,
     ViewportRenderDeliveryStatistics Delivery,
     ViewportContinuousFrameStatistics Frames);
 
@@ -33,9 +34,10 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         long generation,
         int pendingInput,
         ViewportDirtyFlags pendingDirtyFlags,
+        ViewportInputBackpressureSnapshot backpressure,
         ViewportRenderDeliveryStatistics delivery,
         ViewportContinuousFrameStatistics frames) =>
-        new(State, generation, pendingInput, pendingDirtyFlags, delivery, frames);
+        new(State, generation, pendingInput, pendingDirtyFlags, backpressure, delivery, frames);
 
     public bool TryStart(out CancellationToken token)
     {
