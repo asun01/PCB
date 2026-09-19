@@ -58,6 +58,10 @@ catch(OperationCanceledException)
 
 if(!cancelledObserved) failures.Add("Evidence catalog lookup should honor cancellation.");
 
+
+EvidenceCatalogSnapshotHundredStageSmoke.Run((condition,message)=>
+    Check(condition,message));
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
