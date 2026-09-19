@@ -223,6 +223,27 @@ public static class ViewportRenderBudgetValidationHundredStageSmoke
             scenario.Runtime.Dispose();
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            var scenario = CreateScenario();
+            var budget =
+                new ViewportRenderBudget(1, 1, 1, 1);
+            var limited =
+                ViewportRenderBudgetRuntime.Apply(
+                    scenario.Plan,
+                    budget);
+
+            Check(
+                limited.Items.Count <= 1 &&
+                ViewportRenderBudgetValidationRuntime.IsValid(
+                    scenario.Plan,
+                    limited,
+                    budget),
+                $"strict total budget {i + 1} should remain valid.");
+
+            scenario.Runtime.Dispose();
+        }
+
         assert(
             round == 100,
             $"Render budget validation smoke should execute exactly 100 numbered rounds; actual {round}.");
