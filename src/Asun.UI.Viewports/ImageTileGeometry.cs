@@ -243,6 +243,45 @@ public static class ImageTileGeometry
         return tileIndex;
     }
 
+    public static VisibleTileRange IntersectRanges(
+        VisibleTileRange first,
+        VisibleTileRange second)
+    {
+        if (first.IsEmpty || second.IsEmpty)
+            return EmptyRange();
+
+        var minimum = new TileIndex(
+            Math.Max(first.Minimum.X, second.Minimum.X),
+            Math.Max(first.Minimum.Y, second.Minimum.Y));
+
+        var maximum = new TileIndex(
+            Math.Min(first.Maximum.X, second.Maximum.X),
+            Math.Min(first.Maximum.Y, second.Maximum.Y));
+
+        return minimum.X > maximum.X || minimum.Y > maximum.Y
+            ? EmptyRange()
+            : new VisibleTileRange(minimum, maximum);
+    }
+
+    public static VisibleTileRange UnionRanges(
+        VisibleTileRange first,
+        VisibleTileRange second)
+    {
+        if (first.IsEmpty)
+            return second;
+
+        if (second.IsEmpty)
+            return first;
+
+        return new VisibleTileRange(
+            new TileIndex(
+                Math.Min(first.Minimum.X, second.Minimum.X),
+                Math.Min(first.Minimum.Y, second.Minimum.Y)),
+            new TileIndex(
+                Math.Max(first.Maximum.X, second.Maximum.X),
+                Math.Max(first.Maximum.Y, second.Maximum.Y)));
+    }
+
     public static RectangleF GetTileRangeRectangle(
         Vector2 imageSize,
         Vector2 tileSize,
