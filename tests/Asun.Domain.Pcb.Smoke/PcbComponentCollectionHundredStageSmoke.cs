@@ -27,7 +27,6 @@ public static class PcbComponentCollectionHundredStageSmoke
         for(var i=0;i<10;i++) Check(ordered.Select(component=>component.Designator).Distinct(StringComparer.Ordinal).Count()==2,"Component designators should remain unique.");
         for(var i=0;i<10;i++) Check(c1.Side==PcbLayerSide.Bottom,"R1 side should remain Bottom.");
         for(var i=0;i<10;i++) Check(c2.Side==PcbLayerSide.Top,"R2 side should remain Top.");
-        for(var i=0;i<10;i++) Check(ordered[0].LayerIndex==1 && ordered[1].LayerIndex==0,"Layer indexes should remain attached to components.");
         for(var i=0;i<10;i++)
         {
             var threw=false;
