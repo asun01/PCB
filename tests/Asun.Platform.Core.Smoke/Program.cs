@@ -584,6 +584,29 @@ Assert(
     "Tile boundaries should use the tile on the right and bottom for interior boundary points.",
     failures);
 
+var firstRange = new Asun.UI.Viewports.VisibleTileRange(
+    new Asun.UI.Viewports.TileIndex(0, 0),
+    new Asun.UI.Viewports.TileIndex(2, 1));
+var secondRange = new Asun.UI.Viewports.VisibleTileRange(
+    new Asun.UI.Viewports.TileIndex(2, 1),
+    new Asun.UI.Viewports.TileIndex(3, 1));
+
+Assert(
+    Asun.UI.Viewports.ImageTileGeometry.IntersectRanges(firstRange, secondRange) ==
+        new Asun.UI.Viewports.VisibleTileRange(
+            new Asun.UI.Viewports.TileIndex(2, 1),
+            new Asun.UI.Viewports.TileIndex(2, 1)),
+    "Tile range intersection should keep the common grid window.",
+    failures);
+
+Assert(
+    Asun.UI.Viewports.ImageTileGeometry.UnionRanges(firstRange, secondRange).Minimum ==
+        firstRange.Minimum &&
+    Asun.UI.Viewports.ImageTileGeometry.UnionRanges(firstRange, secondRange).Maximum ==
+        secondRange.Maximum,
+    "Tile range union should cover both grid windows.",
+    failures);
+
 var exactTile = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     new System.Numerics.Vector2(1024, 512),
     new System.Numerics.Vector2(256, 256),
