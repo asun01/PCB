@@ -1679,3 +1679,19 @@ Current continuous execution position:
 - completed through Stage 31000;
 - next natural stage: 31001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 31001→31500 PCB production quality provenance — 2026-09-20
+
+Completed stages 31001–31500.
+
+Implemented:
+- Asun.Platform.PcbProductionIntegration;
+- PcbProductionQualityProvenanceBundle and independent validation;
+- real board Assembly fingerprint bound to Production session/provenance and Quality run;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 31500;
+- next natural stage: 31501;
+- global one-million-stage horizon remains 2501–1002500.
