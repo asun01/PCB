@@ -154,7 +154,8 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 assert(
                     retryFirst.Status == ViewportRenderDeliveryStatus.Deferred &&
                     retryFirst.Deferred &&
-                    retryFirst.DeferredUnits == 1,
+                    retryFirst.DeferredUnits == 1 &&
+                    retryFirst.Error is ViewportRenderWorkUnavailableException,
                     $"Delivery chain {i + 1} should classify an unavailable tile as deferred.");
 
                 retryPipeline.RequeueFrame(retryFrame);
