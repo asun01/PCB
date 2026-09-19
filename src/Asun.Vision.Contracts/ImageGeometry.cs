@@ -156,9 +156,19 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
                 "Inflation must not produce a negative or non-finite rectangle size.");
         }
 
+        var newX = X - horizontal;
+        var newY = Y - vertical;
+
+        if (!double.IsFinite(newX) || !double.IsFinite(newY))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(horizontal),
+                "Inflation must not produce non-finite coordinates.");
+        }
+
         return new PixelRect(
-            X - horizontal,
-            Y - vertical,
+            newX,
+            newY,
             newWidth,
             newHeight);
     }
