@@ -108,6 +108,21 @@ Assert(
     "Zoom should preserve the viewport anchor.",
     failures);
 
+var invalidGraphRejected = false;
+try
+{
+    _ = new AsyncPipeline<object>(new[]
+    {
+        new AsyncPipeline<object>.Node("A", new[] { "B" }, (_, _) => ValueTask.CompletedTask),
+        new AsyncPipeline<object>.Node("B", new[] { "A" }, (_, _) => ValueTask.CompletedTask)
+    });
+}
+catch (ArgumentException)
+{
+    invalidGraphRejected = true;
+}
+Assert(invalidGraphRejected, "Cyclic pipeline graphs should be rejected.", failures);
+
 var parallelStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 var secondStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 var parallelPipeline = new AsyncPipeline<object>(new[]
