@@ -24,6 +24,29 @@ public sealed class ViewportRenderBatch
 
     public int RegionCount => Regions.Count;
 
+    public int TileCount =>
+        Items.Count(item =>
+            item.Kind == ViewportRenderWorkKind.Tile &&
+            !item.IsInvalidation);
+
+    public int RoiCount =>
+        Items.Count(item =>
+            item.Kind == ViewportRenderWorkKind.Roi &&
+            !item.IsInvalidation);
+
+    public int OverlayCount =>
+        Items.Count(item =>
+            item.Kind == ViewportRenderWorkKind.Overlay);
+
+    public int InvalidationCount =>
+        Items.Count(item => item.IsInvalidation);
+
+    public int FullSurfaceCount =>
+        Items.Count(item =>
+            item.Kind == ViewportRenderWorkKind.FullSurface);
+
+    public bool HasFullSurface => FullSurfaceCount != 0;
+
     public bool IsEmpty => Items.Count == 0;
 }
 
