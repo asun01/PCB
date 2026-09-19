@@ -21,6 +21,11 @@ public readonly record struct ViewportRenderFrameContext(
     ViewportDirtyFlags DirtyFlags,
     int WorkItemCount);
 
+public readonly record struct ViewportRenderOverlayContext(
+    RectangleF ViewportBounds,
+    ViewportDirtyFlags DirtyFlags,
+    long Generation);
+
 /// <summary>
 /// Rendering target contract intentionally contains no Skia, WPF, DevExpress,
 /// HALCON, or hardware types. A Skia adapter can implement this interface later.
@@ -38,6 +43,11 @@ public interface IViewportRenderSink<TTile>
     ValueTask DrawRoiAsync(
         ViewportRenderRoiContext roi,
         CancellationToken cancellationToken = default);
+
+    ValueTask DrawOverlayAsync(
+        ViewportRenderOverlayContext overlay,
+        CancellationToken cancellationToken = default) =>
+        ValueTask.CompletedTask;
 
     ValueTask EndFrameAsync(
         ViewportRenderFrameContext context,
