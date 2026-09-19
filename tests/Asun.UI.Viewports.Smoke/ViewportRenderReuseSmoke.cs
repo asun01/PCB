@@ -48,7 +48,7 @@ public static class ViewportRenderReuseSmoke
                 $"Reuse chain {i + 1} should return the same frame only after presentation.");
 
             assert(
-                reuse.LatestGeneration == first.Composite.Generation,
+                runtime.Reuse.LatestGeneration == first.Composite.Generation,
                 $"Reuse chain {i + 1} should expose the cached generation.");
 
             runtime.Composite.PanBy(new Vector2(3, 1));
@@ -59,16 +59,16 @@ public static class ViewportRenderReuseSmoke
             assert(
                 second is not null &&
                 second.Composite.Generation != first.Composite.Generation &&
-                !reuse.TryReuse(
+                !runtime.Reuse.TryReuse(
                     second.Composite.Generation,
                     out _),
                 $"Reuse chain {i + 1} should invalidate reuse after navigation.");
 
-            reuse.Clear();
+            runtime.Reuse.Clear();
 
             assert(
-                reuse.LatestGeneration is null &&
-                !reuse.TryReuse(
+                runtime.Reuse.LatestGeneration is null &&
+                !runtime.Reuse.TryReuse(
                     second?.Composite.Generation ?? -1,
                     out _),
                 $"Reuse chain {i + 1} should clear cached frames explicitly.");
