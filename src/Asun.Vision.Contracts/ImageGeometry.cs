@@ -18,6 +18,8 @@ public readonly record struct ImageSize
 
     public long PixelCount => (long)Width * Height;
 
+    public bool IsSquare => Width == Height;
+
     public double AspectRatio => (double)Width / Height;
 
     public Vector2 Vector => new(Width, Height);
