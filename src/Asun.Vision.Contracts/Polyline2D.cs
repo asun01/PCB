@@ -178,6 +178,12 @@ public sealed class Polyline2D
         return Vector2.DistanceSquared(_points[0], _points[^1]) <= tolerance * tolerance;
     }
 
+    public (Vector2 Point, double DistanceSquared) ClosestPointWithDistance(Vector2 point)
+    {
+        var closest = ClosestPoint(point);
+        return (closest, Vector2.DistanceSquared(closest, point));
+    }
+
     public Vector2 ClosestPoint(Vector2 point)
     {
         if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
