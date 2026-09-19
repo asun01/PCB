@@ -96,6 +96,45 @@ catch (OperationCanceledException)
 
 Assert(cancellationObserved, "Pipeline should honor cancellation before scheduling work.", failures);
 
+var runningCancellationSource = new CancellationTokenSource();
+var runningNodeStarted = new TaskCompletionSource<bool>(
+    TaskCreationOptions.RunContinuationsAsynchronously);
+
+var runningCancellationPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("Running", async (_, token) =>
+    {
+        runningNodeStarted.SetResult(true);
+        await Task.Delay(Timeout.InfiniteTimeSpan, token);
+    })
+});
+
+var runningCancellationTask = runningCancellationPipeline
+    .ExecuteAsync(new object(), runningCancellationSource.Token)
+    .AsTask();
+
+await runningNodeStarted.Task;
+runningCancellationSource.Cancel();
+
+var runningCancellationObserved = false;
+try
+{
+    await runningCancellationTask;
+}
+catch (OperationCanceledException)
+{
+    runningCancellationObserved = true;
+}
+finally
+{
+    runningCancellationSource.Dispose();
+}
+
+Assert(
+    runningCancellationObserved,
+    "Pipeline should propagate cancellation while a node is executing.",
+    failures);
+
 var timeoutObserved = false;
 try
 {
