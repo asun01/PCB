@@ -9,6 +9,14 @@ public enum ViewportRenderSurfaceState
     Disposed
 }
 
+public sealed class ViewportPresentationFenceRejectedException : OperationCanceledException
+{
+    public ViewportPresentationFenceRejectedException()
+        : base("The presentation submission is no longer current.")
+    {
+    }
+}
+
 public readonly record struct ViewportRenderSurfaceTransaction(
     long Generation,
     long Sequence);
@@ -108,7 +116,8 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
         ViewportRenderSurfaceTransaction transaction,
         int plannedUnits,
         int renderedUnits,
-        IReadOnlyList<System.Drawing.RectangleF>? regions = null)
+        IReadOnlyList<System.Drawing.RectangleF>? regions = null,
+        Func<bool>? presentationFence = null)
     {
         if (plannedUnits < 0)
             throw new ArgumentOutOfRangeException(nameof(plannedUnits));
@@ -125,6 +134,10 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
                 _renderingSequence != transaction.Sequence)
                 throw new InvalidOperationException(
                     "Only the active surface transaction can be committed.");
+
+            if (presentationFence is not null &&
+                !presentationFence())
+                throw new ViewportPresentationFenceRejectedException();
 
             _lastPlannedUnits = plannedUnits;
             _lastRenderedUnits = renderedUnits;
