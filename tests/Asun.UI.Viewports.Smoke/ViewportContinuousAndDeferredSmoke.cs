@@ -8,6 +8,7 @@ public static class ViewportContinuousAndDeferredSmoke
     {
         await VerifyPartialDeferredRetryAsync(assert);
         await VerifyIdleWakeAsync(assert);
+        await VerifySurfaceTransactionAsync(assert);
     }
 
     private static async ValueTask VerifyPartialDeferredRetryAsync(
@@ -121,6 +122,75 @@ public static class ViewportContinuousAndDeferredSmoke
             retrySink.TileIndices.Count == 1 &&
             retrySink.TileIndices[0] == new TileIndex(0, 0),
             "Recovered delivery should render only the deferred tile without replaying successful work.");
+    }
+
+    private static async ValueTask VerifySurfaceTransactionAsync(
+        Action<bool, string> assert)
+    {
+        using var pipeline = new ViewportRenderPipelineRuntime<string>(
+            new Vector2(200, 100),
+            new Vector2(200, 100),
+            new Vector2(100, 100),
+            0,
+            8,
+            1,
+            new StableTileSource(),
+            new ViewportRenderBudget(4, 4, 2, 8),
+            1000);
+
+        var frame = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(1));
+
+        assert(
+            frame is not null,
+            "Surface transaction smoke should create a render frame.");
+
+        if (frame is null)
+            return;
+
+        using var surface = new ViewportRenderSurfaceRuntime();
+        var successfulSink = new TransactionalSink();
+
+        var delivered = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+            frame,
+            successfulSink,
+            surface: surface);
+
+        var presented = surface.Snapshot;
+
+        assert(
+            delivered.Succeeded &&
+            presented.State == ViewportRenderSurfaceState.Presented &&
+            presented.PresentedGeneration == frame.Composite.Generation &&
+            presented.PresentationSequence == 1 &&
+            presented.PresentedRegionCount == frame.Batch.RegionCount &&
+            successfulSink.Events.SequenceEqual(
+                new[] { "Begin", "End", "Commit" }) &&
+            successfulSink.DiscardCount == 0,
+            "A successful render should atomically transition the surface to Presented after EndFrame and Commit.");
+
+        using var failedSurface = new ViewportRenderSurfaceRuntime();
+        var failingSink = new TransactionalSink
+        {
+            FailCommit = true
+        };
+
+        var failed = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+            frame,
+            failingSink,
+            surface: failedSurface);
+
+        var discarded = failedSurface.Snapshot;
+
+        assert(
+            !failed.Succeeded &&
+            failed.Status == ViewportRenderDeliveryStatus.Failed &&
+            discarded.State == ViewportRenderSurfaceState.Discarded &&
+            discarded.PresentedGeneration is null &&
+            failingSink.Events.SequenceEqual(
+                new[] { "Begin", "End", "Commit", "Discard" }) &&
+            failingSink.DiscardCount == 1,
+            "A commit failure should discard the active surface transaction without publishing a new generation.");
     }
 
     private static async ValueTask VerifyIdleWakeAsync(
@@ -270,6 +340,60 @@ public static class ViewportContinuousAndDeferredSmoke
             ViewportRenderFrameContext context,
             CancellationToken cancellationToken = default) =>
             ValueTask.CompletedTask;
+    }
+
+    private sealed class TransactionalSink : IViewportRenderSink<string>
+    {
+        public bool FailCommit { get; init; }
+        public List<string> Events { get; } = new();
+        public int DiscardCount { get; private set; }
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            Events.Add("Begin");
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            Events.Add("End");
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask CommitFrameAsync(
+            ViewportRenderCommitContext context,
+            CancellationToken cancellationToken = default)
+        {
+            Events.Add("Commit");
+
+            if (FailCommit)
+                throw new InvalidOperationException("synthetic commit failure");
+
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DiscardFrameAsync(
+            ViewportRenderDiscardContext context,
+            CancellationToken cancellationToken = default)
+        {
+            Events.Add("Discard");
+            DiscardCount++;
+            return ValueTask.CompletedTask;
+        }
     }
 
     private sealed class WakeSink : IViewportRenderSink<string>
