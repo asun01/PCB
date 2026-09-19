@@ -146,6 +146,23 @@ public static class ViewportPresentationBufferSmoke
             buffers.Statistics.RegionCommits == 0,
             "Backbuffer reset should clear presentation state and counters.");
 
+        var staleAfterResetRejected = false;
+
+        try
+        {
+            buffers.Begin(
+                tokenB,
+                1);
+        }
+        catch (InvalidOperationException)
+        {
+            staleAfterResetRejected = true;
+        }
+
+        assert(
+            staleAfterResetRejected,
+            "A pre-reset presentation fence must remain invalid after backbuffer reset.");
+
         var postReset = buffers.Begin(
             new ViewportPresentationSubmissionToken(20, 7),
             1);
