@@ -33,6 +33,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     private readonly ViewportCompositeRuntime<TTile> _composite;
     private readonly ViewportRenderSchedulerRuntime _scheduler;
     private readonly ViewportRenderBudget _budget;
+    private readonly ViewportRenderReuseRuntime<TTile> _reuse = new();
     private int _disposed;
 
     public ViewportRenderPipelineRuntime(
@@ -69,6 +70,16 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
     public ViewportRenderSchedulerRuntime Scheduler => _scheduler;
 
     public ViewportRenderBudget Budget => _budget;
+
+    public ViewportRenderReuseRuntime<TTile> Reuse => _reuse;
+
+    public bool TryReuse(
+        long generation,
+        out ViewportRenderPipelineFrame<TTile> frame)
+    {
+        ThrowIfDisposed();
+        return _reuse.TryReuse(generation, out frame);
+    }
 
     public void Invalidate(
         ViewportDirtyFlags flags,
@@ -118,11 +129,14 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             budgeted,
             composite.Tiles.Transform);
 
-        return new ViewportRenderPipelineFrame<TTile>(
+        var result = new ViewportRenderPipelineFrame<TTile>(
             composite,
             submission,
             budgeted,
             batch);
+
+        _reuse.Store(result);
+        return result;
     }
 
     public bool TryTakePointer(
@@ -145,7 +159,7 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
 
         if (!_scheduler.TryTakeFrame(now, out var submission))
         {
-            return new ViewportRenderPipelineFrame<TTile>(
+            var emptyResult = new ViewportRenderPipelineFrame<TTile>(
                 composite,
                 default,
                 ViewportRenderWorkRuntime.Plan(
@@ -153,6 +167,9 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                     ViewportDirtyFlags.None),
                 ViewportRenderBatchRuntime.Empty(
                     composite.Generation));
+
+            _reuse.Store(emptyResult);
+            return emptyResult;
         }
 
         var plan = ViewportRenderWorkRuntime.Plan(
@@ -167,17 +184,23 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             prioritized,
             _budget);
 
-        return new ViewportRenderPipelineFrame<TTile>(
+        var result = new ViewportRenderPipelineFrame<TTile>(
             composite,
             submission,
             budgeted,
             ViewportRenderBatchRuntime.Create(
                 budgeted,
                 composite.Tiles.Transform));
+
+        _reuse.Store(result);
+        return result;
     }
 
-    public void Reset() =>
+    public void Reset()
+    {
         _scheduler.Reset();
+        _reuse.Clear();
+    }
 
     public void Dispose()
     {
