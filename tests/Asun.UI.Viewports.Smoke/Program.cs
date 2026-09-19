@@ -271,6 +271,7 @@ await ViewportPresentationOutcomeEvidenceSmoke.RunAsync(Assert);
 ViewportReplayIntegrationHundredStageSmoke.Run(Assert);
 ViewportReplayWindowHundredStageSmoke.Run(Assert);
 ViewportReplayExecutionHundredStageSmoke.Run(Assert);
+ViewportReplayStateFingerprintHundredStageSmoke.Run(Assert);
 ViewportThreeHundredRoundSmoke.Run(Assert);
 ViewportEvidenceHistorySmoke.Run(Assert);
 
