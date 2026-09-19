@@ -146,8 +146,12 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
             ThrowIfDisposed();
 
             _renderingGeneration = null;
+            _presentedGeneration = null;
             _discardedGeneration = null;
             _lastDiscardStatus = null;
+            _presentationSequence = 0;
+            _lastRenderedUnits = 0;
+            _lastPlannedUnits = 0;
             _presentedRegions = Array.Empty<System.Drawing.RectangleF>();
             _state = ViewportRenderSurfaceState.Idle;
         }
