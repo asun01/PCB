@@ -65,6 +65,14 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         double.IsFinite(Right) &&
         double.IsFinite(Bottom);
 
+    public PixelRect EnsureValid()
+    {
+        if (!IsValid || !AreBoundsFinite)
+            throw new InvalidOperationException("The rectangle is not finite and valid.");
+
+        return this;
+    }
+
     public double Left => X;
     public double Top => Y;
     public double Right => X + Width;
