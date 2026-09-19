@@ -59,6 +59,16 @@ public static class OperationTimeout
             timeout,
             cancellationToken);
 
+    public static ValueTask ExecuteInfiniteAsync(
+        Func<CancellationToken, ValueTask> operation,
+        CancellationToken cancellationToken = default) =>
+        ExecuteAsync(operation, Timeout.InfiniteTimeSpan, cancellationToken);
+
+    public static ValueTask<T> ExecuteInfiniteAsync<T>(
+        Func<CancellationToken, ValueTask<T>> operation,
+        CancellationToken cancellationToken = default) =>
+        ExecuteAsync(operation, Timeout.InfiniteTimeSpan, cancellationToken);
+
     public static async ValueTask ExecuteAsync(
         Func<CancellationToken, ValueTask> operation,
         TimeSpan timeout,
