@@ -12,6 +12,7 @@ public sealed class ViewportRenderReuseRuntime<TTile>
         lock (_sync)
         {
             if (_latest is not null &&
+                !_latest.HasDeferredWork &&
                 _latest.Composite.Generation == generation)
             {
                 frame = _latest;
@@ -26,6 +27,9 @@ public sealed class ViewportRenderReuseRuntime<TTile>
     public void Store(ViewportRenderPipelineFrame<TTile> frame)
     {
         ArgumentNullException.ThrowIfNull(frame);
+
+        if (frame.HasDeferredWork)
+            return;
 
         lock (_sync)
             _latest = frame;
