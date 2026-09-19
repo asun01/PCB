@@ -97,6 +97,21 @@ public static class ViewportEvidenceHistorySmoke
             nonMonotonicRejected,
             "Evidence history should reject a generation regression.");
 
+        var duplicateRejected = false;
+
+        try
+        {
+            store.Add(third);
+        }
+        catch (InvalidOperationException)
+        {
+            duplicateRejected = true;
+        }
+
+        assert(
+            duplicateRejected,
+            "Evidence history should reject duplicate stable keys.");
+
         store.Clear();
 
         assert(
