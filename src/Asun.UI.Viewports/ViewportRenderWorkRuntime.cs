@@ -130,7 +130,10 @@ public static class ViewportRenderWorkRuntime
                 }
             }
         }
-        else if (roiDirty || frame.SceneDiff.Count == 0)
+        else if (
+            roiDirty ||
+            dirtyFlags.HasFlag(ViewportDirtyFlags.Transform) ||
+            dirtyFlags == ViewportDirtyFlags.All)
         {
             foreach (var command in frame.SceneCommands)
             {
