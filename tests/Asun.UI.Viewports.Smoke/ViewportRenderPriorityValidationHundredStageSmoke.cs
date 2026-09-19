@@ -93,19 +93,29 @@ public static class ViewportRenderPriorityValidationHundredStageSmoke
                     s.Plan,
                     s.Frame);
 
-            Check(
+            var priorityKeys =
                 prioritized.Items
+                    .Select(item =>
+                        item.IsInvalidation
+                            ? -2
+                            : item.Kind switch
+                            {
+                                ViewportRenderWorkKind.FullSurface => -1,
+                                ViewportRenderWorkKind.Tile => 0,
+                                ViewportRenderWorkKind.Roi => 3,
+                                ViewportRenderWorkKind.Selection => 4,
+                                ViewportRenderWorkKind.Overlay => 5,
+                                _ => 6
+                            })
+                    .ToArray();
+
+            Check(
+                priorityKeys
                     .Zip(
-                        prioritized.Items.Skip(1),
-                        (left, right) =>
-                            left.Kind == ViewportRenderWorkKind.FullSurface ||
-                            right.Kind == ViewportRenderWorkKind.Tile ||
-                            left.Kind == right.Kind ||
-                            left.RoiId == Guid.Empty ||
-                            true)
-                    .Count() ==
-                Math.Max(0, prioritized.Items.Count - 1),
-                $"priority ordering {i + 1} should remain structurally traversable.");
+                        priorityKeys.Skip(1),
+                        (left, right) => left <= right)
+                    .All(item => item),
+                $"priority ordering {i + 1} should be non-decreasing.");
 
             s.Runtime.Dispose();
         }
