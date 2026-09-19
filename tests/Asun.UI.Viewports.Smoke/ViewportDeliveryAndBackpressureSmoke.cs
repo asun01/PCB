@@ -187,7 +187,6 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 assert(
                     deferredStats.Submissions >= 2,
                     $"Delivery chain {i + 1} should resubmit deferred render work.");
-                }
             }
 
             using var coalescingInput = new ViewportInputSubmissionRuntime();
