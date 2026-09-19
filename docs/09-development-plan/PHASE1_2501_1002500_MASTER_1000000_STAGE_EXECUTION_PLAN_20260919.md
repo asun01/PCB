@@ -2198,5 +2198,6 @@ The plan is fully complete only when:
 - [x] Stages 2501–3000 completed as five 100-stage acceptance blocks.
 - [x] Stages 3001–3500 completed as five 100-stage acceptance blocks.
 - [x] Stages 3501–4000 completed as five 100-stage acceptance blocks.
-- [x] The first completed future window under this master plan now ends at stage 4000.
-- [ ] Stages 4001–1,002,500 remain planned and are not represented as completed work.
+- [x] Stages 4001–4500 completed as five 100-stage acceptance blocks.
+- [x] The first completed future window under this master plan now ends at stage 4500.
+- [ ] Stages 4501–1,002,500 remain planned and are not represented as completed work.
