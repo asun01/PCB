@@ -161,6 +161,21 @@ public readonly record struct AffineTransform2D
             throw new ArgumentOutOfRangeException(parameterName, value, "Value must be finite.");
     }
 
+    public bool ApproximatelyEquals(
+        AffineTransform2D other,
+        float tolerance = 1e-5f)
+    {
+        if (!float.IsFinite(tolerance) || tolerance < 0)
+            throw new ArgumentOutOfRangeException(nameof(tolerance));
+
+        return MathF.Abs(_matrix.M11 - other._matrix.M11) <= tolerance &&
+               MathF.Abs(_matrix.M12 - other._matrix.M12) <= tolerance &&
+               MathF.Abs(_matrix.M21 - other._matrix.M21) <= tolerance &&
+               MathF.Abs(_matrix.M22 - other._matrix.M22) <= tolerance &&
+               MathF.Abs(_matrix.M31 - other._matrix.M31) <= tolerance &&
+               MathF.Abs(_matrix.M32 - other._matrix.M32) <= tolerance;
+    }
+
     private static bool IsFinite(Matrix3x2 matrix) =>
         float.IsFinite(matrix.M11) &&
         float.IsFinite(matrix.M12) &&
