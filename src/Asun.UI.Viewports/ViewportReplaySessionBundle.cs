@@ -6,9 +6,12 @@ public sealed record ViewportReplaySessionBundle(
     ViewportRenderEvidenceManifest[] Evidence,
     ViewportPresentationAuditEvent[] Audit)
 {
+    public int FormatVersion { get; init; } =
+        ViewportReplaySessionBundleRuntime.CurrentFormatVersion;
+
     public bool IsEmpty =>
         Manifest.IsEmpty &&
-        Inputs.Length == 0 &&
-        Evidence.Length == 0 &&
-        Audit.Length == 0;
+        Inputs is { Length: 0 } &&
+        Evidence is { Length: 0 } &&
+        Audit is { Length: 0 };
 }
