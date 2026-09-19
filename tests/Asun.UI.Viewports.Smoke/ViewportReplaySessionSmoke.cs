@@ -139,10 +139,10 @@ public static class ViewportReplaySessionSmoke
             "Replay session manifest should bind input, evidence, audit, and session hashes.");
 
         assert(
-            json.Contains(""manifest":") &&
-            json.Contains(""inputs":") &&
-            json.Contains(""evidence":") &&
-            json.Contains(""audit":"),
+            json.Contains("\"manifest\":") &&
+            json.Contains("\"inputs\":") &&
+            json.Contains("\"evidence\":") &&
+            json.Contains("\"audit\":"),
             "Replay session JSON should expose all evidence layers.");
 
         var beforeResetHash = manifest.SessionHash;
