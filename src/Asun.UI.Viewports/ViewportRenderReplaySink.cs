@@ -48,6 +48,7 @@ public sealed class ViewportRenderReplaySink<TTile> : IViewportRenderSink<TTile>
     private readonly object _sync = new();
     private readonly List<ViewportRenderReplayOperation> _operations = new();
     private long? _activeGeneration;
+    private long? _lastEndedGeneration;
     private bool _frameOpen;
     private int _sequence;
     private int _renderedUnits;
@@ -91,6 +92,7 @@ public sealed class ViewportRenderReplaySink<TTile> : IViewportRenderSink<TTile>
         {
             _operations.Clear();
             _activeGeneration = null;
+            _lastEndedGeneration = null;
             _frameOpen = false;
             _sequence = 0;
             _renderedUnits = 0;
@@ -111,6 +113,7 @@ public sealed class ViewportRenderReplaySink<TTile> : IViewportRenderSink<TTile>
 
             _frameOpen = true;
             _activeGeneration = context.Generation;
+            _lastEndedGeneration = null;
             Add(
                 ViewportRenderReplayOperationKind.Begin,
                 context.Generation,
@@ -245,6 +248,7 @@ public sealed class ViewportRenderReplaySink<TTile> : IViewportRenderSink<TTile>
 
             _frameOpen = false;
             _activeGeneration = null;
+            _lastEndedGeneration = context.Generation;
         }
 
         return ValueTask.CompletedTask;
@@ -313,11 +317,12 @@ public sealed class ViewportRenderReplaySink<TTile> : IViewportRenderSink<TTile>
 
     private void EnsureGeneration(long generation)
     {
-        if (_activeGeneration is long active &&
-            active != generation)
+        var expected = _activeGeneration ?? _lastEndedGeneration;
+
+        if (expected is null || expected.Value != generation)
         {
             throw new InvalidOperationException(
-                "Replay sink generation does not match the active presentation generation.");
+                "Replay sink generation does not match the most recently delivered frame.");
         }
     }
 
