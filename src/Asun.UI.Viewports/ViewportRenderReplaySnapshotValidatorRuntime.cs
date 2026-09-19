@@ -104,6 +104,16 @@ public static class ViewportRenderReplaySnapshotValidatorRuntime
         if (snapshot.OperationCount != operations.Count)
             errors.Add("Replay snapshot operation count does not match operations.");
 
+        var lastGeneration = operations.Count == 0
+            ? (long?)null
+            : operations[^1].Generation;
+
+        if (snapshot.LastGeneration != lastGeneration)
+            errors.Add("Replay last generation does not match operations.");
+
+        if (snapshot.EvidenceHash.Length != 64)
+            errors.Add("Replay evidence hash must be a SHA-256 value.");
+
         if (snapshot.BeginCount != beginCount ||
             snapshot.EndCount != endCount)
         {
