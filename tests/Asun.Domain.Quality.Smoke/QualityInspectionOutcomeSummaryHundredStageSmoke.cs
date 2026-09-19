@@ -33,7 +33,7 @@ public static class QualityInspectionOutcomeSummaryHundredStageSmoke
 
         var summary=QualityInspectionOutcomeSummaryRuntime.Create(result);
         var invalid=summary with {FailCount=-1};
-        var wrong=summary with {TotalCount=summary.TotalCount};
+        var wrong=summary with {PassCount=summary.PassCount+1};
 
         for(var i=0;i<10;i++) Check(QualityInspectionOutcomeSummaryValidationRuntime.IsValid(result,summary),$"outcome summary validation round {i+1} should pass.");
         for(var i=0;i<10;i++) Check(summary.UnknownCount==1,$"unknown count round {i+1} should be one.");
@@ -44,7 +44,7 @@ public static class QualityInspectionOutcomeSummaryHundredStageSmoke
         for(var i=0;i<10;i++) Check(!QualityInspectionOutcomeSummaryValidationRuntime.IsValid(result,invalid),$"negative outcome count round {i+1} should be rejected.");
         for(var i=0;i<10;i++) Check(summary.TotalCount==result.Findings.Count,$"summary/finding alignment round {i+1} should remain explicit.");
         for(var i=0;i<10;i++) Check(QualityInspectionOutcomeSummaryRuntime.Create(result)==summary,$"summary determinism round {i+1} should remain stable.");
-        for(var i=0;i<10;i++) Check(wrong.TotalCount==summary.TotalCount,$"neutral summary record round {i+1} should remain value-stable.");
+        for(var i=0;i<10;i++) Check(!QualityInspectionOutcomeSummaryValidationRuntime.IsValid(result,wrong),$"summary total mismatch round {i+1} should be rejected.");
 
         assert(round==100,$"Quality inspection outcome summary smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
