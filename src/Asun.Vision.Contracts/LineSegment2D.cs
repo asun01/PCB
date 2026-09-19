@@ -33,6 +33,15 @@ public readonly record struct LineSegment2D(
     public Vector2 Midpoint =>
         (Start + End) * 0.5f;
 
+    public Circle2D GetBoundingCircle()
+    {
+        EnsureFinite();
+
+        return new Circle2D(
+            Midpoint,
+            Length / 2d);
+    }
+
     public RectangleF Bounds
     {
         get
