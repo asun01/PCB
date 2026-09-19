@@ -924,6 +924,23 @@ Assert(
 
 Assert(batchQueue.TryDequeue(out var batchTail) && batchTail == 30, "Batch dequeue should leave remaining work intact.", failures);
 
+var cancelledBatchObserved = false;
+using (var batchCancellation = new CancellationTokenSource())
+{
+    batchCancellation.Cancel();
+
+    try
+    {
+        await batchQueue.DequeueBatchAsync(new int[1], batchCancellation.Token);
+    }
+    catch (OperationCanceledException)
+    {
+        cancelledBatchObserved = true;
+    }
+}
+
+Assert(cancelledBatchObserved, "Asynchronous batch dequeue should honor cancellation while waiting.", failures);
+
 var asyncBatchQueue = new BoundedWorkQueue<int>(4);
 Assert(asyncBatchQueue.TryEnqueue(40), "Async batch queue should accept the first item.", failures);
 Assert(asyncBatchQueue.TryEnqueue(50), "Async batch queue should accept the second item.", failures);
