@@ -193,6 +193,31 @@ public static class ViewportReplayBundleIntegrityHundredStageSmoke
                 $"dangling evidence reference {i + 1} should be rejected.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            var invalidInput =
+                new ViewportInputEvent(
+                    1,
+                    ViewportInputEventKind.PointerMove,
+                    new Vector2(10, 20),
+                    0,
+                    (ViewportMouseButton)int.MaxValue);
+
+            var bundle = CreateBundle(
+                new[] { invalidInput },
+                Array.Empty<ViewportRenderEvidenceManifest>());
+
+            var errors =
+                ViewportReplaySessionBundleRuntime.Validate(bundle);
+
+            Check(
+                errors.Any(
+                    item => item.Contains(
+                        "kind and button",
+                        StringComparison.OrdinalIgnoreCase)),
+                $"undefined input button {i + 1} should be rejected.");
+        }
+
         assert(
             round == 100,
             $"Bundle integrity smoke should execute exactly 100 numbered rounds; actual {round}.");
