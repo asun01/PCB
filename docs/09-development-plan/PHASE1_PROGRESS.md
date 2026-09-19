@@ -28,3 +28,14 @@
 ## Automation rule
 
 Continue all non-blocked repository, tooling, dependency-boundary, simulation-boundary, documentation, validator, replay-harness preparation, and audit work. Never invent production schema/state/owner/threshold/API to bypass an open gate.
+
+### 100-round non-blocked continuation — 2026-09-19
+- Completed 100 tracked engineering work units across render evidence, structural invariants, navigation, workflow replay, Scene/Visibility, input/backpressure, render planning/budgeting, and Platform.Core regressions.
+- Added deterministic Replay/Render evidence fingerprints without introducing a pixel-golden authority or vendor-specific rendering dependency.
+- Added centralized invariant validation and dedicated smoke suites, all registered through the existing repository smoke entry.
+- Corrected concrete source defects in AsyncPipeline and AsyncSignal discovered during repository-grounded inspection.
+- Maintained the repository rule that HALCON/DevExpress/hardware authority gates remain recorded external gates and are not guessed around.
+
+Verification note:
+- No local build/test execution result is asserted.
+- Latest branch workflow/status lookup returned no associated GitHub Actions run/status; authoritative build/test verification remains pending external execution.
