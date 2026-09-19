@@ -692,6 +692,22 @@ Assert(
     imageBounds.Area == 500000,
     "Valid pixel rectangles should expose finite bounds and area.",
     failures);
+var centeredRoi = Asun.Vision.Contracts.PixelRect.FromCenter(
+    new Asun.Vision.Contracts.PixelPoint(200, 100),
+    200,
+    100);
+
+Assert(
+    centeredRoi == new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100),
+    "Pixel rectangle center factory should produce the requested center and size.",
+    failures);
+
+var ltrbRoi = Asun.Vision.Contracts.PixelRect.FromLTRB(300, 200, 100, 50);
+Assert(
+    ltrbRoi == centeredRoi,
+    "Pixel rectangle LTRB factory should normalize direction.",
+    failures);
+
 var dragRoi = Asun.Vision.Contracts.PixelRect.FromPoints(
     new Asun.Vision.Contracts.PixelPoint(300, 200),
     new Asun.Vision.Contracts.PixelPoint(100, 50));
