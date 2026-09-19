@@ -228,6 +228,16 @@ var timedResult = await OperationTimeout.ExecuteAsync(
 
 Assert(timedResult == 42, "Generic operation timeout should return the operation result.", failures);
 
+var infiniteTimeoutResult = await OperationTimeout.ExecuteInfiniteAsync(
+    async token =>
+    {
+        await Task.Yield();
+        token.ThrowIfCancellationRequested();
+        return 7;
+    });
+
+Assert(infiniteTimeoutResult == 7, "Infinite timeout convenience should preserve successful results.", failures);
+
 var viewport = Asun.UI.Viewports.ViewportTransform.Fit(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(1200, 800));
