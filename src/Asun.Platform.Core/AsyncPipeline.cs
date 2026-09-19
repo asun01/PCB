@@ -65,6 +65,22 @@ public sealed class AsyncPipeline<TContext>
         return _nodes.Any(node => string.Equals(node.Id, id, StringComparison.Ordinal));
     }
 
+    public IReadOnlyList<string> GetDependencies(string id)
+    {
+        if (!TryGetNode(id, out var node))
+            throw new KeyNotFoundException($"Pipeline node '{id}' is not configured.");
+
+        return node!.Dependencies.ToArray();
+    }
+
+    public IReadOnlyList<string> GetDependents(string id)
+    {
+        if (!_dependents.TryGetValue(id, out var dependents))
+            throw new KeyNotFoundException($"Pipeline node '{id}' is not configured.");
+
+        return dependents.Select(node => node.Id).ToArray();
+    }
+
     public bool TryGetNode(string id, out Node? node)
     {
         if (string.IsNullOrWhiteSpace(id))
