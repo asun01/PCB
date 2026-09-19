@@ -2196,7 +2196,7 @@ The plan is fully complete only when:
 
 - [x] Stages 1–2,500 already have repository history and stage ledgers.
 - [x] Stages 2501–3000 completed as five 100-stage acceptance blocks.
-- [x] The first completed future window under this master plan now ends at stage 3500.
 - [x] Stages 3001–3500 completed as five 100-stage acceptance blocks.
-- [ ] Stages 3501–1,002,500 remain planned and are not represented as completed work.
-- [ ] Stages 3001–1,002,500 are planned by this document and must not be represented as completed until actual repository evidence exists.
+- [x] Stages 3501–4000 completed as five 100-stage acceptance blocks.
+- [x] The first completed future window under this master plan now ends at stage 4000.
+- [ ] Stages 4001–1,002,500 remain planned and are not represented as completed work.
