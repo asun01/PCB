@@ -63,6 +63,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
             _pipeline.Composite.Generation,
             _input.PendingCount,
             _pipeline.Scheduler.PendingFlags,
+            _backpressure.Capture(_input),
             _continuous.Delivery.Statistics,
             _continuous.Statistics);
 
