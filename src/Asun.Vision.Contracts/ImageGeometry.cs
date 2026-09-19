@@ -155,6 +155,22 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
             newHeight);
     }
 
+    public PixelRect ExpandToInclude(PixelPoint point)
+    {
+        if (!IsValid)
+            throw new InvalidOperationException("The rectangle is invalid.");
+
+        if (!point.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        var left = Math.Min(Left, point.X);
+        var top = Math.Min(Top, point.Y);
+        var right = Math.Max(Right, point.X);
+        var bottom = Math.Max(Bottom, point.Y);
+
+        return new PixelRect(left, top, right - left, bottom - top);
+    }
+
     public PixelRect ClampTo(PixelRect bounds)
     {
         if (!IsValid)
