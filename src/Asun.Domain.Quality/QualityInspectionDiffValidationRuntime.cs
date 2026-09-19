@@ -34,6 +34,13 @@ public static class QualityInspectionDiffValidationRuntime
             "Relinked evidence keys",
             errors);
 
+        ValidateFindingIds(diff.AddedFindingIds, "Added finding ids", errors);
+        ValidateFindingIds(diff.RemovedFindingIds, "Removed finding ids", errors);
+        ValidateFindingIds(diff.ChangedFindingIds, "Changed finding ids", errors);
+        ValidateEvidenceKeys(diff.AddedEvidenceKeys, "Added evidence keys", errors);
+        ValidateEvidenceKeys(diff.RemovedEvidenceKeys, "Removed evidence keys", errors);
+        ValidateEvidenceKeys(diff.RelinkedEvidenceKeys, "Relinked evidence keys", errors);
+
         if (diff.AddedFindingIds.Intersect(diff.RemovedFindingIds).Any())
             errors.Add("A finding cannot be both added and removed.");
 
@@ -67,5 +74,23 @@ public static class QualityInspectionDiffValidationRuntime
     {
         if (values.Count != values.Distinct().Count())
             errors.Add($"{label} must contain unique values.");
+    }
+
+    private static void ValidateFindingIds(
+        IReadOnlyList<QualityFindingId> values,
+        string label,
+        List<string> errors)
+    {
+        if (values.Any(id => !id.IsValid))
+            errors.Add($"{label} must contain only valid ids.");
+    }
+
+    private static void ValidateEvidenceKeys(
+        IReadOnlyList<QualityEvidenceKey> values,
+        string label,
+        List<string> errors)
+    {
+        if (values.Any(key => !key.IsValid))
+            errors.Add($"{label} must contain only valid evidence keys.");
     }
 }
