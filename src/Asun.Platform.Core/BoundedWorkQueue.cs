@@ -86,6 +86,27 @@ public sealed class BoundedWorkQueue<T>
     /// Removes up to <paramref name="destination"/>.Length currently available
     /// items without waiting for additional work.
     /// </summary>
+    public int DrainTo(
+        ICollection<T> destination,
+        int maxCount)
+    {
+        ArgumentNullException.ThrowIfNull(destination);
+
+        if (maxCount <= 0)
+            throw new ArgumentOutOfRangeException(nameof(maxCount));
+
+        var count = 0;
+
+        while (count < maxCount &&
+               _channel.Reader.TryRead(out var item))
+        {
+            destination.Add(item!);
+            count++;
+        }
+
+        return count;
+    }
+
     public int TryDequeueBatch(Span<T> destination)
     {
         if (destination.Length == 0)
