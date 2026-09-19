@@ -306,3 +306,30 @@ Verification status:
 - Source-level/static structure checks were performed on the changed acceptance assets.
 - No local build, test, GitHub Actions, hardware, HALCON, DevExpress, or vendor SDK success is claimed unless authoritative execution evidence exists.
 - The 100,000-stage execution window remains active for stages 4501–104500.
+
+
+### 5001→5500 platform resource, queue, pipeline and statistics hardening — 2026-09-19
+
+Completed the next 500-stage batch inside the active 100,000-stage execution window.
+
+Real defect corrected:
+- `ResourceLeasePool.AcquireAsync(resource, timeout, cancellationToken)` now accepts `TimeSpan.Zero` as a valid non-blocking timeout, matching the synchronous acquisition semantics. Negative finite timeouts remain rejected.
+
+Validation added:
+- `ResourceLeasePoolValidationRuntime`
+- `BoundedWorkQueueValidationRuntime`
+- `AsyncPipelineValidationRuntime`
+- `StatisticsValidationRuntime`
+- `AsyncSignalValidationRuntime`
+- five dedicated 100-round Platform Core Smokes, registered in `tests/Asun.Platform.Core.Smoke/Program.cs`.
+
+Stage ledgers closed:
+- 5001–5100
+- 5101–5200
+- 5201–5300
+- 5301–5400
+- 5401–5500
+
+Verification status:
+- Static structure audits passed for the five new Smokes: 10 loop groups, 100 numbered rounds, balanced delimiters, no placeholder markers.
+- No local build/test/CI success is claimed; the latest checked branch commit has no workflow run/status evidence.
