@@ -18,6 +18,12 @@ public static class QualityInspectionReplayProjectionValidationRuntime
         if (projection.Sequence < 0)
             errors.Add("Replay projection sequence cannot be negative.");
 
+        if (projection.EvidenceManifest is null)
+        {
+            errors.Add("Replay projection evidence manifest cannot be null.");
+            return errors;
+        }
+
         var findingIds = new HashSet<QualityFindingId>();
         foreach (var findingId in projection.FindingIds)
         {
