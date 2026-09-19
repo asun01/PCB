@@ -38,6 +38,12 @@ public readonly record struct ViewportRenderReplaySnapshot(
     int RenderedUnits,
     IReadOnlyList<ViewportRenderReplayOperation> Operations);
 
+public partial record struct ViewportRenderReplaySnapshot
+{
+    public string EvidenceHash =>
+        ViewportRenderEvidenceRuntime.ComputeReplayHash(Operations);
+}
+
 /// <summary>
 /// Deterministic, vendor-neutral render sink used for replay/golden evidence.
 /// It records the logical rendering contract without depending on WPF, Skia,
