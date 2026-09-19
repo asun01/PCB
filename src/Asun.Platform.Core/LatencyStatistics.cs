@@ -53,4 +53,7 @@ public sealed class LatencyStatistics
     public double P95 => Percentiles.Calculate(_samples, 95);
 
     public double P99 => Percentiles.Calculate(_samples, 99);
+
+    public double Percentile(double percentile) =>
+        Percentiles.Calculate(_samples, percentile);
 }
