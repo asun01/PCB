@@ -530,6 +530,15 @@ Assert(
     failures);
 
 var centeredPointTransform = viewport.CenterOnImagePoint(new System.Numerics.Vector2(250, 125));
+
+var centeredInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
+    .CenterOnImagePoint(new System.Numerics.Vector2(250, 125));
+
+Assert(
+    centeredInteraction.Transform.ViewportToImage(centeredInteraction.Transform.ViewportCenter) ==
+        new System.Numerics.Vector2(250, 125),
+    "Viewport interaction centering should forward to transform geometry.",
+    failures);
 Assert(
     centeredPointTransform.ViewportToImage(centeredPointTransform.ViewportCenter) ==
         new System.Numerics.Vector2(250, 125),
