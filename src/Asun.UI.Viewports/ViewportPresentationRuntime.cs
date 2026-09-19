@@ -85,6 +85,10 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     public ViewportRenderFrameState? LastFrameState =>
         _continuous.LastDelivery?.FrameState;
 
+    public ViewportPresentationReplayDiagnosticSnapshot
+        CreateReplayDiagnosticSnapshot() =>
+        ViewportPresentationReplayDiagnosticRuntime.Capture(this);
+
     public ViewportInputBackpressureRuntime Backpressure => _backpressure;
 
     public ViewportPresentationState State => _lifecycle.State;
