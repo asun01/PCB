@@ -132,6 +132,21 @@ public static class ViewportRenderCommandStreamValidationHundredStageSmoke
                 $"clear command counters {i + 1} should remain non-negative.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            var frame = CreateFrame();
+
+            Check(
+                frame is not null &&
+                frame.CommandStream.TileCount +
+                frame.CommandStream.RoiCount +
+                frame.CommandStream.OverlayCount +
+                frame.CommandStream.InvalidationCount +
+                frame.CommandStream.FullSurfaceCount ==
+                frame.CommandStream.CommandCount,
+                $"command category accounting {i + 1} should be complete.");
+        }
+
         assert(
             round == 100,
             $"Render command stream validation smoke should execute exactly 100 numbered rounds; actual {round}.");
