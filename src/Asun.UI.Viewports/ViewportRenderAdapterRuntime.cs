@@ -75,6 +75,8 @@ public static class ViewportRenderAdapterRuntime
 
             if (work.Kind == ViewportRenderWorkKind.FullSurface)
             {
+                await FlushInvalidationsAsync().ConfigureAwait(false);
+
                 await sink
                     .ClearInvalidatedRegionAsync(
                         new ViewportRenderInvalidationContext(
@@ -94,20 +96,12 @@ public static class ViewportRenderAdapterRuntime
                     transform);
 
                 if (!invalidationBounds.IsEmpty)
-                {
-                    await sink
-                        .ClearInvalidatedRegionAsync(
-                            new ViewportRenderInvalidationContext(
-                                invalidationBounds,
-                                frame.Composite.Generation),
-                            cancellationToken)
-                        .ConfigureAwait(false);
-
-                    renderedUnits++;
-                }
+                    pendingInvalidations.Add(invalidationBounds);
 
                 continue;
             }
+
+            await FlushInvalidationsAsync().ConfigureAwait(false);
 
             if (work.Kind == ViewportRenderWorkKind.Overlay)
             {
@@ -186,14 +180,6 @@ public static class ViewportRenderAdapterRuntime
         }
 
         await FlushInvalidationsAsync().ConfigureAwait(false);
-
-        }
-        finally
-        {
-            await sink
-                .EndFrameAsync(context, CancellationToken.None)
-                .ConfigureAwait(false);
-        }
 
         return renderedUnits + renderedRoiIds.Count;
     }
