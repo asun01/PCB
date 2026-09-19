@@ -38,6 +38,9 @@ public readonly record struct Angle2D(double Radians)
     public Angle2D Normalized =>
         new(NormalizedRadians);
 
+    public Angle2D Opposite =>
+        new(NormalizedRadians + Math.PI).Normalized;
+
     public double ShortestDeltaTo(Angle2D target) =>
         Normalize(target.Radians - Radians);
 
