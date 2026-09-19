@@ -28,6 +28,7 @@ public readonly record struct ViewportWorkflowCommand(
     Vector2 Vector,
     double Value,
     double SecondaryValue,
+    double TertiaryValue,
     Guid? RoiId)
 {
     public static ViewportWorkflowCommand Fit() =>
@@ -44,6 +45,7 @@ public readonly record struct ViewportWorkflowCommand(
             delta,
             0,
             0,
+            0,
             null);
 
     public static ViewportWorkflowCommand Zoom(
@@ -56,7 +58,8 @@ public readonly record struct ViewportWorkflowCommand(
             anchor,
             factor,
             minScale,
-            null) with { SecondaryValue = maxScale };
+            maxScale,
+            null);
 
     public static ViewportWorkflowCommand Center(Vector2 imagePoint) =>
         new(ViewportWorkflowOperation.CenterOnImagePoint, imagePoint, 0, 0, 0, null);
@@ -283,7 +286,9 @@ public sealed class ViewportWorkflowRuntime
     private Guid? ExecuteZoom(ViewportWorkflowCommand command)
     {
         if (!double.IsFinite(command.SecondaryValue) ||
-            command.SecondaryValue <= command.Value)
+            !double.IsFinite(command.TertiaryValue) ||
+            command.SecondaryValue <= 0 ||
+            command.TertiaryValue < command.SecondaryValue)
         {
             throw new ArgumentOutOfRangeException(
                 nameof(command),
@@ -293,7 +298,7 @@ public sealed class ViewportWorkflowRuntime
         _runtime.ZoomAt(
             command.Value,
             command.SecondaryValue,
-            Math.Max(command.SecondaryValue, 1000d),
+            command.TertiaryValue,
             command.Vector);
 
         return _runtime.SelectedId;
