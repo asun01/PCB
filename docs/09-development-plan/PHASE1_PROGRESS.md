@@ -598,3 +598,76 @@ Verification:
 Current continuous execution position:
 - completed through Stage 9000 in the active 4501–104500 window;
 - next natural stage: 9001.
+
+
+### 9001→9100 audit diff hardening — 2026-09-19
+
+Completed stages 9001–9100.
+
+Implemented:
+- QualityInspectionAuditDiff;
+- QualityInspectionAuditDiffRuntime;
+- exact 100-round audit diff Smoke.
+
+Audit diff reports changes in result identity, snapshot identity, sequence, finding count, evidence-link count, and canonical content fingerprint.
+
+### 9101→9200 evidence manifest hardening — 2026-09-19
+
+Completed stages 9101–9200.
+
+Implemented:
+- QualityInspectionEvidenceManifest;
+- deterministic manifest projection runtime;
+- manifest validation runtime;
+- exact 100-round evidence manifest Smoke.
+
+Evidence manifest ordering is canonical by FindingId then EvidenceKey, while the source snapshot remains unchanged.
+
+### 9201→9300 replay projection hardening — 2026-09-19
+
+Completed stages 9201–9300.
+
+Implemented:
+- QualityInspectionReplayProjection;
+- deterministic replay projection runtime;
+- replay projection validation runtime;
+- explicit null-manifest validation hardening;
+- exact 100-round replay projection Smoke.
+
+Replay projection is a lightweight, vendor-neutral consumer boundary over Result identity, Snapshot identity, sequence, finding ids, evidence manifest, and canonical content fingerprint.
+
+### 9301→9400 replay projection diff — 2026-09-19
+
+Completed stages 9301–9400.
+
+Implemented:
+- QualityInspectionReplayProjectionDiff;
+- deterministic replay projection diff runtime;
+- exact 100-round replay diff Smoke.
+
+The projection diff reports added/removed finding ids, exact added/removed evidence relationships, and content fingerprint change.
+
+### 9401→9500 inspection diff semantic hardening — 2026-09-19
+
+Completed stages 9401–9500.
+
+Real defects corrected:
+- existing QualityInspectionDiff now distinguishes newly introduced/removed evidence keys from relinked relationships through additive RelinkedEvidenceKeys state;
+- evidence key relinks are no longer falsely represented as both added and removed keys;
+- QualityInspectionDiffValidationRuntime now rejects invalid/blank FindingId and EvidenceKey values.
+
+Regression coverage:
+- diff validation Smoke now covers invalid identifiers and relink uniqueness;
+- diff runtime Smoke now covers same-key Finding relinks while preserving true key addition/removal counts.
+
+Closed acceptance asset:
+- PHASE1_9001_9500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Verification:
+- static source audits show balanced delimiters and exact 10-loop/10-Check/round==100 structure on the changed 100-round Smokes;
+- no TODO/NotImplementedException placeholder introduced;
+- no build/test/CI success claimed without authoritative execution evidence.
+
+Current continuous execution position:
+- completed through Stage 9500 in the active 4501–104500 window;
+- next natural stage: 9501.
