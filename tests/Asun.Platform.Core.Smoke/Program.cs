@@ -937,6 +937,18 @@ Assert(
     "Async batch dequeue should wait for the first item and drain already available work.",
     failures);
 
+var zeroBatchRejected = false;
+try
+{
+    _ = batchQueue.TryDequeueBatch(Span<int>.Empty);
+}
+catch (ArgumentException)
+{
+    zeroBatchRejected = true;
+}
+
+Assert(zeroBatchRejected, "Synchronous batch dequeue should reject an empty destination.", failures);
+
 using var readinessQueue = new BoundedWorkQueue<int>(1);
 Assert(readinessQueue.CanWrite, "A new queue should report writable readiness.", failures);
 var canWrite = await readinessQueue.WaitToWriteAsync();
