@@ -1053,7 +1053,9 @@ var waitingLeaseTask = resources.AcquireAsync("camera").AsTask();
 Assert(!waitingLeaseTask.IsCompleted, "A saturated resource should apply bounded waiting.", failures);
 
 cameraLease!.Dispose();
+Assert(cameraLease.IsDisposed, "Disposed resource leases should report released state.", failures);
 using var secondCameraLease = await waitingLeaseTask;
+Assert(!secondCameraLease.IsDisposed, "A newly acquired resource lease should be active.", failures);
 Assert(resources.Available("camera") == 0, "Acquired lease should consume the available slot.", failures);
 
 using var gpuLease1 = await resources.AcquireAsync("gpu");
