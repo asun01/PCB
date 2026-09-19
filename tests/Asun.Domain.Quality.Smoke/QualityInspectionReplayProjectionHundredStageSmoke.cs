@@ -36,6 +36,13 @@ public static class QualityInspectionReplayProjectionHundredStageSmoke
             new[]{QualityFindingId.Create("F-999")},
             projection.EvidenceManifest,
             projection.ContentFingerprint);
+        var nullManifest=new QualityInspectionReplayProjection(
+            projection.ResultId,
+            projection.SnapshotId,
+            projection.Sequence,
+            projection.FindingIds,
+            null!,
+            projection.ContentFingerprint);
 
         for(var i=0;i<10;i++) Check(QualityInspectionReplayProjectionValidationRuntime.IsValid(projection),$"projection validation round {i+1} should pass.");
         for(var i=0;i<10;i++) Check(projection.ResultId==result.ResultId,$"projection result identity round {i+1} should match.");
@@ -46,7 +53,7 @@ public static class QualityInspectionReplayProjectionHundredStageSmoke
         for(var i=0;i<10;i++) Check(projection.ContentFingerprint==QualityInspectionResultDeterminismRuntime.CreateContentFingerprint(result),$"projection fingerprint round {i+1} should match canonical result content.");
         for(var i=0;i<10;i++) Check(QualityInspectionReplayProjectionValidationRuntime.Validate(projection).Count==0,$"projection diagnostics round {i+1} should remain empty.");
         for(var i=0;i<10;i++) Check(!QualityInspectionReplayProjectionValidationRuntime.IsValid(invalid),$"projection orphan finding round {i+1} should be rejected.");
-        for(var i=0;i<10;i++) Check(projection.FindingIds.Distinct().Count()==2,$"projection finding uniqueness round {i+1} should remain stable.");
+        for(var i=0;i<10;i++) Check(projection.FindingIds.Distinct().Count()==2 && !QualityInspectionReplayProjectionValidationRuntime.IsValid(nullManifest),$"projection null-manifest boundary round {i+1} should remain explicit.");
 
         assert(round==100,$"Quality inspection replay projection smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
