@@ -2281,3 +2281,27 @@ The one-million-stage plan is an active execution program rather than a planning
 - Next natural stage: 18,001.
 - Evidence now supports window-wide opaque reference closure across multiple snapshots.
 - The one-million-stage horizon remains 2501–1,002,500.
+
+
+## Multi-product-chain live execution state — 2026-09-19
+
+The execution model has been upgraded from single-track subsystem continuation to rotating concrete product chains.
+
+Completed product-chain windows:
+- 18001–18500 — PCB Component / Assembly
+- 18501–19000 — Vision / Metrology
+- 19001–19500 — Render / Presentation
+- 19501–20000 — Acquisition / Device Simulation
+- 20001–20500 — Quality / Inspection Run
+- 20501–21000 — Program / Recipe
+- 21001–21500 — Pipeline / Orchestration
+
+Current completed boundary: **21,500**
+Next executable stage: **21,501**
+
+The anti-skeleton rule is now explicit:
+- history commits are not considered active implementation unless their files exist on this branch;
+- a DTO or interface without executable behavior does not close a stage;
+- every product-chain block requires concrete runtime logic, invalid-state handling, Smoke coverage, integration evidence, and honest CI/build boundaries.
+
+Future rotation will continue through Simulation/Digital Twin, Release/Compliance, Persistence boundaries, and Production Runtime, then revisit earlier chains for deeper cross-chain integration.
