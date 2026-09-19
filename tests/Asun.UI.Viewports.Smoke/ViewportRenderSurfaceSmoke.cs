@@ -249,14 +249,35 @@ public static class ViewportRenderSurfaceSmoke
             "Surface should reject an older generation without disturbing the newer presented surface.");
 
         var retryTransaction = surface.Begin(10);
+
+        assert(
+            retryTransaction.Sequence > transaction.Sequence,
+            "A same-generation retry must receive a new transaction sequence after discard.");
+
         surface.Discard(
             retryTransaction,
             ViewportRenderDeliveryStatus.Cancelled);
 
+        var staleCommitRejected = false;
+
+        try
+        {
+            surface.Commit(
+                transaction,
+                plannedUnits: 1,
+                renderedUnits: 1,
+                regions: Array.Empty<RectangleF>());
+        }
+        catch (InvalidOperationException)
+        {
+            staleCommitRejected = true;
+        }
+
         assert(
+            staleCommitRejected &&
             surface.Snapshot.DiscardedGeneration == 10 &&
             surface.Snapshot.PresentedGeneration == 10,
-            "Surface should still allow a same-generation retry while preserving the last successful presentation.");
+            "An older discarded transaction token must not be able to commit over a later same-generation transaction.");
     }
 
     private static async ValueTask VerifyFailureDiscardAsync(
