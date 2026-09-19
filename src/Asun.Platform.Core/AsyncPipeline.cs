@@ -47,6 +47,18 @@ public sealed class AsyncPipeline<TContext>
     public IReadOnlyList<string> NodeIds =>
         _nodes.Select(node => node.Id).ToArray();
 
+    public IReadOnlyList<string> RootNodeIds =>
+        _nodes
+            .Where(node => node.Dependencies.Count == 0)
+            .Select(node => node.Id)
+            .ToArray();
+
+    public IReadOnlyList<string> LeafNodeIds =>
+        _nodes
+            .Where(node => _dependents[node.Id].Count == 0)
+            .Select(node => node.Id)
+            .ToArray();
+
     public bool ContainsNode(string id)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
