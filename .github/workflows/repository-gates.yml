@@ -36,6 +36,9 @@ jobs:
       - name: Validate project boundaries
         run: python3 tools/validate_project_boundaries.py
 
+      - name: Validate ContractCandidates
+        run: python3 tools/validate_contract_candidates.py
+
       - name: Report open gates
         run: python3 tools/task_gate_check.py
 
