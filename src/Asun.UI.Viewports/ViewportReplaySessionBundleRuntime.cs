@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 
 namespace Asun.UI.Viewports;
 
@@ -12,6 +13,53 @@ public readonly record struct ViewportReplaySessionBundleComparison(
 
 public static class ViewportReplaySessionBundleRuntime
 {
+    public static string ToJson(
+        ViewportReplaySessionBundle bundle)
+    {
+        var errors = Validate(bundle);
+
+        if (errors.Count != 0)
+        {
+            throw new InvalidOperationException(
+                $"Cannot serialize an invalid replay bundle: {errors[0]}");
+        }
+
+        return JsonSerializer.Serialize(
+            bundle,
+            new JsonSerializerOptions
+            {
+                WriteIndented = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+    }
+
+    public static ViewportReplaySessionBundle FromJson(
+        string json)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(json);
+
+        var bundle = JsonSerializer.Deserialize<ViewportReplaySessionBundle>(
+            json,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+        if (bundle is null)
+            throw new InvalidOperationException(
+                "Replay bundle JSON did not contain a bundle.");
+
+        var errors = Validate(bundle);
+
+        if (errors.Count != 0)
+        {
+            throw new InvalidOperationException(
+                $"Replay bundle JSON failed validation: {errors[0]}");
+        }
+
+        return bundle;
+    }
+
     public static ViewportReplaySessionBundle Capture(
         ViewportReplaySessionManifest manifest,
         IReadOnlyList<ViewportInputEvent> inputs,
