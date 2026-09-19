@@ -1174,6 +1174,11 @@ var normalized = new Asun.Vision.Contracts.PixelRect(300, 250, -200, -100)
     .Normalize();
 
 Assert(
+    normalized.Normalized == normalized,
+    "Normalized pixel rectangle view should be idempotent.",
+    failures);
+
+Assert(
     normalized == new Asun.Vision.Contracts.PixelRect(100, 150, 200, 100),
     "Pixel rectangle normalization should recover positive bounds from reversed dimensions.",
     failures);
