@@ -191,6 +191,29 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
             Math.Max(0, bottom - top));
     }
 
+    public double DistanceSquaredTo(PixelPoint point)
+    {
+        if (!IsValid)
+            throw new InvalidOperationException("The rectangle is invalid.");
+
+        if (!point.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        var dx = point.X < Left
+            ? Left - point.X
+            : point.X > Right
+                ? point.X - Right
+                : 0d;
+
+        var dy = point.Y < Top
+            ? Top - point.Y
+            : point.Y > Bottom
+                ? point.Y - Bottom
+                : 0d;
+
+        return dx * dx + dy * dy;
+    }
+
     public PixelRect Union(PixelRect other)
     {
         if (!IsValid)
