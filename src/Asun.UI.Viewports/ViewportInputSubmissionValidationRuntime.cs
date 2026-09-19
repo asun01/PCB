@@ -20,7 +20,5 @@ public static class ViewportInputSubmissionValidationRuntime
 
     public static bool IsTerminal(
         ViewportInputSubmissionSnapshot snapshot) =>
-        snapshot.IsCompleted &&
-        snapshot.Pending == 0 &&
-        (!snapshot.IsCancelled || snapshot.IsCancelled);
+        snapshot.IsCompleted;
 }
