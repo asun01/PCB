@@ -43,7 +43,12 @@ public sealed class ViewportRenderWorkPlan
         Items.Count(item => item.Kind == ViewportRenderWorkKind.Tile);
 
     public int RoiWorkCount =>
-        Items.Count(item => item.Kind == ViewportRenderWorkKind.Roi);
+        Items.Count(item =>
+            item.Kind == ViewportRenderWorkKind.Roi &&
+            !item.IsInvalidation);
+
+    public int InvalidationWorkCount =>
+        Items.Count(item => item.IsInvalidation);
 }
 
 public static class ViewportRenderWorkRuntime
