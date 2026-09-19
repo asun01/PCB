@@ -41,7 +41,9 @@ public static class ViewportRenderRegionRuntime
             {
                 for (var j = i + 1; j < pending.Count; j++)
                 {
-                    if (!pending[i].IntersectsWith(pending[j]))
+                    if (!OverlapsOrTouches(
+                            pending[i],
+                            pending[j]))
                         continue;
 
                     pending[i] = RectangleF.Union(
@@ -56,6 +58,23 @@ public static class ViewportRenderRegionRuntime
         }
 
         return pending;
+    }
+
+    private static bool OverlapsOrTouches(
+        RectangleF first,
+        RectangleF second)
+    {
+        const float epsilon = 0.01f;
+
+        var firstRight = first.Right;
+        var firstBottom = first.Bottom;
+        var secondRight = second.Right;
+        var secondBottom = second.Bottom;
+
+        return first.Left <= secondRight + epsilon &&
+            second.Left <= firstRight + epsilon &&
+            first.Top <= secondBottom + epsilon &&
+            second.Top <= firstBottom + epsilon;
     }
 
     public static IReadOnlyList<RectangleF> ClipAndMerge(
