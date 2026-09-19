@@ -75,6 +75,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
             for (var attempt = 0; attempt < 2; attempt++)
             {
                 var beforeGeneration = _pipeline.Composite.Generation;
+                var beforeSurface = _continuous.Surface.Snapshot;
 
                 var snapshot = _lifecycle.Capture(
                     beforeGeneration,
@@ -85,16 +86,21 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     _continuous.Delivery.Statistics,
                     _continuous.Statistics,
                     _continuous.LastDelivery?.FrameState,
-                    _continuous.Surface.Snapshot,
-                    isGenerationStable: false);
+                    beforeSurface,
+                    isGenerationStable: false,
+                    isSurfaceStable: false);
 
                 var afterGeneration = _pipeline.Composite.Generation;
+                var afterSurface = _continuous.Surface.Snapshot;
 
-                if (beforeGeneration == afterGeneration)
+                if (beforeGeneration == afterGeneration &&
+                    beforeSurface.PresentationSequence ==
+                    afterSurface.PresentationSequence)
                 {
                     return snapshot with
                     {
-                        IsGenerationStable = true
+                        IsGenerationStable = true,
+                        IsSurfaceStable = true
                     };
                 }
             }
@@ -111,7 +117,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 _continuous.Statistics,
                 _continuous.LastDelivery?.FrameState,
                 _continuous.Surface.Snapshot,
-                isGenerationStable: false);
+                isGenerationStable: false,
+                isSurfaceStable: false);
         }
     }
 
