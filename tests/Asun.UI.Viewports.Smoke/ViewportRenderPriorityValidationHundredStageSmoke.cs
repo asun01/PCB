@@ -235,6 +235,27 @@ public static class ViewportRenderPriorityValidationHundredStageSmoke
             s.Runtime.Dispose();
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            var s = CreateScenario();
+            var prioritized =
+                ViewportRenderPriorityRuntime.Prioritize(
+                    s.Plan,
+                    s.Frame);
+
+            var invalidationCount =
+                prioritized.Items.TakeWhile(
+                    item => item.IsInvalidation).Count();
+
+            Check(
+                prioritized.Items
+                    .Skip(invalidationCount)
+                    .All(item => !item.IsInvalidation),
+                $"invalidation prefix {i + 1} should be contiguous.");
+
+            s.Runtime.Dispose();
+        }
+
         assert(
             round == 100,
             $"Render priority validation smoke should execute exactly 100 numbered rounds; actual {round}.");
