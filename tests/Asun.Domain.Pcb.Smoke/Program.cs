@@ -11,6 +11,10 @@ PcbFeatureIdValidationHundredStageSmoke.Run(Assert);
 PcbBoardDefinitionValidationHundredStageSmoke.Run(Assert);
 PcbFeatureReferenceValidationHundredStageSmoke.Run(Assert);
 PcbFeatureCollectionValidationHundredStageSmoke.Run(Assert);
+PcbComponentReferenceValidationHundredStageSmoke.Run(Assert);
+PcbComponentCollectionHundredStageSmoke.Run(Assert);
+PcbComponentLookupHundredStageSmoke.Run(Assert);
+PcbAssemblySnapshotHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
