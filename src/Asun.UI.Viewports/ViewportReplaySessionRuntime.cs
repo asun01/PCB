@@ -105,6 +105,78 @@ public sealed class ViewportReplaySessionRuntime
         }
     }
 
+    public IReadOnlyList<string> Validate()
+    {
+        lock (_sync)
+        {
+            var errors = new List<string>();
+            long previousInputSequence = 0;
+            long previousEvidenceGeneration = -1;
+            long previousEvidenceSequence = -1;
+            long previousAuditSequence = 0;
+
+            foreach (var input in _inputs)
+            {
+                if (input.Sequence <= previousInputSequence)
+                    errors.Add("Input event sequence must increase strictly.");
+
+                previousInputSequence = input.Sequence;
+            }
+
+            foreach (var evidence in _evidence)
+            {
+                if (evidence.Generation < previousEvidenceGeneration ||
+                    (evidence.Generation == previousEvidenceGeneration &&
+                     evidence.SubmissionSequence < previousEvidenceSequence))
+                {
+                    errors.Add("Evidence sequence must remain monotonic.");
+                }
+
+                errors.AddRange(
+                    ViewportRenderDiagnosticsRuntime.ValidateManifest(
+                        evidence));
+
+                previousEvidenceGeneration = evidence.Generation;
+                previousEvidenceSequence = evidence.SubmissionSequence;
+            }
+
+            foreach (var audit in _audit)
+            {
+                if (audit.Sequence <= previousAuditSequence)
+                    errors.Add("Audit event sequence must increase strictly.");
+
+                if (audit.Generation < 0 ||
+                    audit.SubmissionSequence < 0 ||
+                    audit.RenderedUnits < 0 ||
+                    audit.DeferredUnits < 0)
+                {
+                    errors.Add("Audit event contains invalid counters.");
+                }
+
+                previousAuditSequence = audit.Sequence;
+            }
+
+            var manifest = CreateManifest();
+
+            if (manifest.InputEventCount != _inputs.Count ||
+                manifest.EvidenceManifestCount != _evidence.Count ||
+                manifest.AuditEventCount != _audit.Count)
+            {
+                errors.Add("Replay session manifest counters do not match retained evidence.");
+            }
+
+            if (!IsSha256(manifest.InputHash) ||
+                !IsSha256(manifest.EvidenceHash) ||
+                !IsSha256(manifest.AuditHash) ||
+                !IsSha256(manifest.SessionHash))
+            {
+                errors.Add("Replay session manifest hashes must be SHA-256 values.");
+            }
+
+            return errors;
+        }
+    }
+
     public string ToJson()
     {
         lock (_sync)
@@ -136,6 +208,12 @@ public sealed class ViewportReplaySessionRuntime
             _audit.Clear();
         }
     }
+
+    private static bool IsSha256(string value) =>
+        value.Length == 64 &&
+        value.All(character =>
+            (character >= '0' && character <= '9') ||
+            (character >= 'A' && character <= 'F'));
 
     private static string Hash(string value) =>
         Convert.ToHexString(
