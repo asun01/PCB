@@ -5,4 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Asun.Vision.Contracts/Asun.Vision.Contracts.csproj" />
+  </ItemGroup>
 </Project>

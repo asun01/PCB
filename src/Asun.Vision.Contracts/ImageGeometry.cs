@@ -1,0 +1,34 @@
+using System.Numerics;
+
+namespace Asun.Vision.Contracts;
+
+/// <summary>
+/// Vendor-neutral image geometry primitives. Pixel interpretation remains the
+/// responsibility of the concrete image backend.
+/// </summary>
+public readonly record struct ImageSize(int Width, int Height)
+{
+    public ImageSize
+    {
+        if (Width <= 0) throw new ArgumentOutOfRangeException(nameof(Width));
+        if (Height <= 0) throw new ArgumentOutOfRangeException(nameof(Height));
+    }
+
+    public Vector2 Center => new(Width / 2f, Height / 2f);
+}
+
+public readonly record struct PixelPoint(double X, double Y)
+{
+    public bool IsFinite => double.IsFinite(X) && double.IsFinite(Y);
+}
+
+public readonly record struct PixelRect(double X, double Y, double Width, double Height)
+{
+    public bool IsFinite =>
+        double.IsFinite(X) && double.IsFinite(Y) &&
+        double.IsFinite(Width) && double.IsFinite(Height);
+
+    public bool IsValid => IsFinite && Width >= 0 && Height >= 0;
+
+    public PixelPoint Center => new(X + Width / 2d, Y + Height / 2d);
+}

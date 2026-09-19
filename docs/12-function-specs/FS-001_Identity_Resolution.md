@@ -29,7 +29,7 @@
 6. **Performance is a design input**: define measurement points, queue behavior, memory lifecycle, backpressure, cancellation, and resource limits before optimization work.
 7. **AI is bounded**: AI may generate candidates, proposals, explanations, ranking and code, but cannot gain implicit production authority.
 8. **External implementation research is evidence, not authority**: GitHub/third-party code can inform a design but cannot overwrite this platform's Contract, licensing, security, or qualification rules.
-9. **HALCON APIs must be version-verified**: use the target HALCON 24.11 documentation/reference installed in the actual development environment; do not rely on model memory for operator names or parameters.
+9. **HALCON APIs must be version-verified**: use the target HALCON 25.11 documentation/reference installed in the actual development environment; do not rely on model memory for operator names or parameters.
 10. **Production qualification is separate**: document completeness does not equal metrology qualification, HIL acceptance or production acceptance.
 
 ## 3. 输入前置检查

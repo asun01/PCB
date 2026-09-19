@@ -2,7 +2,7 @@
 - 文档 ID：`DEV-PLAN-006`
 - 版本：`1.1.0`
 - 状态：`ImplementationSpecificationReady`
-- 技术基线：C# + .NET 10 + WPF + DevExpress + HALCON 24.11 + AsunImage
+- 技术基线：C# + .NET 10 + WPF + DevExpress 25.2.3 + HALCON 25.11；AsunImage 不属于当前实现基线。
 
 ## 1. 总体依赖方向
 
@@ -12,8 +12,7 @@ Apps / Product Shells
   → Domain
   → Platform Contracts / Facts / Evidence
   → Vision / Metrology / Device Ports
-  → AsunImage Adapter
-  → HALCON / Vendor SDK
+  → HALCON / Vendor SDK adapters
 ```
 
 UI 只能向下依赖 Application Ports / DTO / Render Contracts，不允许 UI → Domain Store 直连。

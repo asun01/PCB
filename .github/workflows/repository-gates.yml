@@ -1,0 +1,72 @@
+name: Repository Deterministic Gates
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Print runner diagnostics
+        run: |
+          set -euxo pipefail
+          python3 --version
+          pwd
+          git rev-parse --show-toplevel
+          find tools -maxdepth 1 -type f -name '*.py' -print | sort
+
+      - name: Validate CI prerequisites
+        run: python3 tools/validate_ci_prerequisites.py
+
+      - name: Python syntax check
+        run: python3 -m py_compile tools/*.py
+
+      - name: Validate baseline documents
+        run: python3 tools/validate_docs.py
+
+      - name: Validate solution layout
+        run: python3 tools/validate_solution_layout.py
+
+      - name: Validate runnable WPF shell
+        run: python3 tools/validate_wpf_shell.py
+
+      - name: Validate implementation policy
+        run: python3 tools/validate_repository_policy.py
+
+      - name: Validate FunctionSpec bindings
+        run: python3 tools/validate_function_bindings.py
+
+      - name: Validate PageContracts
+        run: python3 tools/validate_page_contracts.py
+
+      - name: Validate project boundaries
+        run: python3 tools/validate_project_boundaries.py
+
+      - name: Validate ContractCandidates
+        run: python3 tools/validate_contract_candidates.py
+
+      - name: Validate planning cross-links
+        run: python3 tools/validate_planning_crosslinks.py
+
+      - name: Report open gates
+        run: python3 tools/task_gate_check.py
+
+      - name: Generate task admission report
+        run: python3 tools/generate_task_admission.py
+
+      - name: Resolve repository authorities
+        run: python3 tools/validate_repository_authorities.py
+
+      - name: Build convenience master
+        run: python3 tools/build_master.py
+
+      - name: Audit historical technology references
+        run: python3 tools/version_baseline_audit.py
