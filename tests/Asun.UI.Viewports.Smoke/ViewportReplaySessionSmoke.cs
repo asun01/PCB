@@ -139,11 +139,42 @@ public static class ViewportReplaySessionSmoke
             "Replay session manifest should bind input, evidence, audit, and session hashes.");
 
         assert(
+            session.Validate().Count == 0,
+            "A well-formed replay session should validate without sequence, counter, or hash errors.");
+
+        assert(
             json.Contains("\"manifest\":") &&
             json.Contains("\"inputs\":") &&
             json.Contains("\"evidence\":") &&
             json.Contains("\"audit\":"),
             "Replay session JSON should expose all evidence layers.");
+
+        var invalidSession = new ViewportReplaySessionRuntime(
+            sessionId: "invalid-session",
+            createdAtUtc: DateTimeOffset.UnixEpoch);
+
+        invalidSession.RecordInput(
+            new ViewportInputEvent(
+                2,
+                ViewportInputEventKind.PointerMove,
+                new Vector2(10, 10),
+                0,
+                ViewportMouseButton.Left));
+
+        invalidSession.RecordInput(
+            new ViewportInputEvent(
+                1,
+                ViewportInputEventKind.PointerMove,
+                new Vector2(20, 20),
+                0,
+                ViewportMouseButton.Left));
+
+        assert(
+            invalidSession.Validate().Any(
+                error => error.Contains(
+                    "Input event sequence",
+                    StringComparison.Ordinal)),
+            "Replay validation should reject non-monotonic input sequences.");
 
         var beforeResetHash = manifest.SessionHash;
 
@@ -154,8 +185,9 @@ public static class ViewportReplaySessionSmoke
         assert(
             empty.IsEmpty &&
             empty.SessionId == manifest.SessionId &&
-            empty.SessionHash != beforeResetHash,
-            "Resetting a replay session should clear evidence while retaining the session identity.");
+            empty.SessionHash != beforeResetHash &&
+            session.Validate().Count == 0,
+            "Resetting a replay session should clear evidence while retaining a valid empty session.");
 
         replay.Reset();
 
