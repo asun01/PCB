@@ -53,6 +53,34 @@ public readonly record struct PixelPoint(double X, double Y)
         return new PixelPoint(x, y);
     }
 
+    public PixelPoint Midpoint(PixelPoint other)
+    {
+        if (!IsFinite || !other.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(other));
+
+        return new PixelPoint(
+            (X + other.X) / 2d,
+            (Y + other.Y) / 2d);
+    }
+
+    public PixelPoint Lerp(PixelPoint other, double amount)
+    {
+        if (!IsFinite || !other.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(other));
+
+        if (!double.IsFinite(amount))
+            throw new ArgumentOutOfRangeException(nameof(amount));
+
+        var x = X + (other.X - X) * amount;
+        var y = Y + (other.Y - Y) * amount;
+
+        if (!double.IsFinite(x) || !double.IsFinite(y))
+            throw new ArgumentOutOfRangeException(nameof(amount));
+
+        return new PixelPoint(x, y);
+    }
+}
+
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
 {
     public static PixelRect FromPoints(PixelPoint first, PixelPoint second)
