@@ -1,60 +1,80 @@
+using System.Drawing;
 using Asun.UI.Viewports;
 
 public static class ViewportReplaySnapshotValidatorSmoke
 {
     public static void Run(Action<bool, string> assert)
     {
-        var sink = new ViewportRenderReplaySink<string>();
-        var context = new ViewportRenderFrameContext(
-            7,
-            new System.Drawing.RectangleF(0, 0, 100, 100),
-            1,
-            1);
-
-        sink.BeginFrameAsync(context).GetAwaiter().GetResult();
-        sink.DrawTileAsync(
-            new ViewportRenderTileContext<string>(
+        var operations = new[]
+        {
+            new ViewportRenderReplayOperation(
+                1,
+                ViewportRenderReplayOperationKind.Begin,
+                7,
+                null,
+                Guid.Empty,
+                new RectangleF(0, 0, 100, 100),
+                0,
+                null),
+            new ViewportRenderReplayOperation(
+                2,
+                ViewportRenderReplayOperationKind.DrawTile,
                 7,
                 new TileIndex(0, 0),
-                "tile",
-                new System.Drawing.RectangleF(0, 0, 50, 50))).GetAwaiter().GetResult();
-        sink.EndFrameAsync(context).GetAwaiter().GetResult();
-        sink.CommitFrameAsync(
-            new ViewportRenderCommitContext(
+                Guid.Empty,
+                new RectangleF(0, 0, 50, 50),
+                1,
+                null),
+            new ViewportRenderReplayOperation(
+                3,
+                ViewportRenderReplayOperationKind.End,
                 7,
-                1,
-                1,
-                1,
-                new[]
-                {
-                    new System.Drawing.RectangleF(0, 0, 50, 50)
-                },
-                1,
+                null,
+                Guid.Empty,
+                new RectangleF(0, 0, 100, 100),
                 0,
-                0,
-                0,
-                0)).GetAwaiter().GetResult();
+                null),
+            new ViewportRenderReplayOperation(
+                4,
+                ViewportRenderReplayOperationKind.Commit,
+                7,
+                null,
+                Guid.Empty,
+                new RectangleF(0, 0, 50, 50),
+                1,
+                ViewportRenderDeliveryStatus.Succeeded)
+        };
+
+        var validSnapshot = new ViewportRenderReplaySnapshot(
+            4,
+            7,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            operations);
 
         var valid = ViewportRenderReplaySnapshotValidatorRuntime.Validate(
-            sink.Snapshot);
+            validSnapshot);
 
         assert(
             valid.IsValid &&
             valid.Errors.Count == 0,
-            "Replay sink output should satisfy lifecycle and counter invariants.");
-
-        var validSnapshot = sink.Snapshot;
-
-        var reorderedOperations = validSnapshot.Operations
-            .Select((operation, index) =>
-                index == 0 && validSnapshot.Operations.Count > 1
-                    ? validSnapshot.Operations[1] with { Sequence = 1 }
-                    : operation)
-            .ToArray();
+            "Replay validator should accept a balanced committed frame.");
 
         var invalidSequence = validSnapshot with
         {
-            Operations = reorderedOperations
+            Operations = operations
+                .Select((operation, index) =>
+                    index == 1
+                        ? operation with { Sequence = 99 }
+                        : operation)
+                .ToArray()
         };
 
         var sequenceResult =
@@ -88,7 +108,7 @@ public static class ViewportReplaySnapshotValidatorSmoke
 
         var openFrame = validSnapshot with
         {
-            Operations = validSnapshot.Operations.Take(1).ToArray(),
+            Operations = operations.Take(1).ToArray(),
             OperationCount = 1,
             BeginCount = 1,
             EndCount = 0,
@@ -108,11 +128,42 @@ public static class ViewportReplaySnapshotValidatorSmoke
                     StringComparison.OrdinalIgnoreCase)),
             "Replay validator should reject an unfinished frame.");
 
-        sink.Reset();
+        var invalidGeneration = validSnapshot with
+        {
+            LastGeneration = 999
+        };
+
+        var generationResult =
+            ViewportRenderReplaySnapshotValidatorRuntime.Validate(
+                invalidGeneration);
+
+        assert(
+            !generationResult.IsValid &&
+            generationResult.Errors.Any(
+                error => error.Contains(
+                    "last generation",
+                    StringComparison.OrdinalIgnoreCase)),
+            "Replay validator should reject an inconsistent last generation.");
+
+        sinklessReset:
+
+        var empty = new ViewportRenderReplaySnapshot(
+            0,
+            null,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            Array.Empty<ViewportRenderReplayOperation>());
 
         assert(
             ViewportRenderReplaySnapshotValidatorRuntime.Validate(
-                sink.Snapshot).IsValid,
+                empty).IsValid,
             "Replay validator should accept the empty reset state.");
     }
 }
