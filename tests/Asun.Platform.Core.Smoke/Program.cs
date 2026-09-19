@@ -652,6 +652,12 @@ Assert(
     "Viewport rectangle conversion should round-trip.",
     failures);
 
+var blankLookupRejected =
+    !pipeline.ContainsNode(" ") &&
+    !pipeline.TryGetNode(" ", out _);
+
+Assert(blankLookupRejected, "Blank pipeline identifiers should not be treated as valid lookups.", failures);
+
 var duplicateDependencyRejected = false;
 try
 {
