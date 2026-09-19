@@ -8,12 +8,14 @@ public sealed class ViewportRenderPipelineFrame<TTile>
         ViewportCompositeFrame<TTile> composite,
         ViewportRenderSubmission submission,
         ViewportRenderWorkPlan workPlan,
-        ViewportRenderBatch batch)
+        ViewportRenderBatch batch,
+        bool hasDeferredWork)
     {
         Composite = composite;
         Submission = submission;
         WorkPlan = workPlan;
         Batch = batch;
+        HasDeferredWork = hasDeferredWork;
     }
 
     public ViewportCompositeFrame<TTile> Composite { get; }
@@ -23,6 +25,8 @@ public sealed class ViewportRenderPipelineFrame<TTile>
     public ViewportRenderWorkPlan WorkPlan { get; }
 
     public ViewportRenderBatch Batch { get; }
+
+    public bool HasDeferredWork { get; }
 
     public bool Accepted => Submission.Sequence > 0;
 }
@@ -131,11 +135,22 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             budgeted,
             composite.Tiles.Transform);
 
+        var hasDeferredWork =
+            budgeted.Items.Count < prioritized.Items.Count;
+
+        if (hasDeferredWork)
+        {
+            _scheduler.Submit(
+                submission.DirtyFlags,
+                composite.Generation);
+        }
+
         var result = new ViewportRenderPipelineFrame<TTile>(
             composite,
             submission,
             budgeted,
-            batch);
+            batch,
+            hasDeferredWork);
 
         _reuse.Store(result);
         return result;
@@ -170,7 +185,8 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                     composite,
                     ViewportDirtyFlags.None),
                 ViewportRenderBatchRuntime.Empty(
-                    composite.Generation));
+                    composite.Generation),
+                hasDeferredWork: false);
 
             return emptyResult;
         }
@@ -187,13 +203,24 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             prioritized,
             _budget);
 
+        var hasDeferredWork =
+            budgeted.Items.Count < prioritized.Items.Count;
+
+        if (hasDeferredWork)
+        {
+            _scheduler.Submit(
+                submission.DirtyFlags,
+                composite.Generation);
+        }
+
         var result = new ViewportRenderPipelineFrame<TTile>(
             composite,
             submission,
             budgeted,
             ViewportRenderBatchRuntime.Create(
                 budgeted,
-                composite.Tiles.Transform));
+                composite.Tiles.Transform),
+            hasDeferredWork);
 
         _reuse.Store(result);
         return result;
