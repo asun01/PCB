@@ -87,6 +87,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 var beforeSurface = _continuous.Surface.Snapshot;
                 var beforeBuffer = _continuous.PresentationBuffers.Snapshot;
                 var beforeQueue = _continuous.PresentationQueue.Statistics;
+                var beforeExecution = _continuous.PresentationExecution.Statistics;
 
                 var snapshot = _lifecycle.Capture(
                     beforeGeneration,
@@ -96,6 +97,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     _pipeline.Scheduler.Statistics,
                     _continuous.Delivery.Statistics,
                     beforeQueue,
+                    beforeExecution,
                     _continuous.Statistics,
                     _continuous.LastDelivery?.FrameState,
                     beforeSurface,
@@ -109,6 +111,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 var afterSurface = _continuous.Surface.Snapshot;
                 var afterBuffer = _continuous.PresentationBuffers.Snapshot;
                 var afterQueue = _continuous.PresentationQueue.Statistics;
+                var afterExecution = _continuous.PresentationExecution.Statistics;
 
                 var surfaceStable =
                     beforeSurface.State == afterSurface.State &&
@@ -148,10 +151,18 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     beforeQueue.InFlightSequence ==
                     afterQueue.InFlightSequence;
 
+                var executionStable =
+                    beforeExecution.Executed == afterExecution.Executed &&
+                    beforeExecution.LastGeneration ==
+                    afterExecution.LastGeneration &&
+                    beforeExecution.LastSequence ==
+                    afterExecution.LastSequence;
+
                 if (beforeGeneration == afterGeneration &&
                     surfaceStable &&
                     bufferStable &&
-                    queueStable)
+                    queueStable &&
+                    executionStable)
                 {
                     return snapshot with
                     {
@@ -173,6 +184,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 _pipeline.Scheduler.Statistics,
                 _continuous.Delivery.Statistics,
                 _continuous.PresentationQueue.Statistics,
+                _continuous.PresentationExecution.Statistics,
                 _continuous.Statistics,
                 _continuous.LastDelivery?.FrameState,
                 _continuous.Surface.Snapshot,
