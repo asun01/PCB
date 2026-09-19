@@ -107,7 +107,9 @@ public readonly record struct AffineTransform2D
 
     public bool TryInvert(out AffineTransform2D inverse)
     {
-        if (!Matrix3x2.Invert(_matrix, out var matrix))
+        if (Math.Abs(Determinant) <= 1e-12 ||
+            !Matrix3x2.Invert(_matrix, out var matrix) ||
+            !IsFinite(matrix))
         {
             inverse = default;
             return false;
