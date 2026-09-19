@@ -43,6 +43,18 @@ public sealed class PointSet2D
         }
     }
 
+    public bool TryGetCentroid(out Vector2 centroid)
+    {
+        if (_points.Length == 0)
+        {
+            centroid = default;
+            return false;
+        }
+
+        centroid = Centroid;
+        return true;
+    }
+
     public Vector2 Centroid
     {
         get
