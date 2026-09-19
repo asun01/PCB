@@ -954,6 +954,24 @@ Assert(!queue.TryEnqueue(3), "Completed queue should reject new work.", failures
 Assert(queue.IsCompleted, "Completed queue should report completion after draining.", failures);
 await queue.Completion;
 
+var cancelledReadQueue = new BoundedWorkQueue<int>(1);
+using (var readCancellation = new CancellationTokenSource())
+{
+    readCancellation.Cancel();
+    var readCancelled = false;
+
+    try
+    {
+        await cancelledReadQueue.DequeueAsync(readCancellation.Token);
+    }
+    catch (OperationCanceledException)
+    {
+        readCancelled = true;
+    }
+
+    Assert(readCancelled, "Queue dequeue should honor cancellation.", failures);
+}
+
 using var resources = new ResourceLeasePool<string>(new[]
 {
     new KeyValuePair<string, int>("camera", 1),
