@@ -149,6 +149,23 @@ public static class ViewportRenderPipelineSmoke
                 page3.WorkPlan.Items.Count == 1 &&
                 page2.WorkPlan.Items[0] != page3.WorkPlan.Items[0],
                 $"Pipeline chain {i + 1} should advance the deferred cursor instead of replaying work.");
+
+            if (page2 is not null)
+            {
+                paged.RequeueFrame(page2);
+                paged.RequeueFrame(page2);
+                paged.Invalidate(
+                    page2.Submission.DirtyFlags,
+                    page2.Composite.Generation);
+
+                var deduplicatedRetry = await paged.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(4));
+
+                assert(
+                    deduplicatedRetry is not null &&
+                    deduplicatedRetry.WorkPlan.Items.Count == 1,
+                    $"Pipeline chain {i + 1} should not duplicate explicitly requeued render work.");
+            }
         }
     }
 
