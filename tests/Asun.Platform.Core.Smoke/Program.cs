@@ -496,6 +496,68 @@ var infiniteTimeoutResult = await OperationTimeout.ExecuteInfiniteAsync(
 
 Assert(infiniteTimeoutResult == 7, "Infinite timeout convenience should preserve successful results.", failures);
 
+var viewportModel = new Asun.UI.Viewports.ImageViewportModel(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(1200, 800),
+    new System.Numerics.Vector2(256, 256),
+    prefetchMarginTiles: 1);
+
+Assert(
+    viewportModel.Transform.IsImageFullyVisible &&
+    viewportModel.TileSize == new System.Numerics.Vector2(256, 256) &&
+    viewportModel.PrefetchMarginTiles == 1,
+    "Viewport model should initialize with a canonical fit transform and tile settings.",
+    failures);
+
+viewportModel.BeginPan(new System.Numerics.Vector2(100, 100));
+viewportModel.UpdatePan(new System.Numerics.Vector2(120, 125));
+Assert(
+    viewportModel.IsPanning &&
+    viewportModel.Transform.Translation != Asun.UI.Viewports.ViewportTransform.Fit(
+        new System.Numerics.Vector2(1000, 500),
+        new System.Numerics.Vector2(1200, 800)).Translation,
+    "Viewport model pan state should update the transform.",
+    failures);
+
+viewportModel.EndPan();
+viewportModel.ZoomFactor(
+    zoomFactor: 2,
+    minScale: 0.5,
+    maxScale: 4,
+    viewportAnchor: new System.Numerics.Vector2(600, 400));
+
+Assert(
+    viewportModel.Transform.Scale > 1,
+    "Viewport model zoom should update the current scale.",
+    failures);
+
+var modelRequests = viewportModel.GetTileRequests();
+Assert(
+    modelRequests.Count > 0 &&
+    modelRequests.Any(request => request.IsVisible),
+    "Viewport model should produce visible tile requests.",
+    failures);
+
+viewportModel.ResizeViewport(new System.Numerics.Vector2(1600, 1000));
+Assert(
+    viewportModel.Transform.ViewportSize == new System.Numerics.Vector2(1600, 1000),
+    "Viewport model resize should update viewport geometry.",
+    failures);
+
+viewportModel.CenterOnImagePoint(new System.Numerics.Vector2(250, 125));
+Assert(
+    viewportModel.Transform.ImagePointAtViewportCenter ==
+        new System.Numerics.Vector2(250, 125),
+    "Viewport model centering should place the requested image point at viewport center.",
+    failures);
+
+viewportModel.FitToViewport();
+Assert(
+    viewportModel.Transform.IsImageFullyVisible &&
+    !viewportModel.IsPanning,
+    "Viewport model fit should restore a stable non-panning state.",
+    failures);
+
 var viewport = Asun.UI.Viewports.ViewportTransform.Fit(
     new System.Numerics.Vector2(1000, 500),
     new System.Numerics.Vector2(1200, 800));
