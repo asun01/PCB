@@ -54,8 +54,9 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 !failure.Succeeded &&
                 failure.Status == ViewportRenderDeliveryStatus.Failed &&
                 !failure.Cancelled &&
-                failure.Error is not null,
-                $"Delivery chain {i + 1} should isolate sink exceptions.");
+                failure.Error is not null &&
+                failingSink.EndCount == 1,
+                $"Delivery chain {i + 1} should isolate sink exceptions and finalize the frame.");
 
             var cancelledSink = new CancelledSink();
             var cancellation = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
@@ -265,8 +266,11 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
         public ValueTask EndFrameAsync(
             ViewportRenderFrameContext context,
-            CancellationToken cancellationToken = default) =>
-            ValueTask.CompletedTask;
+            CancellationToken cancellationToken = default)
+        {
+            EndCount++;
+            return ValueTask.CompletedTask;
+        }
     }
 
 
@@ -295,6 +299,8 @@ public static class ViewportDeliveryAndBackpressureSmoke
 
     private sealed class ThrowingSink : IViewportRenderSink<string>
     {
+        public int EndCount { get; private set; }
+
         public ValueTask BeginFrameAsync(
             ViewportRenderFrameContext context,
             CancellationToken cancellationToken = default) =>
