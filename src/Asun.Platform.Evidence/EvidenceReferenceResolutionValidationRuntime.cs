@@ -13,8 +13,16 @@ public static class EvidenceReferenceResolutionValidationRuntime
 
         var errors=new List<string>();
 
-        errors.AddRange(EvidenceCatalogSnapshotValidationRuntime.Validate(snapshot));
-        errors.AddRange(EvidenceReferenceSetValidationRuntime.Validate(referenceSet));
+        var snapshotErrors=
+            EvidenceCatalogSnapshotValidationRuntime.Validate(snapshot);
+        var referenceSetErrors=
+            EvidenceReferenceSetValidationRuntime.Validate(referenceSet);
+
+        errors.AddRange(snapshotErrors);
+        errors.AddRange(referenceSetErrors);
+
+        if(errors.Count>0)
+            return errors;
 
         var snapshotFingerprint=
             EvidenceCatalogSnapshotFingerprintRuntime.CreateFingerprint(snapshot);
