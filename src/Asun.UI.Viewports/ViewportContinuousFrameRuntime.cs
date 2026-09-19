@@ -101,6 +101,23 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
                     if (frame is not null && frame.Accepted)
                     {
+                        if (frame.WorkPlan.IsEmpty)
+                        {
+                            Interlocked.Increment(ref _skippedLoops);
+
+                            var emptyFrameDelay = _pipeline.Scheduler
+                                .GetNextFrameDelay(DateTimeOffset.UtcNow);
+
+                            await Task.Delay(
+                                emptyFrameDelay > TimeSpan.Zero
+                                    ? emptyFrameDelay
+                                    : _idleDelay,
+                                cancellationToken)
+                                .ConfigureAwait(false);
+
+                            continue;
+                        }
+
                         var delivery = await ViewportRenderDeliveryRuntime
                             .TryDeliverAsync(
                                 frame,
@@ -132,13 +149,12 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                         var pacingDelay = _pipeline.Scheduler
                             .GetNextFrameDelay(DateTimeOffset.UtcNow);
 
-                        if (pacingDelay > TimeSpan.Zero)
-                        {
-                            await Task.Delay(
-                                pacingDelay,
-                                cancellationToken)
-                                .ConfigureAwait(false);
-                        }
+                        await Task.Delay(
+                            pacingDelay > TimeSpan.Zero
+                                ? pacingDelay
+                                : _idleDelay,
+                            cancellationToken)
+                            .ConfigureAwait(false);
                     }
                 }
                 catch (OperationCanceledException) when (
