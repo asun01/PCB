@@ -122,9 +122,12 @@ public static class ViewportContinuousAndDeferredSmoke
 
         var initialRendered = initialCompleted == sink.FirstFrame.Task;
 
+        var initialSnapshot = presentation.Snapshot;
+
         assert(
             initialRendered &&
-            presentation.LastFrameState is { IsComplete: true },
+            presentation.LastFrameState is { IsComplete: true } &&
+            initialSnapshot.LastFrameState is { IsComplete: true },
             "Continuous runtime should render its initial frame and publish a complete presentation frame state.");
 
         var before = presentation.Composite.Generation;
