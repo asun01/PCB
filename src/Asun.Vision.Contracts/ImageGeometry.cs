@@ -80,11 +80,31 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         rectangle.Right <= Right &&
         rectangle.Bottom <= Bottom;
 
+    public PixelRect Normalize()
+    {
+        if (!IsFinite)
+            throw new InvalidOperationException("The rectangle contains non-finite values.");
+
+        var left = Math.Min(Left, Right);
+        var top = Math.Min(Top, Bottom);
+        var right = Math.Max(Left, Right);
+        var bottom = Math.Max(Top, Bottom);
+
+        return new PixelRect(left, top, right - left, bottom - top);
+    }
+
     public PixelRect Translate(double deltaX, double deltaY)
     {
         ValidateFinite(deltaX, nameof(deltaX));
         ValidateFinite(deltaY, nameof(deltaY));
-        return new PixelRect(X + deltaX, Y + deltaY, Width, Height);
+
+        var translatedX = X + deltaX;
+        var translatedY = Y + deltaY;
+
+        if (!double.IsFinite(translatedX) || !double.IsFinite(translatedY))
+            throw new ArgumentOutOfRangeException(nameof(deltaX), "Translation produces non-finite coordinates.");
+
+        return new PixelRect(translatedX, translatedY, Width, Height);
     }
 
     public PixelRect Inflate(double horizontal, double vertical)
