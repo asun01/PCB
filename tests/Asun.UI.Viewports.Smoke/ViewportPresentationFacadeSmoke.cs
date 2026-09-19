@@ -109,8 +109,17 @@ public static class ViewportPresentationFacadeSmoke
 
             assert(
                 !presentation.Input.HasPending &&
-                presentation.Pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None,
-                $"Presentation facade {i + 1} reset should clear input and render scheduling state.");
+                !presentation.Input.IsCancelled &&
+                !presentation.Input.IsCompleted &&
+                presentation.Pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None &&
+                presentation.State == ViewportPresentationState.Created,
+                $"Presentation facade {i + 1} reset should clear runtime state and restore input lifecycle.");
+
+            assert(
+                presentation.TrySubmit(
+                    ViewportInputEventKind.PointerMove,
+                    new Vector2(12, 18)),
+                $"Presentation facade {i + 1} should accept input again after reset.");
         }
     }
 
