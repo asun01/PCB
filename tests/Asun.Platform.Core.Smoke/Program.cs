@@ -505,6 +505,24 @@ Assert(
     "Visible image rectangle should remain inside image bounds.",
     failures);
 
+var clampedInteraction = Asun.UI.Viewports.ViewportInteractionState.Create(
+        viewport.WithScaleAround(2, new System.Numerics.Vector2(600, 400)))
+    .ClampPan();
+
+Assert(
+    clampedInteraction.Transform.RenderedImageRectangle.Right >= clampedInteraction.Transform.ViewportSize.X &&
+    clampedInteraction.Transform.RenderedImageRectangle.Bottom >= clampedInteraction.Transform.ViewportSize.Y,
+    "Interaction pan clamping should prevent blank viewport gaps.",
+    failures);
+
+var resizeForwarded = Asun.UI.Viewports.ViewportInteractionState.Create(viewport)
+    .WithViewportSize(new System.Numerics.Vector2(1400, 900));
+
+Assert(
+    resizeForwarded.Transform.ViewportSize == new System.Numerics.Vector2(1400, 900),
+    "Interaction viewport resize should forward to the transform.",
+    failures);
+
 var zoomed = viewport.WithScaleAround(2, new System.Numerics.Vector2(600, 400));
 var anchorBefore = viewport.ViewportToImage(new System.Numerics.Vector2(600, 400));
 var anchorAfter = zoomed.ViewportToImage(new System.Numerics.Vector2(600, 400));
