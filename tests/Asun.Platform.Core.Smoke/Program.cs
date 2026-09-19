@@ -363,6 +363,55 @@ catch (ArgumentException)
 }
 Assert(invalidGraphRejected, "Cyclic pipeline graphs should be rejected.", failures);
 
+var downstreamExecuted = false;
+var failingPipeline = new AsyncPipeline<object>(new[]
+{
+    new AsyncPipeline<object>.Node("Fail", (_, _) =>
+        ValueTask.FromException(new InvalidOperationException("expected"))),
+    new AsyncPipeline<object>.Node("Downstream", new[] { "Fail" }, (_, _) =>
+    {
+        downstreamExecuted = true;
+        return ValueTask.CompletedTask;
+    })
+});
+
+var dependencyFailureObserved = false;
+try
+{
+    await failingPipeline.ExecuteAsync(new object());
+}
+catch (InvalidOperationException)
+{
+    dependencyFailureObserved = true;
+}
+
+Assert(dependencyFailureObserved, "Pipeline dependency failures should propagate to the caller.", failures);
+Assert(!downstreamExecuted, "A failed dependency must not execute downstream nodes.", failures);
+
+using var queueCancellation = new CancellationTokenSource();
+var blockedQueue = new BoundedWorkQueue<int>(1);
+Assert(blockedQueue.TryEnqueue(1), "The queue should accept its first item.", failures);
+var blockedEnqueue = blockedQueue.EnqueueAsync(2, queueCancellation.Token).AsTask();
+queueCancellation.Cancel();
+
+var enqueueCancelled = false;
+try
+{
+    await blockedEnqueue;
+}
+catch (OperationCanceledException)
+{
+    enqueueCancelled = true;
+}
+
+Assert(enqueueCancelled, "A blocked enqueue should honor cancellation.", failures);
+
+var queueCancellationDrain = new List<int>();
+Assert(blockedQueue.TryDequeue(out var queuedValue) && queuedValue == 1, "The original queue item should remain intact after cancellation.", failures);
+blockedQueue.Complete();
+await foreach (var item in blockedQueue.ReadAllAsync())
+    queueCancellationDrain.Add(item);
+
 var parallelStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 var secondStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 var parallelPipeline = new AsyncPipeline<object>(new[]
