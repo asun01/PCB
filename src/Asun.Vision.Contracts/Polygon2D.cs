@@ -171,6 +171,42 @@ public sealed class Polygon2D
         return inside;
     }
 
+    public Vector2 ClosestPoint(Vector2 point)
+    {
+        if (!float.IsFinite(point.X) || !float.IsFinite(point.Y))
+            throw new ArgumentOutOfRangeException(nameof(point));
+
+        var bestPoint = _points[0];
+        var bestDistance = double.PositiveInfinity;
+
+        for (var index = 1; index < _points.Length; index++)
+        {
+            var candidate = new LineSegment2D(
+                _points[index - 1],
+                _points[index])
+                .ClosestPoint(point);
+
+            var distance = Vector2.DistanceSquared(candidate, point);
+
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestPoint = candidate;
+            }
+        }
+
+        return bestPoint;
+    }
+
+    public double DistanceSquaredTo(Vector2 point)
+    {
+        var closest = ClosestPoint(point);
+        return Vector2.DistanceSquared(closest, point);
+    }
+
+    public double DistanceTo(Vector2 point) =>
+        Math.Sqrt(DistanceSquaredTo(point));
+
     public Polygon2D Reverse() =>
         new(_points.Take(_points.Length - 1).Reverse());
 
