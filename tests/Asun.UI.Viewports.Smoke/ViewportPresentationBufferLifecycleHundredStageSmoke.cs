@@ -148,6 +148,13 @@ public static class ViewportPresentationBufferLifecycleHundredStageSmoke
                 $"disposed state round {i + 1} should remain structurally valid.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            Check(
+                doubleBeginRejected,
+                $"concurrent acquisition round {i + 1} should remain rejected.");
+        }
+
         assert(
             round == 100,
             $"Presentation buffer lifecycle smoke should execute exactly 100 numbered rounds; actual {round}.");
