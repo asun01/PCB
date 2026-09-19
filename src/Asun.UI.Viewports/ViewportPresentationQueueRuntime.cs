@@ -378,6 +378,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
     public void Reset()
     {
+        CancellationTokenSource? cancellation;
+
         lock (_sync)
         {
             ThrowIfDisposed();
@@ -385,8 +387,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             _pending.Clear();
             _committingToken = null;
             _inFlight = null;
-            _inFlightCancellation?.Cancel();
-            _inFlightCancellation?.Dispose();
+            cancellation = _inFlightCancellation;
             _inFlightCancellation = null;
             _activitySignal.Wait(0);
             _enqueued = 0;
@@ -399,10 +400,18 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             _presentedGeneration = null;
             _presentedSequence = null;
         }
+
+        if (cancellation is not null)
+        {
+            cancellation.Cancel();
+            cancellation.Dispose();
+        }
     }
 
     public void Dispose()
     {
+        CancellationTokenSource? cancellation;
+
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
 
@@ -411,10 +420,15 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             _pending.Clear();
             _committingToken = null;
             _inFlight = null;
-            _inFlightCancellation?.Cancel();
-            _inFlightCancellation?.Dispose();
+            cancellation = _inFlightCancellation;
             _inFlightCancellation = null;
             _activitySignal.Dispose();
+        }
+
+        if (cancellation is not null)
+        {
+            cancellation.Cancel();
+            cancellation.Dispose();
         }
     }
 
