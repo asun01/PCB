@@ -18,6 +18,8 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly TimeSpan _idleDelay;
     private readonly ViewportCompositeInputRuntime<TTile> _interaction;
     private readonly ViewportRenderDeliveryTracker _delivery = new();
+    private readonly object _deliveryStateSync = new();
+    private ViewportRenderDeliveryResult? _lastDelivery;
     private long _loopCount;
     private long _renderedFrames;
     private long _skippedLoops;
@@ -47,6 +49,15 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
     public ViewportRenderDeliveryTracker Delivery => _delivery;
 
+    public ViewportRenderDeliveryResult? LastDelivery
+    {
+        get
+        {
+            lock (_deliveryStateSync)
+                return _lastDelivery;
+        }
+    }
+
     public ViewportContinuousFrameStatistics Statistics
     {
         get
@@ -70,6 +81,10 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _input.ResetLifecycle();
         _interaction.Reset();
         _delivery.Reset();
+
+        lock (_deliveryStateSync)
+            _lastDelivery = null;
+
         Interlocked.Exchange(ref _loopCount, 0);
         Interlocked.Exchange(ref _renderedFrames, 0);
         Interlocked.Exchange(ref _skippedLoops, 0);
@@ -149,6 +164,9 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                                 _delivery,
                                 cancellationToken)
                             .ConfigureAwait(false);
+
+                        lock (_deliveryStateSync)
+                            _lastDelivery = delivery;
 
                         if (delivery.Succeeded)
                         {
