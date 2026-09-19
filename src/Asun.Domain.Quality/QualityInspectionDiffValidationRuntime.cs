@@ -29,6 +29,10 @@ public static class QualityInspectionDiffValidationRuntime
             diff.RemovedEvidenceKeys,
             "Removed evidence keys",
             errors);
+        ValidateUnique(
+            diff.RelinkedEvidenceKeys,
+            "Relinked evidence keys",
+            errors);
 
         if (diff.AddedFindingIds.Intersect(diff.RemovedFindingIds).Any())
             errors.Add("A finding cannot be both added and removed.");
@@ -37,6 +41,16 @@ public static class QualityInspectionDiffValidationRuntime
             diff.RemovedFindingIds.Intersect(diff.ChangedFindingIds).Any())
         {
             errors.Add("A finding cannot be both added/removed and changed.");
+        }
+
+        if (diff.AddedEvidenceKeys.Intersect(diff.RemovedEvidenceKeys).Any())
+            errors.Add("An evidence key cannot be both added and removed.");
+
+        if (diff.RelinkedEvidenceKeys.Intersect(diff.AddedEvidenceKeys).Any() ||
+            diff.RelinkedEvidenceKeys.Intersect(diff.RemovedEvidenceKeys).Any())
+        {
+            errors.Add(
+                "A relinked evidence key cannot also be newly added or removed.");
         }
 
         return errors;
