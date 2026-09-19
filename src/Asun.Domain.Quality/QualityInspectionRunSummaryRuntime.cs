@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using System.Text;
+
 namespace Asun.Domain.Quality;
 
 public static class QualityInspectionRunSummaryRuntime
@@ -37,6 +40,9 @@ public static class QualityInspectionRunSummaryRuntime
             failCount,
             reviewCount,
             criticalCount,
-            QualityInspectionResultDeterminismRuntime.CreateHash(canonical));
+            Convert.ToHexString(
+                SHA256.HashData(
+                    Encoding.UTF8.GetBytes(canonical)))
+                .ToLowerInvariant());
     }
 }
