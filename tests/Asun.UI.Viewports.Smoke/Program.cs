@@ -218,6 +218,8 @@ Assert(
     teaching.Snapshot.CurrentStep is not null,
     "Reset should restore the first teaching step.");
 
+RoiDocumentRuntimeSmoke.Run(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
