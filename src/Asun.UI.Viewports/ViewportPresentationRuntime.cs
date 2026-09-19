@@ -85,6 +85,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                     _continuous.Delivery.Statistics,
                     _continuous.Statistics,
                     _continuous.LastDelivery?.FrameState,
+                    _continuous.Surface.Snapshot,
                     isGenerationStable: false);
 
                 var afterGeneration = _pipeline.Composite.Generation;
@@ -109,6 +110,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
                 _continuous.Delivery.Statistics,
                 _continuous.Statistics,
                 _continuous.LastDelivery?.FrameState,
+                _continuous.Surface.Snapshot,
                 isGenerationStable: false);
         }
     }
