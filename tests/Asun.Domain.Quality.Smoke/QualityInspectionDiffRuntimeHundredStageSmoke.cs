@@ -21,11 +21,13 @@ public static class QualityInspectionDiffRuntimeHundredStageSmoke
         var addedFinding=MakeFinding("F-002","added");
 
         var oldEvidence=new QualityFindingEvidenceSet(new[]{
-            new QualityFindingEvidenceLink(oldFinding.Id,QualityEvidenceKey.Create("frame://001"))
+            new QualityFindingEvidenceLink(oldFinding.Id,QualityEvidenceKey.Create("frame://001")),
+            new QualityFindingEvidenceLink(oldFinding.Id,QualityEvidenceKey.Create("frame://old"))
         });
         var newEvidence=new QualityFindingEvidenceSet(new[]{
             new QualityFindingEvidenceLink(changedFinding.Id,QualityEvidenceKey.Create("frame://002")),
-            new QualityFindingEvidenceLink(addedFinding.Id,QualityEvidenceKey.Create("frame://003"))
+            new QualityFindingEvidenceLink(addedFinding.Id,QualityEvidenceKey.Create("frame://003")),
+            new QualityFindingEvidenceLink(addedFinding.Id,QualityEvidenceKey.Create("frame://001"))
         });
 
         var previous=new QualityInspectionSnapshot(Guid.NewGuid(),10,new QualityFindingSet(new[]{oldFinding}),oldEvidence);
@@ -36,7 +38,7 @@ public static class QualityInspectionDiffRuntimeHundredStageSmoke
         var noChange=QualityInspectionDiffRuntime.Diff(previous,unchanged);
 
         for(var i=0;i<10;i++) Check(diff.AddedFindingIds.Single()==addedFinding.Id,$"added finding diff round {i+1} should identify F-002.");
-        for(var i=0;i<10;i++) Check(diff.RemovedFindingIds.Count==0,$"removed finding diff round {i+1} should be empty.");
+        for(var i=0;i<10;i++) Check(diff.RemovedFindingIds.Count==0 && diff.RelinkedEvidenceKeys.Single().Value=="frame://001",$"relinked evidence diff round {i+1} should identify frame://001.");
         for(var i=0;i<10;i++) Check(diff.ChangedFindingIds.Single()==oldFinding.Id,$"changed finding diff round {i+1} should identify F-001.");
         for(var i=0;i<10;i++) Check(diff.AddedEvidenceKeys.Count==2,$"added evidence diff round {i+1} should contain two new keys.");
         for(var i=0;i<10;i++) Check(diff.RemovedEvidenceKeys.Count==1,$"removed evidence diff round {i+1} should contain the old key.");
