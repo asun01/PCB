@@ -81,6 +81,27 @@ public static class ViewportRenderSchedulerGenerationSmoke
         assert(
             scheduler.PendingFlags.HasFlag(ViewportDirtyFlags.Overlay),
             "Rejected stale scheduling should preserve pending dirty work.");
+
+        var pacing = new ViewportRenderSchedulerRuntime(framesPerSecond: 60);
+        var firstNow = DateTimeOffset.UtcNow.AddSeconds(1);
+
+        pacing.Submit(ViewportDirtyFlags.Image, generation: 1);
+        assert(
+            pacing.TryTakeFrame(firstNow, out _),
+            "Scheduler pacing smoke should admit the first frame.");
+
+        pacing.Submit(ViewportDirtyFlags.Image, generation: 2);
+        assert(
+            !pacing.TryTakeFrame(firstNow, out _),
+            "Scheduler pacing smoke should reject an immediate second frame.");
+
+        assert(
+            pacing.Statistics.RateLimited >= 1,
+            "Scheduler should count rate-limited frame attempts.");
+
+        assert(
+            pacing.GetNextFrameDelay(firstNow) > TimeSpan.Zero,
+            "Scheduler should expose a positive delay until the next frame opportunity.");
     }
 }
 
