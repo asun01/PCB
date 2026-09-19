@@ -297,7 +297,7 @@ public static class ViewportThreeHundredRoundSmoke
                 "a deterministic ROI scene should remain valid and fingerprintable.");
         }
 
-        Check(
+        assert(
             round == 300,
             "the verification matrix must execute exactly 300 numbered rounds.");
     }
