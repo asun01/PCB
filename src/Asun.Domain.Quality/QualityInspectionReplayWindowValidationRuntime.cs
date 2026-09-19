@@ -13,9 +13,18 @@ public static class QualityInspectionReplayWindowValidationRuntime
 
         foreach (var envelope in window.Envelopes)
         {
-            errors.AddRange(
+            var envelopeErrors =
                 QualityInspectionReplayEnvelopeValidationRuntime
-                    .Validate(envelope));
+                    .Validate(envelope);
+
+            errors.AddRange(envelopeErrors);
+
+            if (envelopeErrors.Count > 0 ||
+                envelope.Bundle is null ||
+                envelope.Bundle.Current is null)
+            {
+                continue;
+            }
 
             if (!resultIds.Add(envelope.Bundle.Current.ResultId))
                 errors.Add("Replay window result ids must be unique.");
