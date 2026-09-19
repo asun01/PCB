@@ -42,6 +42,17 @@ public sealed class AsyncPipeline<TContext>
             StringComparer.Ordinal);
     }
 
+    public int NodeCount => _nodes.Count;
+
+    public IReadOnlyList<string> NodeIds =>
+        _nodes.Select(node => node.Id).ToArray();
+
+    public bool ContainsNode(string id)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(id);
+        return _nodes.Any(node => string.Equals(node.Id, id, StringComparison.Ordinal));
+    }
+
     public ValueTask ExecuteAsync(
         TContext context,
         CancellationToken cancellationToken = default) =>
