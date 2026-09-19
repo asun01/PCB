@@ -1022,6 +1022,13 @@ using var resources = new ResourceLeasePool<string>(new[]
     new KeyValuePair<string, int>("gpu", 2)
 });
 
+Assert(
+    resources.ResourceCount == 2 &&
+    resources.ResourceKeys.Contains("camera") &&
+    resources.ResourceKeys.Contains("gpu"),
+    "Resource metadata should expose the configured resource set.",
+    failures);
+
 Assert(resources.Capacity("camera") == 1, "Configured resource capacity should be exposed.", failures);
 Assert(resources.Available("gpu") == 2, "Independent resource capacity should start available.", failures);
 
