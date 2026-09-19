@@ -49,7 +49,11 @@ public static class PcbBoardDefinitionValidationHundredStageSmoke
             Check(!invalidLayers.IsValid, $"zero-layer board round {i + 1} should fail.");
 
         for (var i = 0; i < 10; i++)
-            Check(invalidId.Center == board.Center, $"record-geometry fallback round {i + 1} should remain deterministic without invoking IsValid.");
+            Check(
+                invalidId.WidthMm == board.WidthMm &&
+                invalidId.HeightMm == board.HeightMm &&
+                invalidId.LayerCount == board.LayerCount,
+                $"record copy round {i + 1} should preserve the unchanged geometry fields.");
 
         for (var i = 0; i < 10; i++)
         {
