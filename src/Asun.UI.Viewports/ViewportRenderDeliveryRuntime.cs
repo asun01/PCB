@@ -53,7 +53,9 @@ public readonly record struct ViewportRenderDeliveryResult(
     int RenderedUnits,
     int DeferredUnits,
     IReadOnlyList<ViewportRenderWorkItem> DeferredWorkItems,
-    Exception? Error)
+    Exception? Error,
+    int PlannedUnits,
+    int RegionCount)
 {
     public ViewportRenderDeliveryStatus Status =>
         Cancelled
@@ -63,6 +65,16 @@ public readonly record struct ViewportRenderDeliveryResult(
                 : Succeeded
                     ? ViewportRenderDeliveryStatus.Succeeded
                     : ViewportRenderDeliveryStatus.Failed;
+
+    public ViewportRenderFrameState FrameState => new(
+        Status,
+        Generation,
+        PlannedUnits,
+        RenderedUnits,
+        DeferredUnits,
+        RegionCount,
+        DeferredWorkItems,
+        Error);
 }
 
 public static class ViewportRenderDeliveryRuntime
@@ -94,7 +106,9 @@ public static class ViewportRenderDeliveryRuntime
                 units,
                 0,
                 Array.Empty<ViewportRenderWorkItem>(),
-                null);
+                null,
+                frame.Batch.ItemCount,
+                frame.Batch.RegionCount);
         }
         catch (OperationCanceledException)
         {
@@ -106,7 +120,9 @@ public static class ViewportRenderDeliveryRuntime
                 0,
                 0,
                 Array.Empty<ViewportRenderWorkItem>(),
-                null);
+                null,
+                frame.Batch.ItemCount,
+                frame.Batch.RegionCount);
         }
         catch (ViewportRenderWorkUnavailableException exception)
         {
@@ -118,7 +134,9 @@ public static class ViewportRenderDeliveryRuntime
                 exception.RenderedUnits,
                 exception.WorkItems.Count,
                 exception.WorkItems,
-                exception);
+                exception,
+                frame.Batch.ItemCount,
+                frame.Batch.RegionCount);
         }
         catch (Exception exception)
         {
@@ -130,7 +148,9 @@ public static class ViewportRenderDeliveryRuntime
                 0,
                 0,
                 Array.Empty<ViewportRenderWorkItem>(),
-                exception);
+                exception,
+                frame.Batch.ItemCount,
+                frame.Batch.RegionCount);
         }
 
         tracker?.Record(
