@@ -244,3 +244,18 @@ Verification note:
 - Added five exact 100-round Smoke matrices and registered them in the primary viewport smoke entry.
 - Completed 3001–3500 with five dedicated stage ledgers.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+
+### 3501→4000 presentation lifecycle and tile request hardening — 2026-09-19
+
+- Completed stages 3501–4000 as five contiguous 100-stage blocks.
+- Audited presentation-buffer Reset semantics and retained the monotonic submission-fence domain intentionally: reset clears presentation state/counters, but pre-reset submission sequences remain invalid.
+- Corrected a real presentation-buffer contract defect: Commit now rejects rendered units greater than the planned unit budget instead of publishing impossible accounting.
+- Added presentation-buffer and presentation-queue lifecycle Smoke matrices covering reset, stale fences, commit windows, cancellation, latest sequence and disposed state.
+- Added TileLoadCoordinatorValidationRuntime and a 100-round concurrency Smoke covering same-tile load coalescing, shared results, caller cancellation isolation, completion cleanup and cache population.
+- Added TileCacheWarmupValidationRuntime and a 100-round Smoke covering duplicate-request suppression, cache-only repeat warmup, source-call suppression and load-health accounting.
+- Added TileRequestPlannerValidationRuntime and a 100-round Smoke covering visible coverage, visible-first ordering, tile uniqueness, geometry-derived distance, finite request rectangles, deterministic ordering and out-of-grid rejection.
+- Registered all five new lifecycle/planner Smokes in the primary viewport smoke entry.
+- Added stage ledgers for 3501–3600, 3601–3700, 3701–3800, 3801–3900 and 3901–4000.
+- Static verification confirms each new 100-stage Smoke uses 10 loop groups × 10 Check calls with round == 100, and the new C# sources have balanced delimiters with no placeholder implementation.
+- No local build/test/CI success is asserted without authoritative execution evidence.
