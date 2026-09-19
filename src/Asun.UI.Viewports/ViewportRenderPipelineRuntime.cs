@@ -226,7 +226,6 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
             batch,
             hasDeferredWork);
 
-        _reuse.Store(result);
         return result;
     }
 
@@ -362,8 +361,22 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                 composite.Tiles.Transform),
             hasDeferredWork);
 
-        _reuse.Store(result);
         return result;
+    }
+
+    public bool MarkPresented(
+        ViewportRenderPipelineFrame<TTile> frame)
+    {
+        ArgumentNullException.ThrowIfNull(frame);
+        ThrowIfDisposed();
+
+        if (frame.HasDeferredWork ||
+            !frame.Accepted ||
+            frame.Composite.Generation != _composite.Generation)
+            return false;
+
+        _reuse.Store(frame);
+        return true;
     }
 
     public void Reset()
