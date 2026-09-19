@@ -113,9 +113,11 @@ public static class ViewportContinuousAndDeferredSmoke
             .RunAsync(sink, cancellation.Token)
             .AsTask();
 
-        var initialRendered = await sink
-            .FirstFrame
-            .WaitAsync(TimeSpan.FromSeconds(2));
+        var initialCompleted = await Task.WhenAny(
+            sink.FirstFrame.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        var initialRendered = initialCompleted == sink.FirstFrame.Task;
 
         assert(
             initialRendered,
@@ -130,9 +132,11 @@ public static class ViewportContinuousAndDeferredSmoke
                 new Vector2(40, 30)),
             "Presentation input should be accepted while the runtime is idle.");
 
-        var secondRendered = await sink
-            .SecondFrame
-            .WaitAsync(TimeSpan.FromMilliseconds(500));
+        var secondCompleted = await Task.WhenAny(
+            sink.SecondFrame.Task,
+            Task.Delay(TimeSpan.FromMilliseconds(500)));
+
+        var secondRendered = secondCompleted == sink.SecondFrame.Task;
 
         started.Stop();
 
