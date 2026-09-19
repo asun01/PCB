@@ -6,6 +6,8 @@ public static class ViewportPresentationQueueSmoke
 {
     public static async ValueTask RunAsync(Action<bool, string> assert)
     {
+        await VerifyCommitWindowAsync(assert);
+
         using var pipeline = CreatePipeline(new StableTileSource());
 
         var first = await pipeline.RefreshAsync(
@@ -155,6 +157,86 @@ public static class ViewportPresentationQueueSmoke
             sink.RoiCount == 0 &&
             sink.ClearCount == 0,
             "Delivery should execute the command stream at the sink boundary without replaying unrelated layers.");
+    }
+
+    private static async ValueTask VerifyCommitWindowAsync(
+        Action<bool, string> assert)
+    {
+        using var pipeline = CreatePipeline(new StableTileSource());
+
+        var first = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(20));
+
+        assert(
+            first is not null,
+            "Commit-window smoke should create the first frame.");
+
+        if (first is null)
+            return;
+
+        pipeline.Composite.PanBy(new Vector2(8, 0));
+
+        var second = await pipeline.RefreshAsync(
+            DateTimeOffset.UtcNow.AddSeconds(21));
+
+        assert(
+            second is not null &&
+            second.Composite.Generation > first.Composite.Generation,
+            "Commit-window smoke should create a newer frame.");
+
+        if (second is null)
+            return;
+
+        using var queue = new ViewportPresentationQueueRuntime<string>();
+
+        assert(
+            queue.TryEnqueue(first, out var firstPacket) &&
+            queue.TryTakeLatest(out var inFlight) &&
+            inFlight.Token == firstPacket.Token &&
+            queue.TryBeginCommit(inFlight.Token),
+            "A current in-flight presentation should enter the explicit commit window.");
+
+        var cancellation = queue.GetInFlightCancellationToken(
+            inFlight.Token);
+
+        assert(
+            queue.Statistics.CommitInProgress &&
+            queue.IsCommitCurrent(inFlight.Token),
+            "The queue should expose an active commit window before backend publication.");
+
+        assert(
+            queue.TryEnqueue(second, out var newerPacket) &&
+            newerPacket.Token.Sequence > inFlight.Token.Sequence &&
+            !cancellation.IsCancellationRequested &&
+            !queue.IsCurrent(inFlight.Token) &&
+            queue.IsCommitCurrent(inFlight.Token),
+            "A newer submission should become pending without cancelling a presentation already inside its commit window.");
+
+        var duringCommit = queue.Statistics;
+
+        assert(
+            duringCommit.CommitInProgress &&
+            duringCommit.CommittingSequence == inFlight.Token.Sequence &&
+            duringCommit.Pending == 1,
+            "Queue diagnostics should show the older committing token and the newer pending token simultaneously.");
+
+        assert(
+            queue.TryCompleteCommit(inFlight.Token),
+            "The commit-window token should acknowledge successfully even when a newer frame is already pending.");
+
+        var afterCommit = queue.Statistics;
+
+        assert(
+            !afterCommit.CommitInProgress &&
+            afterCommit.PresentedSequence == inFlight.Token.Sequence &&
+            afterCommit.Pending == 1,
+            "Completing the commit window should publish the committed token and leave the newer frame queued.");
+
+        assert(
+            queue.TryTakeLatest(out var pending) &&
+            pending.Token == newerPacket.Token &&
+            queue.TryCancel(pending.Token),
+            "The newer pending frame should remain available for the next execution cycle.");
     }
 
     private static ViewportRenderPipelineRuntime<string> CreatePipeline(
