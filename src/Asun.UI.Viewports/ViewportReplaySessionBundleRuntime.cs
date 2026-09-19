@@ -40,12 +40,23 @@ public static class ViewportReplaySessionBundleRuntime
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(json);
 
-        var bundle = JsonSerializer.Deserialize<ViewportReplaySessionBundle>(
-            json,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+        ViewportReplaySessionBundle? bundle;
+
+        try
+        {
+            bundle = JsonSerializer.Deserialize<ViewportReplaySessionBundle>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+        }
+        catch (JsonException exception)
+        {
+            throw new InvalidOperationException(
+                "Replay bundle JSON is malformed.",
+                exception);
+        }
 
         if (bundle is null)
             throw new InvalidOperationException(
@@ -122,6 +133,20 @@ public static class ViewportReplaySessionBundleRuntime
             if (input.Sequence <= previousInputSequence)
                 errors.Add("Bundle input sequence must increase strictly.");
 
+            if (!float.IsFinite(input.Position.X) ||
+                !float.IsFinite(input.Position.Y))
+            {
+                errors.Add(
+                    "Bundle input positions must be finite.");
+            }
+
+            if (!Enum.IsDefined(input.Kind) ||
+                !Enum.IsDefined(input.Button))
+            {
+                errors.Add(
+                    "Bundle input kind and button must be defined.");
+            }
+
             previousInputSequence = input.Sequence;
         }
 
@@ -146,9 +171,18 @@ public static class ViewportReplaySessionBundleRuntime
         }
 
         long previousAuditSequence = 0;
-        var evidenceKeys = bundle.Evidence
-            .Select(item => item.StableKey)
-            .ToHashSet(StringComparer.Ordinal);
+        var evidenceKeys = new HashSet<string>(
+            StringComparer.Ordinal);
+
+        foreach (var evidence in bundle.Evidence)
+        {
+            if (string.IsNullOrWhiteSpace(evidence.StableKey) ||
+                !evidenceKeys.Add(evidence.StableKey))
+            {
+                errors.Add(
+                    "Bundle evidence stable keys must be non-empty and unique.");
+            }
+        }
 
         foreach (var audit in bundle.Audit)
         {
