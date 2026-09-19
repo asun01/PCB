@@ -914,6 +914,12 @@ Assert(
     "Oriented rectangle local-to-world conversion should round-trip.",
     failures);
 
+var closestPoint = oriented.ClosestPoint(new System.Numerics.Vector2(140, 60));
+Assert(
+    closestPoint == new System.Numerics.Vector2(120, 60),
+    "Oriented rectangle closest point should clamp to the local bounds.",
+    failures);
+
 var translatedOriented = oriented.Translate(new System.Numerics.Vector2(5, -10));
 Assert(
     translatedOriented.Center == new System.Numerics.Vector2(105, 40),
