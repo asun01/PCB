@@ -2402,3 +2402,13 @@ Current completed boundary: **31,500**
 Next executable stage: **31,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 32000 — 2026-09-20
+
+Closed Quality Outcome Summary → Release fact alignment. Release/replay-facing layers now consume canonical Quality summary facts rather than duplicating their own fail/review/critical counting logic.
+
+Current completed boundary: **32,000**
+Next executable stage: **32,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
