@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Asun.UI.Viewports;
 
@@ -32,14 +31,10 @@ public readonly record struct ViewportRenderEvidenceManifest(
     {
         return JsonSerializer.Serialize(
             this,
-            ViewportRenderEvidenceJsonContext.Default.ViewportRenderEvidenceManifest);
+            new JsonSerializerOptions
+            {
+                WriteIndented = false,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
     }
-}
-
-[JsonSourceGenerationOptions(
-    WriteIndented = false,
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
-[JsonSerializable(typeof(ViewportRenderEvidenceManifest))]
-internal partial class ViewportRenderEvidenceJsonContext : JsonSerializerContext
-{
 }
