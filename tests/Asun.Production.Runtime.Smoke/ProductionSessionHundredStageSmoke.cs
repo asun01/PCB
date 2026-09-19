@@ -44,7 +44,7 @@ public static class ProductionSessionHundredStageSmoke
         var pipeline=PipelineDefinitionRuntime.Create(new[]{
             new PipelineStage<CapturedFrame>(
                 1,
-                "Normalize",
+                "Acquire",
                 frame=>CapturedFrame.Create(frame.Metadata,frame.Payload.ToArray())),
             new PipelineStage<CapturedFrame>(
                 2,
