@@ -60,7 +60,11 @@ public static class ViewportRenderPrioritySmoke
 
             var metrics = ViewportRenderPlanMetricsRuntime.Capture(
                 prioritized,
-                batch);
+                batch,
+                frame.Roi.Items
+                    .Where(item => item.IsSelected)
+                    .Select(item => item.Id)
+                    .ToHashSet());
 
             assert(
                 metrics.Total == prioritized.Items.Count &&
