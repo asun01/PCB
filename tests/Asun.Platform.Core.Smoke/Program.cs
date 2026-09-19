@@ -399,6 +399,16 @@ Assert(
     "A fully outside tile window should remain an empty range.",
     failures);
 
+var clampedTile = Asun.UI.Viewports.ImageTileGeometry.ClampTileIndex(
+    new System.Numerics.Vector2(1000, 500),
+    new System.Numerics.Vector2(256, 256),
+    new Asun.UI.Viewports.TileIndex(-4, 99));
+
+Assert(
+    clampedTile == new Asun.UI.Viewports.TileIndex(0, 1),
+    "Tile index clamping should stay within the finite grid.",
+    failures);
+
 Assert(
     visible.X >= 0 &&
     visible.Y >= 0 &&
