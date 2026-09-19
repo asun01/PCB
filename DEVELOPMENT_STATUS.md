@@ -151,3 +151,17 @@ Verification note:
 - Repository implementation and smoke wiring are complete for this round.
 - No local build/test execution result is asserted from this environment.
 - The latest GitHub branch still requires external CI/build execution for authoritative compile/test verification.
+
+### Latest viewport presentation fence / transaction hardening — 2026-09-19
+- Surface presentation now uses an explicit `ViewportRenderSurfaceTransaction` token with an independent monotonic transaction sequence.
+- A surface rejects render generations older than the last successfully presented generation, even if they arrive after Scheduler-level filtering.
+- Same-generation retries are allowed, but each retry receives a new transaction sequence so an older discarded token cannot alias a later transaction.
+- Delivery now carries the active surface transaction through Commit/Discard paths; stale or concurrent transaction attempts cannot commit over the current Surface state.
+- Surface rollback is best-effort during concurrent disposal, preserving the original delivery exception instead of allowing cleanup to mask it.
+- Presentation snapshot stability now samples Surface state, RenderingGeneration, RenderingSequence, and PresentationSequence in addition to Composite.Generation.
+- Surface smoke now covers stale-generation rejection, same-generation transaction sequence monotonicity, stale token rejection, and concurrent disposal during commit.
+
+Verification note:
+- Repository implementation and smoke wiring are complete for this round.
+- No local build/test execution result is asserted from this environment.
+- GitHub status/workflow results remain unavailable for the current branch and are not being inferred as successful.
