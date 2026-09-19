@@ -131,6 +131,17 @@ public static class RoiTeachingValidationHundredStageSmoke
                     steps),
                 $"stopped teaching round {i + 1} should not expose an invalid active index.");
 
+        for (var i = 0; i < 10; i++)
+            Check(
+                completed.CurrentStepIndex == steps.Count,
+                $"terminal index round {i + 1} should equal the step count.");
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                completed.CurrentStep is null &&
+                completed.IsCompleted,
+                $"terminal snapshot round {i + 1} should expose completed state.");
+
         assert(
             round == 100,
             $"ROI teaching validation smoke should execute exactly 100 numbered rounds; actual {round}.");
