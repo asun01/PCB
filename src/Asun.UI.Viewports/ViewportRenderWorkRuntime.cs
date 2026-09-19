@@ -168,19 +168,6 @@ public static class ViewportRenderWorkRuntime
             frame.Generation);
     }
 
-    private static RectangleF Union(
-        RectangleF a,
-        RectangleF b)
-    {
-        if (a.IsEmpty)
-            return b;
-
-        if (b.IsEmpty)
-            return a;
-
-        return RectangleF.Union(a, b);
-    }
-
     private static IReadOnlyList<ViewportRenderWorkItem> Deduplicate(
         IEnumerable<ViewportRenderWorkItem> items)
     {
