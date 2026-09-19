@@ -274,3 +274,35 @@ Verification note:
 - Added ledgers for 4001–4100, 4101–4200, 4201–4300, 4301–4400 and 4401–4500.
 - Static verification confirms each new 100-stage Smoke uses 10 loop groups × 10 Check calls with `round == 100`; delimiters are balanced and no placeholder implementation was introduced in the new validation/Smoke files.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+
+### 4501→5000 scene, selection, document identity and tile visibility hardening — 2026-09-19
+
+Completed the first 500-stage batch inside the requested 100,000-stage execution window (4501–104500).
+
+Real defects corrected:
+- `RoiSelectionRuntime.SelectFromPoint` now honors the supplied handle tolerance through spatial-index hit testing instead of point-containment-only lookup.
+- `RoiLayerRuntime.Ensure` now preserves existing visibility/lock state while allowing synchronized name/order updates.
+- `ViewportSceneRuntime` now gives ROI body segments stable `HandleIndex` identity, enabling complete multi-edge scene diffs.
+- `RoiDocumentRuntime.Cancel` preserves the identity of the ROI being cancelled across snapshot rollback.
+- `RoiDocumentRuntime.Add` rejects empty and duplicate explicit ROI ids.
+
+Validation added:
+- `ViewportSceneDiffValidationRuntime`
+- `RoiLayerValidationRuntime`
+- `RoiSelectionValidationRuntime`
+- `RoiDocumentValidationRuntime`
+- `ViewportTileRoiVisibilityValidationRuntime`
+- five dedicated 100-round Smoke entries, all registered in `tests/Asun.UI.Viewports.Smoke/Program.cs`.
+
+Stage ledgers closed:
+- 4501–4600
+- 4601–4700
+- 4701–4800
+- 4801–4900
+- 4901–5000
+
+Verification status:
+- Source-level/static structure checks were performed on the changed acceptance assets.
+- No local build, test, GitHub Actions, hardware, HALCON, DevExpress, or vendor SDK success is claimed unless authoritative execution evidence exists.
+- The 100,000-stage execution window remains active for stages 4501–104500.
