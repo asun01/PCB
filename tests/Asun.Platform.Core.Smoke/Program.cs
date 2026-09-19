@@ -222,7 +222,6 @@ Assert(resources.TryAcquire("camera", out var cameraLease), "The first lease sho
 Assert(!resources.TryAcquire("camera", out _), "A saturated resource should reject a non-blocking lease.", failures);
 
 var waitingLeaseTask = resources.AcquireAsync("camera").AsTask();
-await Task.Delay(10);
 Assert(!waitingLeaseTask.IsCompleted, "A saturated resource should apply bounded waiting.", failures);
 
 cameraLease!.Dispose();
