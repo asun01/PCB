@@ -70,3 +70,18 @@ Verification note:
 - The current environment cannot resolve github.com for a local checkout, so no fresh local dotnet build/test result is asserted.
 - The latest GitHub branch commit currently has no associated workflow run or status result, so CI success is not inferred.
 - Current branch is continuously ahead of main; authoritative merge/CI handling remains with the existing open PR and repository governance.
+
+### 400-stage continuous evidence/replay continuation — 2026-09-19
+
+- Completed stages 401–500 and recorded them in `PHASE1_400_STAGE_LEDGER_20260919.md`.
+- Added immutable `ViewportReplaySessionBundle` capture at the runtime boundary.
+- Added bundle-level manifest reconstruction, integrity validation, deterministic comparison, and evidence-key linkage validation.
+- Added logical render replay snapshot validator covering sequence, frame lifecycle, generation, lifecycle counters, commit/discard status, and rendered-unit totals.
+- Added a deterministic 100-round replay bundle smoke and registered it in the primary viewport smoke entry.
+- Added continuous presentation outcome evidence smoke covering Failed, Deferred→Presented recovery, and Superseded→Presented recovery.
+- Kept all evidence/replay facilities independent of Skia, WPF, DevExpress, HALCON, and hardware SDK types.
+
+Verification note:
+- No local C# build/test result is asserted.
+- Latest GitHub workflow/status lookup is still required before claiming CI success.
+- The branch remains in the non-blocked automation lane; unresolved vendor/authoritative Contract/Schema/Owner/State gates remain unchanged.
