@@ -105,6 +105,9 @@ public readonly record struct ViewportTransform(
     public Vector2 ImagePointAtViewportCenter =>
         ViewportToImage(ViewportCenter);
 
+    public ViewportTransform ResetToFit() =>
+        Fit(ImageSize, ViewportSize);
+
     public ViewportTransform WithZoomFactor(
         double zoomFactor,
         Vector2 viewportAnchor)
