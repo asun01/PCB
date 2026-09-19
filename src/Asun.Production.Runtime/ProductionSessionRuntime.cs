@@ -20,19 +20,17 @@ public static class ProductionSessionRuntime
         if(definition.FrameCount<=0)
             throw new ArgumentOutOfRangeException(nameof(definition.FrameCount));
 
-        if(!ProgramExecutionPlanValidationRuntime.IsValid(
-            CreateSourceProgram(definition.ProgramPlan),
-            definition.ProgramPlan))
+        if(!ProductionProgramPipelineBindingValidationRuntime.IsValid(
+            definition.ProgramPlan,
+            definition.Pipeline,
+            ProductionProgramPipelineBindingRuntime.Create(
+                definition.ProgramPlan,
+                definition.Pipeline)))
         {
             throw new ArgumentException(
-                "Production session program plan is invalid.",
+                "Production session program/pipeline binding is invalid.",
                 nameof(definition));
         }
-
-        if(definition.Pipeline.Stages.Count==0)
-            throw new ArgumentException(
-                "Production session pipeline cannot be empty.",
-                nameof(definition));
 
         var frameExecutions=new List<ProductionFrameExecution>(
             definition.FrameCount);
@@ -86,12 +84,4 @@ public static class ProductionSessionRuntime
             frameExecutions,
             fingerprint);
     }
-
-    private static InspectionProgram CreateSourceProgram(
-        ProgramExecutionPlan plan)=>
-        new(
-            plan.ProgramId,
-            "validated-source-program",
-            plan.Version,
-            plan.Steps);
 }
