@@ -48,6 +48,7 @@ QualityInspectionRuleAuditProjectionFingerprintHundredStageSmoke.Run(Assert);
 QualityInspectionFindingAuditRecordHundredStageSmoke.Run(Assert);
 QualityInspectionFindingAuditIndexHundredStageSmoke.Run(Assert);
 QualityInspectionFindingAuditIndexFingerprintHundredStageSmoke.Run(Assert);
+QualityInspectionFindingAuditProjectionHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
