@@ -193,7 +193,8 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
     public void Commit(
         ViewportPresentationBufferTransaction transaction,
         int renderedUnits,
-        IReadOnlyList<RectangleF>? regions = null)
+        IReadOnlyList<RectangleF>? regions = null,
+        Func<bool>? presentationFence = null)
     {
         if (renderedUnits < 0)
             throw new ArgumentOutOfRangeException(nameof(renderedUnits));
@@ -218,6 +219,10 @@ public sealed class ViewportPresentationBufferRuntime : IDisposable
                 throw new InvalidOperationException(
                     "The presentation backbuffer transaction is stale.");
             }
+
+            if (presentationFence is not null &&
+                !presentationFence())
+                throw new ViewportPresentationFenceRejectedException();
 
             var committedRegions = regions is null
                 ? slot.Regions
