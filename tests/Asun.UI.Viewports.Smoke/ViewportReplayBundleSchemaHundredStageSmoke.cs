@@ -115,7 +115,7 @@ public static class ViewportReplayBundleSchemaHundredStageSmoke
 
             Check(
                 json.Contains(
-                    ""formatVersion"",
+                    "\"formatVersion\"",
                     StringComparison.Ordinal),
                 $"JSON schema field {i + 1} should be explicit.");
         }
@@ -187,8 +187,8 @@ public static class ViewportReplayBundleSchemaHundredStageSmoke
                 ViewportReplaySessionBundleRuntime.ToJson(bundle);
 
             var caseVariant = json.Replace(
-                ""formatVersion"",
-                ""FORMATVERSION"",
+                "\"formatVersion\"",
+                "\"FORMATVERSION\",
                 StringComparison.Ordinal);
 
             var restored =
