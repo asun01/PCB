@@ -121,9 +121,64 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 trackedStats.Attempts == 1 &&
                 trackedStats.Succeeded == 1 &&
                 trackedStats.Failed == 0 &&
+                trackedStats.Deferred == 0 &&
                 trackedStats.Cancelled == 0 &&
                 trackedStats.RenderedUnits == trackedSuccess.RenderedUnits,
                 $"Delivery chain {i + 1} should expose delivery statistics.");
+
+            using var retryPipeline = new ViewportRenderPipelineRuntime<string>(
+                new Vector2(100, 100),
+                new Vector2(100, 100),
+                new Vector2(100, 100),
+                0,
+                8,
+                1,
+                new FlakyTileSource(),
+                new ViewportRenderBudget(4, 4, 1, 8),
+                1000);
+
+            var retryFrame = await retryPipeline.RefreshAsync(
+                DateTimeOffset.UtcNow.AddSeconds(1));
+
+            assert(
+                retryFrame is not null,
+                $"Delivery chain {i + 1} should create a frame for unavailable tile retry.");
+
+            if (retryFrame is not null)
+            {
+                var retryFirst = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                    retryFrame,
+                    new PassiveSink());
+
+                assert(
+                    retryFirst.Status == ViewportRenderDeliveryStatus.Deferred &&
+                    retryFirst.Deferred &&
+                    retryFirst.DeferredUnits == 1,
+                    $"Delivery chain {i + 1} should classify an unavailable tile as deferred.");
+
+                retryPipeline.RequeueFrame(retryFrame);
+                retryPipeline.Invalidate(
+                    retryFrame.Submission.DirtyFlags,
+                    retryFrame.Composite.Generation);
+
+                var retrySecond = await retryPipeline.RefreshAsync(
+                    DateTimeOffset.UtcNow.AddSeconds(2));
+
+                assert(
+                    retrySecond is not null,
+                    $"Delivery chain {i + 1} should rebuild a frame after deferred tile delivery.");
+
+                if (retrySecond is not null)
+                {
+                    var retryDelivered = await ViewportRenderDeliveryRuntime.TryDeliverAsync(
+                        retrySecond,
+                        new PassiveSink());
+
+                    assert(
+                        retryDelivered.Succeeded,
+                        $"Delivery chain {i + 1} should succeed once the tile source recovers.");
+                }
+            }
 
             using var coalescingInput = new ViewportInputSubmissionRuntime();
             var coalescing = new ViewportInputBackpressureRuntime(
@@ -154,6 +209,22 @@ public static class ViewportDeliveryAndBackpressureSmoke
                 coalescedFallback.Pending == 2 &&
                 coalescedFallback.Dropped == 1,
                 $"Delivery chain {i + 1} should drop the oldest event when the saturated tail cannot be coalesced.");
+        }
+    }
+
+    private sealed class FlakyTileSource : ITileSource<string>
+    {
+        private int _attempts;
+
+        public ValueTask<string> LoadAsync(
+            TileRequest request,
+            RectangleF imageRectangle,
+            CancellationToken cancellationToken = default)
+        {
+            if (Interlocked.Increment(ref _attempts) == 1)
+                throw new InvalidOperationException("synthetic first-load failure");
+
+            return ValueTask.FromResult("recovered-tile");
         }
     }
 
