@@ -25,6 +25,22 @@ public readonly record struct PixelPoint(double X, double Y)
 
 public readonly record struct PixelRect(double X, double Y, double Width, double Height)
 {
+    public static PixelRect FromPoints(PixelPoint first, PixelPoint second)
+    {
+        if (!first.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(first));
+
+        if (!second.IsFinite)
+            throw new ArgumentOutOfRangeException(nameof(second));
+
+        var left = Math.Min(first.X, second.X);
+        var top = Math.Min(first.Y, second.Y);
+        var right = Math.Max(first.X, second.X);
+        var bottom = Math.Max(first.Y, second.Y);
+
+        return new PixelRect(left, top, right - left, bottom - top);
+    }
+
     public bool IsFinite =>
         double.IsFinite(X) && double.IsFinite(Y) &&
         double.IsFinite(Width) && double.IsFinite(Height);
