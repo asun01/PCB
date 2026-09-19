@@ -81,7 +81,6 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable
     public void Reset()
     {
         ThrowIfDisposed();
-        _input.Clear();
         _continuous.Reset();
         _pipeline.Reset();
     }
