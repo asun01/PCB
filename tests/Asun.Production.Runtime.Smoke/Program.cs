@@ -8,6 +8,7 @@ void Check(bool condition,string message)
 
 await ProductionSessionHundredStageSmoke.RunAsync(Check);
 await ProductionCancellationHundredStageSmoke.RunAsync(Check);
+await ProductionReleaseCandidateHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
