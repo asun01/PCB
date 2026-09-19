@@ -109,8 +109,7 @@ public sealed class ViewportInputReplayRuntime
     {
         return ViewportRenderEvidenceRuntime.ComputeTextHash(
             string.Join(
-                "
-",
+                "\n",
                 Snapshot().Select(item =>
                     $"{item.Sequence}|{item.Kind}|{item.Position.X:R}|{item.Position.Y:R}|{item.WheelDelta}|{item.Button}")));
     }
