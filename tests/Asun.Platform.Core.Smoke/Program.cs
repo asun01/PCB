@@ -47,6 +47,14 @@ Assert(
     "Arbitrary latency percentile should use the same interpolation rule.",
     failures);
 
+var emptyRequestedPercentiles = Percentiles.CalculateMany(
+    new[] { 0d, 10d, 20d },
+    Array.Empty<double>());
+Assert(
+    emptyRequestedPercentiles.Count == 0,
+    "An empty percentile request should return an empty result without changing the sample contract.",
+    failures);
+
 var duplicateRequestedPercentiles = Percentiles.CalculateMany(
     new[] { 0d, 10d, 20d },
     new[] { 50d, 50d, 100d });
