@@ -2195,4 +2195,7 @@ The plan is fully complete only when:
 ## Current completion ledger
 
 - [x] Stages 1–2,500 already have repository history and stage ledgers.
-- [ ] Stages 2,501–1,002,500 are planned by this document and must not be represented as completed until actual repository evidence exists.
+- [x] Stages 2501–3000 completed as five 100-stage acceptance blocks.
+- [x] The first completed future window under this master plan now ends at stage 3000.
+- [ ] Stages 3001–1,002,500 remain planned and are not represented as completed work.
+- [ ] Stages 3001–1,002,500 are planned by this document and must not be represented as completed until actual repository evidence exists.
