@@ -100,6 +100,9 @@ public static class ViewportPresentationExecutionSmoke
             result.Packet is not null &&
             result.Packet.Token == packet.Token &&
             result.Delivery.Succeeded &&
+            execution.Statistics.Executed == 1 &&
+            execution.Statistics.Presented == 1 &&
+            execution.Statistics.LastSequence == packet.Token.Sequence &&
             queueSnapshot.Presented == 1 &&
             queueSnapshot.Pending == 0 &&
             queueSnapshot.InFlightGeneration is null &&
@@ -240,6 +243,10 @@ public static class ViewportPresentationExecutionSmoke
             snapshot.Any(result =>
                 result.Presented &&
                 result.Packet?.Frame.Composite.Generation == second.Composite.Generation) &&
+            execution.Statistics.Executed == 2 &&
+            execution.Statistics.Superseded == 1 &&
+            execution.Statistics.Presented == 1 &&
+            execution.Statistics.LastGeneration == second.Composite.Generation &&
             queue.Statistics.PresentedGeneration == second.Composite.Generation &&
             buffers.Snapshot.PresentedGeneration == second.Composite.Generation &&
             surface.Snapshot.PresentedGeneration == second.Composite.Generation,
