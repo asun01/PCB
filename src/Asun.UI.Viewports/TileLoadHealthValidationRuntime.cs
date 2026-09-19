@@ -15,11 +15,6 @@ public static class TileLoadHealthValidationRuntime
             errors.Add("Tile load health counters cannot be negative.");
         }
 
-        if (health.CacheCount == 0 && health.Evictions > 0)
-        {
-            errors.Add("An empty cache cannot report current eviction occupancy.");
-        }
-
         return errors;
     }
 
