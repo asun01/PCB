@@ -69,11 +69,13 @@ public static class ViewportRenderAdapterRuntime
             }
         }
 
-        foreach (var work in frame.WorkPlan.Items)
+        foreach (var command in frame.CommandStream.Commands)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (work.Kind == ViewportRenderWorkKind.FullSurface)
+            var work = command.WorkItem;
+
+            if (command.Kind == ViewportRenderCommandKind.FullSurfaceClear)
             {
                 await FlushInvalidationsAsync().ConfigureAwait(false);
 
@@ -89,7 +91,7 @@ public static class ViewportRenderAdapterRuntime
                 continue;
             }
 
-            if (work.IsInvalidation)
+            if (command.Kind == ViewportRenderCommandKind.ClearInvalidatedRegion)
             {
                 var invalidationBounds = ViewportRenderRegionRuntime.ClipToViewport(
                     work.Bounds,
@@ -103,7 +105,7 @@ public static class ViewportRenderAdapterRuntime
 
             await FlushInvalidationsAsync().ConfigureAwait(false);
 
-            if (work.Kind == ViewportRenderWorkKind.Overlay)
+            if (command.Kind == ViewportRenderCommandKind.DrawOverlay)
             {
                 await sink
                     .DrawOverlayAsync(
@@ -118,7 +120,7 @@ public static class ViewportRenderAdapterRuntime
                 continue;
             }
 
-            if (work.Kind == ViewportRenderWorkKind.Tile &&
+            if (command.Kind == ViewportRenderCommandKind.DrawTile &&
                 work.Tile is TileIndex tileIndex)
             {
                 if (!visibility.TryGetTile(tileIndex, out var tileVisibility))
@@ -150,7 +152,7 @@ public static class ViewportRenderAdapterRuntime
                 continue;
             }
 
-            if (work.Kind != ViewportRenderWorkKind.Roi ||
+            if (command.Kind != ViewportRenderCommandKind.DrawRoi ||
                 work.RoiId == Guid.Empty ||
                 !renderedRoiIds.Add(work.RoiId) ||
                 !roiCommandsById.TryGetValue(work.RoiId, out var commands))
