@@ -30,7 +30,8 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
 {
     private readonly object _sync = new();
     private readonly LinkedList<ViewportInputEvent> _queue = new();
-    private readonly CancellationTokenSource _lifetime = new();
+    private CancellationTokenSource _lifetime = new();
+    private readonly SemaphoreSlim _signal = new(0);
     private long _sequence;
     private long _submitted;
     private long _coalesced;
@@ -138,7 +139,7 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
                     wheelDelta,
                     button));
 
-            Monitor.PulseAll(_sync);
+            _signal.Release();
             return sequence;
         }
     }
@@ -218,11 +219,17 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
 
                 if (IsCompleted || IsCancelled)
                     return Array.Empty<ViewportInputEvent>();
-
-                Monitor.Wait(_sync, TimeSpan.FromMilliseconds(8));
             }
 
-            await Task.Yield();
+            try
+            {
+                await _signal
+                    .WaitAsync(TimeSpan.FromMilliseconds(250), cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (TimeoutException)
+            {
+            }
         }
     }
 
@@ -242,7 +249,24 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
             if (cancelPending)
                 _queue.Clear();
 
-            Monitor.PulseAll(_sync);
+            _signal.Release();
+        }
+    }
+
+    public void ResetLifecycle()
+    {
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            _queue.Clear();
+            while (_signal.Wait(0))
+            {
+            }
+
+            _lifetime.Dispose();
+            _lifetime = new CancellationTokenSource();
+            Volatile.Write(ref _completed, 0);
         }
     }
 
@@ -254,10 +278,9 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
         lock (_sync)
         {
             _queue.Clear();
-            Monitor.PulseAll(_sync);
+            Volatile.Write(ref _completed, 1);
+            _signal.Release();
         }
-
-        Volatile.Write(ref _completed, 1);
     }
 
     public void Dispose()
@@ -267,6 +290,7 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
 
         Cancel();
         _lifetime.Dispose();
+        _signal.Dispose();
     }
 
     private void ThrowIfDisposedOrCompleted()
