@@ -1082,6 +1082,8 @@ Assert(cancelledLease, "Resource acquisition should honor cancellation.", failur
 using (var disposablePool = new ResourceLeasePool<string>(
            new[] { new KeyValuePair<string, int>("single", 1) }))
 {
+    Assert(disposablePool.ResourceCount == 1, "Single-resource pool should expose its configured count.", failures);
+{
     Assert(
         disposablePool.TryAcquire("single", out var activeLease),
         "A disposable pool should grant its active lease.",
