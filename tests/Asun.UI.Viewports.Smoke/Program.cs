@@ -272,6 +272,7 @@ ViewportReplayIntegrationHundredStageSmoke.Run(Assert);
 ViewportReplayWindowHundredStageSmoke.Run(Assert);
 ViewportReplayExecutionHundredStageSmoke.Run(Assert);
 ViewportReplayStateFingerprintHundredStageSmoke.Run(Assert);
+ViewportReplayVerificationHundredStageSmoke.Run(Assert);
 ViewportThreeHundredRoundSmoke.Run(Assert);
 ViewportEvidenceHistorySmoke.Run(Assert);
 
