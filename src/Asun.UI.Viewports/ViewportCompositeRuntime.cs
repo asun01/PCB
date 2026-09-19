@@ -446,7 +446,8 @@ public sealed class ViewportCompositeRuntime<TTile> : IDisposable
     private ViewportCompositeFrame<TTile> BuildFrameUnsafe(
         ViewportTileFrame<TTile> tileFrame,
         RoiViewportSnapshot roiSnapshot,
-        ViewportDirtyFlags dirtyFlags)
+        ViewportDirtyFlags dirtyFlags,
+        long generation)
     {
         var roiCommands = RoiRenderCommandBuilder.Build(roiSnapshot);
         var scene = ViewportSceneRuntime.Build(roiSnapshot);
