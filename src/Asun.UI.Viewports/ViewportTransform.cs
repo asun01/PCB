@@ -220,6 +220,19 @@ public readonly record struct ViewportTransform(
             tileSize,
             GetVisibleImageRectangle());
 
+    public VisibleTileRange GetPrefetchTileRange(
+        Vector2 tileSize,
+        int marginTiles)
+    {
+        var visibleRange = GetVisibleTileRange(tileSize);
+
+        return ImageTileGeometry.ExpandTileRange(
+            ImageSize,
+            tileSize,
+            visibleRange,
+            marginTiles);
+    }
+
     public RectangleF GetVisibleImageRectangle()
     {
         var topLeft = ViewportToImage(Vector2.Zero);
