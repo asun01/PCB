@@ -227,7 +227,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
             ThrowIfDisposed();
 
             if (_inFlight is null ||
-                _inFlight.Token != token)
+                _inFlight.Token != token ||
+                _latestSubmissionSequence != token.Sequence)
                 return false;
 
             if (_presentedSequence is long presented &&
