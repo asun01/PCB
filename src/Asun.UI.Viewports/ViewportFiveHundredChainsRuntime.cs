@@ -84,7 +84,7 @@ internal static class BulkChainKernel
                             (float)(parameter * (stage + 1)),
                             (float)(-parameter * stage)))
                         .Center;
-                    metric += context.Geometry.GetBounds().Area();
+                    metric += context.Geometry.GetBounds().Width * context.Geometry.GetBounds().Height;
                     break;
                 case 2:
                     var projected = context.Transform.ImageToViewportRectangle(bounds);
@@ -124,7 +124,7 @@ internal static class BulkChainKernel
                     var visible = context.Transform.GetVisibleImageRectangle();
                     metric += visible.Width * visible.Height;
                     bounds = visible;
-                    point = visible.Center.ToVector2();
+                    point = new Vector2(visible.X + visible.Width / 2f, visible.Y + visible.Height / 2f);
                     break;
             }
         }
