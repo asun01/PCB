@@ -228,6 +228,8 @@ ViewportTenChainSmoke.Run(Assert);
 
 await ViewportFiftyChainSmoke.RunAsync(Assert);
 
+AdvancedFiveHundredChainSmoke.Run(Assert);
+
 ViewportFiveHundredChainsSmoke.Run(Assert);
 
 if (failures.Count > 0)
