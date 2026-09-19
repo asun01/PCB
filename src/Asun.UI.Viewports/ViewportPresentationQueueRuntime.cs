@@ -34,7 +34,8 @@ public readonly record struct ViewportPresentationQueueStatistics(
     long? PresentedGeneration,
     long? PresentedSequence,
     long? InFlightGeneration,
-    long? InFlightSequence);
+    long? InFlightSequence,
+    long LatestSubmissionSequence);
 
 public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 {
@@ -85,7 +86,8 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                     _presentedGeneration,
                     _presentedSequence,
                     _inFlight?.Token.Generation,
-                    _inFlight?.Token.Sequence);
+                    _inFlight?.Token.Sequence,
+                    _latestSubmissionSequence);
             }
         }
     }
@@ -106,7 +108,7 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
 
                 var generation = frame.Composite.Generation;
 
-            if (_latestGeneration is long latest &&
+                if (_latestGeneration is long latest &&
                 generation < latest)
             {
                 _staleRejected++;
@@ -114,28 +116,28 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                 return false;
             }
 
-            _latestGeneration = generation;
+                _latestGeneration = generation;
 
-            while (_pending.Count != 0 &&
+                while (_pending.Count != 0 &&
                    _pending.Peek().Frame.Composite.Generation < generation)
-            {
-                _pending.Dequeue();
-                _dropped++;
-            }
+                {
+                    _pending.Dequeue();
+                    _dropped++;
+                }
 
-            while (_pending.Count >= _capacity)
-            {
-                _pending.Dequeue();
-                _dropped++;
-            }
+                while (_pending.Count >= _capacity)
+                {
+                    _pending.Dequeue();
+                    _dropped++;
+                }
 
-            packet = new ViewportPresentationPacket<TTile>(
+                packet = new ViewportPresentationPacket<TTile>(
                 new ViewportPresentationSubmissionToken(
                     generation,
                     ++_submissionSequence),
                 frame);
 
-            _latestSubmissionSequence = packet.Token.Sequence;
+                _latestSubmissionSequence = packet.Token.Sequence;
 
                 if (_inFlight is not null &&
                     packet.Token.Sequence > _inFlight.Token.Sequence)
@@ -143,9 +145,9 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
                     supersededCancellation = _inFlightCancellation;
                 }
 
-            var wasEmpty = _pending.Count == 0;
-            _pending.Enqueue(packet);
-            _enqueued++;
+                var wasEmpty = _pending.Count == 0;
+                _pending.Enqueue(packet);
+                _enqueued++;
 
                 if (wasEmpty)
                     _activitySignal.Release();
