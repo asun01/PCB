@@ -75,6 +75,9 @@ public static class ViewportReplaySessionBundleRuntime
         }
 
         long previousAuditSequence = 0;
+        var evidenceKeys = bundle.Evidence
+            .Select(item => item.StableKey)
+            .ToHashSet(StringComparer.Ordinal);
 
         foreach (var audit in bundle.Audit)
         {
@@ -87,6 +90,13 @@ public static class ViewportReplaySessionBundleRuntime
                 audit.DeferredUnits < 0)
             {
                 errors.Add("Bundle audit counters must be non-negative.");
+            }
+
+            if (!string.IsNullOrEmpty(audit.EvidenceKey) &&
+                !evidenceKeys.Contains(audit.EvidenceKey))
+            {
+                errors.Add(
+                    "Bundle audit evidence key does not reference retained evidence.");
             }
 
             previousAuditSequence = audit.Sequence;
@@ -176,6 +186,41 @@ public static class ViewportReplaySessionBundleRuntime
             "Manifest.CreatedAtUtc",
             expected.Manifest.CreatedAtUtc,
             actual.Manifest.CreatedAtUtc);
+        CompareValue(
+            differences,
+            "Manifest.InputEventCount",
+            expected.Manifest.InputEventCount,
+            actual.Manifest.InputEventCount);
+        CompareValue(
+            differences,
+            "Manifest.EvidenceManifestCount",
+            expected.Manifest.EvidenceManifestCount,
+            actual.Manifest.EvidenceManifestCount);
+        CompareValue(
+            differences,
+            "Manifest.AuditEventCount",
+            expected.Manifest.AuditEventCount,
+            actual.Manifest.AuditEventCount);
+        CompareValue(
+            differences,
+            "Manifest.InputHash",
+            expected.Manifest.InputHash,
+            actual.Manifest.InputHash);
+        CompareValue(
+            differences,
+            "Manifest.EvidenceHash",
+            expected.Manifest.EvidenceHash,
+            actual.Manifest.EvidenceHash);
+        CompareValue(
+            differences,
+            "Manifest.AuditHash",
+            expected.Manifest.AuditHash,
+            actual.Manifest.AuditHash);
+        CompareValue(
+            differences,
+            "Manifest.SessionHash",
+            expected.Manifest.SessionHash,
+            actual.Manifest.SessionHash);
 
         CompareInputs(differences, expected.Inputs, actual.Inputs);
         CompareEvidence(differences, expected.Evidence, actual.Evidence);
@@ -197,25 +242,25 @@ public static class ViewportReplaySessionBundleRuntime
 
         CompareValue(
             differences,
-            "Manifest.InputHash",
+            "DerivedManifest.InputHash",
             expectedManifest.InputHash,
             actualManifest.InputHash);
 
         CompareValue(
             differences,
-            "Manifest.EvidenceHash",
+            "DerivedManifest.EvidenceHash",
             expectedManifest.EvidenceHash,
             actualManifest.EvidenceHash);
 
         CompareValue(
             differences,
-            "Manifest.AuditHash",
+            "DerivedManifest.AuditHash",
             expectedManifest.AuditHash,
             actualManifest.AuditHash);
 
         CompareValue(
             differences,
-            "Manifest.SessionHash",
+            "DerivedManifest.SessionHash",
             expectedManifest.SessionHash,
             actualManifest.SessionHash);
 
