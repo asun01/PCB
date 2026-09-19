@@ -29,7 +29,13 @@ public static class ViewportRenderAdapterRuntime
             .BeginFrameAsync(context, cancellationToken)
             .ConfigureAwait(false);
 
+        var visibility = ViewportTileRoiVisibilityRuntime.Build(
+            frame.Composite);
+
+        var visibleRoiIds = visibility.VisibleRoiIds;
+
         var roiCommandsById = frame.Composite.RoiCommands
+            .Where(command => visibleRoiIds.Contains(command.RoiId))
             .GroupBy(command => command.RoiId)
             .ToDictionary(group => group.Key, group => group.ToArray());
 
