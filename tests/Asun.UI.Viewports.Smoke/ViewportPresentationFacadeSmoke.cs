@@ -37,6 +37,7 @@ public static class ViewportPresentationFacadeSmoke
                 initialSnapshot.IsSurfaceStable &&
                 initialSnapshot.IsBufferStable &&
                 initialSnapshot.IsQueueStable &&
+                initialSnapshot.IsExecutionStable &&
                 initialSnapshot.IsPresentationStable &&
                 initialSnapshot.Surface.PresentationSequence == 0 &&
                 initialSnapshot.IsPresentationStable &&
@@ -115,6 +116,8 @@ public static class ViewportPresentationFacadeSmoke
             assert(
                 presentation.Statistics.RenderedFrames >= 1 &&
                 presentation.Statistics.DeliveryFailures >= 1 &&
+                presentation.PresentationExecution.Statistics.Executed >= 1 &&
+                presentation.PresentationExecution.Statistics.LastGeneration is not null &&
                 continuousSink.BeginCount >= 2 &&
                 continuousSink.EndCount >= 1,
                 $"Presentation facade {i + 1} should retry a failed delivery and complete the continuous render lifecycle.");
@@ -126,6 +129,7 @@ public static class ViewportPresentationFacadeSmoke
                 !presentation.Input.IsCancelled &&
                 !presentation.Input.IsCompleted &&
                 presentation.Pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None &&
+                presentation.PresentationExecution.Statistics.Executed == 0 &&
                 presentation.State == ViewportPresentationState.Created,
                 $"Presentation facade {i + 1} reset should clear runtime state and restore input lifecycle.");
 
