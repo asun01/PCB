@@ -1142,6 +1142,23 @@ Assert(
     "Zoom ratio should report scale relative to fit.",
     failures);
 
+Assert(
+    viewport.TryViewportToImage(new System.Numerics.Vector2(600, 400), out var tryImagePoint) &&
+    tryImagePoint == new System.Numerics.Vector2(500, 250),
+    "Non-throwing viewport conversion should return valid image coordinates.",
+    failures);
+
+Assert(
+    !viewport.TryViewportToImage(new System.Numerics.Vector2(float.NaN, 0), out _),
+    "Non-throwing viewport conversion should reject non-finite points.",
+    failures);
+
+Assert(
+    viewport.TryImageToViewport(new System.Numerics.Vector2(500, 250), out var tryViewportPoint) &&
+    tryViewportPoint == new System.Numerics.Vector2(600, 400),
+    "Non-throwing image conversion should return valid viewport coordinates.",
+    failures);
+
 var sourceRect = new RectangleF(100, 50, 200, 100);
 var viewportRect = viewport.ImageToViewportRectangle(sourceRect);
 var sourceRoundTripRect = viewport.ViewportToImageRectangle(viewportRect);
