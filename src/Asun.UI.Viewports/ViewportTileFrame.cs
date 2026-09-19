@@ -29,13 +29,29 @@ public sealed class ViewportTileFrame<TTile>
 
     public IReadOnlyList<TileLoadFailure<TTile>> Failures { get; }
 
-    public int RequestedCount => Requests.Count(request => request.IsVisible);
+    public int RequestedCount =>
+        Requests.Count;
+
+    public int RequestedVisibleCount =>
+        Requests.Count(request => request.IsVisible);
+
+    public int RequestedPrefetchCount =>
+        Requests.Count(request => request.IsPrefetch);
 
     public int LoadedCount => LoadedTiles.Count;
 
-    public bool IsComplete =>
+    public bool IsCompleteForVisible =>
+        Failures.All(failure => failure.Request.IsPrefetch) &&
+        LoadedTiles.Keys.Count(index =>
+            Requests.Any(request =>
+                request.IsVisible &&
+                request.Index == index)) == RequestedVisibleCount;
+
+    public bool IsCompleteForAllRequests =>
         Failures.Count == 0 &&
         LoadedCount == RequestedCount;
+
+    public bool IsComplete => IsCompleteForVisible;
 
     public bool TryGetTile(TileIndex index, out TTile tile) =>
         LoadedTiles.TryGetValue(index, out tile!);
