@@ -108,9 +108,8 @@ public static class ViewportRenderSurfaceSmoke
 
         assert(
             result.Status == ViewportRenderDeliveryStatus.Deferred &&
-            result.FrameState.IsPartial ||
-            result.Status == ViewportRenderDeliveryStatus.Deferred &&
-            result.FrameState.HasDeferredWork,
+            (result.FrameState.IsPartial ||
+             result.FrameState.HasDeferredWork),
             "Deferred delivery should preserve deferred frame state.");
 
         assert(
@@ -160,10 +159,10 @@ public static class ViewportRenderSurfaceSmoke
 
     private class TrackingSink : IViewportRenderSink<string>
     {
-        public int BeginCount { get; private set; }
-        public int EndCount { get; private set; }
-        public int CommitCount { get; private set; }
-        public int DiscardCount { get; private set; }
+        public int BeginCount { get; protected set; }
+        public int EndCount { get; protected set; }
+        public int CommitCount { get; protected set; }
+        public int DiscardCount { get; protected set; }
 
         public virtual ValueTask BeginFrameAsync(
             ViewportRenderFrameContext context,
