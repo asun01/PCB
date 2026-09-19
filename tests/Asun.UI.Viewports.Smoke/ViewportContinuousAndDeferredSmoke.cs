@@ -164,6 +164,12 @@ public static class ViewportContinuousAndDeferredSmoke
             presented.PresentedGeneration == frame.Composite.Generation &&
             presented.PresentationSequence == 1 &&
             presented.PresentedRegionCount == frame.Batch.RegionCount &&
+            successfulSink.CommitContext is not null &&
+            successfulSink.CommitContext.Value.TileCount == frame.Batch.TileCount &&
+            successfulSink.CommitContext.Value.RoiCount == frame.Batch.RoiCount &&
+            successfulSink.CommitContext.Value.OverlayCount == frame.Batch.OverlayCount &&
+            successfulSink.CommitContext.Value.InvalidationCount == frame.Batch.InvalidationCount &&
+            successfulSink.CommitContext.Value.FullSurfaceCount == frame.Batch.FullSurfaceCount &&
             successfulSink.Events.SequenceEqual(
                 new[] { "Begin", "End", "Commit" }) &&
             successfulSink.DiscardCount == 0,
@@ -347,6 +353,7 @@ public static class ViewportContinuousAndDeferredSmoke
         public bool FailCommit { get; init; }
         public List<string> Events { get; } = new();
         public int DiscardCount { get; private set; }
+        public ViewportRenderCommitContext? CommitContext { get; private set; }
 
         public ValueTask BeginFrameAsync(
             ViewportRenderFrameContext context,
@@ -379,6 +386,7 @@ public static class ViewportContinuousAndDeferredSmoke
             CancellationToken cancellationToken = default)
         {
             Events.Add("Commit");
+            CommitContext = context;
 
             if (FailCommit)
                 throw new InvalidOperationException("synthetic commit failure");
