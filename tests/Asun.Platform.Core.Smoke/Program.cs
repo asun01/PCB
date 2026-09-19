@@ -139,6 +139,28 @@ Assert(
 using var cancelled = new CancellationTokenSource();
 cancelled.Cancel();
 
+using var timeoutCancellation = new CancellationTokenSource();
+timeoutCancellation.Cancel();
+
+var callerCancellationObserved = false;
+try
+{
+    await OperationTimeout.ExecuteAsync(
+        async token =>
+        {
+            await Task.Delay(10, token);
+            return 1;
+        },
+        TimeSpan.FromSeconds(1),
+        timeoutCancellation.Token);
+}
+catch (OperationCanceledException)
+{
+    callerCancellationObserved = true;
+}
+
+Assert(callerCancellationObserved, "Caller cancellation should remain OperationCanceledException.", failures);
+
 var cancellationObserved = false;
 try
 {
