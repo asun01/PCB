@@ -5,6 +5,18 @@ namespace Asun.Vision.Contracts;
 /// </summary>
 public readonly record struct Angle2D(double Radians)
 {
+    public bool IsFinite => double.IsFinite(Radians);
+
+    public static Angle2D FromVector(System.Numerics.Vector2 direction)
+    {
+        if (!float.IsFinite(direction.X) || !float.IsFinite(direction.Y))
+            throw new ArgumentOutOfRangeException(nameof(direction));
+
+        if (direction == System.Numerics.Vector2.Zero)
+            throw new ArgumentException("Direction vector must be non-zero.", nameof(direction));
+
+        return new Angle2D(Math.Atan2(direction.Y, direction.X));
+    }
     public static Angle2D Zero => new(0);
 
     public static Angle2D FromDegrees(double degrees)
