@@ -1,11 +1,26 @@
 namespace Asun.UI.Viewports;
 
+public enum ViewportRenderDeliveryStatus
+{
+    Succeeded,
+    Failed,
+    Cancelled
+}
+
 public readonly record struct ViewportRenderDeliveryResult(
     bool Succeeded,
     bool Cancelled,
     long Generation,
     int RenderedUnits,
-    Exception? Error);
+    Exception? Error)
+{
+    public ViewportRenderDeliveryStatus Status =>
+        Cancelled
+            ? ViewportRenderDeliveryStatus.Cancelled
+            : Succeeded
+                ? ViewportRenderDeliveryStatus.Succeeded
+                : ViewportRenderDeliveryStatus.Failed;
+}
 
 public static class ViewportRenderDeliveryRuntime
 {
