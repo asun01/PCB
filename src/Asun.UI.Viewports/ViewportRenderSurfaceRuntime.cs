@@ -70,7 +70,7 @@ public sealed class ViewportRenderSurfaceRuntime : IDisposable
                     _presentationSequence,
                     _lastRenderedUnits,
                     _lastPlannedUnits,
-                    _presentedRegions);
+                    _presentedRegions.ToArray());
             }
         }
     }
