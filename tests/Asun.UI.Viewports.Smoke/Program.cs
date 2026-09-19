@@ -263,6 +263,8 @@ await ViewportEvidenceSmoke.RunAsync(Assert);
 await ViewportInputEdgeSmoke.RunAsync(Assert);
 await ViewportRenderPlanSmoke.RunAsync(Assert);
 await ViewportDiagnosticsManifestSmoke.RunAsync(Assert);
+ViewportReplaySessionSmoke.Run(Assert);
+ViewportThreeHundredRoundSmoke.Run(Assert);
 
 await ViewportPresentationLifecycleSmoke.RunAsync(Assert);
 
