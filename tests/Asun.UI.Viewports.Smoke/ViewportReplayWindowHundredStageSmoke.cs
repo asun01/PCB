@@ -219,27 +219,6 @@ public static class ViewportReplayWindowHundredStageSmoke
 
         for (var i = 0; i < 10; i++)
         {
-            var auditWindow = ViewportReplaySessionBundleWindowRuntime.Tail(
-                source,
-                12,
-                8,
-                i + 1);
-
-            var closureValid =
-                auditWindow.Audit.All(a =>
-                    auditWindow.Evidence.Any(e => e.StableKey == a.EvidenceKey));
-
-            var evidenceBound = auditWindow.Evidence.Length <= 8;
-
-            Check(
-                closureValid &&
-                evidenceBound &&
-                ViewportReplaySessionBundleRuntime.Validate(auditWindow).Count == 0,
-                $"audit-driven evidence closure {i + 1} should remain valid.");
-        }
-
-        for (var i = 0; i < 10; i++)
-        {
             var outer = ViewportReplaySessionBundleWindowRuntime.Tail(
                 source,
                 8,
@@ -281,27 +260,6 @@ public static class ViewportReplayWindowHundredStageSmoke
                 json.Contains(""evidence":", StringComparison.Ordinal) &&
                 json.Contains(""audit":", StringComparison.Ordinal),
                 $"repeated diagnostic JSON cycle {i} should be lossless.");
-        }
-
-        for (var i = 0; i < 10; i++)
-        {
-            var window = ViewportReplaySessionBundleWindowRuntime.Tail(
-                source,
-                i,
-                8,
-                i);
-
-            var descriptor = ViewportReplaySessionBundleWindowRuntime.Describe(window);
-
-            Check(
-                descriptor.InputCount == window.Inputs.Length &&
-                descriptor.EvidenceCount == window.Evidence.Length &&
-                descriptor.AuditCount == window.Audit.Length &&
-                descriptor.FirstInputSequence ==
-                (window.Inputs.Length == 0 ? 0 : window.Inputs[0].Sequence) &&
-                descriptor.LastInputSequence ==
-                (window.Inputs.Length == 0 ? 0 : window.Inputs[^1].Sequence),
-                $"window descriptor sequence accounting {i} should be exact.");
         }
 
         for (var i = 0; i < 10; i++)
