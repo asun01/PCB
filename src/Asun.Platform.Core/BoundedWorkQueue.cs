@@ -44,6 +44,14 @@ public sealed class BoundedWorkQueue<T>
     public bool TryDequeue(out T? item) =>
         _channel.Reader.TryRead(out item);
 
+    public ValueTask<bool> WaitToReadAsync(
+        CancellationToken cancellationToken = default) =>
+        _channel.Reader.WaitToReadAsync(cancellationToken);
+
+    public ValueTask<bool> WaitToWriteAsync(
+        CancellationToken cancellationToken = default) =>
+        _channel.Writer.WaitToWriteAsync(cancellationToken);
+
     /// <summary>
     /// Waits for the first available item, then drains additional items that are
     /// already available without waiting for the batch to fill.
