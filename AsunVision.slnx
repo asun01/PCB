@@ -19,6 +19,7 @@
   <Project Path="src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
   <Project Path="src/Asun.App.Shell/Asun.App.Shell.csproj" />
   <Project Path="tests/Asun.Platform.Core.Smoke/Asun.Platform.Core.Smoke.csproj" />
+  <Project Path="tests/Asun.Platform.Evidence.Smoke/Asun.Platform.Evidence.Smoke.csproj" />
   <Project Path="tests/Asun.Vision.Contracts.Smoke/Asun.Vision.Contracts.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Pcb.Smoke/Asun.Domain.Pcb.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Quality.Smoke/Asun.Domain.Quality.Smoke.csproj" />
