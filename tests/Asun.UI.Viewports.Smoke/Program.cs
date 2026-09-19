@@ -246,6 +246,8 @@ await ViewportRenderReuseSmoke.RunAsync(Assert);
 
 await ViewportPresentationChainSmoke.RunAsync(Assert);
 
+await ViewportPresentationFacadeSmoke.RunAsync(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
