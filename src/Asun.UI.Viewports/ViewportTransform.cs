@@ -64,6 +64,37 @@ public readonly record struct ViewportTransform(
     public Vector2 RenderedImageSize =>
         ImageSize * (float)Scale;
 
+    public Vector2 ViewportCenter =>
+        ViewportSize * 0.5f;
+
+    public Vector2 ImageCenter =>
+        ImageSize * 0.5f;
+
+    public ViewportTransform WithZoomFactor(
+        double zoomFactor,
+        Vector2 viewportAnchor)
+    {
+        if (!double.IsFinite(zoomFactor) || zoomFactor <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(zoomFactor),
+                zoomFactor,
+                "Zoom factor must be finite and greater than zero.");
+        }
+
+        return WithScaleAround(Scale * zoomFactor, viewportAnchor);
+    }
+
+    public Vector2 ClampViewportPointToImage(Vector2 viewportPoint)
+    {
+        var imagePoint = ViewportToImage(viewportPoint);
+        var clamped = new Vector2(
+            Math.Clamp(imagePoint.X, 0f, ImageSize.X),
+            Math.Clamp(imagePoint.Y, 0f, ImageSize.Y));
+
+        return ImageToViewport(clamped);
+    }
+
     public bool ContainsViewportPoint(Vector2 viewportPoint)
     {
         var imagePoint = ViewportToImage(viewportPoint);
