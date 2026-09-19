@@ -37,6 +37,9 @@ public sealed class Polyline2D
 
     public double Length => _cumulativeLengths[^1];
 
+    public bool IsClosed =>
+        _points[0] == _points[^1];
+
     public IReadOnlyList<Vector2> Points =>
         Array.AsReadOnly(_points);
 
