@@ -5,7 +5,9 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
 {
     public static void Run(Action<bool, string> assert)
     {
-        using var viewport = CreateViewport();
+        var viewport = new RoiViewportRuntime(
+            imageSize: new Vector2(100, 100),
+            viewportSize: new Vector2(100, 100));
         var gestures = new ViewportGestureRuntime(viewport);
         var capture = new ViewportInputCaptureRuntime();
         var router = new ViewportInputRouterRuntime(gestures, capture);
@@ -17,39 +19,42 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
             assert(condition, $"Round {round}: {message}");
         }
 
-        var left = router.PointerDown(new Vector2(10, 10), ViewportMouseButton.Left);
-        var ownerAfterLeft = capture.Owner;
+        var left = router.PointerDown(
+            new Vector2(10, 10),
+            ViewportMouseButton.Left);
 
         for (var i = 0; i < 10; i++)
             Check(
                 left.Kind == ViewportGestureKind.Panning &&
-                ownerAfterLeft == ViewportInputOwner.Roi,
-                $"left capture round {i + 1} should belong to ROI routing.");
+                capture.Owner == ViewportInputOwner.Roi &&
+                router.CapturedOwner == ViewportInputOwner.Roi,
+                $"left capture round {i + 1} should belong to ROI.");
 
         router.PointerUp(new Vector2(10, 10));
-        var releasedOwner = capture.Owner;
 
         for (var i = 0; i < 10; i++)
             Check(
-                ViewportInputCaptureValidationRuntime.IsFree(releasedOwner),
-                $"release round {i + 1} should return capture to None.");
+                ViewportInputCaptureValidationRuntime.IsFree(capture.Owner) &&
+                router.CapturedOwner == ViewportInputOwner.None,
+                $"owned release round {i + 1} should clear both owners.");
 
-        var right = router.PointerDown(new Vector2(10, 10), ViewportMouseButton.Right);
+        var right = router.PointerDown(
+            new Vector2(10, 10),
+            ViewportMouseButton.Right);
 
         for (var i = 0; i < 10; i++)
             Check(
                 right == default &&
                 capture.Owner == ViewportInputOwner.None,
-                $"right-button round {i + 1} should not acquire gesture capture.");
+                $"right-button round {i + 1} should not acquire capture.");
 
-        var held = new ViewportInputCaptureRuntime();
         Check(
-            held.TryCapture(ViewportInputOwner.Overlay),
+            capture.TryCapture(ViewportInputOwner.Overlay),
             "external owner should acquire capture.");
 
         var blockedRouter = new ViewportInputRouterRuntime(
             gestures,
-            held);
+            capture);
 
         var blockedDown = blockedRouter.PointerDown(
             new Vector2(10, 10),
@@ -58,30 +63,40 @@ public static class ViewportInputCaptureValidationHundredStageSmoke
         for (var i = 0; i < 10; i++)
             Check(
                 blockedDown == default &&
-                held.Owner == ViewportInputOwner.Overlay,
+                capture.Owner == ViewportInputOwner.Overlay &&
+                blockedRouter.CapturedOwner == ViewportInputOwner.None,
                 $"blocked acquisition round {i + 1} should preserve the external owner.");
 
-        var blockedUp = blockedRouter.PointerUp(new Vector2(10, 10));
+        var blockedMove = blockedRouter.PointerMove(new Vector2(20, 20));
+
+        for (var i = 0; i < 10; i++)
+            Check(
+                capture.Owner == ViewportInputOwner.Overlay &&
+                blockedRouter.CapturedOwner == ViewportInputOwner.None,
+                $"blocked move round {i + 1} should not steal capture.");
+
+        var blockedUp = blockedRouter.PointerUp(new Vector2(20, 20));
 
         for (var i = 0; i < 10; i++)
             Check(
                 blockedUp == default &&
-                held.Owner == ViewportInputOwner.Overlay,
-                $"foreign pointer-up round {i + 1} should not release the external owner.");
+                capture.Owner == ViewportInputOwner.Overlay,
+                $"foreign pointer-up round {i + 1} should not release the overlay owner.");
+
+        Check(
+            !blockedRouter.Escape(new Vector2(20, 20)) &&
+            capture.Owner == ViewportInputOwner.Overlay,
+            "foreign Escape should not release the overlay owner.");
 
         Check(
             ViewportInputCaptureValidationRuntime.IsOwnedBy(
-                held.Owner,
-                ViewportInputOwner.Overlay),
-            "capture validator should confirm the preserved external owner.");
+                capture.Owner,
+                ViewportInputOwner.Overlay) &&
+            blockedMove == default,
+            "capture validation should preserve foreign ownership.");
 
-        Check(
+        assert(
             round == 100,
             $"Input capture validation smoke should execute exactly 100 numbered rounds; actual {round}.");
     }
-
-    private static RoiViewportRuntime CreateViewport() =>
-        new(
-            imageSize: new Vector2(100, 100),
-            viewportSize: new Vector2(100, 100));
 }
