@@ -250,6 +250,24 @@ public readonly record struct ViewportTransform(
             Math.Max(0f, bottom - top));
     }
 
+    /// <summary>
+    /// Changes the viewport size while keeping the image point currently under
+    /// the old viewport center centered in the new viewport.
+    /// </summary>
+    public ViewportTransform WithViewportSize(Vector2 viewportSize)
+    {
+        ValidateSize(viewportSize, nameof(viewportSize));
+
+        var imageCenterAnchor = ViewportToImage(ViewportCenter);
+        var translation = viewportSize * 0.5f - imageCenterAnchor * (float)Scale;
+
+        return this with
+        {
+            ViewportSize = viewportSize,
+            Translation = translation
+        };
+    }
+
     public ViewportTransform WithTranslation(Vector2 translation)
     {
         if (!IsFinite(translation))
