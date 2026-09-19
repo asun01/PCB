@@ -879,6 +879,12 @@ Assert(
     "Pixel rectangle inflation should preserve the rectangle center.",
     failures);
 
+var relativeZoomed = viewport.WithScaleAround(2, new System.Numerics.Vector2(600, 400));
+Assert(
+    Math.Abs(relativeZoomed.ZoomRatioToFit - 2) < 1e-9,
+    "Zoom ratio should report scale relative to fit.",
+    failures);
+
 var sourceRect = new RectangleF(100, 50, 200, 100);
 var viewportRect = viewport.ImageToViewportRectangle(sourceRect);
 var sourceRoundTripRect = viewport.ViewportToImageRectangle(viewportRect);
