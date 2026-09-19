@@ -33,8 +33,9 @@ public static class TileRequestPlanner
         ValidateRange(imageSize, tileSize, prefetchRange, nameof(prefetchRange));
 
         var requests = new List<TileRequest>();
+        var visibleTiles = visibleRange.Enumerate().ToHashSet();
 
-        foreach (var tile in visibleRange.Enumerate())
+        foreach (var tile in visibleTiles)
         {
             requests.Add(CreateRequest(
                 imageSize,
@@ -46,7 +47,7 @@ public static class TileRequestPlanner
 
         foreach (var tile in prefetchRange.Enumerate())
         {
-            if (visibleRange.Enumerate().Contains(tile))
+            if (!visibleTiles.Add(tile))
                 continue;
 
             requests.Add(CreateRequest(
