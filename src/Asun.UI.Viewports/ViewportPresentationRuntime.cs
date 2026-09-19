@@ -76,6 +76,12 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     public ViewportPresentationAuditTrace AuditTrace =>
         _continuous.AuditTrace;
 
+    public ViewportReplaySessionBundle ReplayBundle =>
+        _continuous.ReplayBundle;
+
+    public IReadOnlyList<string> ReplayBundleValidation =>
+        _continuous.ValidateReplayBundle();
+
     public ViewportRenderFrameState? LastFrameState =>
         _continuous.LastDelivery?.FrameState;
 
