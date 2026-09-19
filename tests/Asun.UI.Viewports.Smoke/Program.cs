@@ -268,6 +268,7 @@ ViewportEvidenceComparatorSmoke.Run(Assert);
 ViewportReplayBundleHundredStageSmoke.Run(Assert);
 ViewportReplaySnapshotValidatorSmoke.Run(Assert);
 await ViewportPresentationOutcomeEvidenceSmoke.RunAsync(Assert);
+ViewportReplayIntegrationHundredStageSmoke.Run(Assert);
 ViewportThreeHundredRoundSmoke.Run(Assert);
 ViewportEvidenceHistorySmoke.Run(Assert);
 
