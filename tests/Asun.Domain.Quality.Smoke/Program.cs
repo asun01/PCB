@@ -30,6 +30,7 @@ QualityInspectionEvidenceManifestHundredStageSmoke.Run(Assert);
 QualityInspectionReplayProjectionHundredStageSmoke.Run(Assert);
 QualityInspectionReplayProjectionDiffHundredStageSmoke.Run(Assert);
 QualityInspectionReplayBundleHundredStageSmoke.Run(Assert);
+QualityInspectionReplayBundleFingerprintHundredStageSmoke.Run(Assert);
 
 if (failures.Count > 0)
 {
