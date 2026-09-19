@@ -85,7 +85,8 @@ public static class ViewportRenderDeliveryRuntime
         ViewportRenderDeliveryTracker? tracker = null,
         CancellationToken cancellationToken = default,
         ViewportRenderSurfaceRuntime? surface = null,
-        Func<bool>? presentationFence = null)
+        Func<bool>? presentationFence = null,
+        Func<bool>? beginPresentationCommit = null)
     {
         ArgumentNullException.ThrowIfNull(frame);
         ArgumentNullException.ThrowIfNull(sink);
@@ -120,6 +121,10 @@ public static class ViewportRenderDeliveryRuntime
             {
                 try
                 {
+                    if (beginPresentationCommit is not null &&
+                        !beginPresentationCommit())
+                        throw new ViewportPresentationFenceRejectedException();
+
                     if (presentationFence is not null &&
                         !presentationFence())
                         throw new ViewportPresentationFenceRejectedException();
