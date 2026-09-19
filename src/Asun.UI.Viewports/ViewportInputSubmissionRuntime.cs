@@ -231,6 +231,9 @@ public sealed class ViewportInputSubmissionRuntime : IDisposable
                         _queue.RemoveFirst();
                     }
 
+                    if (_queue.Count == 0)
+                        _signal.Wait(0);
+
                     return events;
                 }
 
