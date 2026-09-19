@@ -1160,3 +1160,40 @@ Current continuous execution position:
 - completed through Stage 16000 in the active 4501–104500 window;
 - next natural stage: 16001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 16001→16500 Evidence catalog statistics and consistency diagnostics — 2026-09-19
+
+Completed stages 16001–16500.
+
+Implemented:
+- EvidenceCatalogKindCount and EvidenceCatalogMediaTypeCount;
+- EvidenceCatalogStatistics and deterministic statistics runtime;
+- statistics validation for source coverage, canonical ordering, unique buckets, and known-byte totals;
+- deterministic statistics SHA-256 fingerprint and validation;
+- EvidenceCatalogConsistencyReport binding snapshot/statistics/reference fingerprints and factual cardinalities;
+- five dedicated exact 100-round Smokes covering statistics, validation, fingerprint, consistency report, and end-to-end integration.
+
+Boundary:
+- diagnostics remain factual/observational and do not define customer acceptance policy;
+- no persistence provider, storage schema, transport, serialization, Quality dependency, HALCON, DevExpress, renderer, or hardware authority introduced.
+
+Closed acceptance asset:
+- PHASE1_16001_16500_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_16001-16100_STAGE_LEDGER_20260919.md
+- PHASE1_16101-16200_STAGE_LEDGER_20260919.md
+- PHASE1_16201-16300_STAGE_LEDGER_20260919.md
+- PHASE1_16301-16400_STAGE_LEDGER_20260919.md
+- PHASE1_16401-16500_STAGE_LEDGER_20260919.md
+
+Verification:
+- static audits confirm balanced delimiters and no TODO/NotImplementedException in changed diagnostic assets;
+- all five new 100-round Smokes use 10 loop groups and explicit round == 100 assertions;
+- workflow lookup for checkpoint commit 290c6a372213e13f6cd3fd729cd3e3aaab4a66af returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 16500 in the active 4501–104500 window;
+- next natural stage: 16501;
+- global one-million-stage horizon remains 2501–1002500.
