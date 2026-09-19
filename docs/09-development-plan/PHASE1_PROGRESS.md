@@ -210,3 +210,11 @@ Verification note:
 - Added independent stage ledgers for 2001–2100, 2101–2200, 2201–2300, 2301–2400, and 2401–2500.
 - Static verification confirms each new 100-round smoke has exactly 10 loops × 10 Check calls and round == 100.
 - No local build/test/CI success is asserted without authoritative execution evidence.
+
+### One-million-stage execution program established — 2026-09-19
+
+- Global non-blocked execution horizon expanded from the previous 10,000-stage planning slice to exactly 1,000,000 future stages: 2501–1,002,500.
+- Added PHASE1_2501_1002500_MASTER_1000000_STAGE_EXECUTION_PLAN_20260919.md.
+- The master plan uses deterministic hierarchy: 2,000 batches × 500 stages, 10,000 blocks × 100 stages, 100,000 micro-blocks × 10 stages.
+- The plan defines 20 engineering tracks, deterministic track rotation, acceptance requirements, stage-number continuity rules, and vendor-neutral continuation rules.
+- Stages 1–2,500 remain the only completed scope currently represented as repository evidence; 2501–1,002,500 are planned only.
