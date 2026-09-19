@@ -21,6 +21,7 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
     private readonly ViewportRenderSurfaceRuntime _surface;
     private readonly ViewportPresentationQueueRuntime<TTile> _presentationQueue;
     private readonly ViewportPresentationBufferRuntime _presentationBuffers;
+    private readonly ViewportPresentationExecutionRuntime<TTile> _presentationExecution;
     private readonly object _deliveryStateSync = new();
     private ViewportRenderDeliveryResult? _lastDelivery;
     private long _loopCount;
@@ -42,6 +43,11 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
         _surface = surface ?? new ViewportRenderSurfaceRuntime();
         _presentationQueue = new ViewportPresentationQueueRuntime<TTile>();
         _presentationBuffers = new ViewportPresentationBufferRuntime();
+        _presentationExecution = new ViewportPresentationExecutionRuntime<TTile>(
+            _presentationQueue,
+            _presentationBuffers,
+            _surface,
+            _delivery);
         _interaction = new ViewportCompositeInputRuntime<TTile>(_pipeline.Composite);
 
         _idleDelay = idleDelay ?? TimeSpan.FromMilliseconds(4);
@@ -63,6 +69,9 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
     public ViewportPresentationBufferRuntime PresentationBuffers =>
         _presentationBuffers;
+
+    public ViewportPresentationExecutionRuntime<TTile> PresentationExecution =>
+        _presentationExecution;
 
     public ViewportRenderDeliveryResult? LastDelivery
     {
@@ -177,64 +186,48 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
 
                         if (!_presentationQueue.TryEnqueue(
                                 frame,
-                                out var packet) ||
-                            !_presentationQueue.TryTakeLatest(out packet))
+                                out _))
                         {
                             Interlocked.Increment(ref _skippedLoops);
                             continue;
                         }
 
-                        var presentedFrame = packet.Frame;
-                        ViewportPresentationBufferTransaction? bufferTransaction = null;
-
                         try
                         {
-                            bufferTransaction = _presentationBuffers.Begin(
-                                packet.Token,
-                                presentedFrame.Batch.ItemCount,
-                                presentedFrame.CommandStream.Regions);
-
-                            var delivery = await ViewportRenderDeliveryRuntime
-                                .TryDeliverAsync(
-                                    presentedFrame,
+                            var execution = await _presentationExecution
+                                .ExecuteNextAsync(
                                     sink,
-                                    _delivery,
-                                    cancellationToken,
-                                    _surface)
+                                    cancellationToken)
                                 .ConfigureAwait(false);
+
+                            if (!execution.Executed)
+                            {
+                                Interlocked.Increment(ref _skippedLoops);
+                                continue;
+                            }
+
+                            var delivery = execution.Delivery;
+                            var presentedFrame = execution.Packet?.Frame;
 
                             lock (_deliveryStateSync)
                                 _lastDelivery = delivery;
 
-                            if (delivery.Succeeded)
+                            if (execution.Presented &&
+                                presentedFrame is not null)
                             {
-                                _presentationBuffers.Commit(
-                                    bufferTransaction.Value,
-                                    delivery.RenderedUnits,
-                                    presentedFrame.CommandStream.Regions);
-
-                                if (_presentationQueue.TryAcknowledgePresented(
-                                        packet.Token))
-                                {
-                                    _pipeline.MarkPresented(presentedFrame);
-                                    Interlocked.Increment(ref _renderedFrames);
-                                }
-                                else
-                                {
-                                    _presentationQueue.TryCancel(packet.Token);
-                                    Interlocked.Increment(ref _supersededFrames);
-                                    _pipeline.Invalidate(
-                                        presentedFrame.Submission.DirtyFlags,
-                                        _pipeline.Composite.Generation);
-                                }
+                                _pipeline.MarkPresented(presentedFrame);
+                                Interlocked.Increment(ref _renderedFrames);
                             }
-                            else
+                            else if (execution.Superseded &&
+                                     presentedFrame is not null)
                             {
-                                if (bufferTransaction is ViewportPresentationBufferTransaction activeBuffer)
-                                    _presentationBuffers.Discard(activeBuffer);
-
-                                _presentationQueue.TryCancel(packet.Token);
-
+                                Interlocked.Increment(ref _supersededFrames);
+                                _pipeline.Invalidate(
+                                    presentedFrame.Submission.DirtyFlags,
+                                    _pipeline.Composite.Generation);
+                            }
+                            else if (presentedFrame is not null)
+                            {
                                 if (delivery.Status is
                                     ViewportRenderDeliveryStatus.Failed or
                                     ViewportRenderDeliveryStatus.Deferred)
@@ -254,14 +247,6 @@ public sealed class ViewportContinuousFrameRuntime<TTile>
                         }
                         catch (Exception) when (!cancellationToken.IsCancellationRequested)
                         {
-                            if (bufferTransaction is ViewportPresentationBufferTransaction activeBuffer)
-                                _presentationBuffers.Discard(activeBuffer);
-
-                            _presentationQueue.TryCancel(packet.Token);
-                            _pipeline.RequeueFrame(presentedFrame);
-                            _pipeline.Invalidate(
-                                presentedFrame.Submission.DirtyFlags,
-                                presentedFrame.Composite.Generation);
                             Interlocked.Increment(ref _skippedLoops);
                         }
                     }
