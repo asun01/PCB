@@ -2360,3 +2360,15 @@ Current completed boundary: **29,500**
 Next executable stage: **29,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 30000 — 2026-09-20
+
+The rotating cross-chain program has closed another 5,000-stage segment from 25001 through 30000, including PCB Assembly → Production, Program → Pipeline binding, Production → Quality, Evidence, Render, Metrology Calibration → Placement, Quality Integration, Simulation replay, Release projection, and the end-to-end Production → Quality → Evidence replay bundle.
+
+The current implementation rule remains executable handoff first: each boundary is backed by runtime behavior, independent validation, an exact-100-round Smoke, five stage ledgers, and a 500-stage integration checkpoint.
+
+Current completed boundary: **30,000**
+Next executable stage: **30,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
