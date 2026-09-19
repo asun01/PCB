@@ -451,6 +451,7 @@ public sealed class RoiDocumentRuntime
                     false);
             }
 
+            var cancelledRoiId = entry.Id;
             var editorEvent = entry.Editor.Cancel(pointer);
 
             if (_pointerTransactionStart is not null)
@@ -462,7 +463,7 @@ public sealed class RoiDocumentRuntime
 
             return new RoiDocumentEvent(
                 editorEvent,
-                _selectedId,
+                cancelledRoiId,
                 false,
                 false);
         }
