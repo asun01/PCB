@@ -127,6 +127,23 @@ Assert(
     "Viewport and image centers should be derived from their sizes.",
     failures);
 
+var translation = Asun.Vision.Contracts.AffineTransform2D.Translation(10, 20);
+var scale = Asun.Vision.Contracts.AffineTransform2D.UniformScale(2);
+var transform = scale.Combine(translation);
+var transformedPoint = transform.TransformPoint(new System.Numerics.Vector2(5, 7));
+var restoredPoint = transform.Inverse.TransformPoint(transformedPoint);
+
+Assert(
+    Math.Abs(restoredPoint.X - 5) < 1e-4f &&
+    Math.Abs(restoredPoint.Y - 7) < 1e-4f,
+    "Affine transform inversion should restore the original point.",
+    failures);
+
+Assert(transform.IsInvertible, "A non-singular affine transform should be invertible.", failures);
+
+var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
+Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
+
 var imageBounds = new Asun.Vision.Contracts.PixelRect(0, 0, 1000, 500);
 var roi = new Asun.Vision.Contracts.PixelRect(100, 50, 200, 100);
 
