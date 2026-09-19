@@ -113,6 +113,21 @@ Assert(
     "Viewport should contain the rendered image origin.",
     failures);
 
+var panned = viewport.PanBy(new System.Numerics.Vector2(-100, 25));
+Assert(
+    panned.Translation == viewport.Translation + new System.Numerics.Vector2(-100, 25),
+    "Viewport panning should apply the requested delta.",
+    failures);
+
+var visible = panned.GetVisibleImageRectangle();
+Assert(
+    visible.X >= 0 &&
+    visible.Y >= 0 &&
+    visible.Right <= viewport.ImageSize.X &&
+    visible.Bottom <= viewport.ImageSize.Y,
+    "Visible image rectangle should remain inside image bounds.",
+    failures);
+
 var zoomed = viewport.WithScaleAround(2, new System.Numerics.Vector2(600, 400));
 var anchorBefore = viewport.ViewportToImage(new System.Numerics.Vector2(600, 400));
 var anchorAfter = zoomed.ViewportToImage(new System.Numerics.Vector2(600, 400));

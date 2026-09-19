@@ -158,6 +158,38 @@ public readonly record struct ViewportTransform(
         return WithScaleAround(clampedScale, viewportAnchor);
     }
 
+    public ViewportTransform PanBy(Vector2 viewportDelta)
+    {
+        if (!IsFinite(viewportDelta))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(viewportDelta),
+                "Viewport delta must contain finite values.");
+        }
+
+        return this with
+        {
+            Translation = Translation + viewportDelta
+        };
+    }
+
+    public RectangleF GetVisibleImageRectangle()
+    {
+        var topLeft = ViewportToImage(Vector2.Zero);
+        var bottomRight = ViewportToImage(ViewportSize);
+
+        var left = Math.Clamp(Math.Min(topLeft.X, bottomRight.X), 0f, ImageSize.X);
+        var top = Math.Clamp(Math.Min(topLeft.Y, bottomRight.Y), 0f, ImageSize.Y);
+        var right = Math.Clamp(Math.Max(topLeft.X, bottomRight.X), 0f, ImageSize.X);
+        var bottom = Math.Clamp(Math.Max(topLeft.Y, bottomRight.Y), 0f, ImageSize.Y);
+
+        return new RectangleF(
+            left,
+            top,
+            Math.Max(0f, right - left),
+            Math.Max(0f, bottom - top));
+    }
+
     public ViewportTransform WithTranslation(Vector2 translation)
     {
         if (!IsFinite(translation))
