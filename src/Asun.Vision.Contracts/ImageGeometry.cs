@@ -268,6 +268,12 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         return new PixelRect(translatedX, translatedY, Width, Height);
     }
 
+    public PixelRect ScaleUniform(double factor)
+    {
+        ValidateFinite(factor, nameof(factor));
+        return ScaleAroundCenter(factor, factor);
+    }
+
     public PixelRect ScaleAroundCenter(double factorX, double factorY)
     {
         ValidateFinite(factorX, nameof(factorX));
