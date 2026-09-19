@@ -1502,3 +1502,82 @@ Current continuous execution position:
 - completed through Stage 23000;
 - next natural stage: 23001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 23001→23500 Simulation stable-determinism hardening — 2026-09-19
+
+Completed stages 23001–23500.
+
+Implemented:
+- StableSimulationSeedRuntime using explicit SHA-256-derived seed material;
+- independent SimulationObservationFingerprintRuntime;
+- scenario-bound SimulationObservationIntegrityRuntime;
+- SimulationSessionRuntime now enforces scenario-bound integrity;
+- dedicated observation-integrity Smoke.
+
+Real correction:
+- replaced runtime-dependent HashCode.Combine seed derivation;
+- made stable-seed byte order explicit;
+- fixed MetrologyPoint2D.Zero, which Simulation had already been using.
+
+Closed acceptance asset:
+- PHASE1_23001_23500_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 23501→24000 Production → Release bridge — 2026-09-19
+
+Completed stages 23501–24000.
+
+Implemented:
+- Production Runtime now references Release Core;
+- ProductionReleaseCandidateRuntime projects a validated production report into a deterministic logical ReleaseArtifact;
+- ProductionReleaseCandidateValidationRuntime validates the release candidate against the source production session;
+- dedicated Production release-candidate Smoke.
+
+Real correction:
+- release-candidate validation made fail-safe for zero/multiple artifacts instead of calling Single() after recording an error.
+
+Closed acceptance asset:
+- PHASE1_23501_24000_INTEGRATION_CHECKPOINT_20260919.md. 
+
+### 24001→24500 Metrology affine calibration — 2026-09-19
+
+Completed stages 24001–24500.
+
+Implemented:
+- CalibrationCorrespondence2D;
+- six-parameter affine least-squares fitting with pivoted linear algebra;
+- RMS and maximum residual metrics;
+- deterministic calibration fingerprint;
+- independent calibration validation by re-fitting and comparing all transform coefficients and metrics;
+- AffineCalibration Smoke registered in Metrology Smoke.
+
+Real corrections:
+- repaired a malformed determinant-threshold identifier in the calibration fitter;
+- tightened validation to compare all six affine transform coefficients;
+- added MetrologyPoint2D.Zero required by the cross-chain Simulation/PCB observation paths.
+
+Closed acceptance asset:
+- PHASE1_24001_24500_INTEGRATION_CHECKPOINT_20260919.md.
+
+### 24501→25000 PCB placement observation — 2026-09-19
+
+Completed stages 24501–25000.
+
+Implemented:
+- PcbPlacementObservation;
+- observation runtime over PcbComponentReference + MetrologyPoint2D;
+- factual measured-minus-expected delta and Euclidean residual;
+- independent validation/recomputation;
+- PcbPlacementObservationSet with maximum/RMS residual;
+- two new placement Smokes registered in PCB Smoke.
+
+Boundary:
+- placement observations report geometry facts only; no customer acceptance tolerance or AOI policy is hard-coded.
+
+Closed acceptance asset:
+- PHASE1_24501_25000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Current continuous execution position:
+- completed through Stage 25000;
+- next natural stage: 25001;
+- global one-million-stage horizon remains 2501–1002500.
