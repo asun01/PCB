@@ -182,5 +182,12 @@ public static class ViewportRenderAdapterRuntime
         await FlushInvalidationsAsync().ConfigureAwait(false);
 
         return renderedUnits + renderedRoiIds.Count;
+        }
+        finally
+        {
+            await sink
+                .EndFrameAsync(context, CancellationToken.None)
+                .ConfigureAwait(false);
+        }
     }
 }
