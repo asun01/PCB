@@ -256,6 +256,7 @@ await ViewportPresentationQueueSmoke.RunAsync(Assert);
 await ViewportPresentationExecutionSmoke.RunAsync(Assert);
 await ViewportPresentationEndToEndSmoke.RunAsync(Assert);
 await ViewportInvariantSmoke.RunAsync(Assert);
+ViewportNavigationFeatureSmoke.Run(Assert);
 
 await ViewportPresentationLifecycleSmoke.RunAsync(Assert);
 
