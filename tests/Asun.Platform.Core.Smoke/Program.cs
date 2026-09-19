@@ -1219,6 +1219,12 @@ Assert(
     "Pixel rectangle intersection should return the overlapping region.",
     failures);
 
+var uniformlyScaledRoi = roi.ScaleUniform(2);
+Assert(
+    uniformlyScaledRoi == new Asun.Vision.Contracts.PixelRect(-100, -50, 600, 300),
+    "Uniform pixel rectangle scaling should preserve the center.",
+    failures);
+
 var scaledRoi = roi.ScaleAroundCenter(2, 0.5);
 Assert(
     scaledRoi == new Asun.Vision.Contracts.PixelRect(0, 75, 400, 50),
