@@ -393,3 +393,27 @@ Closed acceptance assets:
 Verification status:
 - static structure audits passed: five Smokes × 10 loop groups, exact `round == 100`, balanced delimiters, no placeholder markers;
 - no local build/test/CI success is claimed without authoritative execution evidence.
+
+
+### 6501→7000 PCB domain foundation — 2026-09-19
+
+Completed stages 6501–7000 inside the active 100,000-stage execution window.
+
+Implemented a minimal vendor-neutral PCB domain foundation:
+- `PcbFeatureKind`
+- `PcbLayerSide`
+- `PcbCoordinate`
+- `PcbFeatureId`
+- `PcbBoardDefinition`
+- `PcbFeatureReference`
+- five validation runtimes for coordinates, ids, boards, features, and feature collections.
+
+Added a dedicated `Asun.Domain.Pcb.Smoke` project and registered it in `AsunVision.slnx`, with five exact 100-round Smokes.
+
+Closed acceptance assets:
+- stage ledgers 6501–6600, 6601–6700, 6701–6800, 6801–6900, 6901–7000;
+- integration checkpoint `PHASE1_6501_7000_INTEGRATION_CHECKPOINT_20260919.md`.
+
+Verification:
+- static source/project/solution audits passed;
+- no build/test/CI success is claimed without authoritative execution evidence.
