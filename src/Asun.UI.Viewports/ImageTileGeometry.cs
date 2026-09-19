@@ -151,6 +151,22 @@ public static class ImageTileGeometry
         return new VisibleTileRange(minimum, maximum);
     }
 
+    public static bool ContainsTile(
+        Vector2 imageSize,
+        Vector2 tileSize,
+        TileIndex tileIndex)
+    {
+        ValidatePositiveFinite(imageSize, nameof(imageSize));
+        ValidatePositiveFinite(tileSize, nameof(tileSize));
+
+        var gridSize = CalculateGridSize(imageSize, tileSize);
+
+        return tileIndex.X >= 0 &&
+               tileIndex.Y >= 0 &&
+               tileIndex.X < gridSize.X &&
+               tileIndex.Y < gridSize.Y;
+    }
+
     public static RectangleF GetTileRectangle(
         Vector2 imageSize,
         Vector2 tileSize,
