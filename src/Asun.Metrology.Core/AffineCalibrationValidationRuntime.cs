@@ -50,11 +50,16 @@ public static class AffineCalibrationValidationRuntime
 
         var expected=AffineCalibrationRuntime.Fit(points);
 
-        if(!result.Transform.Equals(expected.Transform) &&
-           Math.Abs(result.Transform.M11-expected.Transform.M11)>tolerance)
-        {
+        var transformMatches=
+            Math.Abs(result.Transform.M11-expected.Transform.M11)<=tolerance &&
+            Math.Abs(result.Transform.M12-expected.Transform.M12)<=tolerance &&
+            Math.Abs(result.Transform.M21-expected.Transform.M21)<=tolerance &&
+            Math.Abs(result.Transform.M22-expected.Transform.M22)<=tolerance &&
+            Math.Abs(result.Transform.Tx-expected.Transform.Tx)<=tolerance &&
+            Math.Abs(result.Transform.Ty-expected.Transform.Ty)<=tolerance;
+
+        if(!transformMatches)
             errors.Add("Calibration transform does not match the correspondences.");
-        }
 
         if(Math.Abs(result.RootMeanSquareError-expected.RootMeanSquareError)>tolerance)
             errors.Add("Calibration RMS error does not match the correspondences.");
