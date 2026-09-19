@@ -19,6 +19,7 @@ public readonly record struct ViewportPresentationSnapshot(
     ViewportRenderDeliveryStatistics Delivery,
     ViewportContinuousFrameStatistics Frames,
     ViewportRenderFrameState? LastFrameState,
+    ViewportRenderSurfaceSnapshot Surface,
     bool IsGenerationStable);
 
 public sealed class ViewportPresentationLifecycleRuntime : IDisposable
@@ -43,6 +44,7 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
         ViewportRenderDeliveryStatistics delivery,
         ViewportContinuousFrameStatistics frames,
         ViewportRenderFrameState? lastFrameState,
+        ViewportRenderSurfaceSnapshot surface,
         bool isGenerationStable) =>
         new(
             State,
@@ -54,6 +56,7 @@ public sealed class ViewportPresentationLifecycleRuntime : IDisposable
             delivery,
             frames,
             lastFrameState,
+            surface,
             isGenerationStable);
 
     public bool TryStart(out CancellationToken token)
