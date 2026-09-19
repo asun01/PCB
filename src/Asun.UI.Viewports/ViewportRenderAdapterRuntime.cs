@@ -25,12 +25,11 @@ public static class ViewportRenderAdapterRuntime
             frame.Composite.DirtyFlags,
             frame.WorkPlan.Items.Count);
 
-        await sink
-            .BeginFrameAsync(context, cancellationToken)
-            .ConfigureAwait(false);
-
         try
         {
+            await sink
+                .BeginFrameAsync(context, cancellationToken)
+                .ConfigureAwait(false);
             var visibility = ViewportTileRoiVisibilityRuntime.Build(
             frame.Composite);
 
