@@ -1197,3 +1197,38 @@ Current continuous execution position:
 - completed through Stage 16500 in the active 4501–104500 window;
 - next natural stage: 16501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 16501→17000 Evidence top-level diagnostic bundle — 2026-09-19
+
+Completed stages 16501–17000.
+
+Implemented:
+- EvidenceCatalogDiagnosticBundle;
+- cross-component validation over snapshot, statistics, query batch, and opaque reference resolution;
+- deterministic bundle SHA-256 fingerprint and validation;
+- four dedicated exact 100-round Smokes plus end-to-end diagnostic integration.
+
+Boundary:
+- diagnostic bundle is observational composition only;
+- no Quality dependency, persistence/provider authority, storage schema, transport, serialization, HALCON, DevExpress, renderer, or hardware authority introduced.
+
+Closed acceptance asset:
+- PHASE1_16501_17000_INTEGRATION_CHECKPOINT_20260919.md.
+
+Stage ledgers:
+- PHASE1_16501-16600_STAGE_LEDGER_20260919.md
+- PHASE1_16601-16700_STAGE_LEDGER_20260919.md
+- PHASE1_16701-16800_STAGE_LEDGER_20260919.md
+- PHASE1_16801-16900_STAGE_LEDGER_20260919.md
+- PHASE1_16901-17000_STAGE_LEDGER_20260919.md
+
+Verification:
+- static audits confirm balanced delimiters and no TODO/NotImplementedException in changed diagnostic assets;
+- all four new 100-round Smokes use 10 loop groups and explicit round == 100 assertions;
+- workflow lookup for checkpoint commit f58fffc2eb11f367a69adf1e5bed1d68c15b42d6 returned no associated run, so no build/test/CI success is claimed.
+
+Current continuous execution position:
+- completed through Stage 17000 in the active 4501–104500 window;
+- next natural stage: 17001;
+- global one-million-stage horizon remains 2501–1002500.
