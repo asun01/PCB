@@ -123,3 +123,17 @@ Verification note:
 - Repository edits and smoke wiring are completed.
 - No local build/test execution result is asserted from this environment.
 - The current GitHub branch state must still be validated by an actual external build/test run when CI execution is available.
+
+### Latest viewport presentation transaction hardening — 2026-09-19
+- Surface presentation now carries exact committed regions and explicit layer counts across Tile, ROI, Overlay, Invalidation, and FullSurface work.
+- FullSurface, ROI-incremental, and Overlay-only commits are exercised as separate presentation paths on the same surface generation sequence.
+- Surface failures retain the discarded generation and delivery status while the last successful presented generation remains diagnosable.
+- Surface reset now clears the complete presentation session history, including generations, sequence, units, regions, and discard diagnostics.
+- Fixed an incremental planning bug where an Overlay-only invalidation could replay the complete ROI scene merely because the current SceneDiff was empty.
+- Smoke coverage now asserts Overlay-only batches contain no Tile or ROI work, and that surface reset removes all prior presentation state.
+- Existing dedicated ViewportRenderSurfaceSmoke was reused for surface-specific scenarios to avoid duplicating ownership across smoke suites.
+
+Verification note:
+- Implementation and smoke wiring completed through the repository workflow.
+- No local build/test execution result is asserted from this environment.
+- GitHub commit status/workflow availability remains the authoritative external verification path.
