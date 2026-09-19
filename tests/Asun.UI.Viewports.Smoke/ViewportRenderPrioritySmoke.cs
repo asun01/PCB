@@ -73,6 +73,21 @@ public static class ViewportRenderPrioritySmoke
                 metrics.Regions == batch.RegionCount,
                 $"Priority chain {i + 1} should produce consistent plan metrics.");
 
+            var adjacentRegions = ViewportRenderRegionRuntime.Merge(
+                new[]
+                {
+                    new RectangleF(10, 10, 40, 20),
+                    new RectangleF(50, 10, 30, 20),
+                    new RectangleF(200, 200, 10, 10)
+                });
+
+            assert(
+                adjacentRegions.Count == 2 &&
+                adjacentRegions.Any(region =>
+                    Math.Abs(region.X - 10) < 1e-4f &&
+                    Math.Abs(region.Width - 70) < 1e-4f),
+                $"Priority chain {i + 1} should merge touching render regions.");
+
             var budget = ViewportRenderBudgetRuntime.Apply(
                 prioritized,
                 new ViewportRenderBudget(4, 4, 1, 8));
