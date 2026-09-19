@@ -49,6 +49,16 @@ public static class ProductionSessionValidationRuntime
             errors.Add("Production report fingerprint must be 64 lowercase hexadecimal characters.");
         }
 
+        if(!errors.Any())
+        {
+            var expectedFingerprint=ProductionSessionFingerprintRuntime.CreateFingerprint(
+                definition,
+                report.Frames);
+
+            if(expectedFingerprint!=report.Fingerprint)
+                errors.Add("Production report fingerprint does not match the report.");
+        }
+
         return errors;
     }
 
