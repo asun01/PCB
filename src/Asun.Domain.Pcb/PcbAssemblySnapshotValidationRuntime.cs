@@ -12,10 +12,18 @@ public static class PcbAssemblySnapshotValidationRuntime
         if(!snapshot.Board.IsValid)
             errors.Add("Assembly snapshot board must be valid.");
 
-        errors.AddRange(
-            PcbFeatureCollectionValidationRuntime.Validate(
-                snapshot.Board,
-                snapshot.Components.Cast<PcbFeatureReference>().ToArray()));
+        var designators=new HashSet<string>(StringComparer.Ordinal);
+
+        foreach(var component in snapshot.Components)
+        {
+            errors.AddRange(
+                PcbComponentReferenceValidationRuntime.Validate(
+                    component,
+                    snapshot.Board));
+
+            if(!designators.Add(component.Designator))
+                errors.Add("Assembly snapshot component designators must be unique.");
+        }
 
         if(!snapshot.Components.SequenceEqual(
             snapshot.Components.OrderBy(component=>component.Designator,StringComparer.Ordinal)))
