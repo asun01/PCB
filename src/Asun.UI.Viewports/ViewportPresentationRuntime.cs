@@ -138,6 +138,9 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
         finally
         {
             _lifecycle.MarkStopped();
+
+            if (Volatile.Read(ref _disposed) != 0)
+                DisposeResources();
         }
     }
 
@@ -175,7 +178,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
 
     public async ValueTask DisposeAsync()
     {
-        if (Volatile.Read(ref _disposed) != 0)
+        if (_lifecycle.State == ViewportPresentationState.Disposed)
             return;
 
         _lifecycle.RequestStop();
@@ -198,6 +201,19 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
             return;
 
         _lifecycle.RequestStop();
+
+        if (_lifecycle.State is
+            ViewportPresentationState.Running or
+            ViewportPresentationState.Stopping)
+        {
+            return;
+        }
+
+        DisposeResources();
+    }
+
+    private void DisposeResources()
+    {
         _input.Dispose();
         _pipeline.Dispose();
         _lifecycle.Dispose();
