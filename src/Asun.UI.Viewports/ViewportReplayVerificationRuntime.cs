@@ -1,5 +1,14 @@
 namespace Asun.UI.Viewports;
 
+public readonly record struct ViewportReplayBundleInputVerificationResult(
+    bool IsValid,
+    bool InputMatches,
+    IReadOnlyList<string> Differences)
+{
+    public static ViewportReplayBundleInputVerificationResult Passed { get; } =
+        new(true, true, Array.Empty<string>());
+}
+
 public readonly record struct ViewportReplayVerificationResult(
     bool IsValid,
     bool InputMatches,
@@ -76,7 +85,7 @@ public static class ViewportReplayVerificationRuntime
                 differences);
     }
 
-    public static ViewportReplayVerificationResult VerifyAgainstBundle(
+    public static ViewportReplayBundleInputVerificationResult VerifyInputAgainstBundle(
         ViewportReplaySessionBundle expectedBundle,
         ViewportReplayExecutionStateReport actual)
     {
@@ -100,15 +109,8 @@ public static class ViewportReplayVerificationRuntime
                 StringComparison.Ordinal);
 
         return inputMatches
-            ? new ViewportReplayVerificationResult(
-                true,
-                true,
-                false,
-                false,
-                Array.Empty<string>())
-            : new ViewportReplayVerificationResult(
-                false,
-                false,
+            ? ViewportReplayBundleInputVerificationResult.Passed
+            : new ViewportReplayBundleInputVerificationResult(
                 false,
                 false,
                 new[]
