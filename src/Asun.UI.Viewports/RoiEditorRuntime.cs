@@ -361,48 +361,17 @@ public sealed class RoiEditorRuntime
         RoiHandleKind handle,
         Vector2 pointer)
     {
-        var local = start.ToLocal(pointer);
-        var half = start.Size / 2f;
         var direction = RoiHitTester.GetHandleDirection(handle);
-
         if (direction == Vector2.Zero)
             return start;
 
-        var x = half.X;
-        var y = half.Y;
-
-        if (direction.X < 0f)
-            x = MathF.Max(MathF.Abs(local.X) + half.X, 1e-4f) / 2f;
-        else if (direction.X > 0f)
-            x = MathF.Max(local.X + half.X, 1e-4f) / 2f;
-
-        if (direction.Y < 0f)
-            y = MathF.Max(MathF.Abs(local.Y) + half.Y, 1e-4f) / 2f;
-        else if (direction.Y > 0f)
-            y = MathF.Max(local.Y + half.Y, 1e-4f) / 2f;
-
-        var newHalf = new Vector2(x, y);
-
-        if (direction.X < 0f)
-            newHalf.X = MathF.Max(MathF.Abs(local.X), 1e-4f) / 2f + half.X / 2f;
-        if (direction.X > 0f)
-            newHalf.X = MathF.Max(local.X, 1e-4f) / 2f + half.X / 2f;
-        if (direction.Y < 0f)
-            newHalf.Y = MathF.Max(MathF.Abs(local.Y), 1e-4f) / 2f + half.Y / 2f;
-        if (direction.Y > 0f)
-            newHalf.Y = MathF.Max(local.Y, 1e-4f) / 2f + half.Y / 2f;
-
+        var local = start.ToLocal(pointer);
+        var half = start.Size / 2f;
         var fixedLocal = new Vector2(
             direction.X < 0f ? half.X : direction.X > 0f ? -half.X : 0f,
             direction.Y < 0f ? half.Y : direction.Y > 0f ? -half.Y : 0f);
-
-        if (direction.X == 0f)
-            fixedLocal.X = 0f;
-
-        if (direction.Y == 0f)
-            fixedLocal.Y = 0f;
-
         var movingLocal = local;
+
         var centerLocal = (fixedLocal + movingLocal) / 2f;
         var size = new Vector2(
             MathF.Max(MathF.Abs(movingLocal.X - fixedLocal.X), 1e-4f),
@@ -420,10 +389,17 @@ public sealed class RoiEditorRuntime
             size.Y = start.Size.Y;
         }
 
-        return RoiGeometry.CreateRectangle(
-            start.ToWorld(centerLocal),
-            size).WithRotation(start.RotationRadians)
-            .WithRotation(start.RotationRadians);
+        var center = start.ToWorld(centerLocal);
+        return start.Kind switch
+        {
+            RoiShapeKind.Rectangle =>
+                RoiGeometry.CreateRectangle(center, size),
+            RoiShapeKind.RotatedRectangle =>
+                RoiGeometry.CreateRotatedRectangle(center, size, start.RotationRadians),
+            RoiShapeKind.Ellipse =>
+                RoiGeometry.CreateEllipse(center, size, start.RotationRadians),
+            _ => start
+        };
     }
 
     private static void ValidatePoint(Vector2 point)
