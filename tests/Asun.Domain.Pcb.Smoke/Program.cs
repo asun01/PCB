@@ -17,6 +17,7 @@ PcbComponentLookupHundredStageSmoke.Run(Check);
 PcbAssemblySnapshotHundredStageSmoke.Run(Check);
 PcbPlacementObservationHundredStageSmoke.Run(Check);
 PcbPlacementObservationSetHundredStageSmoke.Run(Check);
+await CalibratedPcbPlacementObservationHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
