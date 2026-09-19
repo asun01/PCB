@@ -16,6 +16,7 @@ public sealed class ViewportRenderSchedulerRuntime
     private readonly object _sync = new();
     private readonly ViewportFrameRateGate _rateGate;
     private readonly ViewportPointerCoalescer _pointerCoalescer;
+    private readonly SemaphoreSlim _activitySignal = new(0);
     private ViewportDirtyFlags _pendingFlags;
     private long _sequence;
     private long _latestGeneration;
@@ -67,7 +68,13 @@ public sealed class ViewportRenderSchedulerRuntime
         lock (_sync)
         {
             Interlocked.Increment(ref _submissions);
+
+            var wasIdle = _pendingFlags == ViewportDirtyFlags.None;
             _pendingFlags |= flags;
+
+            if (wasIdle)
+                _activitySignal.Release();
+
             if (generation >= _latestGeneration)
                 _latestGeneration = generation;
 
@@ -119,6 +126,7 @@ public sealed class ViewportRenderSchedulerRuntime
 
             _pendingFlags = ViewportDirtyFlags.None;
             _latest = null;
+            _activitySignal.Wait(0);
             Interlocked.Increment(ref _acceptedFrames);
             return true;
         }
@@ -126,6 +134,16 @@ public sealed class ViewportRenderSchedulerRuntime
 
     public TimeSpan GetNextFrameDelay(DateTimeOffset now) =>
         _rateGate.GetDelay(now);
+
+    public async ValueTask WaitForActivityAsync(
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        await _activitySignal
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
+    }
 
     public bool TryTakePointer(
         out CoalescedPointer pointer) =>
@@ -139,6 +157,11 @@ public sealed class ViewportRenderSchedulerRuntime
             _latestGeneration = 0;
             _rateGate.Reset();
             _pointerCoalescer.Clear();
+
+            while (_activitySignal.Wait(0))
+            {
+            }
+
             Interlocked.Exchange(ref _submissions, 0);
             Interlocked.Exchange(ref _acceptedFrames, 0);
             Interlocked.Exchange(ref _rateLimited, 0);
