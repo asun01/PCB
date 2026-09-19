@@ -145,7 +145,6 @@ public static class ViewportReplaySnapshotValidatorSmoke
                     StringComparison.OrdinalIgnoreCase)),
             "Replay validator should reject an inconsistent last generation.");
 
-        sinklessReset:
 
         var empty = new ViewportRenderReplaySnapshot(
             0,
