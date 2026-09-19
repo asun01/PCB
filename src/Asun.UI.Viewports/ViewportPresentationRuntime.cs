@@ -41,7 +41,8 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
         _continuous = new ViewportContinuousFrameRuntime<TTile>(
             _pipeline,
             _input,
-            idleDelay);
+            idleDelay,
+            new ViewportRenderSurfaceRuntime());
     }
 
     public ViewportRenderPipelineRuntime<TTile> Pipeline => _pipeline;
@@ -56,6 +57,9 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
 
     public ViewportRenderDeliveryResult? LastDelivery =>
         _continuous.LastDelivery;
+
+    public ViewportRenderSurfaceRuntime Surface =>
+        _continuous.Surface;
 
     public ViewportRenderFrameState? LastFrameState =>
         _continuous.LastDelivery?.FrameState;
@@ -257,6 +261,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
     {
         _input.Dispose();
         _pipeline.Dispose();
+        _continuous.Surface.Dispose();
         _lifecycle.Dispose();
     }
 
