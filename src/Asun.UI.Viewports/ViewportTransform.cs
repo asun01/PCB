@@ -88,6 +88,12 @@ public readonly record struct ViewportTransform(
     public Vector2 ImageCenter =>
         ImageSize * 0.5f;
 
+    public bool IsImageFullyVisible =>
+        RenderedImageRectangle.X >= 0 &&
+        RenderedImageRectangle.Y >= 0 &&
+        RenderedImageRectangle.Right <= ViewportSize.X &&
+        RenderedImageRectangle.Bottom <= ViewportSize.Y;
+
     public ViewportTransform WithZoomFactor(
         double zoomFactor,
         Vector2 viewportAnchor)
