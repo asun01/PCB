@@ -8,12 +8,11 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Asun.Platform.Core/Asun.Platform.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="../../src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
     <ProjectReference Include="../../src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
     <ProjectReference Include="../../src/Asun.Vision.Contracts/Asun.Vision.Contracts.csproj" />
     <ProjectReference Include="../../src/Asun.Device.Contracts/Asun.Device.Contracts.csproj" />
+    <ProjectReference Include="../../src/Asun.Device.Impl/Asun.Device.Impl.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.Contracts/Asun.Platform.Contracts.csproj" />
   </ItemGroup>
 </Project>
