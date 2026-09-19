@@ -898,6 +898,13 @@ Assert(
     failures);
 
 var rotatedOriented = oriented.Rotate(Math.PI / 2);
+
+var normalizedAngle = oriented.Rotate(Math.PI * 5).NormalizeAngle();
+Assert(
+    normalizedAngle.AngleRadians <= Math.PI &&
+    normalizedAngle.AngleRadians > -Math.PI,
+    "Oriented rectangle angle normalization should stay within the canonical interval.",
+    failures);
 Assert(
     Math.Abs(rotatedOriented.AngleRadians - Math.PI / 2) < 1e-12,
     "Oriented rectangle rotation should accumulate angle.",
