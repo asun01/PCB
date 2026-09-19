@@ -24,6 +24,9 @@ jobs:
       - name: Validate solution layout
         run: python3 tools/validate_solution_layout.py
 
+      - name: Validate runnable WPF shell
+        run: python3 tools/validate_wpf_shell.py
+
       - name: Validate implementation policy
         run: python3 tools/validate_repository_policy.py
 
