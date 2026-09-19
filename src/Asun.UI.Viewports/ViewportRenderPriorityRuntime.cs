@@ -21,7 +21,12 @@ public static class ViewportRenderPriorityRuntime
                 request => request.DistanceSquaredToViewportCenter);
 
         var ordered = plan.Items
-            .OrderBy(item => Priority(item.Kind, item.RoiId, item.Tile, selectedIds))
+            .OrderBy(item => Priority(
+                item.IsInvalidation,
+                item.Kind,
+                item.RoiId,
+                item.Tile,
+                selectedIds))
             .ThenBy(item => TileDistance(item.Tile, tileDistances))
             .ThenBy(item => item.RoiId)
             .ThenBy(item => item.Bounds.Top)
@@ -35,11 +40,16 @@ public static class ViewportRenderPriorityRuntime
     }
 
     private static int Priority(
+        bool isInvalidation,
         ViewportRenderWorkKind kind,
         Guid roiId,
         TileIndex? tile,
-        IReadOnlySet<Guid> selectedIds) =>
-        kind switch
+        IReadOnlySet<Guid> selectedIds)
+    {
+        if (isInvalidation)
+            return -1;
+
+        return kind switch
         {
             ViewportRenderWorkKind.Tile => 0,
             ViewportRenderWorkKind.FullSurface => 1,
@@ -49,6 +59,7 @@ public static class ViewportRenderPriorityRuntime
             ViewportRenderWorkKind.Overlay => 5,
             _ => 6
         };
+    }
 
     private static double TileDistance(
         TileIndex? tile,
