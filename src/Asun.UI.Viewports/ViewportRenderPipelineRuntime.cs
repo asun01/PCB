@@ -15,6 +15,7 @@ public sealed class ViewportRenderPipelineFrame<TTile>
         Submission = submission;
         WorkPlan = workPlan;
         Batch = batch;
+        CommandStream = ViewportRenderCommandStreamRuntime.Build(batch);
         HasDeferredWork = hasDeferredWork;
     }
 
@@ -25,6 +26,8 @@ public sealed class ViewportRenderPipelineFrame<TTile>
     public ViewportRenderWorkPlan WorkPlan { get; }
 
     public ViewportRenderBatch Batch { get; }
+
+    public ViewportRenderCommandStream CommandStream { get; }
 
     public bool HasDeferredWork { get; }
 
