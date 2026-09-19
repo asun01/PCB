@@ -558,6 +558,13 @@ Assert(
     "Viewport zoom should respect the configured lower bound.",
     failures);
 
+Assert(
+    Math.Abs(transform.LinearScaleX - 2) < 1e-6 &&
+    Math.Abs(transform.LinearScaleY - 2) < 1e-6 &&
+    transform.ApproximatelyEquals(transform, 0),
+    "Affine linear scale metadata and self-equality should be deterministic.",
+    failures);
+
 var singular = Asun.Vision.Contracts.AffineTransform2D.Scale(1, 0);
 Assert(!singular.IsInvertible, "A singular affine transform should report non-invertible.", failures);
 
