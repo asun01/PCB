@@ -141,6 +141,29 @@ public static class ViewportRenderSurfaceValidationHundredStageSmoke
                 $"reset surface {i + 1} should return to valid idle state.");
         }
 
+        for (var i = 0; i < 10; i++)
+        {
+            using var surface = new ViewportRenderSurfaceRuntime();
+            var first = surface.Begin(i + 1);
+            surface.Commit(first, 1, 1);
+
+            var rejected = false;
+            try
+            {
+                surface.Begin(i);
+            }
+            catch (InvalidOperationException)
+            {
+                rejected = true;
+            }
+
+            Check(
+                rejected &&
+                ViewportRenderSurfaceValidationRuntime.IsValid(
+                    surface.Snapshot),
+                $"stale surface generation {i + 1} should be rejected cleanly.");
+        }
+
         assert(
             round == 100,
             $"Render surface validation smoke should execute exactly 100 numbered rounds; actual {round}.");
