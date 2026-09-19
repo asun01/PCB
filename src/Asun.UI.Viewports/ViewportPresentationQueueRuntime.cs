@@ -328,7 +328,32 @@ public sealed class ViewportPresentationQueueRuntime<TTile> : IDisposable
     public bool TryAcknowledgePresented(
         ViewportPresentationSubmissionToken token)
     {
-        return TryCompleteCommit(token);
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            if (_committingToken is not null ||
+                _inFlight is null ||
+                _inFlight.Token != token ||
+                _latestSubmissionSequence != token.Sequence)
+                return false;
+
+            if (_presentedSequence is long presented &&
+                token.Sequence <= presented)
+                return false;
+
+            if (_presentedGeneration is long presentedGeneration &&
+                token.Generation < presentedGeneration)
+                return false;
+
+            _presentedGeneration = token.Generation;
+            _presentedSequence = token.Sequence;
+            _inFlight = null;
+            _inFlightCancellation?.Dispose();
+            _inFlightCancellation = null;
+            _presented++;
+            return true;
+        }
     }
 
     public bool TryCancel(
