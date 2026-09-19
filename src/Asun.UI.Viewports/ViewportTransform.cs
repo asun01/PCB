@@ -6,7 +6,7 @@ namespace Asun.UI.Viewports;
 /// Pure image-to-viewport geometry used by the viewport layer.
 /// It contains no WPF, DevExpress, imaging-library, or device dependencies.
 /// </summary>
-internal readonly record struct ViewportTransform(
+public readonly record struct ViewportTransform(
     double Scale,
     Vector2 Translation,
     Vector2 ImageSize,
