@@ -16,7 +16,8 @@ public readonly record struct ViewportRenderWorkItem(
     RectangleF Bounds,
     Guid RoiId,
     TileIndex? Tile,
-    long Generation);
+    long Generation,
+    bool IsInvalidation = false);
 
 public sealed class ViewportRenderWorkPlan
 {
@@ -88,7 +89,7 @@ public static class ViewportRenderWorkRuntime
             }
         }
 
-        if (roiDirty || frame.SceneDiff.Count > 0)
+        if (roiDirty)
         {
             foreach (var command in frame.SceneCommands)
             {
@@ -101,28 +102,32 @@ public static class ViewportRenderWorkRuntime
                         null,
                         frame.Generation));
             }
-
+        }
+        else if (frame.SceneDiff.Count > 0)
+        {
             foreach (var diff in frame.SceneDiff)
             {
-                var currentBounds = diff.Current is { } current
-                    ? ViewportSceneRuntime.GetCommandBounds(current)
-                    : RectangleF.Empty;
-
-                var previousBounds = diff.Previous is { } previous
-                    ? ViewportSceneRuntime.GetCommandBounds(previous)
-                    : RectangleF.Empty;
-
-                var bounds = Union(currentBounds, previousBounds);
-
-                if (!bounds.IsEmpty)
+                if (diff.Current is { } current)
                 {
                     items.Add(
                         new ViewportRenderWorkItem(
                             ViewportRenderWorkKind.Roi,
-                            bounds,
+                            ViewportSceneRuntime.GetCommandBounds(current),
                             diff.RoiId,
                             null,
                             frame.Generation));
+                }
+
+                if (diff.Previous is { } previous)
+                {
+                    items.Add(
+                        new ViewportRenderWorkItem(
+                            ViewportRenderWorkKind.Roi,
+                            ViewportSceneRuntime.GetCommandBounds(previous),
+                            diff.RoiId,
+                            null,
+                            frame.Generation,
+                            IsInvalidation: true));
                 }
             }
         }
@@ -186,7 +191,8 @@ public static class ViewportRenderWorkRuntime
                 item.RoiId,
                 item.Tile,
                 item.Bounds,
-                item.Generation
+                item.Generation,
+                item.IsInvalidation
             })
             .Select(group => group.First())
             .ToArray();
