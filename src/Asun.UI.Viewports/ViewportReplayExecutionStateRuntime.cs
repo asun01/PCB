@@ -38,6 +38,29 @@ public static class ViewportReplayExecutionStateRuntime
             final);
     }
 
+    public static ViewportReplayExecutionStateReport Execute<TTile>(
+        ViewportCompositeInputRuntime<TTile> input,
+        ViewportReplaySessionBundle bundle)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(bundle);
+
+        var initial = ViewportReplayStateFingerprintRuntime.Capture(
+            input.Composite);
+
+        var execution = ViewportReplayExecutionRuntime.Execute(
+            input,
+            bundle);
+
+        var final = ViewportReplayStateFingerprintRuntime.Capture(
+            input.Composite);
+
+        return new ViewportReplayExecutionStateReport(
+            execution,
+            initial,
+            final);
+    }
+
     public static bool HasSameFinalState(
         ViewportReplayExecutionStateReport left,
         ViewportReplayExecutionStateReport right) =>
