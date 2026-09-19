@@ -88,6 +88,20 @@ public sealed class Polyline2D
     public Vector2 GetPoint(int index) =>
         _points[index];
 
+    public IReadOnlyList<LineSegment2D> GetSegments()
+    {
+        var segments = new LineSegment2D[_points.Length - 1];
+
+        for (var index = 1; index < _points.Length; index++)
+        {
+            segments[index - 1] = new LineSegment2D(
+                _points[index - 1],
+                _points[index]);
+        }
+
+        return Array.AsReadOnly(segments);
+    }
+
     public Vector2 PointAtFraction(double fraction)
     {
         if (!double.IsFinite(fraction) || fraction < 0 || fraction > 1)
