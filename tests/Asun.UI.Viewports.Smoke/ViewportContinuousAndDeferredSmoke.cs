@@ -152,6 +152,7 @@ public static class ViewportContinuousAndDeferredSmoke
         var initialRendered = initialCompleted == sink.FirstFrame.Task;
 
         var initialSnapshot = presentation.Snapshot;
+        var initialQueue = presentation.PresentationQueue.Statistics;
 
         assert(
             initialRendered &&
@@ -159,7 +160,10 @@ public static class ViewportContinuousAndDeferredSmoke
             initialSnapshot.LastFrameState is { IsComplete: true } &&
             initialSnapshot.IsPresentationStable &&
             initialSnapshot.Surface.State == ViewportRenderSurfaceState.Presented &&
-            initialSnapshot.Surface.PresentedGeneration == presentation.Composite.Generation,
+            initialSnapshot.Surface.PresentedGeneration == presentation.Composite.Generation &&
+            initialQueue.Presented == 1 &&
+            initialQueue.Pending == 0 &&
+            initialQueue.PresentedGeneration == presentation.Composite.Generation,
             "Continuous runtime should render its initial frame and publish a complete presentation frame state.");
 
         var before = presentation.Composite.Generation;
@@ -179,11 +183,15 @@ public static class ViewportContinuousAndDeferredSmoke
 
         started.Stop();
 
+        var secondQueue = presentation.PresentationQueue.Statistics;
+
         assert(
             secondRendered &&
             presentation.Composite.Generation > before &&
-            started.Elapsed < TimeSpan.FromMilliseconds(500),
-            "Input activity should wake the idle presentation runtime without waiting for the long idle delay.");
+            started.Elapsed < TimeSpan.FromMilliseconds(500) &&
+            secondQueue.Presented >= 2 &&
+            secondQueue.Pending == 0,
+            "Input activity should wake the idle presentation runtime and complete a queued presentation without waiting for the long idle delay.");
 
         cancellation.Cancel();
 
@@ -202,10 +210,14 @@ public static class ViewportContinuousAndDeferredSmoke
 
         presentation.Reset();
 
+        var resetQueue = presentation.PresentationQueue.Statistics;
+
         assert(
             presentation.Surface.Snapshot.State == ViewportRenderSurfaceState.Idle &&
-            presentation.LastFrameState is null,
-            "Presentation reset should clear the active surface transaction and last delivery state.");
+            presentation.LastFrameState is null &&
+            resetQueue.Pending == 0 &&
+            resetQueue.PresentedGeneration is null,
+            "Presentation reset should clear the active surface, queue, and last delivery state.");
     }
 
     private sealed class RecoveringTileSource : ITileSource<string>
