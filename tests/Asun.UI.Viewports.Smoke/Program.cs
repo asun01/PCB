@@ -232,6 +232,8 @@ AdvancedFiveHundredChainSmoke.Run(Assert);
 
 ViewportFiveHundredChainsSmoke.Run(Assert);
 
+ViewportFiveHundredWorkflowSmoke.Run(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
