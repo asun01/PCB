@@ -312,21 +312,18 @@ public static class ViewportReplayStateFingerprintHundredStageSmoke
 
                 using (second.Composite)
                 {
-                    var bundledExecution =
-                        ViewportReplayExecutionRuntime.Execute(
+                    var bundledReport =
+                        ViewportReplayExecutionStateRuntime.Execute(
                             second,
                             bundle);
-
-                    var bundledState =
-                        ViewportReplayStateFingerprintRuntime.Capture(
-                            second.Composite);
 
                     Check(
                         ViewportReplayExecutionRuntime.HasSameResult(
                             report.Execution,
-                            bundledExecution) &&
-                        report.FinalStateHash ==
-                        bundledState.StateHash,
+                            bundledReport.Execution) &&
+                        ViewportReplayStateFingerprintRuntime.AreEquivalent(
+                            report.FinalState,
+                            bundledReport.FinalState),
                         $"bundle and direct execution {i + 1} should converge to the same state.");
                 }
             }
