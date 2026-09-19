@@ -254,6 +254,8 @@ ViewportPresentationLifecycleSmoke.Run(Assert);
 
 ViewportRenderSchedulerGenerationSmoke.Run(Assert);
 
+await ViewportInputLifecycleSmoke.RunAsync(Assert);
+
 if (failures.Count > 0)
 {
     foreach (var failure in failures)
