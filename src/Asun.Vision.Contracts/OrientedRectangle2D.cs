@@ -146,6 +146,21 @@ public readonly record struct OrientedRectangle2D(
         return Vector2.DistanceSquared(point, Center);
     }
 
+    public OrientedRectangle2D Resize(Vector2 size)
+    {
+        EnsureValid();
+
+        if (!float.IsFinite(size.X) ||
+            !float.IsFinite(size.Y) ||
+            size.X < 0 ||
+            size.Y < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(size));
+        }
+
+        return this with { Size = size };
+    }
+
     public OrientedRectangle2D Translate(Vector2 delta)
     {
         if (!float.IsFinite(delta.X) || !float.IsFinite(delta.Y))
