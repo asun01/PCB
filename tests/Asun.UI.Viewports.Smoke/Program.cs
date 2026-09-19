@@ -285,6 +285,7 @@ ViewportPresentationReplayDiagnosticHundredStageSmoke.Run(Assert);
 ViewportReplayContinuousDiagnosticHundredStageSmoke.Run(Assert);
 ViewportRenderDeliveryValidationHundredStageSmoke.Run(Assert);
 ViewportRenderCommandStreamValidationHundredStageSmoke.Run(Assert);
+await ViewportRenderFrameSummaryHundredStageSmoke.RunAsync(Assert);
 ViewportRenderSurfaceValidationHundredStageSmoke.Run(Assert);
 ViewportPresentationBufferValidationHundredStageSmoke.Run(Assert);
 ViewportPresentationQueueValidationHundredStageSmoke.Run(Assert);
