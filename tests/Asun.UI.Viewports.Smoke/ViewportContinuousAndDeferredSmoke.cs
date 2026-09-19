@@ -8,6 +8,7 @@ public static class ViewportContinuousAndDeferredSmoke
     {
         await VerifyPartialDeferredRetryAsync(assert);
         await VerifyIdleWakeAsync(assert);
+        await VerifyInputContinuesDuringSlowPresentationAsync(assert);
     }
 
     private static async ValueTask VerifyPartialDeferredRetryAsync(
@@ -121,6 +122,101 @@ public static class ViewportContinuousAndDeferredSmoke
             retrySink.TileIndices.Count == 1 &&
             retrySink.TileIndices[0] == new TileIndex(0, 0),
             "Recovered delivery should render only the deferred tile without replaying successful work.");
+    }
+
+    private static async ValueTask VerifyInputContinuesDuringSlowPresentationAsync(
+        Action<bool, string> assert)
+    {
+        using var presentation = new ViewportPresentationRuntime<string>(
+            new Vector2(300, 200),
+            new Vector2(200, 100),
+            new Vector2(100, 100),
+            0,
+            16,
+            2,
+            new StableTileSource(),
+            new ViewportRenderBudget(8, 8, 4, 16),
+            1000,
+            TimeSpan.FromMilliseconds(2));
+
+        using var cancellation = new CancellationTokenSource();
+        var sink = new BlockingSink();
+
+        var runTask = presentation
+            .RunAsync(sink, cancellation.Token)
+            .AsTask();
+
+        var started = await Task.WhenAny(
+            sink.FirstFrameStarted.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        assert(
+            started == sink.FirstFrameStarted.Task,
+            "A slow presentation smoke should reach the asynchronous render worker.");
+
+        if (started != sink.FirstFrameStarted.Task)
+        {
+            cancellation.Cancel();
+
+            try
+            {
+                await runTask;
+            }
+            catch (OperationCanceledException)
+            {
+            }
+
+            return;
+        }
+
+        var before = presentation.Composite.Generation;
+
+        assert(
+            presentation.TrySubmit(
+                ViewportInputEventKind.PointerMove,
+                new Vector2(60, 40)),
+            "Input should be accepted while the render worker is blocked.");
+
+        var advanced = false;
+
+        for (var i = 0; i < 50; i++)
+        {
+            if (presentation.Composite.Generation > before)
+            {
+                advanced = true;
+                break;
+            }
+
+            await Task.Delay(10);
+        }
+
+        assert(
+            advanced,
+            "The control loop should continue processing input while the presentation worker is blocked.");
+
+        sink.ReleaseFirstFrame.TrySetResult(true);
+
+        var secondStarted = await Task.WhenAny(
+            sink.SecondFrameStarted.Task,
+            Task.Delay(TimeSpan.FromSeconds(2)));
+
+        assert(
+            secondStarted == sink.SecondFrameStarted.Task,
+            "Requeued/new-generation presentation should continue after the blocked frame is released.");
+
+        cancellation.Cancel();
+
+        try
+        {
+            await runTask;
+        }
+        catch (OperationCanceledException)
+        {
+        }
+
+        assert(
+            presentation.State == ViewportPresentationState.Stopped,
+            "Continuous presentation should stop cleanly after asynchronous worker cancellation.");
     }
 
     private static async ValueTask VerifyIdleWakeAsync(
@@ -283,6 +379,52 @@ public static class ViewportContinuousAndDeferredSmoke
             TileIndices.Add(tile.Index);
             return ValueTask.CompletedTask;
         }
+
+        public ValueTask DrawRoiAsync(
+            ViewportRenderRoiContext roi,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+
+        public ValueTask EndFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
+    }
+
+    private sealed class BlockingSink : IViewportRenderSink<string>
+    {
+        private int _frames;
+
+        public TaskCompletionSource<bool> FirstFrameStarted { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> ReleaseFirstFrame { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public TaskCompletionSource<bool> SecondFrameStarted { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public ValueTask BeginFrameAsync(
+            ViewportRenderFrameContext context,
+            CancellationToken cancellationToken = default)
+        {
+            if (Interlocked.Increment(ref _frames) == 1)
+            {
+                FirstFrameStarted.TrySetResult(true);
+
+                return new ValueTask(
+                    ReleaseFirstFrame.Task
+                        .WaitAsync(cancellationToken));
+            }
+
+            SecondFrameStarted.TrySetResult(true);
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DrawTileAsync(
+            ViewportRenderTileContext<string> tile,
+            CancellationToken cancellationToken = default) =>
+            ValueTask.CompletedTask;
 
         public ValueTask DrawRoiAsync(
             ViewportRenderRoiContext roi,
