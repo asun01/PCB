@@ -228,6 +228,9 @@ public readonly record struct PixelRect(double X, double Y, double Width, double
         Top <= rectangle.Bottom &&
         Bottom >= rectangle.Top;
 
+    public PixelRect Normalized =>
+        Normalize();
+
     public PixelRect Normalize()
     {
         if (!IsFinite)
