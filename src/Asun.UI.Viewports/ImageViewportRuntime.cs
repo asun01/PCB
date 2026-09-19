@@ -61,6 +61,8 @@ public sealed class ImageViewportRuntime<TTile> : IDisposable
 
     public int InFlightCount => _loader.InFlightCount;
 
+    public int CacheCapacity => _loader.Cache.Capacity;
+
     public bool IsPanning
     {
         get
