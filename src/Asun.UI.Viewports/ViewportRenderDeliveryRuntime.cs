@@ -122,13 +122,15 @@ public static class ViewportRenderDeliveryRuntime
                             frame.Composite.Generation,
                             frame.Batch.ItemCount,
                             units,
-                            frame.Batch.RegionCount),
+                            frame.Batch.RegionCount,
+                            frame.Batch.Regions),
                         cancellationToken).ConfigureAwait(false);
 
                     surface.Commit(
                         frame.Composite.Generation,
                         frame.Batch.ItemCount,
-                        units);
+                        units,
+                        frame.Batch.Regions);
                 }
                 catch (Exception exception)
                 {
