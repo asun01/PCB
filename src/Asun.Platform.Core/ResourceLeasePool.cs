@@ -1,7 +1,5 @@
 namespace Asun.Platform.Core;
 
-using System.Collections.Concurrent;
-
 /// <summary>
 /// Provides bounded, independently schedulable capacity for named resources.
 /// It contains no domain ownership or production-state semantics.
@@ -112,7 +110,7 @@ public sealed class ResourceLeasePool<TKey> : IDisposable
         ObjectDisposedException.ThrowIf(_disposed != 0, this);
     }
 
-    private sealed class ResourceEntry
+    internal sealed class ResourceEntry
     {
         public ResourceEntry(int capacity)
         {
