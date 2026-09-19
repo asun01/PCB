@@ -185,6 +185,17 @@ Assert(
     "Viewport panning should apply the requested delta.",
     failures);
 
+var resized = panned.WithViewportSize(new System.Numerics.Vector2(1600, 1000));
+var centeredImagePointBeforeResize = panned.ViewportToImage(panned.ViewportCenter);
+var centeredImagePointAfterResize = resized.ViewportToImage(resized.ViewportCenter);
+
+Assert(
+    Math.Abs(centeredImagePointBeforeResize.X - centeredImagePointAfterResize.X) < 1e-4f &&
+    Math.Abs(centeredImagePointBeforeResize.Y - centeredImagePointAfterResize.Y) < 1e-4f &&
+    resized.ViewportSize == new System.Numerics.Vector2(1600, 1000),
+    "Viewport resize should preserve the current image center.",
+    failures);
+
 var visible = panned.GetVisibleImageRectangle();
 var outsideTileRange = Asun.UI.Viewports.ImageTileGeometry.CalculateVisibleTiles(
     viewport.ImageSize,
