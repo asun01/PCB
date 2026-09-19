@@ -249,7 +249,10 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
                 frame.WorkPlan.ConsumedFlags |
                 (existing?.ConsumedFlags ?? ViewportDirtyFlags.None),
                 generation);
-            _deferredComposite = frame.Composite;
+
+            // Delivery retry must refresh the Composite snapshot so temporarily
+            // unavailable tiles can be loaded again.
+            _deferredComposite = null;
             _deferredGeneration = generation;
         }
     }
