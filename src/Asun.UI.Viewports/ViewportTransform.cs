@@ -189,6 +189,35 @@ public readonly record struct ViewportTransform(
         };
     }
 
+    public ViewportTransform CenterOnImagePoint(Vector2 imagePoint)
+    {
+        if (!IsFinite(imagePoint))
+            throw new ArgumentOutOfRangeException(nameof(imagePoint));
+
+        return this with
+        {
+            Translation = ViewportCenter - imagePoint * (float)Scale
+        };
+    }
+
+    public ViewportTransform CenterOnImageRectangle(RectangleF imageRectangle)
+    {
+        if (!IsFiniteRectangle(imageRectangle) ||
+            imageRectangle.Width <= 0 ||
+            imageRectangle.Height <= 0)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(imageRectangle),
+                "Image rectangle must contain finite positive dimensions.");
+        }
+
+        var center = new Vector2(
+            imageRectangle.X + imageRectangle.Width / 2f,
+            imageRectangle.Y + imageRectangle.Height / 2f);
+
+        return CenterOnImagePoint(center);
+    }
+
     public ViewportTransform WithScaleAroundClamped(
         double requestedScale,
         double minScale,
