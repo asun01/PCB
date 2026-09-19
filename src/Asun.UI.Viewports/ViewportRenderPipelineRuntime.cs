@@ -93,6 +93,18 @@ public sealed class ViewportRenderPipelineRuntime<TTile> : IDisposable
         long generation)
     {
         ThrowIfDisposed();
+
+        lock (_sync)
+        {
+            if (_deferredGeneration >= 0 &&
+                generation > _deferredGeneration)
+            {
+                _deferredWork = null;
+                _deferredComposite = null;
+                _deferredGeneration = -1;
+            }
+        }
+
         _scheduler.Submit(flags, generation);
     }
 
