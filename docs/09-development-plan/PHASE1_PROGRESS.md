@@ -1581,3 +1581,36 @@ Current continuous execution position:
 - completed through Stage 25000;
 - next natural stage: 25001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 25001→29500 multi-product real-chain continuation — 2026-09-20
+
+Completed consecutive rotating product-chain windows:
+- 25001–25500 PCB Assembly → Production Runtime
+- 25501–26000 Program → Pipeline / Production deterministic binding
+- 26001–26500 Production → Quality factual alignment projection
+- 26501–27000 Production ↔ Evidence opaque reference projection
+- 27001–27500 Production → Render / Presentation projection
+- 27501–28000 Metrology Calibration → PCB Placement Observation
+- 28001–28500 PCB Placement Observation → Quality Integration
+- 28501–29000 Production ↔ Simulation replay alignment
+- 29001–29500 Production evidence → Release projection
+
+Concrete cross-chain assets include executable runtimes, independent validators, dedicated exact-100-round Smokes, and registered integration projects. Several real defects were corrected during the window, including unreachable Simulation return code, an invalid Render validation API assumption, exception-prone validation paths, and a calibration-validation failure path.
+
+Boundary discipline remains active:
+- Quality integration receives an injected rule evaluator and does not define customer acceptance thresholds.
+- Evidence remains opaque; Production does not resolve evidence storage/content.
+- Render integration remains outside Production Runtime and does not introduce Skia/WPF/DevExpress authority.
+- Simulation integration aligns separate production/simulation fingerprints without falsely equating their semantics.
+- Release integration produces logical artifacts only and does not claim physical persistence.
+
+Verification:
+- static source audits performed on each completed window;
+- new 100-round Smokes use 10 loop groups, 10 meaningful Check call sites, and explicit round == 100 assertions;
+- no local compiler/test success or GitHub Actions success is claimed without authoritative execution evidence.
+
+Current continuous execution position:
+- completed through Stage 29500;
+- next natural stage: 29501;
+- global one-million-stage horizon remains 2501–1002500.
