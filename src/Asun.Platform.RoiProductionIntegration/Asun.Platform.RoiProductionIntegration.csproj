@@ -9,5 +9,6 @@
     <ProjectReference Include="../../src/Asun.UI.Viewports/Asun.UI.Viewports.csproj" />
     <ProjectReference Include="../../src/Asun.Production.Runtime/Asun.Production.Runtime.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.RenderIntegration/Asun.Platform.RenderIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.MeasurementQualityIntegration/Asun.Platform.MeasurementQualityIntegration.csproj" />
   </ItemGroup>
 </Project>
