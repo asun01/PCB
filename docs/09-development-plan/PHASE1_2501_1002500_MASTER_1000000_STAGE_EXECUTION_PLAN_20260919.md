@@ -2522,3 +2522,13 @@ Current completed boundary: **38,000**
 Next executable stage: **38,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 38500 — 2026-09-20
+
+Closed production evidence envelope. The execution program now has a top-level, persistence-neutral envelope joining board identity, production identity, replay identity, evidence resolution, and release identity.
+
+Current completed boundary: **38,500**
+Next executable stage: **38,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
