@@ -4,12 +4,19 @@ using Asun.Platform.Pipeline;
 
 namespace Asun.Production.Runtime;
 
+public sealed record ProductionSessionProgress(
+    Guid SessionId,
+    int CompletedFrames,
+    int TotalFrames,
+    FrameSequence? LastSequence);
+
 public static class ProductionSessionRuntime
 {
     public static async ValueTask<ProductionSessionReport> RunAsync(
         ProductionSessionDefinition definition,
         IFrameSource source,
-        CancellationToken cancellationToken=default)
+        CancellationToken cancellationToken=default,
+        IProgress<ProductionSessionProgress>? progress=null)
     {
         ArgumentNullException.ThrowIfNull(definition);
         ArgumentNullException.ThrowIfNull(source);
@@ -71,6 +78,13 @@ public static class ProductionSessionRuntime
                     frame.Metadata.Sequence,
                     frame.PayloadFingerprint,
                     report));
+
+            progress?.Report(
+                new ProductionSessionProgress(
+                    definition.SessionId,
+                    frameExecutions.Count,
+                    definition.FrameCount,
+                    frame.Metadata.Sequence));
         }
 
         var fingerprint=ProductionSessionFingerprintRuntime.CreateFingerprint(
