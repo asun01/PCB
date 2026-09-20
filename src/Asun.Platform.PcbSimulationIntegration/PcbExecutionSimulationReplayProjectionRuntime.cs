@@ -17,8 +17,7 @@ public static class PcbExecutionSimulationReplayProjectionRuntime
         ArgumentNullException.ThrowIfNull(observations);
         ArgumentNullException.ThrowIfNull(simulationBinding);
 
-        if(simulationBinding.ProductionFingerprint!=new string('0',0) &&
-           simulationBinding.ProductionFingerprint!=executionSnapshot.ProductionFingerprint)
+        if(simulationBinding.ProductionFingerprint!=executionSnapshot.ProductionFingerprint)
             throw new ArgumentException("Simulation binding production fingerprint must match execution snapshot.",nameof(simulationBinding));
 
         if(simulationBinding.Frames.Count!=executionSnapshot.FrameCount ||
