@@ -7,6 +7,11 @@ void Check(bool condition,string message)
 }
 
 await PcbEvidenceReleaseFactProjectionHundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTrace1HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTrace2HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTrace3HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTrace4HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTrace5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
