@@ -5,8 +5,8 @@
 - Start: **57,001**
 - End: **1,057,000**
 - Size: **1,000,000 stages**
-- Completed before this interval: **66,000**
-- Next executable stage: **66,001**
+- Completed before this interval: **66,500**
+- Next executable stage: **66,501**
 
 This is the active autonomous execution interval requested for the continuing PCB product-chain development. Existing historical stage numbers and checkpoints are not rewritten.
 
@@ -34,6 +34,6 @@ Static source checks may be reported. Local build/test and CI success must only 
 
 ## Current cell
 
-**65501-66000** — Frame Provenance → Production Measurement Fact → Measurement Provenance Closure.
+**66001-66500** — Frame Provenance → Production Measurement → Measurement Quality → Quality Provenance Closure.
 
-After closure, continue from **66001** without waiting for another planning request.
+After closure, continue from **66501** without waiting for another planning request.
