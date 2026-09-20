@@ -2422,3 +2422,13 @@ Current completed boundary: **32,500**
 Next executable stage: **32,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 33000 — 2026-09-20
+
+Closed Acquisition / Production provenance → Evidence opaque references. Capture metadata and payload identity now meet Evidence only through opaque handle collections, with Evidence-owned canonical ordering preserved.
+
+Current completed boundary: **33,000**
+Next executable stage: **33,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
