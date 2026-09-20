@@ -1816,3 +1816,19 @@ Current continuous execution position:
 - completed through Stage 35500;
 - next natural stage: 35501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 35501→36000 unified execution → Release facts — 2026-09-20
+
+Completed stages 35501–36000.
+
+Implemented:
+- Asun.Platform.PcbReleaseIntegration;
+- PcbExecutionReleaseProjection and independent validation;
+- reuse of Release Core manifest/readiness authority;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 36000;
+- next natural stage: 36001;
+- global one-million-stage horizon remains 2501–1002500.
