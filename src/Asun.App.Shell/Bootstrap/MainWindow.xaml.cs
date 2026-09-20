@@ -66,6 +66,7 @@ public partial class MainWindow : System.Windows.Window
             {
                 RefreshWorkspaceStatus();
                 RefreshAcquisitionStatus();
+                RefreshHomeStatus();
                 RefreshCommandAvailability();
                 RefreshResultStatus();
             }));
@@ -187,6 +188,11 @@ public partial class MainWindow : System.Windows.Window
 
     private void ApplyWorkspaceView(ClientWorkspaceKind workspace)
     {
+        HomeWorkspace.Visibility =
+            workspace==ClientWorkspaceKind.Home
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+
         ProgramWorkspace.Visibility =
             workspace==ClientWorkspaceKind.Program
                 ? System.Windows.Visibility.Visible
@@ -386,6 +392,7 @@ public partial class MainWindow : System.Windows.Window
         RefreshWorkspaceStatus();
         RefreshProgramStatus();
         RefreshAcquisitionStatus();
+        RefreshHomeStatus();
         RefreshResultStatus();
         RefreshRunHistoryStatus();
         RefreshRoiSurface();
@@ -664,6 +671,17 @@ public partial class MainWindow : System.Windows.Window
 
         if(_client.SelectedHistoryOrdinal is long selected)
             RunHistoryList.SelectedItem=items.FirstOrDefault(item=>item.Ordinal==selected);
+    }
+
+    private void RefreshHomeStatus()
+    {
+        var home=ClientHomePresentationRuntime.Create(_client.Capture());
+        HomeProgramStatus.Text=$"Program: {home.ProgramStatus}";
+        HomeAcquisitionStatus.Text=$"Acquisition: {home.AcquisitionStatus}";
+        HomeProductionStatus.Text=$"Production: {home.ProductionStatus}";
+        HomeQualityStatus.Text=$"Quality: {home.QualityStatus}";
+        HomeResultsStatus.Text=$"Results: {home.ResultsStatus}";
+        HomeFingerprint.Text=$"Overview: {home.Fingerprint[..12]}...";
     }
 
     private void RefreshWorkspaceStatus()
