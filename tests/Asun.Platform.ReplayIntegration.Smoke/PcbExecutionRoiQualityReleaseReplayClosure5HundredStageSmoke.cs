@@ -146,9 +146,9 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
                       !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
-        if(round!=100)
-            throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
+        if(round==100)
+            return Task.CompletedTask;
 
-        return Task.CompletedTask;
+        throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
     }
 }
