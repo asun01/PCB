@@ -151,7 +151,7 @@ public static class ProductionExecutionReleaseCandidateAuditClosure4HundredStage
             definition,
             production);
 
-        var badPath=manifest with {Artifacts=new[]{new ReleaseArtifact("release/changed",manifest.Artifacts[0].Sha256,manifest.Artifacts[0].Size)}};
+        var badPath=manifest with {Artifacts=new[]{new ReleaseArtifact("release/changed",manifest.Artifacts[0].Sha256,manifest.Artifacts[0].ByteLength)}};
 var badReady=closure with {ReleaseReady=!closure.ReleaseReady};
 for(var i=0;i<10;i++) Check(badPath.Artifacts[0].Path!=manifest.Artifacts[0].Path,"Changed logical artifact path should be observable.");
 for(var i=0;i<10;i++) Check(badPath.Fingerprint!=manifest.Fingerprint,"Changed artifact source should alter manifest identity.");
