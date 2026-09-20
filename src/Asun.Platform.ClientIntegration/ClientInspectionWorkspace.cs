@@ -279,6 +279,11 @@ public sealed class ClientInspectionWorkspace : IDisposable
         if(!_acquisition.TryGetSource(out var source))
             throw new InvalidOperationException("An Acquisition source must be bound before Production execution.");
 
+        _replay=null;
+        _release=null;
+        _quality.Clear();
+        _selectedHistoryOrdinal=null;
+
         var report=await _production.StartAsync(source,cancellationToken);
 
         _roi.BindProductionReport(report);
@@ -396,9 +401,11 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _program.Reset();
+        _program.Reset();
         _production.Reset();
         _roi.Reset();
         _quality.Clear();
+        _acquisition.Unbind();
         _replay=null;
         _release=null;
         _selectedHistoryOrdinal=null;
