@@ -99,9 +99,7 @@ public static class ProductionRoiRenderReplayContextRuntime
     private static string CreateRenderFingerprint(
         IReadOnlyList<ProductionRenderReplayFrameIntegrity> frames)
     {
-        var canonical=string.Join(
-            "
-",
+        var canonical=string.Join("\n",
             frames.OrderBy(frame=>frame.Sequence)
                 .Select(frame=>$"{frame.Sequence}|{frame.ProductionInputFingerprint}|{frame.RenderFingerprint}"));
         return Hash(canonical);
