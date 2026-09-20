@@ -26,6 +26,12 @@ await ProductionRoiMeasurementQualityContext2HundredStageSmoke.RunAsync(Check);
 await ProductionRoiMeasurementQualityContext3HundredStageSmoke.RunAsync(Check);
 await ProductionRoiMeasurementQualityContext4HundredStageSmoke.RunAsync(Check);
 await ProductionRoiMeasurementQualityContext5HundredStageSmoke.RunAsync(Check);
+await ProductionRoiQualityEvidenceReplayContext1HundredStageSmoke.RunAsync(Check);
+await ProductionRoiQualityEvidenceReplayContext2HundredStageSmoke.RunAsync(Check);
+await ProductionRoiQualityEvidenceReplayContext3HundredStageSmoke.RunAsync(Check);
+await ProductionRoiQualityEvidenceReplayContext4HundredStageSmoke.RunAsync(Check);
+await ProductionRoiQualityEvidenceReplayContext5HundredStageSmoke.RunAsync(Check);
+
 
 
 
