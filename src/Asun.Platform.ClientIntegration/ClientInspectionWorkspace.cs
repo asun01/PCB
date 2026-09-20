@@ -10,7 +10,11 @@ public sealed record ClientInspectionWorkspaceSnapshot(
     ClientRoiInteractionSnapshot? Roi,
     ClientProductionReplaySnapshot? Replay,
     ClientReleaseProjection? Release,
-    ClientProductionRunHistorySnapshot History);
+    ClientProductionRunHistorySnapshot History)
+{
+    public bool CanUndoRoi { get; init; }
+    public bool CanRedoRoi { get; init; }
+}
 
 public sealed class ClientInspectionWorkspace : IDisposable
 {
@@ -70,7 +74,11 @@ public sealed class ClientInspectionWorkspace : IDisposable
             roiSnapshot,
             _replay,
             _release,
-            _history.Capture());
+            _history.Capture())
+        {
+            CanUndoRoi=_roi.Document.CanUndo,
+            CanRedoRoi=_roi.Document.CanRedo
+        };
     }
 
     public void Load(ProductionSessionDefinition definition)
