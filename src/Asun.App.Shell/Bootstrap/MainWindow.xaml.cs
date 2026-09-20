@@ -29,6 +29,7 @@ public partial class MainWindow : System.Windows.Window
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
 
         RefreshWorkspaceStatus();
+        RefreshProgramStatus();
         RefreshRunHistoryStatus();
         RefreshCommandAvailability();
     }
@@ -74,6 +75,7 @@ public partial class MainWindow : System.Windows.Window
             ReleaseStatus.Text="Release: not evaluated.";
             DiagnosticStatus.Text="Diagnostic: not evaluated.";
             RefreshWorkspaceStatus();
+            RefreshProgramStatus();
             RefreshRoiSurface();
         }
         catch(Exception exception)
@@ -82,6 +84,7 @@ public partial class MainWindow : System.Windows.Window
             ReleaseStatus.Text="Release: not evaluated.";
             RefreshDiagnosticStatus();
             RefreshWorkspaceStatus();
+            RefreshProgramStatus();
         }
     }
 
