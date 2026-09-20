@@ -2701,3 +2701,13 @@ Next executable stage: **43,501**
 - 46501–47000: **Production → Simulation replay descriptor**.
 - Acceptance: five 100-stage ledgers, five registered exact-100-round Smokes, integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 47500 — 2026-09-20
+
+- Completed boundary: **47,500**
+- Next executable stage: **47,501**
+- Active macro horizon: **41,501–141,500**
+- 47001–47500: **Render → Evidence replay descriptor**.
+- Acceptance: five 100-stage ledgers, five registered exact-100-round Smokes, integration checkpoint.
+- Smoke static audits were repaired where loop-group gaps were detected; all five new Smokes now meet the structural acceptance matrix.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
