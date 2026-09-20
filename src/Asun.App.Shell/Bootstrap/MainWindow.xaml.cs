@@ -27,6 +27,7 @@ public partial class MainWindow : System.Windows.Window
         RefreshWorkspaceStatus();
         RefreshProgramStatus();
         RefreshResultStatus();
+        RefreshQualityStatus();
         RefreshRunHistoryStatus();
         ApplyWorkspaceView(_workspaceRuntime.Current.Workspace);
         RefreshCommandAvailability();
@@ -435,8 +436,24 @@ public partial class MainWindow : System.Windows.Window
         ResultSession.Text=$"{result.SessionText} · {result.FrameCount} frame(s)";
         ResultReplay.Text=result.ReplayText;
         ResultRelease.Text=result.ReleaseText;
+        RefreshQualityStatus();
+    }
+
+    private void RefreshQualityStatus()
+    {
+        var quality=_client.Quality;
+
+        if(!quality.IsBound)
+        {
+            QualityStatus.Text=
+                "Quality Run: not attached. Quality facts remain outside this client projection until an authoritative Quality run is available.";
+            QualityFindingList.ItemsSource=Array.Empty<ClientQualityFindingDisplayItem>();
+            return;
+        }
+
         QualityStatus.Text=
-            "Quality Run: not attached. Quality facts remain outside this client projection until an authoritative Quality run is available.";
+            $"Quality Run {quality.RunId} · Results {quality.ResultCount} · Findings {quality.FindingCount} · Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount} · Evidence links {quality.EvidenceLinkCount}.";
+        QualityFindingList.ItemsSource=quality.Findings;
     }
 
     private void RefreshDiagnosticStatus(
