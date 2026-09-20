@@ -29,7 +29,7 @@ public static class ClientCommandAvailabilityRuntime
                 new(false,false,true,false,false,false,false,false),
 
             ClientExecutionStatus.Completed =>
-                new(true,true,false,true,true,true,snapshot.Roi?.RoiCount>0,false),
+                new(true,true,false,true,true,true,snapshot.CanUndoRoi,snapshot.CanRedoRoi),
 
             ClientExecutionStatus.Cancelled =>
                 new(true,true,false,true,false,false,false,false),
