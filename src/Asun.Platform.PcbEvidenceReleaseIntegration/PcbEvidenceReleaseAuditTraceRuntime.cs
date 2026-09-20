@@ -136,6 +136,70 @@ public static class PcbEvidenceReleaseAuditTraceRuntime
         PcbAuditReleaseReplayDescriptor auditReplay)=>
         Validate(trace,projection,auditReplay).Count==0;
 
+    public static IReadOnlyList<string> ValidateStructure(
+        PcbEvidenceReleaseAuditTrace trace)
+    {
+        ArgumentNullException.ThrowIfNull(trace);
+
+        var errors=new List<string>();
+        try
+        {
+            ValidateCapacity(trace.Capacity);
+        }
+        catch(ArgumentOutOfRangeException)
+        {
+            errors.Add("Trace capacity must be between 1 and 64.");
+        }
+
+        if(trace.Entries.Count==0)
+            errors.Add("Evidence release audit trace must contain at least one entry.");
+        if(trace.Entries.Count>trace.Capacity)
+            errors.Add("Evidence release audit trace exceeds capacity.");
+
+        for(var i=0;i<trace.Entries.Count;i++)
+        {
+            var entry=trace.Entries[i];
+
+            if(entry.Sequence!=i+1)
+                errors.Add("Trace sequences must be consecutive starting at one.");
+            if(!IsLowerHex(entry.EvidenceReleaseFactFingerprint))
+                errors.Add("Trace evidence fact fingerprint is malformed.");
+            if(!IsLowerHex(entry.ReleaseManifestFingerprint))
+                errors.Add("Trace Release manifest fingerprint is malformed.");
+            if(!IsLowerHex(entry.AuditTransitionFingerprint))
+                errors.Add("Trace audit transition fingerprint is malformed.");
+            if(entry.QualityRunId==Guid.Empty)
+                errors.Add("Trace Quality run identity is invalid.");
+            if(entry.RequestedCount<0 || entry.FoundCount<0 || entry.MissingCount<0)
+                errors.Add("Trace evidence counts must be non-negative.");
+            if(entry.RequestedCount!=entry.FoundCount+entry.MissingCount)
+                errors.Add("Trace evidence counts must reconcile.");
+            if(entry.AllRequestedResolved!=(entry.MissingCount==0))
+                errors.Add("Trace resolution state must match missing count.");
+        }
+
+        if(trace.Entries.Count>0)
+        {
+            var manifest=trace.Entries[0].ReleaseManifestFingerprint;
+            if(trace.ReleaseManifestFingerprint!=manifest)
+                errors.Add("Trace manifest identity must match its entries.");
+            if(trace.Entries.Any(entry=>entry.ReleaseManifestFingerprint!=manifest))
+                errors.Add("All trace entries must use one Release manifest fingerprint.");
+        }
+
+        if(trace.Fingerprint.Length!=64 || !IsLowerHex(trace.Fingerprint))
+            errors.Add("Trace fingerprint must be 64 lowercase hexadecimal characters.");
+
+        if(errors.Count==0 &&
+           CreateFingerprint(trace.Capacity,trace.Entries,trace.ReleaseManifestFingerprint)!=trace.Fingerprint)
+            errors.Add("Trace fingerprint does not match canonical content.");
+
+        return errors;
+    }
+
+    public static bool IsStructurallyValid(PcbEvidenceReleaseAuditTrace trace)=>
+        ValidateStructure(trace).Count==0;
+
     private static PcbEvidenceReleaseAuditTrace CreateSnapshot(
         int capacity,
         IReadOnlyList<PcbEvidenceReleaseAuditTraceEntry> entries)
