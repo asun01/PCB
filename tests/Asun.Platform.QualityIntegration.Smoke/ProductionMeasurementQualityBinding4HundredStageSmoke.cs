@@ -52,6 +52,8 @@ for(var i=0;i<10;i++) Check(ProductionMeasurementQualityBindingRuntime.IsValid(f
 for(var i=0;i<10;i++) Check(binding.Sequence==fact.Sequence,"Baseline sequence should remain stable.");
 for(var i=0;i<10;i++) Check(binding.QualitySnapshotId==qualityEvaluation.Result.SnapshotId,"Baseline Quality snapshot should remain stable.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.All(Uri.IsHexDigit),"Baseline fingerprint should be hexadecimal.");
+for(var i=0;i<10;i++) Check(binding.CalibrationFingerprint==observation.CalibrationFingerprint,"Baseline calibration identity should remain fixed.");
+
         assert(round==100,$"ProductionMeasurementQualityBinding4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
