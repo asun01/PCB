@@ -33,6 +33,7 @@ for(var i=0;i<10;i++) Check(changedBinding.EvidenceFingerprint==binding.Evidence
 for(var i=0;i<10;i++) Check(binding.ComponentId=="C1","Original component identity should remain stable.");
 for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Create(measurementEvidenceBinding,manifest).Fingerprint==binding.Fingerprint,"Original binding creation should remain deterministic.");
 for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,binding),"Final baseline validation should remain clean.");
+for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Original release readiness should remain stable.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceReleaseBinding5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
