@@ -99,8 +99,6 @@ public sealed class ClientProductionWorkspace
 
     public event Action<ClientWorkspaceSnapshot>? Changed;
 
-    public event Action<ClientWorkspaceSnapshot>? Changed;
-
     private void Publish() => Changed?.Invoke(_snapshot);
 
     public void Load(ProductionSessionDefinition definition)
@@ -203,7 +201,10 @@ public sealed class ClientProductionWorkspace
         {
             FramesProcessed=progress.CompletedFrames,
             TargetFrameCount=progress.TotalFrames,
-            LastSequence=progress.LastSequence
+            LastSequence=progress.LastSequence,
+            LastFrameWidth=progress.Width,
+            LastFrameHeight=progress.Height,
+            LastPixelFormat=progress.PixelFormat
         };
         PublishChanged();
         Publish();
