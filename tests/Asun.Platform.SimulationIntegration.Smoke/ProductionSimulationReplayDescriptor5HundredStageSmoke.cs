@@ -31,6 +31,8 @@ public static class ProductionSimulationReplayDescriptor5HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.IsValid(production,reversed,equivalent,equivalentDescriptor),"Reordered simulation replay should validate.");
         for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint==ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).DescriptorFingerprint,"Original descriptor should remain deterministic.");
         for(var i=0;i<10;i++) Check(descriptor.BindingFingerprint.Length==64,"Binding fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).ProductionSessionId==descriptor.ProductionSessionId,"Recreated replay descriptor should preserve the production session identity.");
+
         assert(round==100,$"ProductionSimulationReplayDescriptor5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
