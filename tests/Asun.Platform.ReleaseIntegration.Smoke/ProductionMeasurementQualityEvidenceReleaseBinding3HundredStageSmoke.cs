@@ -32,6 +32,8 @@ for(var i=0;i<10;i++) Check(binding.Sequence==measurementEvidenceBinding.Sequenc
 for(var i=0;i<10;i++) Check(binding.QualityResultId==measurementEvidenceBinding.QualityResultId,"Baseline Quality identity should remain stable.");
 for(var i=0;i<10;i++) Check(binding.ComponentId=="C1","Baseline component identity should remain stable.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Baseline fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline Manifest identity should remain stable.");
+for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint==measurementEvidenceBinding.EvidenceFingerprint,"Baseline Evidence identity should remain stable.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceReleaseBinding3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
