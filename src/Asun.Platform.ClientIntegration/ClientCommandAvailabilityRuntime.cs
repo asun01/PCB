@@ -35,7 +35,7 @@ public static class ClientCommandAvailabilityRuntime
                 new(true,true,false,true,false,false,false,false),
 
             ClientExecutionStatus.Failed =>
-                new(true,true,false,true,false,false),
+                new(true,true,false,true,false,false,false,false),
 
             _ =>
                 new(false,false,false,false,false,false,false,false)
