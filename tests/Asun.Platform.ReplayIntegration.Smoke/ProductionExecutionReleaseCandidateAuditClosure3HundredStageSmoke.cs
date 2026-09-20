@@ -159,7 +159,7 @@ for(var i=0;i<10;i++) Check(ProductionExecutionReleaseCandidateAuditClosureRunti
 for(var i=0;i<10;i++) Check(ProductionExecutionReleaseCandidateAuditClosureRuntime.Validate(badAudit,manifest,definition,production,closure).Count>0,"Audit session tampering should emit diagnostics.");
 for(var i=0;i<10;i++) Check(closure.ProductionSessionId==production.SessionId,"Baseline session identity remains stable.");
 for(var i=0;i<10;i++) Check(closure.AuditClosureFingerprint==auditClosure.Fingerprint,"Baseline audit identity remains stable.");
-for(var i=0;i<10;i++) Check(manifest.Identity.Name=="Asun PCB Release Candidate","Baseline Release identity remains stable.");
+for(var i=0;i<10;i++) Check(manifest.Identity.ProductName=="Asun PCB Release Candidate","Baseline Release identity remains stable.");
 for(var i=0;i<10;i++) Check(manifest.Artifacts[0].Path=="release/audit","Baseline artifact path remains stable.");
 for(var i=0;i<10;i++) Check(ProductionReleaseCandidateValidationRuntime.IsValid(manifest,definition,production),"Baseline Release candidate remains valid.");
 for(var i=0;i<10;i++) Check(ProductionExecutionReleaseCandidateAuditClosureRuntime.IsValid(auditClosure,manifest,definition,production,closure),"Baseline audit remains valid.");
