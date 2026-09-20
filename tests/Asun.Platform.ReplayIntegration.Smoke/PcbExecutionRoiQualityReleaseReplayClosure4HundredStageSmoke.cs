@@ -43,9 +43,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration1=0;iteration1<10;iteration1++)
         {
@@ -54,9 +52,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration2=0;iteration2<10;iteration2++)
         {
@@ -65,9 +61,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration3=0;iteration3<10;iteration3++)
         {
@@ -76,9 +70,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration4=0;iteration4<10;iteration4++)
         {
@@ -87,9 +79,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration5=0;iteration5<10;iteration5++)
         {
@@ -98,9 +88,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration6=0;iteration6<10;iteration6++)
         {
@@ -109,9 +97,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration7=0;iteration7<10;iteration7++)
         {
@@ -120,9 +106,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration8=0;iteration8<10;iteration8++)
         {
@@ -131,9 +115,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         for(var iteration9=0;iteration9<10;iteration9++)
         {
@@ -142,9 +124,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId);
                 var closure=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
-                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) &&
-                      round<=100,
-                      "ROI binding identity tamper must be rejected");
+                Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
         if(round!=100)
             throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
