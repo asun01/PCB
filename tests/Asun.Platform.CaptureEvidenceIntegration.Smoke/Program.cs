@@ -7,6 +7,11 @@ void Check(bool condition,string message)
 }
 
 await ProductionCaptureEvidenceProjectionHundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceCanonical1HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceCanonical2HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceCanonical3HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceCanonical4HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceCanonical5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
