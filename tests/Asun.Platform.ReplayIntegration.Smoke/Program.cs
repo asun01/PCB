@@ -23,3 +23,9 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.ReplayIntegration smoke tests passed.");
 return 0;
+
+await ProductionQualityEvidenceReleaseReplayBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionQualityEvidenceReleaseReplayBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionQualityEvidenceReleaseReplayBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionQualityEvidenceReleaseReplayBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionQualityEvidenceReleaseReplayBinding5HundredStageSmoke.RunAsync(Check);
