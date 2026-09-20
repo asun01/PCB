@@ -38,7 +38,12 @@ public partial class MainWindow : System.Windows.Window
     {
         try
         {
-            _client.Load(ClientSimulationSessionFactory.CreateDefinition());
+            var definition=ClientSimulationSessionFactory.CreateDefinition();
+            _client.LoadProgram(
+                ClientSimulationSessionFactory.CreateProgram(),
+                ClientSimulationSessionFactory.CreatePipeline(),
+                definition.SessionId,
+                definition.FrameCount);
             SimulationStatus.Text="Simulation session loaded.";
             RefreshCommandAvailability();
             ReleaseStatus.Text="Release: not evaluated.";
@@ -118,7 +123,11 @@ public partial class MainWindow : System.Windows.Window
         try
         {
             var definition=ClientSimulationSessionFactory.CreateDefinition();
-            _client.Load(definition);
+            _client.LoadProgram(
+                ClientSimulationSessionFactory.CreateProgram(),
+                ClientSimulationSessionFactory.CreatePipeline(),
+                definition.SessionId,
+                definition.FrameCount);
             RefreshWorkspaceStatus();
             RefreshCommandAvailability();
 
