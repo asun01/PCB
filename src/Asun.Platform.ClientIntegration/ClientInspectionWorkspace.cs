@@ -27,6 +27,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private readonly ClientProductionRunHistory _history;
     private readonly ClientRoiInteractionWorkspace _roi;
     private readonly ClientQualityWorkspace _quality;
+    private readonly ClientAcquisitionWorkspace _acquisition;
 
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
@@ -45,6 +46,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _history=new ClientProductionRunHistory(historyCapacity);
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
         _quality=new ClientQualityWorkspace();
+        _acquisition=new ClientAcquisitionWorkspace();
         _production.Changed+=OnProductionChanged;
     }
 
@@ -141,6 +143,23 @@ public sealed class ClientInspectionWorkspace : IDisposable
         }
     }
 
+    public ClientAcquisitionWorkspaceSnapshot Acquisition
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _acquisition.Snapshot;
+        }
+    }
+
+    public void BindAcquisition(
+        IFrameSource source,
+        ClientAcquisitionDescriptor descriptor)
+    {
+        ThrowIfDisposed();
+        _acquisition.Bind(source,descriptor);
+    }
+
     public void BindQualityRun(Asun.Domain.Quality.QualityInspectionRun run)
     {
         ThrowIfDisposed();
@@ -160,18 +179,20 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ThrowIfDisposed();
         _production.Load(definition);
         _quality.Clear();
+        _acquisition.Unbind();
         _replay=null;
         _release=null;
     }
 
     public async ValueTask<ProductionSessionReport> ExecuteAsync(
-        IFrameSource source,
         ReleaseManifest releaseManifest,
         CancellationToken cancellationToken=default)
     {
         ThrowIfDisposed();
-        ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(releaseManifest);
+
+        if(!_acquisition.TryGetSource(out var source))
+            throw new InvalidOperationException("An Acquisition source must be bound before Production execution.");
 
         var report=await _production.StartAsync(source,cancellationToken);
 
@@ -185,6 +206,22 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
         _history.Append(_replay,_release);
         return report;
+    }
+
+    public ValueTask<ProductionSessionReport> ExecuteAsync(
+        IFrameSource source,
+        ReleaseManifest releaseManifest,
+        CancellationToken cancellationToken=default)
+    {
+        ThrowIfDisposed();
+        _acquisition.Bind(
+            source,
+            new ClientAcquisitionDescriptor(
+                "runtime-source",
+                "Bound runtime source",
+                false));
+
+        return ExecuteAsync(releaseManifest,cancellationToken);
     }
 
     public ClientRoiInteractionSnapshot CaptureRoi()
