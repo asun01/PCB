@@ -8,7 +8,10 @@ public sealed record ClientCommandAvailability(
     bool CanSelectRoi,
     bool CanCreateRoi,
     bool CanUndoRoi,
-    bool CanRedoRoi);
+    bool CanRedoRoi)
+{
+    public bool CanPreviewAcquisition { get; init; }
+};
 
 public static class ClientCommandAvailabilityRuntime
 {
@@ -17,7 +20,7 @@ public static class ClientCommandAvailabilityRuntime
     {
         ArgumentNullException.ThrowIfNull(snapshot);
 
-        return snapshot.Production.Status switch
+        var result=snapshot.Production.Status switch
         {
             ClientExecutionStatus.Idle =>
                 new(true,false,false,false,false,false,false,false),
@@ -39,6 +42,13 @@ public static class ClientCommandAvailabilityRuntime
 
             _ =>
                 new(false,false,false,false,false,false,false,false)
+        };
+
+        return result with
+        {
+            CanPreviewAcquisition=
+                snapshot.Acquisition.State==ClientAcquisitionState.Ready &&
+                snapshot.Acquisition.CanCapture
         };
     }
 }
