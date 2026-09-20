@@ -1832,3 +1832,19 @@ Current continuous execution position:
 - completed through Stage 36000;
 - next natural stage: 36001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 36001→36500 unified execution → Evidence catalog resolution — 2026-09-20
+
+Completed stages 36001–36500.
+
+Implemented:
+- Asun.Platform.PcbEvidenceResolutionIntegration;
+- PcbExecutionEvidenceResolution and independent validation;
+- real catalog resolution through EvidenceReferenceResolutionRuntime;
+- exact 100-round Smoke using real EvidenceCatalogSnapshotRuntime data.
+
+Current continuous execution position:
+- completed through Stage 36500;
+- next natural stage: 36501;
+- global one-million-stage horizon remains 2501–1002500.
