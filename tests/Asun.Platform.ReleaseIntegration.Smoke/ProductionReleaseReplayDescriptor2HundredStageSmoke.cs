@@ -26,6 +26,8 @@ public static class ProductionReleaseReplayDescriptor2HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.IsValid(manifest,descriptor),"Baseline descriptor should remain valid.");
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.Create(manifest).DescriptorFingerprint==descriptor.DescriptorFingerprint,"Baseline descriptor should remain deterministic.");
         for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.Length==64,"Baseline descriptor fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.Create(manifest).DescriptorFingerprint==descriptor.DescriptorFingerprint,"Recreated release descriptor should preserve the canonical fingerprint.");
+
         assert(round==100,$"ProductionReleaseReplayDescriptor2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
