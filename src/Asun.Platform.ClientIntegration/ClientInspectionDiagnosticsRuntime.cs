@@ -21,6 +21,7 @@ public static class ClientInspectionDiagnosticsRuntime
 
         ValidateProductionState(snapshot,errors,warnings);
         ValidateProgramAlignment(snapshot,errors);
+        ValidateAcquisitionAlignment(snapshot,errors);
         ValidateReleaseAndReplay(snapshot,errors);
         ValidateRoi(snapshot,errors);
         ValidateHistory(snapshot.History,errors);
@@ -110,6 +111,30 @@ public static class ClientInspectionDiagnosticsRuntime
         if(snapshot.Production.Status!=ClientExecutionStatus.Idle &&
            snapshot.Program.Status!=ClientProgramLoadStatus.Ready)
             errors.Add("A non-idle Production workspace requires a Ready Program projection.");
+    }
+
+    private static void ValidateAcquisitionAlignment(
+        ClientInspectionWorkspaceSnapshot snapshot,
+        List<string> errors)
+    {
+        var acquisition=snapshot.Acquisition;
+
+        if(snapshot.Production.Status is
+            ClientExecutionStatus.Ready or
+            ClientExecutionStatus.Running or
+            ClientExecutionStatus.Completed)
+        {
+            if(!acquisition.CanCapture || acquisition.Descriptor is null)
+                errors.Add("Ready/running/completed Production client state must have a bound Acquisition source.");
+        }
+
+        if(acquisition.State==ClientAcquisitionState.Ready &&
+           !acquisition.CanCapture)
+            errors.Add("Ready Acquisition state must permit capture.");
+
+        if(acquisition.State==ClientAcquisitionState.Unbound &&
+           acquisition.Descriptor is not null)
+            errors.Add("Unbound Acquisition state cannot carry a descriptor.");
     }
 
     private static void ValidateReleaseAndReplay(
