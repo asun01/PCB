@@ -8,6 +8,7 @@ namespace Asun.App.Shell.Bootstrap;
 public partial class MainWindow : System.Windows.Window
 {
     private readonly ClientInspectionWorkspace _client;
+    private readonly ClientWorkspaceRuntime _workspaceRuntime;
     private WpfRoiInputAdapter _roiInputAdapter;
 
     public MainWindow()
@@ -18,6 +19,12 @@ public partial class MainWindow : System.Windows.Window
             new Vector2(100,100),
             new Vector2(1,1),
             historyCapacity:20);
+
+        _workspaceRuntime=new ClientWorkspaceRuntime();
+        _workspaceRuntime.Changed+=selection =>
+        {
+            WorkspaceNavigationStatus.Text=$"Workspace: {selection.Workspace}";
+        };
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
 
         RefreshWorkspaceStatus();
@@ -30,7 +37,24 @@ public partial class MainWindow : System.Windows.Window
         System.EventArgs e)
     {
         _client.Dispose();
+        _workspaceRuntime.Reset();
     }
+
+
+    private void WorkspaceHomeButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
+        _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Home);
+
+    private void WorkspaceInspectionButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
+        _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Inspection);
+
+    private void WorkspaceProgramButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
+        _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Program);
+
+    private void WorkspaceQualityButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
+        _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Quality);
+
+    private void WorkspaceResultsButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
+        _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Results);
 
     private void LoadSimulationButton_Click(
         object sender,
