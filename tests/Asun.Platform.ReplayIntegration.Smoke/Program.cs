@@ -39,6 +39,12 @@ await ProductionMeasurementQualityEvidenceReleaseReplayDescriptor4HundredStageSm
 await ProductionMeasurementQualityEvidenceReleaseReplayDescriptor5HundredStageSmoke.RunAsync(Check);
 
 
+await ProductionExecutionProvenanceAuditClosure1HundredStageSmoke.RunAsync(Check);
+await ProductionExecutionProvenanceAuditClosure2HundredStageSmoke.RunAsync(Check);
+await ProductionExecutionProvenanceAuditClosure3HundredStageSmoke.RunAsync(Check);
+await ProductionExecutionProvenanceAuditClosure4HundredStageSmoke.RunAsync(Check);
+await ProductionExecutionProvenanceAuditClosure5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
