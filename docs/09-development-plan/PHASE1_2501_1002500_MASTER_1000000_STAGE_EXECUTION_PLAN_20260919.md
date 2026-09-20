@@ -2783,3 +2783,17 @@ Next executable stage: **43,501**
 - 51001–51500: **Metrology → PCB → Production → Quality → Evidence → Release**.
 - Acceptance: five 100-stage ledgers, five registered exact-100-round Smokes, integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
+
+
+## Live execution synchronization — Stage 52000 — 2026-09-20
+
+- Completed boundary: **52,000**
+- Next executable stage: **52,001**
+- Active macro horizon: **41,501–141,500**
+- 51501–52000: **Metrology → PCB → Production → Quality → opaque Evidence → Release → Replay descriptor**.
+- Acceptance: five 100-stage ledgers, five registered exact-100-round Smokes, and integration checkpoint `PHASE1_51501_52000_INTEGRATION_CHECKPOINT_20260920.md`.
+- ReplayIntegration Smoke registration was repaired to remove unreachable suite execution after `return 0`.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+Current completed boundary: **52,000**
+Next executable stage: **52,001**
