@@ -233,6 +233,7 @@
                         x:Name="RunHistoryList"
                         Margin="0,8,0,0"
                         Height="92"
+                        SelectionChanged="RunHistoryList_SelectionChanged"
                         AutomationProperties.AutomationId="Shell.RunHistoryList">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
