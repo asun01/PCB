@@ -48,6 +48,12 @@ await ClientInspectionWorkspaceControl3HundredStageSmoke.RunAsync(Check);
 await ClientInspectionWorkspaceControl4HundredStageSmoke.RunAsync(Check);
 await ClientInspectionWorkspaceControl5HundredStageSmoke.RunAsync(Check);
 
+await ClientInspectionDiagnostics1HundredStageSmoke.RunAsync(Check);
+await ClientInspectionDiagnostics2HundredStageSmoke.RunAsync(Check);
+await ClientInspectionDiagnostics3HundredStageSmoke.RunAsync(Check);
+await ClientInspectionDiagnostics4HundredStageSmoke.RunAsync(Check);
+await ClientInspectionDiagnostics5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
