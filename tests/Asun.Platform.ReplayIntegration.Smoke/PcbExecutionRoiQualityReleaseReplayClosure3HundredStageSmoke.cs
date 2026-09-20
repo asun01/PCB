@@ -106,9 +106,9 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure3HundredStageSmoke
                 var release=QualityRelease(binding.QualityRunId,ready:false);
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
-        if(round!=100)
-            throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
+        if(round==100)
+            return Task.CompletedTask;
 
-        return Task.CompletedTask;
+        throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
     }
 }
