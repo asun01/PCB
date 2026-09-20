@@ -1,26 +1,11 @@
 # Integration Checkpoint — Stage 73,501
 
-## Product chain
+Production Runtime → Client Production Workspace → Client Inspection Workspace.
 
-Production Runtime → Client Production Workspace → Client Inspection Workspace
+ProductionSessionProgress now reaches the client projection with completed frame count, definition target count, last sequence, frame dimensions, and pixel format. Running progress is preserved through Completed, Cancelled, and Failed; Reset returns the projection to Idle with cleared progress.
 
-## Closed behavior
+Acceptance smoke:
+ProductionSessionProgressAcceptanceSmoke.Run100Stages
+contains ten loop groups, explicit round==100 guards, ten concrete Check(...) call sites, balanced delimiters, and no TODO/NotImplementedException.
 
-`ProductionSessionProgress` now reaches the client projection with:
-- completed frame count;
-- definition target frame count;
-- last frame sequence;
-- last frame dimensions;
-- last pixel format.
-
-The client state machine preserves these facts through Running → Completed, and through partial progress → Cancelled/Failed. Reset returns the projection to Idle with zeroed progress.
-
-## Smoke
-
-`ProductionSessionProgressAcceptanceSmoke.Run100Stages()` contains ten loop groups, explicit `round==100` guards, ten concrete `Check(...)` call sites, balanced delimiters, and no TODO/`NotImplementedException`.
-
-The smoke is source-level acceptance code. It is not represented as executed test evidence.
-
-## External gates
-
-Per `docs/00-baseline/OPEN-GATES.md`, repository authority, exact schema contracts, DevExpress environment, HALCON environment, hardware SDK contracts, and automated test framework remain gated where not verified. No implementation claim crosses those gates.
+No build, CI, hardware, HALCON, or DevExpress success is claimed without authoritative evidence. Open external/contract gates remain governed by docs/00-baseline/OPEN-GATES.md.
