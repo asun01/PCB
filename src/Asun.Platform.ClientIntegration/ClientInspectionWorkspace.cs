@@ -32,6 +32,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private ClientReleaseProjection? _release;
     private int _disposed;
 
+    public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
+
     public ClientInspectionWorkspace(
         Vector2 imageSize,
         Vector2 viewportSize,
@@ -43,6 +45,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _history=new ClientProductionRunHistory(historyCapacity);
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
         _quality=new ClientQualityWorkspace();
+        _production.Changed+=OnProductionChanged;
     }
 
     public void CancelExecution()
@@ -274,8 +277,12 @@ public sealed class ClientInspectionWorkspace : IDisposable
         if(Interlocked.Exchange(ref _disposed,1)!=0)
             return;
 
+        _production.Changed-=OnProductionChanged;
         _roi.Dispose();
     }
+
+    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot) =>
+        ProductionChanged?.Invoke(snapshot);
 
     private void ThrowIfDisposed() =>
         ObjectDisposedException.ThrowIf(_disposed!=0,this);
