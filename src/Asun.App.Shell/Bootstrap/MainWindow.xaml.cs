@@ -751,5 +751,9 @@ public partial class MainWindow : System.Windows.Window
             ClientExecutionStatus.Failed=>$"Failed — {snapshot.LastError}",
             _=>"Unknown client workspace state."
         };
+
+        var target=snapshot.TargetFrameCount;
+        ExecutionProgress.Maximum=Math.Max(1,target);
+        ExecutionProgress.Value=Math.Clamp(snapshot.FramesProcessed,0,Math.Max(1,target));
     }
 }
