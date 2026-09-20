@@ -2629,3 +2629,10 @@ Closed 41501–42000 as Quality Finding → opaque Evidence resolution. Finding-
 
 Current completed boundary: **42,000**
 Next executable stage: **42,001**
+
+## Execution checkpoint: Stage 42500 — 2026-09-20
+
+Closed 42001–42500 as Pipeline replay → Release logical handoff. Pipeline replay identity and Release manifest identity are now joined through an explicit, persistence-neutral handoff with independent validation and tamper rejection. Five 100-stage ledgers and the 500-stage integration checkpoint are present.
+
+Current completed boundary: **42,500**
+Next executable stage: **42,501**
