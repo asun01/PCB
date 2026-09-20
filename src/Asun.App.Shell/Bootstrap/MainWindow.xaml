@@ -97,6 +97,15 @@
                         Content="Run Simulation"
                         AutomationProperties.AutomationId="Shell.RunSimulation" />
                     <Button
+                        x:Name="CancelSimulationButton"
+                        Margin="8,0,0,0"
+                        Width="110"
+                        Height="32"
+                        Click="CancelSimulationButton_Click"
+                        Content="Cancel"
+                        IsEnabled="False"
+                        AutomationProperties.AutomationId="Shell.CancelSimulation" />
+                    <Button
                         x:Name="ResetSessionButton"
                         Margin="8,0,0,0"
                         Width="130"
