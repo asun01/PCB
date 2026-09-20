@@ -22,16 +22,16 @@ public static class ProductionMeasurementQualityEvidenceReleaseBinding1HundredSt
             new ReleaseIdentity("Asun PCB",new Version(1,0,0),"stable"),
             new[]{new ReleaseArtifact("measurement/quality/evidence",new string('f',64),128)});
         var binding=ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Create(measurementEvidenceBinding,manifest);
-        for(var i=0;i<10;i++) Check(binding.Sequence==measurementEvidenceBinding.Sequence,"Release binding should preserve sequence.");
-for(var i=0;i<10;i++) Check(binding.QualityResultId==measurementEvidenceBinding.QualityResultId,"Release binding should preserve Quality result identity.");
-for(var i=0;i<10;i++) Check(binding.ComponentId==measurementEvidenceBinding.ComponentId,"Release binding should preserve component identity.");
-for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint==measurementEvidenceBinding.EvidenceFingerprint,"Release binding should preserve Evidence identity.");
-for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Release binding should preserve Release manifest identity.");
-for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Release binding should preserve factual readiness.");
-for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Release binding fingerprint should be fixed width.");
-for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,binding),"Canonical Release binding should validate.");
-for(var i=0;i<10;i++) Check(binding.Fingerprint.All(Uri.IsHexDigit),"Release binding fingerprint should be hexadecimal.");
-for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Create(measurementEvidenceBinding,manifest).Fingerprint==binding.Fingerprint,"Release binding creation should be deterministic.");
+        for(var i=0;i<10;i++) Check(binding.ProductionInputFingerprint==measurementEvidenceBinding.ProductionInputFingerprint,"Production input identity should be propagated.");
+for(var i=0;i<10;i++) Check(binding.Sequence==measurementEvidenceBinding.Sequence,"Sequence should be propagated.");
+for(var i=0;i<10;i++) Check(binding.QualityResultId==measurementEvidenceBinding.QualityResultId,"Quality result identity should be propagated.");
+for(var i=0;i<10;i++) Check(binding.ComponentId==measurementEvidenceBinding.ComponentId,"Component identity should be propagated.");
+for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint==measurementEvidenceBinding.EvidenceFingerprint,"Evidence identity should be propagated.");
+for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Manifest identity should be propagated.");
+for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Readiness should remain factual.");
+for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,binding),"Canonical binding should validate.");
+for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Binding fingerprint should be fixed width.");
+for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Create(measurementEvidenceBinding,manifest).Fingerprint==binding.Fingerprint,"Binding creation should be deterministic.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceReleaseBinding1HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
