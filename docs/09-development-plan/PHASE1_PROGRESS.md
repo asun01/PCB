@@ -2121,3 +2121,17 @@ No authoritative build/test/CI success is claimed.
 
 Current completed boundary: **46,500**
 Next executable stage: **46,501**
+
+
+### 46501→47000 Production → Simulation replay descriptor — 2026-09-20
+
+Completed stages 46501–47000 as five contiguous 100-stage acceptance blocks.
+
+Implemented `ProductionSimulationReplayDescriptorRuntime` to canonically project Production session identity, Production report fingerprint, frame count, Simulation replay binding fingerprint, and descriptor fingerprint. The descriptor rejects session/production/count/binding drift and malformed identity, while reordered Simulation observations remain equivalent through the canonical replay binding.
+
+Added and registered five exact 100-round Smokes and five stage ledgers plus the integration checkpoint.
+
+Static audit of the five new Smokes: all have 10 loop groups, 10 meaningful Check calls, `round==100`, balanced braces, and no TODO/NotImplementedException. No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **47,000**
+Next executable stage: **47,001**
