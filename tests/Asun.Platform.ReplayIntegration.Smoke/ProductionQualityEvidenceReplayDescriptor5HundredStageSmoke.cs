@@ -55,6 +55,8 @@ for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReplayDescriptorRuntime.IsE
 for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReplayDescriptorRuntime.IsValid(definition,production,qualityRun,reversedProjection,equivalentBundle,equivalent),"Reordered replay descriptor should validate.");
 for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint==ProductionQualityEvidenceReplayDescriptorRuntime.Create(definition,production,qualityRun,evidence,bundle).DescriptorFingerprint,"Original descriptor should remain deterministic.");
 for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.All(Uri.IsHexDigit),"Original descriptor fingerprint should remain hexadecimal.");
+for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReplayDescriptorRuntime.IsValid(definition,production,qualityRun,evidence,bundle,descriptor),"Final baseline descriptor validation should remain clean.");
+
         assert(round==100,$"ProductionQualityEvidenceReplayDescriptor5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
