@@ -203,6 +203,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         }
     }
 
+    public async ValueTask<ClientAcquisitionPreviewSnapshot> PreviewAcquisitionAsync(
+        CancellationToken cancellationToken=default)
+    {
+        ThrowIfDisposed();
+        var preview=await _acquisition.PreviewAsync(cancellationToken);
+        ProductionChanged?.Invoke(_production.Snapshot);
+        return preview;
+    }
+
     public bool BindAcquisitionSource(string sourceId)
     {
         ThrowIfDisposed();
