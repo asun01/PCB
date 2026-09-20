@@ -8,7 +8,10 @@ public sealed record ClientWorkspaceCommandRouting(
     bool CanResetSession,
     bool CanEditRoi,
     bool CanReviewQuality,
-    bool CanReviewResults);
+    bool CanReviewResults)
+{
+    public bool CanPreviewAcquisition { get; init; }
+};
 
 public static class ClientWorkspaceCommandRoutingRuntime
 {
@@ -16,7 +19,7 @@ public static class ClientWorkspaceCommandRoutingRuntime
         ClientWorkspaceSelection workspace,
         ClientCommandAvailability availability)
     {
-        return workspace.Workspace switch
+        var result=workspace.Workspace switch
         {
             ClientWorkspaceKind.Home =>
                 new(workspace.Workspace,
@@ -70,6 +73,13 @@ public static class ClientWorkspaceCommandRoutingRuntime
 
             _ =>
                 throw new ArgumentOutOfRangeException(nameof(workspace.Workspace))
+        };
+
+        return result with
+        {
+            CanPreviewAcquisition=
+                workspace.Workspace==ClientWorkspaceKind.Inspection &&
+                availability.CanPreviewAcquisition
         };
     }
 }
