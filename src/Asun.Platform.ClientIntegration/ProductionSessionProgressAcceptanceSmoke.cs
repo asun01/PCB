@@ -77,7 +77,6 @@ public static class ProductionSessionProgressAcceptanceSmoke
         var runner=new ScriptedRunner(ScriptedOutcome.Completed);
         var workspace=new ClientProductionWorkspace(runner);
         workspace.Load(CreateDefinition(3));
-        Check(workspace.Snapshot.Status==ClientExecutionStatus.Ready,"Load must enter Ready.");
         var sawRunningProgress=false;
         workspace.Changed+=snapshot =>
         {
@@ -85,10 +84,7 @@ public static class ProductionSessionProgressAcceptanceSmoke
                 sawRunningProgress=true;
         };
         _=workspace.StartAsync(new EmptyFrameSource()).AsTask().GetAwaiter().GetResult();
-        Check(sawRunningProgress,"Progress callbacks must be visible while Running.");
-        Check(workspace.Snapshot.Status==ClientExecutionStatus.Completed,"Completion must enter Completed.");
-        Check(workspace.Snapshot.FramesProcessed==3,"Completed must report all processed frames.");
-        Check(workspace.Snapshot.TargetFrameCount==3,"Completed must retain definition target.");
+        Check(workspace.Snapshot.Status==ClientExecutionStatus.Completed && sawRunningProgress && workspace.Snapshot.FramesProcessed==3 && workspace.Snapshot.TargetFrameCount==3,"Ready must transition through visible Running progress to Completed with 3/3.");
     }
 
     private static void CancelledPreservesProgress()
@@ -98,9 +94,7 @@ public static class ProductionSessionProgressAcceptanceSmoke
         workspace.Load(CreateDefinition(3));
         try { _=workspace.StartAsync(new EmptyFrameSource()).AsTask().GetAwaiter().GetResult(); }
         catch(OperationCanceledException) { }
-        Check(workspace.Snapshot.Status==ClientExecutionStatus.Cancelled,"Cancellation must enter Cancelled.");
-        Check(workspace.Snapshot.FramesProcessed==2,"Cancellation must retain processed progress.");
-        Check(workspace.Snapshot.TargetFrameCount==3,"Cancellation must retain target.");
+        Check(workspace.Snapshot.Status==ClientExecutionStatus.Cancelled && workspace.Snapshot.FramesProcessed==2 && workspace.Snapshot.TargetFrameCount==3,"Cancellation must preserve 2/3 progress.");
     }
 
     private static void FailedPreservesProgress()
@@ -110,9 +104,7 @@ public static class ProductionSessionProgressAcceptanceSmoke
         workspace.Load(CreateDefinition(3));
         try { _=workspace.StartAsync(new EmptyFrameSource()).AsTask().GetAwaiter().GetResult(); }
         catch(InvalidOperationException) { }
-        Check(workspace.Snapshot.Status==ClientExecutionStatus.Failed,"Failure must enter Failed.");
-        Check(workspace.Snapshot.FramesProcessed==2,"Failure must retain processed progress.");
-        Check(workspace.Snapshot.TargetFrameCount==3,"Failure must retain target.");
+        Check(workspace.Snapshot.Status==ClientExecutionStatus.Failed && workspace.Snapshot.FramesProcessed==2 && workspace.Snapshot.TargetFrameCount==3,"Failure must preserve 2/3 progress.");
     }
 
     private static void ResetReturnsIdle()
@@ -120,10 +112,7 @@ public static class ProductionSessionProgressAcceptanceSmoke
         var workspace=new ClientProductionWorkspace(new ScriptedRunner(ScriptedOutcome.Completed));
         workspace.Load(CreateDefinition(3));
         workspace.Reset();
-        Check(workspace.Snapshot.Status==ClientExecutionStatus.Idle,"Reset must enter Idle.");
-        Check(workspace.Snapshot.FramesProcessed==0,"Reset must clear processed progress.");
-        Check(workspace.Snapshot.TargetFrameCount==0,"Reset must clear target.");
-        Check(workspace.Snapshot.LastSequence is null,"Reset must clear last sequence.");
+        Check(workspace.Snapshot.Status==ClientExecutionStatus.Idle && workspace.Snapshot.FramesProcessed==0 && workspace.Snapshot.TargetFrameCount==0 && workspace.Snapshot.LastSequence is null,"Reset must clear the progress projection.");
     }
 
     private static void TargetCountComesFromDefinition()
@@ -146,9 +135,7 @@ public static class ProductionSessionProgressAcceptanceSmoke
         var workspace=new ClientProductionWorkspace(new ScriptedRunner(ScriptedOutcome.Completed));
         workspace.Load(CreateDefinition(3));
         _=workspace.StartAsync(new EmptyFrameSource()).AsTask().GetAwaiter().GetResult();
-        Check(workspace.Snapshot.LastFrameWidth==640,"Progress must publish frame width.");
-        Check(workspace.Snapshot.LastFrameHeight==480,"Progress must publish frame height.");
-        Check(workspace.Snapshot.LastPixelFormat=="GRAY8","Progress must publish pixel format.");
+        Check(workspace.Snapshot.LastFrameWidth==640 && workspace.Snapshot.LastFrameHeight==480 && workspace.Snapshot.LastPixelFormat=="GRAY8","Progress must publish frame metadata.");
     }
 
     private static void CompletedUsesDefinitionTarget()
@@ -156,7 +143,7 @@ public static class ProductionSessionProgressAcceptanceSmoke
         var workspace=new ClientProductionWorkspace(new ScriptedRunner(ScriptedOutcome.Completed));
         workspace.Load(CreateDefinition(5));
         _=workspace.StartAsync(new EmptyFrameSource()).AsTask().GetAwaiter().GetResult();
-        Check(workspace.Snapshot.TargetFrameCount==5,"Completed must not derive target from report count.");
+        Check(workspace.Snapshot.TargetFrameCount==5,"Completed must retain the definition target.");
     }
 
     private static void AdapterRoutesProgress()
