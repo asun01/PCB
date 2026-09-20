@@ -7,6 +7,7 @@ namespace Asun.Platform.ReleaseIntegration;
 
 public sealed record ProductionMeasurementQualityEvidenceReleaseBinding(
     long Sequence,
+    string ProductionInputFingerprint,
     Guid QualityResultId,
     string ComponentId,
     string EvidenceFingerprint,
@@ -31,6 +32,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseBindingRuntime
         var readiness=ReleaseReadinessRuntime.Evaluate(manifest);
         var fingerprint=CreateFingerprint(
             measurementEvidenceBinding.Sequence,
+            measurementEvidenceBinding.ProductionInputFingerprint,
             measurementEvidenceBinding.QualityResultId,
             measurementEvidenceBinding.ComponentId,
             measurementEvidenceBinding.EvidenceFingerprint,
@@ -39,6 +41,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseBindingRuntime
 
         return new ProductionMeasurementQualityEvidenceReleaseBinding(
             measurementEvidenceBinding.Sequence,
+            measurementEvidenceBinding.ProductionInputFingerprint,
             measurementEvidenceBinding.QualityResultId,
             measurementEvidenceBinding.ComponentId,
             measurementEvidenceBinding.EvidenceFingerprint,
@@ -61,10 +64,14 @@ public static class ProductionMeasurementQualityEvidenceReleaseBindingRuntime
             errors.Add("Measurement-quality-evidence binding fingerprint must be 64 characters.");
         if(!ReleaseManifestValidationRuntime.IsValid(manifest))
             errors.Add("Release manifest is invalid.");
+        if(string.IsNullOrWhiteSpace(measurementEvidenceBinding.ProductionInputFingerprint))
+            errors.Add("Measurement-quality-evidence Production input fingerprint is required.");
 
         var readiness=ReleaseReadinessRuntime.Evaluate(manifest);
         if(binding.Sequence!=measurementEvidenceBinding.Sequence)
             errors.Add("Release binding sequence must match.");
+        if(binding.ProductionInputFingerprint!=measurementEvidenceBinding.ProductionInputFingerprint)
+            errors.Add("Release binding Production input fingerprint must match.");
         if(binding.QualityResultId!=measurementEvidenceBinding.QualityResultId)
             errors.Add("Release binding Quality result identity must match.");
         if(binding.ComponentId!=measurementEvidenceBinding.ComponentId)
@@ -83,6 +90,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseBindingRuntime
         {
             var expected=CreateFingerprint(
                 measurementEvidenceBinding.Sequence,
+                measurementEvidenceBinding.ProductionInputFingerprint,
                 measurementEvidenceBinding.QualityResultId,
                 measurementEvidenceBinding.ComponentId,
                 measurementEvidenceBinding.EvidenceFingerprint,
@@ -103,6 +111,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseBindingRuntime
 
     internal static string CreateFingerprint(
         long sequence,
+        string productionInputFingerprint,
         Guid qualityResultId,
         string componentId,
         string evidenceFingerprint,
@@ -112,6 +121,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseBindingRuntime
         var canonical=string.Join(
             "|",
             sequence,
+            productionInputFingerprint,
             qualityResultId,
             componentId,
             evidenceFingerprint,
