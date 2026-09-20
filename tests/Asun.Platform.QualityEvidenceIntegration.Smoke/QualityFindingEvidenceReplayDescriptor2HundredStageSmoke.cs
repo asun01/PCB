@@ -24,7 +24,7 @@ public static class QualityFindingEvidenceReplayDescriptor2HundredStageSmoke
                         new QualityFinding(secondFindingId,"AOI.PAD.MISSING",QualityOutcome.Fail,QualitySeverity.Minor,"Pad missing")}),
                     new QualityFindingEvidenceSet(new[]{
                         new QualityFindingEvidenceLink(findingId,firstKey),
-                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))}});
+                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))});
         var bindings=new[]{
             new QualityEvidenceHandleBinding(findingId,firstKey,EvidenceHandle.Create("evidence/frame/10/component")),
             new QualityEvidenceHandleBinding(secondFindingId,secondKey,EvidenceHandle.Create("evidence/frame/10/pad"))};
@@ -41,6 +41,7 @@ for(var i=0;i<10;i++) Check(descriptors[1].EvidenceHandles[0].Value=="evidence/f
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.IsValid(run,bindings,resolutions,descriptors),"Baseline descriptors should remain valid.");
 for(var i=0;i<10;i++) Check(descriptors.Count==2,"Baseline descriptor count should remain stable.");
 for(var i=0;i<10;i++) Check(descriptors.All(item=>item.DescriptorFingerprint.Length==64),"Baseline fingerprints should remain fixed width.");
+for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.Create(run,bindings,resolutions).Count==2,"Recreated descriptor set should preserve count.");
         assert(round==100,$"QualityFindingEvidenceReplayDescriptor2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
