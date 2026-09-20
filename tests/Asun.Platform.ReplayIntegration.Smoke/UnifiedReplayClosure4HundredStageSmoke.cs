@@ -36,6 +36,9 @@ for(var i=0;i<10;i++) Check(closure.RenderEvidenceDescriptorCount==2,"Baseline R
 for(var i=0;i<10;i++) Check(UnifiedReplayClosureRuntime.IsValid(pipelineIdentity,simulationDescriptor,renderDescriptors,qualityReleaseDescriptor,releaseBinding,closure),"Baseline closure should remain valid.");
 for(var i=0;i<10;i++) Check(renderDescriptors.All(item=>item.EvidenceHandle.IsValid),"Baseline opaque Evidence handles should remain valid.");
 for(var i=0;i<10;i++) Check(renderDescriptors.All(item=>item.DescriptorFingerprint.Length==64),"Baseline Render descriptor fingerprints should remain fixed width.");
+for(var i=0;i<10;i++) Check(closure.BundleReleaseBindingFingerprint==releaseBinding.Fingerprint,"Baseline Release binding identity should remain aligned.");
+for(var i=0;i<10;i++) Check(closure.RenderEvidenceDescriptorCount==2,"Baseline Render descriptor count should remain stable.");
+
         assert(round==100,$"UnifiedReplayClosure4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
