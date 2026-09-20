@@ -29,6 +29,7 @@ public static class PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke
         var serialized=PcbEvidenceReleaseAuditTraceJsonRuntime.ToJson(appended);
         var restored=PcbEvidenceReleaseAuditTraceJsonRuntime.FromJson(serialized);
         var tampered=serialized+" ";
+        var normalized=PcbEvidenceReleaseAuditTraceJsonRuntime.FromJson(tampered);
 
         for(var i=0;i<10;i++) Check(serialized.Contains("formatVersion",StringComparison.Ordinal) && serialized.Contains("integrityHash",StringComparison.Ordinal),"Serialized trace should carry explicit schema version and integrity metadata.");
         for(var i=0;i<10;i++) Check(restored.Fingerprint==appended.Fingerprint,"JSON roundtrip should preserve trace fingerprint.");
@@ -39,6 +40,7 @@ public static class PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke
         for(var i=0;i<10;i++) Check(normalized.Fingerprint==appended.Fingerprint,"Whitespace or normalization handling should remain deterministic.");
         for(var i=0;i<10;i++) Check(normalized.Entries.Count==2,"Schema boundary should preserve the bounded trace shape.");
         for(var i=0;i<10;i++) Check(serialized.Trim()==PcbEvidenceReleaseAuditTraceJsonRuntime.ToJson(restored),"JSON boundary should be canonical enough for deterministic re-serialization.");
+        for(var i=0;i<10;i++) Check(normalized.Capacity==4,"Normalized JSON should preserve the configured trace capacity.");
         
 
         assert(round==100,$"PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
