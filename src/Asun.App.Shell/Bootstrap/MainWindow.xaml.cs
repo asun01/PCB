@@ -50,6 +50,7 @@ public partial class MainWindow : System.Windows.Window
         {
             SimulationStatus.Text=$"Load failed · {exception.Message}";
             ReleaseStatus.Text="Release: not evaluated.";
+            RefreshDiagnosticStatus();
             RefreshWorkspaceStatus();
         }
     }
@@ -124,7 +125,7 @@ public partial class MainWindow : System.Windows.Window
                 : "Release: Not ready.";
             RefreshWorkspaceStatus();
             RefreshRunHistoryStatus();
-            RefreshDiagnosticStatus();
+            RefreshDiagnosticStatus(diagnostic);
             RefreshRoiSurface();
         }
         catch(OperationCanceledException)
