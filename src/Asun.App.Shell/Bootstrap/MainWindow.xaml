@@ -251,6 +251,7 @@
                     Margin="0,12,8,8"
                     Padding="12"
                     BorderThickness="1"
+                    x:Name="ProgramWorkspace"
                     AutomationProperties.AutomationId="Shell.ProgramWorkspace">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -284,6 +285,7 @@
                     Margin="8,12,0,8"
                     Padding="12"
                     BorderThickness="1"
+                    x:Name="ResultWorkspace"
                     AutomationProperties.AutomationId="Shell.ResultWorkspace">
                     <StackPanel>
                         <TextBlock FontWeight="SemiBold" Text="Inspection result" />
@@ -307,6 +309,10 @@
                     Padding="12"
                     BorderThickness="1">
                     <Grid>
+                        <Border
+                            x:Name="QualityWorkspaceOverlay"
+                            Background="{x:Null}"
+                            Visibility="Collapsed" />
                         <TextBlock
                             x:Name="RoiWorkspaceTitle"
                             FontWeight="SemiBold"
