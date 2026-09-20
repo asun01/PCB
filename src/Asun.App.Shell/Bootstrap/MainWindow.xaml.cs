@@ -24,6 +24,13 @@ public partial class MainWindow : System.Windows.Window
         RefreshRunHistoryStatus();
     }
 
+    private void Window_Closed(
+        object? sender,
+        System.EventArgs e)
+    {
+        _client.Dispose();
+    }
+
     private void LoadSimulationButton_Click(
         object sender,
         System.Windows.RoutedEventArgs e)
