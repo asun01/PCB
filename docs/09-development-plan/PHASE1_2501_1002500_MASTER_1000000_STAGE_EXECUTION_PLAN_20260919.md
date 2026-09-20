@@ -2563,3 +2563,20 @@ The previous 500-stage cadence is retained internally as a safety/integration ch
 - Macro-batch 10: 902,501–1,002,500
 
 Macro-batches are planning horizons only. Actual implementation is still committed incrementally through executable 100-stage cells and 500-stage integration checkpoints. No historical stage counts or checkpoints are rewritten.
+
+## Execution checkpoint: Stage 39500 — 2026-09-20
+
+Closed 39001–39500 as a concrete cross-chain cell: PCB Production Evidence Envelope → Quality Audit Window → Release transition → Replay identity.
+
+- 39001–39100: executable audit/release transition projection.
+- 39101–39200: deterministic transition key.
+- 39201–39300: canonical transition identity.
+- 39301–39400: transition equivalence.
+- 39401–39500: persistence-neutral replay descriptor.
+
+Five 100-stage ledgers and the 500-stage integration checkpoint are present on the active branch. Static acceptance evidence is recorded; no build/test/CI success is inferred without authoritative execution results.
+
+Current completed boundary: **39,500**
+Next executable stage: **39,501**
+
+The one-million-stage horizon remains 2,501–1,002,500.
