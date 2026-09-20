@@ -78,6 +78,12 @@ await ClientProgramWorkspace3HundredStageSmoke.RunAsync(Check);
 await ClientProgramWorkspace4HundredStageSmoke.RunAsync(Check);
 await ClientProgramWorkspace5HundredStageSmoke.RunAsync(Check);
 
+await ClientWorkspaceRuntime1HundredStageSmoke.RunAsync(Check);
+await ClientWorkspaceRuntime2HundredStageSmoke.RunAsync(Check);
+await ClientWorkspaceRuntime3HundredStageSmoke.RunAsync(Check);
+await ClientWorkspaceRuntime4HundredStageSmoke.RunAsync(Check);
+await ClientWorkspaceRuntime5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
