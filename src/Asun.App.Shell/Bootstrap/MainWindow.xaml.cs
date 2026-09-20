@@ -137,6 +137,33 @@ public partial class MainWindow : System.Windows.Window
         }
     }
 
+    private void RunSimulationQualityButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        try
+        {
+            var quality=_client.EvaluateQuality(
+                ClientSimulationQualityRunProvider.Instance);
+
+            QualityStatus.Text=
+                $"Quality {quality.Provider?.DisplayName} · Run {quality.RunId} · " +
+                $"Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount}.";
+
+            RefreshQualityStatus();
+            RefreshHomeStatus();
+            RefreshDiagnosticStatus();
+            RefreshCommandAvailability();
+        }
+        catch(Exception exception)
+        {
+            QualityStatus.Text=$"Quality evaluation failed · {exception.Message}";
+            RefreshHomeStatus();
+            RefreshDiagnosticStatus();
+            RefreshCommandAvailability();
+        }
+    }
+
     private void QualityFindingList_SelectionChanged(
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
@@ -576,6 +603,7 @@ public partial class MainWindow : System.Windows.Window
         UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
         RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
         PreviewAcquisitionButton.IsEnabled=routing.CanPreviewAcquisition;
+        RunSimulationQualityButton.IsEnabled=routing.CanEvaluateSimulationQuality;
     }
 
     private void RefreshAcquisitionStatus()
@@ -640,7 +668,7 @@ public partial class MainWindow : System.Windows.Window
         }
 
         QualityStatus.Text=
-            $"Quality Run {quality.RunId} · Results {quality.ResultCount} · Findings {quality.FindingCount} · Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount} · Evidence links {quality.EvidenceLinkCount}.";
+            $"Quality Run {quality.RunId} · {quality.Provider?.DisplayName} · Results {quality.ResultCount} · Findings {quality.FindingCount} · Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount} · Evidence links {quality.EvidenceLinkCount}.";
         QualityFindingList.ItemsSource=quality.Findings;
 
         if(quality.SelectedFindingId is string selected)
