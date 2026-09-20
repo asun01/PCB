@@ -45,6 +45,9 @@ public static class QualityReleaseReplayDescriptor4HundredStageSmoke
         for(var i=0;i<10;i++) Check(descriptor.QualityRunId!=Guid.Empty,"Baseline run identity should be valid.");
         for(var i=0;i<10;i++) Check(descriptor.ReleaseReady,"Release readiness should remain true for the valid manifest.");
         for(var i=0;i<10;i++) Check(QualityReleaseReplayDescriptorRuntime.IsValid(run,manifest,descriptor),"Baseline descriptor should remain valid.");
+for(var i=0;i<10;i++) Check(QualityReleaseReplayDescriptorRuntime.Create(run,manifest).DescriptorFingerprint==descriptor.DescriptorFingerprint,"Recreated descriptor should retain the canonical fingerprint.");
+        for(var i=0;i<10;i++) Check(QualityReleaseReplayDescriptorRuntime.Create(run,manifest).QualitySummaryFingerprint==descriptor.QualitySummaryFingerprint,"Recreated descriptor should retain the summary fingerprint.");
+
         assert(round==100,$"QualityReleaseReplayDescriptor4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
