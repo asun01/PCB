@@ -20,6 +20,7 @@
   <Project Path="src/Asun.Platform.QualityEvidenceIntegration/Asun.Platform.QualityEvidenceIntegration.csproj" />
   <Project Path="src/Asun.Platform.MetrologyProductionIntegration/Asun.Platform.MetrologyProductionIntegration.csproj" />
   <Project Path="src/Asun.Platform.MeasurementQualityIntegration/Asun.Platform.MeasurementQualityIntegration.csproj" />
+  <Project Path="src/Asun.Platform.PipelineProductionIntegration/Asun.Platform.PipelineProductionIntegration.csproj" />
   <Project Path="src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
   <Project Path="src/Asun.Domain.Hdi/Asun.Domain.Hdi.csproj" />
   <Project Path="src/Asun.Domain.Fpc/Asun.Domain.Fpc.csproj" />
@@ -51,5 +52,6 @@
   <Project Path="tests/Asun.Platform.QualityEvidenceIntegration.Smoke/Asun.Platform.QualityEvidenceIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Platform.MetrologyProductionIntegration.Smoke/Asun.Platform.MetrologyProductionIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Platform.MeasurementQualityIntegration.Smoke/Asun.Platform.MeasurementQualityIntegration.Smoke.csproj" />
+  <Project Path="tests/Asun.Platform.PipelineProductionIntegration.Smoke/Asun.Platform.PipelineProductionIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Quality.Smoke/Asun.Domain.Quality.Smoke.csproj" />
 </Solution>
