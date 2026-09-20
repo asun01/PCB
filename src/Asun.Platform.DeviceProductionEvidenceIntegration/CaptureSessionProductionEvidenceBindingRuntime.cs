@@ -143,14 +143,6 @@ public static class CaptureSessionProductionEvidenceBindingRuntime
         return errors;
     }
 
-    private static Asun.Device.Impl.CaptureSessionSnapshot CreateSyntheticCaptureSessionSnapshot(
-        CaptureSessionProductionBinding binding)=>
-        new(
-            binding.CapturedCount,
-            Asun.Device.Contracts.FrameSequence.Create(binding.FirstSequence),
-            Asun.Device.Contracts.FrameSequence.Create(binding.LastSequence),
-            Array.Empty<string>());
-
     private static string CreateFingerprint(
         Guid productionSessionId,
         string productionBindingFingerprint,
