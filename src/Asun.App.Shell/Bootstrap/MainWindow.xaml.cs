@@ -154,6 +154,7 @@ public partial class MainWindow : System.Windows.Window
                 definition.SessionId,
                 definition.FrameCount);
             RefreshWorkspaceStatus();
+            RefreshProgramStatus();
             RefreshCommandAvailability();
 
             var execution=_client.ExecuteAsync(
@@ -174,6 +175,7 @@ public partial class MainWindow : System.Windows.Window
                 ? $"Release: Ready · {release.ArtifactPath}"
                 : "Release: Not ready.";
             RefreshWorkspaceStatus();
+            RefreshProgramStatus();
             RefreshRunHistoryStatus();
             RefreshDiagnosticStatus(diagnostic);
             RefreshRoiSurface();
@@ -216,6 +218,7 @@ public partial class MainWindow : System.Windows.Window
         RefreshCommandAvailability();
         SimulationStatus.Text="Ready.";
         RefreshWorkspaceStatus();
+        RefreshProgramStatus();
         RefreshRunHistoryStatus();
         RefreshRoiSurface();
     }
@@ -361,6 +364,19 @@ public partial class MainWindow : System.Windows.Window
         CreateRoiButton.IsEnabled=routing.CanEditRoi && availability.CanCreateRoi;
         UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
         RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
+    }
+
+    private void RefreshProgramStatus()
+    {
+        var snapshot=_client.Program;
+        if(snapshot.Status!=ClientProgramLoadStatus.Ready || _client.CurrentProgram is null)
+        {
+            ProgramStatus.Text="Program: none loaded.";
+            return;
+        }
+
+        var items=ClientProgramPresentationRuntime.CreateItems(_client.CurrentProgram);
+        ProgramStatus.Text=$"Program: {snapshot.Name} · v{snapshot.Version} · {items.Count} step(s).";
     }
 
     private void RefreshDiagnosticStatus(
