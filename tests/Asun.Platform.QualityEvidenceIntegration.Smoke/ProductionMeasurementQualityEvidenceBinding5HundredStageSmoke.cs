@@ -59,6 +59,7 @@ for(var i=0;i<10;i++) Check(binding.ComponentId==componentId.Value,"Original com
 for(var i=0;i<10;i++) Check(binding.CalibrationFingerprint==qualityBinding.CalibrationFingerprint,"Original calibration identity should remain stable.");
 for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceBindingRuntime.Create(qualityBinding,qualityRun,evidenceBindings).Fingerprint==binding.Fingerprint,"Original binding creation should remain deterministic.");
 for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceBindingRuntime.IsValid(qualityBinding,qualityRun,evidenceBindings,binding),"Final baseline validation should remain clean.");
+for(var i=0;i<10;i++) Check(binding.ProductionInputFingerprint==qualityBinding.ProductionInputFingerprint,"Original Production input identity should remain stable.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceBinding5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
