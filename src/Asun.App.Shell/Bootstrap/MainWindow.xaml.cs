@@ -91,6 +91,7 @@ public partial class MainWindow : System.Windows.Window
             var report=await _workspace.StartAsync(
                 ClientSimulationSessionFactory.CreateSource());
 
+            _roiWorkspace!.BindProductionReport(report);
             var replay=ClientProductionReplaySnapshotRuntime.Create(
                 _workspace.Snapshot,
                 report);
