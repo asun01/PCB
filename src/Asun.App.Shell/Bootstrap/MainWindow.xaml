@@ -93,6 +93,11 @@
                     Margin="0,6,0,0"
                     AutomationProperties.AutomationId="Shell.WorkspaceStatus"
                     Text="Idle — no production session loaded." />
+                <TextBlock
+                    x:Name="ProgramStatus"
+                    Margin="0,6,0,0"
+                    AutomationProperties.AutomationId="Shell.ProgramStatus"
+                    Text="Program: none loaded." />
             </StackPanel>
         </Border>
 
