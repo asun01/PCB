@@ -74,6 +74,12 @@ public sealed class ClientRoiInteractionWorkspace : IDisposable
         }
     }
 
+    public void SetImageSize(Vector2 imageSize)
+    {
+        ThrowIfDisposed();
+        _runtime.RoiViewport.SetImageSize(imageSize);
+    }
+
     public void ResizeViewport(Vector2 viewportSize)
     {
         ThrowIfDisposed();
