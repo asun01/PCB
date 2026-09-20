@@ -29,6 +29,8 @@ public static class ProductionReleaseReplayDescriptor4HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.IsValid(manifest,descriptor),"Original manifest should remain valid.");
         for(var i=0;i<10;i++) Check(descriptor.ArtifactCount==2,"Original artifact count should remain stable.");
         for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.Length==64,"Original descriptor fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.Create(manifest).ArtifactCount==descriptor.ArtifactCount,"Recreated release descriptor should preserve artifact count.");
+
         assert(round==100,$"ProductionReleaseReplayDescriptor4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
