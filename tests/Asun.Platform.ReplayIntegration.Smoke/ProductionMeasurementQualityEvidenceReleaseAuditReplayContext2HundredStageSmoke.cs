@@ -5,9 +5,9 @@ public static class ProductionMeasurementQualityEvidenceReleaseAuditReplayContex
     public static Task RunAsync(Action<bool,string> Check)
     {
         var round=0;
-        for(var group=0;group<10;group++)
+        for(var group0=0;group0<10;group0++)
         {
-            for(var i=0;i<10;i++)
+            for(var i0=0;i0<10;i0++)
             {
                 round++;
                 var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
@@ -18,11 +18,28 @@ public static class ProductionMeasurementQualityEvidenceReleaseAuditReplayContex
                 Check(
                     !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
                         fixture.ReplayDescriptor,audit) &&
-                    (group<9 || round==100),
+                    (group0<9 || round==100),
                     "Production session drift must be rejected");
             }
         }
-        for(var g2=0;g2<10;g2++)
+        for(var group1=0;group1<10;group1++)
+        {
+            for(var i1=0;i1<10;i1++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group1<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group2=0;group2<10;group2++)
         {
             for(var i2=0;i2<10;i2++)
             {
@@ -32,20 +49,132 @@ public static class ProductionMeasurementQualityEvidenceReleaseAuditReplayContex
                 {
                     ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
                 };
-                Check(!ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(fixture.ReplayDescriptor,audit) &&
-                      (g2<9 || round==100),
-                      "Production session drift must be rejected");
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group2<9 || round==100),
+                    "Production session drift must be rejected");
             }
         }
-        for(var g3=0;g3<10;g3++){for(var i3=0;i3<10;i3++){round++;Check(true || round==100,"accepted");}}
-        for(var g4=0;g4<10;g4++){for(var i4=0;i4<10;i4++){round++;Check(true || round==100,"accepted");}}
-        for(var g5=0;g5<10;g5++){for(var i5=0;i5<10;i5++){round++;Check(true || round==100,"accepted");}}
-        for(var g6=0;g6<10;g6++){for(var i6=0;i6<10;i6++){round++;Check(true || round==100,"accepted");}}
-        for(var g7=0;g7<10;g7++){for(var i7=0;i7<10;i7++){round++;Check(true || round==100,"accepted");}}
-        for(var g8=0;g8<10;g8++){for(var i8=0;i8<10;i8++){round++;Check(true || round==100,"accepted");}}
-        for(var g9=0;g9<10;g9++){for(var i9=0;i9<10;i9++){round++;Check(true || round==100,"accepted");}}
-        for(var g10=0;g10<10;g10++){for(var i10=0;i10<10;i10++){round++;Check(true || round==100,"accepted");}}
-        for(var g11=0;g11<10;g11++){for(var i11=0;i11<10;i11++){round++;Check(true || round==100,"accepted");}}
+        for(var group3=0;group3<10;group3++)
+        {
+            for(var i3=0;i3<10;i3++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group3<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group4=0;group4<10;group4++)
+        {
+            for(var i4=0;i4<10;i4++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group4<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group5=0;group5<10;group5++)
+        {
+            for(var i5=0;i5<10;i5++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group5<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group6=0;group6<10;group6++)
+        {
+            for(var i6=0;i6<10;i6++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group6<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group7=0;group7<10;group7++)
+        {
+            for(var i7=0;i7<10;i7++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group7<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group8=0;group8<10;group8++)
+        {
+            for(var i8=0;i8<10;i8++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group8<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
+        for(var group9=0;group9<10;group9++)
+        {
+            for(var i9=0;i9<10;i9++)
+            {
+                round++;
+                var fixture=MeasurementQualityEvidenceAuditReplayFixtureRuntime.Create();
+                var audit=fixture.AuditBinding with
+                {
+                    ProductionSessionId=Guid.Parse("b4000000-0000-0000-0000-000000000001")
+                };
+                Check(
+                    !ProductionMeasurementQualityEvidenceReleaseAuditReplayContextRuntime.IsValid(
+                        fixture.ReplayDescriptor,audit) &&
+                    (group9<9 || round==100),
+                    "Production session drift must be rejected");
+            }
+        }
         return Task.CompletedTask;
     }
 }
