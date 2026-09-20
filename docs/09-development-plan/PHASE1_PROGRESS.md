@@ -1797,3 +1797,22 @@ Current continuous execution position:
 - completed through Stage 35000;
 - next natural stage: 35001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 35001→35500 unified PCB execution snapshot — 2026-09-20
+
+Completed stages 35001–35500.
+
+Implemented:
+- Asun.Platform.PcbExecutionIntegration;
+- PcbExecutionSnapshot and independent validation;
+- one aggregate integrity boundary over PCB, Production, Pipeline, Metrology, Quality, and Evidence facts;
+- exact 100-round end-to-end Smoke registered in AsunVision.slnx.
+
+Real correction:
+- fixed missing Evidence namespace dependency in the unified Smoke before closure.
+
+Current continuous execution position:
+- completed through Stage 35500;
+- next natural stage: 35501;
+- global one-million-stage horizon remains 2501–1002500.
