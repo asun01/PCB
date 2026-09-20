@@ -40,7 +40,7 @@ for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.IsVali
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.IsEquivalent(descriptors,reorderedDescriptors),"Resolution reordering should preserve replay identity.");
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.Validate(run,bindings,resolutions,missing).Count>0,"Missing descriptor should produce diagnostics.");
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.Validate(run,bindings,resolutions,duplicate).Count>0,"Duplicate descriptor should produce diagnostics.");
-for(var i=0;i<10;i++) Check(descriptors[0].FindingId.Value<descriptors[1].FindingId.Value,StringComparison.Ordinal),"Canonical finding ordering should be deterministic.");
+for(var i=0;i<10;i++) Check(string.Compare(descriptors[0].FindingId.Value,descriptors[1].FindingId.Value,StringComparison.Ordinal)<0),"Canonical finding ordering should be deterministic.");
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.IsValid(run,bindings,resolutions,descriptors),"Baseline descriptors should remain valid.");
 for(var i=0;i<10;i++) Check(descriptors.All(item=>item.FindingId.IsValid),"Finding identities should remain valid.");
 for(var i=0;i<10;i++) Check(descriptors.All(item=>item.EvidenceHandles.All(handle=>handle.IsValid)),"Opaque handles should remain valid.");
