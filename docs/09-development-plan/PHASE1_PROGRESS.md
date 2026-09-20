@@ -1726,3 +1726,19 @@ Current continuous execution position:
 - completed through Stage 32500;
 - next natural stage: 32501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 32501→33000 acquisition → Evidence opaque references — 2026-09-20
+
+Completed stages 32501–33000.
+
+Implemented:
+- Asun.Platform.CaptureEvidenceIntegration;
+- ProductionCaptureEvidenceFrameReference;
+- creation/validation over real ProductionSessionReport + ProductionFrameProvenance + opaque EvidenceHandle sets;
+- dedicated exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 33000;
+- next natural stage: 33001;
+- global one-million-stage horizon remains 2501–1002500.
