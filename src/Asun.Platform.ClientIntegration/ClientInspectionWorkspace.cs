@@ -113,6 +113,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         }
     }
 
+    public Asun.Program.Core.InspectionProgram? CurrentProgram
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _program.CurrentProgram;
+        }
+    }
+
     public void Load(ProductionSessionDefinition definition)
     {
         ThrowIfDisposed();
