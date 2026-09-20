@@ -38,6 +38,7 @@ public static class ProductionCaptureEvidenceCanonical4HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionCaptureEvidenceCanonicalRuntime.IsCanonical(production,references),"Repeated canonical validation should remain stable.");
         for(var i=0;i<10;i++) Check(ProductionCaptureEvidenceCanonicalRuntime.CreateProjectionFingerprint(references).All(char.IsAsciiHexDigit),"Projection fingerprint should be hexadecimal.");
         for(var i=0;i<10;i++) Check(ProductionCaptureEvidenceCanonicalRuntime.CreateFingerprintList(references).All(x=>x.All(char.IsAsciiHexDigit)),"Frame fingerprints should be hexadecimal.");
-        assert(round==100,$"ProductionCaptureEvidenceCanonical4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
+        for(var i=0;i<10;i++) Check(references.Count==2,"Final reference cardinality");
+  assert(round==100,$"ProductionCaptureEvidenceCanonical4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
