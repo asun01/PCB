@@ -106,6 +106,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         {
             var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
             _production.Load(definition);
+            _quality.Clear();
             _replay=null;
             _release=null;
         }
@@ -144,18 +145,21 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _quality.Bind(run);
+        ProductionChanged?.Invoke(_production.Snapshot);
     }
 
     public void ClearQualityRun()
     {
         ThrowIfDisposed();
         _quality.Clear();
+        ProductionChanged?.Invoke(_production.Snapshot);
     }
 
     public void Load(ProductionSessionDefinition definition)
     {
         ThrowIfDisposed();
         _production.Load(definition);
+        _quality.Clear();
         _replay=null;
         _release=null;
     }
