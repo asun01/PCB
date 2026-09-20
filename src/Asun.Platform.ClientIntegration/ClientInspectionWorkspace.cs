@@ -18,6 +18,7 @@ public sealed record ClientInspectionWorkspaceSnapshot(
 
 public sealed class ClientInspectionWorkspace : IDisposable
 {
+    private readonly ClientProgramWorkspace _program;
     private readonly ClientProductionWorkspace _production;
     private readonly ClientProductionRunHistory _history;
     private readonly ClientRoiInteractionWorkspace _roi;
@@ -32,6 +33,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         int historyCapacity=20,
         IProductionSessionRunner? productionRunner=null)
     {
+        _program=new ClientProgramWorkspace();
         _production=new ClientProductionWorkspace(productionRunner);
         _history=new ClientProductionRunHistory(historyCapacity);
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
@@ -79,6 +81,34 @@ public sealed class ClientInspectionWorkspace : IDisposable
             CanUndoRoi=_roi.Document.CanUndo,
             CanRedoRoi=_roi.Document.CanRedo
         };
+    }
+
+    public ClientProgramWorkspaceSnapshot LoadProgram(
+        Asun.Program.Core.InspectionProgram program,
+        Asun.Platform.Pipeline.PipelineDefinition<Asun.Device.Contracts.CapturedFrame> pipeline,
+        Guid sessionId,
+        int frameCount)
+    {
+        ThrowIfDisposed();
+        var snapshot=_program.Load(program);
+        if(snapshot.Status==ClientProgramLoadStatus.Ready)
+        {
+            var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
+            _production.Load(definition);
+            _replay=null;
+            _release=null;
+        }
+
+        return snapshot;
+    }
+
+    public ClientProgramWorkspaceSnapshot Program
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _program.Snapshot;
+        }
     }
 
     public void Load(ProductionSessionDefinition definition)
@@ -187,6 +217,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public void ResetCurrentSession()
     {
         ThrowIfDisposed();
+        _program.Reset();
         _production.Reset();
         _roi.Reset();
         _replay=null;
