@@ -18,6 +18,11 @@ public sealed record ClientInspectionWorkspaceSnapshot(
     public ClientQualityWorkspaceSnapshot Quality { get; init; }=new(
         null,0,0,0,0,0,0,null,false,
         Array.Empty<ClientQualityFindingDisplayItem>());
+    public ClientAcquisitionWorkspaceSnapshot Acquisition { get; init; }=new(
+        ClientAcquisitionState.Unbound,
+        null,
+        null,
+        false);
 }
 
 public sealed class ClientInspectionWorkspace : IDisposable
@@ -92,7 +97,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
             CanUndoRoi=_roi.Document.CanUndo,
             CanRedoRoi=_roi.Document.CanRedo,
             Program=_program.Snapshot,
-            Quality=_quality.Capture()
+            Quality=_quality.Capture(),
+            Acquisition=_acquisition.Snapshot
         };
     }
 
