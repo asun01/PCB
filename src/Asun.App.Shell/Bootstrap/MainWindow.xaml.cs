@@ -148,12 +148,14 @@ public partial class MainWindow : System.Windows.Window
         {
             SimulationStatus.Text="Cancelled.";
             ReleaseStatus.Text="Release: not evaluated.";
+            RefreshDiagnosticStatus();
             RefreshWorkspaceStatus();
         }
         catch(Exception exception)
         {
             SimulationStatus.Text=$"Failed · {exception.Message}";
             ReleaseStatus.Text="Release: not evaluated.";
+            RefreshDiagnosticStatus();
             RefreshWorkspaceStatus();
         }
         finally
@@ -176,6 +178,7 @@ public partial class MainWindow : System.Windows.Window
     {
         _client.ResetCurrentSession();
         ReleaseStatus.Text="Release: not evaluated.";
+        RefreshDiagnosticStatus();
         RefreshCommandAvailability();
         SimulationStatus.Text="Ready.";
         RefreshWorkspaceStatus();
@@ -301,6 +304,7 @@ public partial class MainWindow : System.Windows.Window
         {
             RoiSurface.Children.Add(RoiSurfaceHint);
             RoiStatus.Text="ROI: 0 items.";
+            RefreshCommandAvailability();
             return;
         }
 
