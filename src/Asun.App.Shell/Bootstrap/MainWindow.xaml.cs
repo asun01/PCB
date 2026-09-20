@@ -90,6 +90,24 @@ public partial class MainWindow : System.Windows.Window
         RefreshDiagnosticStatus();
     }
 
+    private void ProgramStepList_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if(e.AddedItems.Count==0)
+            return;
+
+        if(e.AddedItems[0] is ClientProgramDisplayItem item)
+        {
+            _client.SelectProgramStep(item.StepId);
+            ProgramStepDetails.Text=
+                $"Step {item.Order} · {item.Name} · {item.Kind}\n" +
+                (string.IsNullOrWhiteSpace(item.ParameterSummary)
+                    ? "Parameters: none"
+                    : $"Parameters: {item.ParameterSummary}");
+        }
+    }
+
     private void WorkspaceHomeButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
         _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Home);
 
@@ -480,6 +498,13 @@ public partial class MainWindow : System.Windows.Window
 
         var items=ClientProgramPresentationRuntime.CreateItems(_client.CurrentProgram);
         ProgramStepList.ItemsSource=items;
+
+        if(snapshot.SelectedStepId is Guid selected)
+        {
+            var selectedItem=items.FirstOrDefault(item=>item.StepId==selected);
+            ProgramStepList.SelectedItem=selectedItem;
+        }
+
         ProgramStatus.Text=$"Program: {snapshot.Name} · v{snapshot.Version} · {items.Count} step(s).";
     }
 
