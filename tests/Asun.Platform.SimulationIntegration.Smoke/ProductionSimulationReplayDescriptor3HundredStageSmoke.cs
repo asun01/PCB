@@ -30,6 +30,8 @@ public static class ProductionSimulationReplayDescriptor3HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).FrameCount==descriptor.FrameCount,"Recreated descriptor should preserve frame count.");
         for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).BindingFingerprint==descriptor.BindingFingerprint,"Recreated descriptor should preserve binding identity.");
         for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.IsValid(production,observations,binding,descriptor),"Baseline descriptor should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).FrameCount==descriptor.FrameCount,"Recreated replay descriptor should preserve the frame count.");
+
         assert(round==100,$"ProductionSimulationReplayDescriptor3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
