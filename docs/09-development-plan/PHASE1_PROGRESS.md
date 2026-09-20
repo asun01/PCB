@@ -2266,3 +2266,15 @@ No authoritative build/test/CI success is claimed.
 
 Current completed boundary: **51,500**
 Next executable stage: **51,501**
+
+
+## Live execution synchronization — Stage 52000 — 2026-09-20
+
+- Completed boundary: **52,000**
+- Next executable stage: **52,001**
+- Active macro horizon: **41,501–141,500**
+- 51501–52000: **Metrology → PCB → Production → Quality → opaque Evidence → Release → Replay descriptor**.
+- Added a persistence-neutral replay descriptor joining the measurement/quality/evidence Release binding with the broader Production/Quality/Evidence Release replay identity.
+- Repaired ReplayIntegration Smoke control flow so all registered Smoke suites execute before the final failure return.
+- Acceptance: five 100-stage ledgers, five registered exact-100-round Smokes, one integration checkpoint, and static source-structure audit.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
