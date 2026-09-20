@@ -60,6 +60,9 @@ public sealed record ClientWorkspaceSnapshot(
     public int TargetFrameCount { get; init; }
     public int FramesProcessed { get; init; }
     public FrameSequence? LastSequence { get; init; }
+    public long LastFrameWidth { get; init; }
+    public long LastFrameHeight { get; init; }
+    public string LastPixelFormat { get; init; }="";
 };
 
 public sealed class ClientProductionWorkspace
@@ -202,7 +205,10 @@ public sealed class ClientProductionWorkspace
         {
             TargetFrameCount=0,
             FramesProcessed=0,
-            LastSequence=null
+            LastSequence=null,
+            LastFrameWidth=0,
+            LastFrameHeight=0,
+            LastPixelFormat=""
         };
         Publish();
     }
