@@ -135,6 +135,13 @@ public static class CaptureSessionProductionEvidenceBindingRuntime
             errors.Add("Capture evidence projection is not canonical for the supplied Production report.");
         }
 
+        if(!ProductionFrameProvenanceRuntime.IsValid(
+               productionReport,
+               provenance))
+        {
+            errors.Add("Production frame provenance is invalid for the supplied Production report.");
+        }
+
         if(provenance.Count!=productionReport.FrameCount)
             errors.Add("Production provenance count must match Production report.");
         if(references.Count!=productionReport.FrameCount)
