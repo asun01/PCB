@@ -126,3 +126,10 @@ Historical 500-stage checkpoints remain valid evidence and are not rewritten. Th
 - Macro plan: `PHASE1_41501_141500_100000_STAGE_MACROBATCH_PLAN_20260920.md`
 
 The current rotation has moved through Production→PCB, Metrology→PCB, Viewport backpressure/coalescing, and Quality→Evidence. The next cells continue dynamic rotation rather than locking the repository to a single subsystem.
+
+## Live execution synchronization — Stage 42500
+
+- Completed boundary: **42,500**
+- Next executable stage: **42,501**
+- Active macro horizon: **41,501–141,500**
+- Latest rotation: Pipeline replay → Release logical handoff.
