@@ -22,6 +22,7 @@ public partial class MainWindow : System.Windows.Window
 
         _workspaceRuntime=new ClientWorkspaceRuntime();
         _workspaceRuntime.Changed+=OnWorkspaceChanged;
+        _client.ProductionChanged+=OnProductionChanged;
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
 
         RefreshWorkspaceStatus();
@@ -37,6 +38,7 @@ public partial class MainWindow : System.Windows.Window
         object? sender,
         System.EventArgs e)
     {
+        _client.ProductionChanged-=OnProductionChanged;
         _workspaceRuntime.Changed-=OnWorkspaceChanged;
         _workspaceRuntime.Dispose();
         _client.Dispose();
@@ -49,6 +51,19 @@ public partial class MainWindow : System.Windows.Window
         RefreshCommandAvailability();
     }
 
+
+    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot)
+    {
+        if(!Dispatcher.HasShutdownStarted)
+        {
+            _=Dispatcher.BeginInvoke(new Action(() =>
+            {
+                RefreshWorkspaceStatus();
+                RefreshCommandAvailability();
+                RefreshResultStatus();
+            }));
+        }
+    }
 
     private void WorkspaceHomeButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
         _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Home);
