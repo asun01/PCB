@@ -35,6 +35,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private readonly ClientAcquisitionWorkspace _acquisition;
     private readonly ClientAcquisitionCatalog _acquisitionCatalog;
 
+    private ProductionSessionReport? _lastProductionReport;
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
     private long? _selectedHistoryOrdinal;
@@ -212,6 +213,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         return preview;
     }
 
+    public ProductionSessionReport? LastProductionReport
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _lastProductionReport;
+        }
+    }
+
     public bool BindAcquisitionSource(string sourceId)
     {
         ThrowIfDisposed();
@@ -242,6 +252,26 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ProductionChanged?.Invoke(_production.Snapshot);
     }
 
+    public ClientQualityWorkspaceSnapshot EvaluateQuality(
+        IClientQualityRunProvider provider)
+    {
+        ThrowIfDisposed();
+        ArgumentNullException.ThrowIfNull(provider);
+
+        var report=_lastProductionReport
+            ?? throw new InvalidOperationException(
+                "A completed Production report is required before Quality evaluation.");
+
+        if(_production.Snapshot.Status!=ClientExecutionStatus.Completed)
+            throw new InvalidOperationException(
+                "Quality evaluation requires a completed Production session.");
+
+        var run=provider.Create(report);
+        _quality.Bind(run,provider.Descriptor);
+        ProductionChanged?.Invoke(_production.Snapshot);
+        return _quality.Capture();
+    }
+
     public bool SelectQualityFinding(string findingId)
     {
         ThrowIfDisposed();
@@ -263,6 +293,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _production.Load(definition);
+        _lastProductionReport=null;
         _quality.Clear();
         _acquisition.Unbind();
         _replay=null;
@@ -286,6 +317,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
         var report=await _production.StartAsync(source,cancellationToken);
 
+        _lastProductionReport=report;
         _roi.BindProductionReport(report);
 
         var production=_production.Snapshot;
@@ -403,6 +435,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _program.Reset();
         _program.Reset();
         _production.Reset();
+        _lastProductionReport=null;
         _roi.Reset();
         _quality.Clear();
         _acquisition.Unbind();
