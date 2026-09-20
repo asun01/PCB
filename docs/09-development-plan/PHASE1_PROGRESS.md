@@ -2030,3 +2030,18 @@ Both cells have five 100-stage ledgers and integration checkpoints. Static Smoke
 
 Current completed boundary: **43,500**
 Next executable stage: **43,501**
+
+
+### Execution checkpoint: Stage 44000 — 2026-09-20
+
+Closed stages 43501–44000 for Simulation replay → Render replay descriptor hardening.
+
+- Hardened ProductionSimulationRenderReplayRuntime against duplicate source sequences and malformed 64-character replay fingerprints.
+- Added ProductionSimulationRenderReplayDescriptorRuntime as a persistence-neutral canonical replay descriptor boundary.
+- Added and registered ProductionSimulationRenderReplayDescriptorHundredStageSmoke.
+- Added five 100-stage ledgers and PHASE1_43501_44000_INTEGRATION_CHECKPOINT_20260920.md.
+
+Static source audit passed for the descriptor Smoke: 10 loop groups, 10 Check call sites, round==100, balanced delimiters, no TODO/NotImplementedException. No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **44,000**
+Next executable stage: **44,001**
