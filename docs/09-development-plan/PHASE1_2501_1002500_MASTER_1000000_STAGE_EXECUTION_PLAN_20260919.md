@@ -2492,3 +2492,13 @@ Current completed boundary: **36,500**
 Next executable stage: **36,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 37000 — 2026-09-20
+
+Closed Evidence catalog resolution → Release facts. The Release-facing layer now exposes catalog resolution facts without converting them into customer acceptance semantics.
+
+Current completed boundary: **37,000**
+Next executable stage: **37,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
