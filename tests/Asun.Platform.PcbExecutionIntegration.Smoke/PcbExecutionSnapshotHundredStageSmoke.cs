@@ -2,6 +2,7 @@ using Asun.Device.Impl;
 using Asun.Device.Contracts;
 using Asun.Domain.Pcb;
 using Asun.Domain.Quality;
+using Asun.Platform.Evidence;
 using Asun.Metrology.Core;
 using Asun.Platform.PcbExecutionIntegration;
 using Asun.Platform.Pipeline;
