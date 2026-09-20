@@ -123,6 +123,9 @@ public static class ClientWorkspaceRuntime4HundredStageSmoke
             Check(round==100,
                   "internal acceptance matrix guard");
         }
-        return Task.CompletedTask;
+        if(round==100)
+            return Task.CompletedTask;
+
+        throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
     }
 }
