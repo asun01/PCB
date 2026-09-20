@@ -13,10 +13,11 @@ public static class PcbMeasurementComponentFixtureRuntime
     public static PcbMeasurementComponentFixture Create()
     {
         var board=new PcbBoardDefinition(
+            Guid.Parse("d3000000-0000-0000-0000-000000000001"),
             "FixtureBoard",
-            2,
             100,
-            100);
+            100,
+            2);
 
         var c1=new PcbComponentReference(
             PcbFeatureId.Create("C1-ID"),
