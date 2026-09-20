@@ -27,6 +27,12 @@ public partial class MainWindow : System.Windows.Window
         _client.ProductionChanged+=OnProductionChanged;
         _client.AcquisitionCatalog.Register(
             ClientSimulationSessionFactory.CreateSourceDefinition());
+
+        _client.QualityProviderCatalog.Register(
+            ClientSimulationQualityRunProvider.CreateDefinition());
+
+        QualityProviderComboBox.ItemsSource=_client.QualityProviderCatalog.Providers;
+        QualityProviderComboBox.SelectedIndex=0;
         AcquisitionSourceComboBox.ItemsSource=_client.AcquisitionCatalog.Sources;
         AcquisitionSourceComboBox.SelectedIndex=0;
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
@@ -137,19 +143,19 @@ public partial class MainWindow : System.Windows.Window
         }
     }
 
-    private void RunSimulationQualityButton_Click(
+    private void RunQualityButton_Click(
         object sender,
         System.Windows.RoutedEventArgs e)
     {
         try
         {
-            var quality=_client.EvaluateQuality(
-                ClientSimulationQualityRunProvider.Instance);
+            if(QualityProviderComboBox.SelectedItem
+                is not ClientQualityProviderDefinition definition)
+            {
+                throw new InvalidOperationException("No Quality provider is selected.");
+            }
 
-            QualityStatus.Text=
-                $"Quality {quality.Provider?.DisplayName} · Run {quality.RunId} · " +
-                $"Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount}.";
-
+            _client.EvaluateQualityProvider(definition.Descriptor.ProviderId);
             RefreshQualityStatus();
             RefreshHomeStatus();
             RefreshDiagnosticStatus();
@@ -603,7 +609,7 @@ public partial class MainWindow : System.Windows.Window
         UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
         RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
         PreviewAcquisitionButton.IsEnabled=routing.CanPreviewAcquisition;
-        RunSimulationQualityButton.IsEnabled=routing.CanEvaluateSimulationQuality;
+        RunQualityButton.IsEnabled=routing.CanEvaluateSimulationQuality;
     }
 
     private void RefreshAcquisitionStatus()
