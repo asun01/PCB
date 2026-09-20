@@ -2636,3 +2636,10 @@ Closed 42001–42500 as Pipeline replay → Release logical handoff. Pipeline re
 
 Current completed boundary: **42,500**
 Next executable stage: **42,501**
+
+## Execution checkpoint: Stage 43500 — 2026-09-20
+
+Closed 42501–43500 through dynamic Render→Evidence and Simulation→Render replay chains. The macro horizon remains **41,501–141,500**.
+
+Current completed boundary: **43,500**
+Next executable stage: **43,501**
