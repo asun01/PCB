@@ -2858,3 +2858,25 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 77501–78000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 78500 — 2026-09-20
+
+- Completed boundary: **78,500**
+- Next executable stage: **78,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 78001–78500: **Bounded Run History -> Presentation Projection -> Newest-first UI Data**.
+- Added `ClientRunHistoryPresentationRuntime` and five exact-100-round presentation Smoke matrices.
+- Presentation validates newest-first ordering, Release/Replay visibility, empty-state correctness, and reordered-data rejection.
+- Added five stage ledgers and the 78001–78500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 79000 — 2026-09-20
+
+- Completed boundary: **79,000**
+- Next executable stage: **79,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 78501–79000: **WPF Result Workspace -> Recent Run List -> Replay/Release Visibility -> History Preservation**.
+- WPF Shell now renders up to five recent bounded runs with Session, Frames, Release, and Replay information.
+- Active-session Reset preserves the bounded history list.
+- Added five stage ledgers and the 78501–79000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
