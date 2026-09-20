@@ -35,9 +35,10 @@ public static class PcbExecutionBoardBindingHundredStageSmoke
         var binding=PcbExecutionBoardBindingRuntime.Create(assembly,execution);
         var copy=binding with {};
         var tampered=binding with {ExecutionFingerprint=new string('f',64)};
+        var invalidExecution=execution with {Fingerprint="bad"};
         var descriptor=PcbExecutionBoardBindingRuntime.CreateReplayDescriptor(binding);
 
-        for(var i=0;i<10;i++) Check(binding.AssemblyFingerprint==assembly.Fingerprint,"Binding should preserve PCB assembly identity.");
+        for(var i=0;i<10;i++) Check(binding.AssemblyFingerprint==assembly.Fingerprint && binding.ProductionSessionId!=Guid.Empty,"Binding should preserve valid PCB assembly and session identity.");
         for(var i=0;i<10;i++) Check(binding.ProductionSessionId==execution.ProductionSessionId,"Binding should preserve Production session identity.");
         for(var i=0;i<10;i++) Check(binding.ExecutionFingerprint==execution.Fingerprint,"Binding should preserve execution identity.");
         for(var i=0;i<10;i++) Check(binding.BindingFingerprint.Length==64,"Binding fingerprint should be fixed width.");
@@ -46,7 +47,7 @@ public static class PcbExecutionBoardBindingHundredStageSmoke
         for(var i=0;i<10;i++) Check(PcbExecutionBoardBindingRuntime.CreateCanonicalKey(binding).Length==64,"Canonical board key should be fixed width.");
         for(var i=0;i<10;i++) Check(PcbExecutionBoardBindingRuntime.IsEquivalent(binding,copy),"Equivalent board bindings should be recognized.");
         for(var i=0;i<10;i++) Check(!PcbExecutionBoardBindingRuntime.IsEquivalent(binding,tampered),"Tampered board bindings should not be equivalent.");
-        for(var i=0;i<10;i++) Check(descriptor.ExecutionFingerprint==execution.Fingerprint,"Replay descriptor should preserve execution identity.");
+        for(var i=0;i<10;i++) Check(descriptor.ExecutionFingerprint==execution.Fingerprint && PcbExecutionBoardBindingRuntime.Validate(assembly,invalidExecution,binding).Count>0,"Replay descriptor should preserve execution identity and malformed execution should be rejected.");
 
         assert(round==100,$"PCB execution board binding smoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
