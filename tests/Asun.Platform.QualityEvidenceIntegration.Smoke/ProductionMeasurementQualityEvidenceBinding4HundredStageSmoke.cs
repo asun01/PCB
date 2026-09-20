@@ -58,6 +58,8 @@ for(var i=0;i<10;i++) Check(binding.Sequence==qualityBinding.Sequence,"Baseline 
 for(var i=0;i<10;i++) Check(binding.FindingId==findingId,"Baseline finding identity should remain stable.");
 for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint.All(Uri.IsHexDigit),"Baseline evidence fingerprint should remain hexadecimal.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.All(Uri.IsHexDigit),"Baseline binding fingerprint should remain hexadecimal.");
+for(var i=0;i<10;i++) Check(binding.QualityResultId==qualityBinding.QualityResultId,"Baseline Quality identity should remain stable.");
+for(var i=0;i<10;i++) Check(binding.ComponentId==componentId.Value,"Baseline component identity should remain stable.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceBinding4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
