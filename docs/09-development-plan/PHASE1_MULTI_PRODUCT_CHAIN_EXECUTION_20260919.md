@@ -133,3 +133,11 @@ The current rotation has moved through Production→PCB, Metrology→PCB, Viewpo
 - Next executable stage: **42,501**
 - Active macro horizon: **41,501–141,500**
 - Latest rotation: Pipeline replay → Release logical handoff.
+
+## Live execution synchronization — Stage 43500
+
+- Completed boundary: **43,500**
+- Next executable stage: **43,501**
+- Active macro horizon: **41,501–141,500**
+- Latest rotation: Render→Evidence → Simulation→Render.
+- Earlier registration mismatch in the Pipeline→Release Smoke was detected on re-read and corrected before advancing this boundary.
