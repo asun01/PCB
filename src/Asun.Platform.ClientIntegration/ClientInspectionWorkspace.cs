@@ -15,6 +15,9 @@ public sealed record ClientInspectionWorkspaceSnapshot(
     public bool CanUndoRoi { get; init; }
     public bool CanRedoRoi { get; init; }
     public ClientProgramWorkspaceSnapshot? Program { get; init; }
+    public ClientQualityWorkspaceSnapshot Quality { get; init; }=new(
+        null,0,0,0,0,0,0,null,false,
+        Array.Empty<ClientQualityFindingDisplayItem>());
 }
 
 public sealed class ClientInspectionWorkspace : IDisposable
@@ -23,6 +26,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private readonly ClientProductionWorkspace _production;
     private readonly ClientProductionRunHistory _history;
     private readonly ClientRoiInteractionWorkspace _roi;
+    private readonly ClientQualityWorkspace _quality;
 
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
@@ -38,6 +42,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _production=new ClientProductionWorkspace(productionRunner);
         _history=new ClientProductionRunHistory(historyCapacity);
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
+        _quality=new ClientQualityWorkspace();
     }
 
     public void CancelExecution()
@@ -81,7 +86,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
         {
             CanUndoRoi=_roi.Document.CanUndo,
             CanRedoRoi=_roi.Document.CanRedo,
-            Program=_program.Snapshot
+            Program=_program.Snapshot,
+            Quality=_quality.Capture()
         };
     }
 
@@ -120,6 +126,27 @@ public sealed class ClientInspectionWorkspace : IDisposable
             ThrowIfDisposed();
             return _program.CurrentProgram;
         }
+    }
+
+    public ClientQualityWorkspaceSnapshot Quality
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _quality.Capture();
+        }
+    }
+
+    public void BindQualityRun(Asun.Domain.Quality.QualityInspectionRun run)
+    {
+        ThrowIfDisposed();
+        _quality.Bind(run);
+    }
+
+    public void ClearQualityRun()
+    {
+        ThrowIfDisposed();
+        _quality.Clear();
     }
 
     public void Load(ProductionSessionDefinition definition)
@@ -231,6 +258,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _program.Reset();
         _production.Reset();
         _roi.Reset();
+        _quality.Clear();
         _replay=null;
         _release=null;
     }
