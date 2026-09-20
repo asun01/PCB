@@ -27,6 +27,7 @@
   <Project Path="src/Asun.Platform.PcbEvidenceReleaseIntegration/Asun.Platform.PcbEvidenceReleaseIntegration.csproj" />
   <Project Path="src/Asun.Platform.PcbReplayIntegration/Asun.Platform.PcbReplayIntegration.csproj" />
   <Project Path="src/Asun.Platform.PcbEvidenceEnvelopeIntegration/Asun.Platform.PcbEvidenceEnvelopeIntegration.csproj" />
+  <Project Path="src/Asun.Platform.PcbAuditIntegration/Asun.Platform.PcbAuditIntegration.csproj" />
   <Project Path="src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
   <Project Path="src/Asun.Domain.Hdi/Asun.Domain.Hdi.csproj" />
   <Project Path="src/Asun.Domain.Fpc/Asun.Domain.Fpc.csproj" />
@@ -65,5 +66,6 @@
   <Project Path="tests/Asun.Platform.PcbEvidenceReleaseIntegration.Smoke/Asun.Platform.PcbEvidenceReleaseIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Platform.PcbReplayIntegration.Smoke/Asun.Platform.PcbReplayIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Platform.PcbEvidenceEnvelopeIntegration.Smoke/Asun.Platform.PcbEvidenceEnvelopeIntegration.Smoke.csproj" />
+  <Project Path="tests/Asun.Platform.PcbAuditIntegration.Smoke/Asun.Platform.PcbAuditIntegration.Smoke.csproj" />
   <Project Path="tests/Asun.Domain.Quality.Smoke/Asun.Domain.Quality.Smoke.csproj" />
 </Solution>
