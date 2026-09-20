@@ -1977,3 +1977,12 @@ Static source audit passed for the new Smoke: 10 loop groups, 10 Check call site
 
 Current completed boundary: **41,000**
 Next executable stage: **41,001**
+
+### Execution checkpoint: Stage 41500 — 2026-09-20
+
+Closed stages 41001–41500 for Viewport bounded input coalescing. Added executable acceptance coverage for capacity-one `CoalesceMoves`, latest-pointer preservation, accepted/coalesced accounting, finite-coordinate rejection, deterministic draining, and cancellation lifecycle. Registered the dedicated Smoke and added five 100-stage ledgers plus `PHASE1_41001_41500_INTEGRATION_CHECKPOINT_20260920.md`.
+
+Static source audit passed: 10 loop groups, 10 Check call sites, round==100, balanced delimiters, no TODO/NotImplementedException. No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **41,500**
+Next executable stage: **41,501**
