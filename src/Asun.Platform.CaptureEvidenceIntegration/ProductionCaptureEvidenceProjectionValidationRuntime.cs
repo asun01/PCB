@@ -13,23 +13,6 @@ public static class ProductionCaptureEvidenceProjectionValidationRuntime
         ArgumentNullException.ThrowIfNull(references);
 
         var errors=new List<string>();
-        if(!ProductionSessionValidationRuntime.IsValid(
-            new ProductionSessionDefinition(
-                productionReport.SessionId,
-                new Asun.Program.Core.ProgramExecutionPlan(
-                    Guid.NewGuid(),
-                    new Version(1,0),
-                    Array.Empty<Asun.Program.Core.ProgramStep>(),
-                    new string('0',64)),
-                new Asun.Platform.Pipeline.PipelineDefinition<Asun.Device.Contracts.CapturedFrame>(
-                    Array.Empty<Asun.Platform.Pipeline.PipelineStage<Asun.Device.Contracts.CapturedFrame>>()),
-                productionReport.FrameCount),
-            productionReport))
-        {
-            // The capture/evidence bridge intentionally validates its own binding facts below;
-            // the complete source ProductionSessionDefinition remains the authoritative context.
-        }
-
         if(references.Count!=productionReport.FrameCount)
             errors.Add("Capture evidence-reference count must match production frame count.");
 
