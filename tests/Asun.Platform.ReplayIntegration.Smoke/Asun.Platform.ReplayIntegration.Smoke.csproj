@@ -9,5 +9,6 @@
     <ProjectReference Include="../../src/Asun.Platform.ReplayIntegration/Asun.Platform.ReplayIntegration.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.Evidence/Asun.Platform.Evidence.csproj" />
     <ProjectReference Include="../../src/Asun.Production.Runtime/Asun.Production.Runtime.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.PcbExecutionIntegration/Asun.Platform.PcbExecutionIntegration.csproj" />
   </ItemGroup>
 </Project>
