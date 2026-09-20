@@ -77,6 +77,12 @@
                         VerticalAlignment="Center"
                         AutomationProperties.AutomationId="Shell.SimulationStatus"
                         Text="Ready." />
+                    <TextBlock
+                        x:Name="ReleaseStatus"
+                        Margin="16,7,0,0"
+                        VerticalAlignment="Center"
+                        AutomationProperties.AutomationId="Shell.ReleaseStatus"
+                        Text="Release: not evaluated." />
                 </StackPanel>
             </StackPanel>
         </Border>
