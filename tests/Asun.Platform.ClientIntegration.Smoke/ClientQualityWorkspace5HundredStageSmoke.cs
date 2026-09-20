@@ -21,14 +21,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -56,14 +56,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -91,14 +91,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -126,14 +126,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -161,14 +161,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -196,14 +196,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -231,14 +231,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -266,14 +266,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -301,14 +301,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
@@ -336,14 +336,14 @@ public static class ClientQualityWorkspace5HundredStageSmoke
                             Guid.Parse("84000000-0000-0000-0000-000000000204"),
                             2,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())),
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))),
                     new QualityInspectionResult(
                         Guid.Parse("84000000-0000-0000-0000-000000000105"),
                         new QualityInspectionSnapshot(
                             Guid.Parse("84000000-0000-0000-0000-000000000205"),
                             1,
                             new QualityFindingSet(Array.Empty<QualityFinding>()),
-                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>()))
+                            new QualityFindingEvidenceSet(Array.Empty<QualityFindingEvidenceLink>())))
                 });
             var workspace=new ClientQualityWorkspace();
             var failed=false;
