@@ -22,6 +22,7 @@ public partial class MainWindow : System.Windows.Window
 
         RefreshWorkspaceStatus();
         RefreshRunHistoryStatus();
+        RefreshCommandAvailability();
     }
 
     private void Window_Closed(
@@ -39,6 +40,7 @@ public partial class MainWindow : System.Windows.Window
         {
             _client.Load(ClientSimulationSessionFactory.CreateDefinition());
             SimulationStatus.Text="Simulation session loaded.";
+            RefreshCommandAvailability();
             ReleaseStatus.Text="Release: not evaluated.";
             DiagnosticStatus.Text="Diagnostic: not evaluated.";
             RefreshWorkspaceStatus();
@@ -63,6 +65,7 @@ public partial class MainWindow : System.Windows.Window
         }
 
         _client.SetRoiMode(RoiEditorMode.Select);
+        RefreshCommandAvailability();
         RoiSurface.Focus();
         RoiStatus.Text="ROI: Select mode.";
     }
@@ -78,6 +81,7 @@ public partial class MainWindow : System.Windows.Window
         }
 
         _client.SetRoiMode(RoiEditorMode.CreateRectangle);
+        RefreshCommandAvailability();
         RoiSurface.Focus();
         RoiStatus.Text="ROI: Create Rectangle mode.";
     }
@@ -98,10 +102,16 @@ public partial class MainWindow : System.Windows.Window
         {
             var definition=ClientSimulationSessionFactory.CreateDefinition();
             _client.Load(definition);
+            RefreshWorkspaceStatus();
+            RefreshCommandAvailability();
 
-            var report=await _client.ExecuteAsync(
+            var execution=_client.ExecuteAsync(
                 ClientSimulationSessionFactory.CreateSource(),
                 ClientSimulationSessionFactory.CreateReleaseManifest());
+
+            RefreshWorkspaceStatus();
+            RefreshCommandAvailability();
+            var report=await execution;
 
             var snapshot=_client.Capture();
             var diagnostic=ClientInspectionDiagnosticsRuntime.Analyze(snapshot);
@@ -131,12 +141,7 @@ public partial class MainWindow : System.Windows.Window
         }
         finally
         {
-            LoadSimulationButton.IsEnabled=true;
-            RunSimulationButton.IsEnabled=true;
-            ResetSessionButton.IsEnabled=true;
-            SelectRoiButton.IsEnabled=true;
-            CreateRoiButton.IsEnabled=true;
-            CancelSimulationButton.IsEnabled=false;
+            RefreshCommandAvailability();
         }
     }
 
@@ -154,6 +159,7 @@ public partial class MainWindow : System.Windows.Window
     {
         _client.ResetCurrentSession();
         ReleaseStatus.Text="Release: not evaluated.";
+        RefreshCommandAvailability();
         SimulationStatus.Text="Ready.";
         RefreshWorkspaceStatus();
         RefreshRunHistoryStatus();
@@ -282,6 +288,17 @@ public partial class MainWindow : System.Windows.Window
         }
 
         RoiStatus.Text=$"ROI: {snapshot.Items.Count} items · selected {snapshot.Document.SelectedId}.";
+    }
+
+    private void RefreshCommandAvailability()
+    {
+        var availability=ClientCommandAvailabilityRuntime.Create(_client.Capture());
+        LoadSimulationButton.IsEnabled=availability.CanLoad;
+        RunSimulationButton.IsEnabled=availability.CanRun;
+        CancelSimulationButton.IsEnabled=availability.CanCancel;
+        ResetSessionButton.IsEnabled=availability.CanReset;
+        SelectRoiButton.IsEnabled=availability.CanSelectRoi;
+        CreateRoiButton.IsEnabled=availability.CanCreateRoi;
     }
 
     private void RefreshDiagnosticStatus(
