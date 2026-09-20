@@ -22,11 +22,15 @@ public sealed record ClientQualityWorkspaceSnapshot(
     int EvidenceLinkCount,
     string? Fingerprint,
     bool IsBound,
-    IReadOnlyList<ClientQualityFindingDisplayItem> Findings);
+    IReadOnlyList<ClientQualityFindingDisplayItem> Findings)
+{
+    public string? SelectedFindingId { get; init; }
+};
 
 public sealed class ClientQualityWorkspace
 {
     private QualityInspectionRun? _run;
+    private string? _selectedFindingId;
 
     public ClientQualityWorkspaceSnapshot Capture()
     {
@@ -92,7 +96,10 @@ public sealed class ClientQualityWorkspace
             evidenceCount,
             fingerprint,
             true,
-            findings);
+            findings)
+        {
+            SelectedFindingId=_selectedFindingId
+        };
     }
 
     public void Bind(QualityInspectionRun run)
@@ -102,7 +109,34 @@ public sealed class ClientQualityWorkspace
             throw new ArgumentException("Quality inspection run is invalid.",nameof(run));
 
         _run=run;
+        _selectedFindingId=_run.Results
+            .OrderBy(result=>result.Sequence)
+            .ThenBy(result=>result.SnapshotId)
+            .ThenBy(result=>result.ResultId)
+            .SelectMany(result=>result.Findings.Findings)
+            .Select(finding=>finding.Id.Value)
+            .FirstOrDefault();
     }
 
-    public void Clear() => _run=null;
+    public bool SelectFinding(string findingId)
+    {
+        if(_run is null || string.IsNullOrWhiteSpace(findingId))
+            return false;
+
+        var exists=_run.Results
+            .SelectMany(result=>result.Findings.Findings)
+            .Any(finding=>finding.Id.Value==findingId);
+
+        if(!exists)
+            return false;
+
+        _selectedFindingId=findingId;
+        return true;
+    }
+
+    public void Clear()
+    {
+        _run=null;
+        _selectedFindingId=null;
+    }
 }
