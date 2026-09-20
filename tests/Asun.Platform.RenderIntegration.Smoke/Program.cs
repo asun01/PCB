@@ -10,6 +10,11 @@ await ProductionRenderFrameProjectionHundredStageSmoke.RunAsync(Check);
 await ProductionRenderReplayFrameIntegrityHundredStageSmoke.RunAsync(Check);
 await ProductionCaptureRenderProvenanceHundredStageSmoke.RunAsync(Check);
 await ProductionRenderEvidenceReferenceHundredStageSmoke.RunAsync(Check);
+await ProductionRenderEvidenceReplayDescriptor1HundredStageSmoke.RunAsync(Check);
+await ProductionRenderEvidenceReplayDescriptor2HundredStageSmoke.RunAsync(Check);
+await ProductionRenderEvidenceReplayDescriptor3HundredStageSmoke.RunAsync(Check);
+await ProductionRenderEvidenceReplayDescriptor4HundredStageSmoke.RunAsync(Check);
+await ProductionRenderEvidenceReplayDescriptor5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
