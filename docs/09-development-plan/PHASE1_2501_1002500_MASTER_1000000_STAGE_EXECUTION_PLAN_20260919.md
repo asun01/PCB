@@ -2502,3 +2502,13 @@ Current completed boundary: **37,000**
 Next executable stage: **37,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 37500 — 2026-09-20
+
+Closed Unified execution → Simulation replay. The repository now carries a factual replay projection that keeps physical Production identity separate from Simulation observation fingerprints while preserving sequence alignment.
+
+Current completed boundary: **37,500**
+Next executable stage: **37,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
