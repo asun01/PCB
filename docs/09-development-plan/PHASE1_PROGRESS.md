@@ -1864,3 +1864,23 @@ Current continuous execution position:
 - completed through Stage 37000;
 - next natural stage: 37001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 37001→37500 unified execution → Simulation replay — 2026-09-20
+
+Completed stages 37001–37500.
+
+Implemented:
+- Asun.Platform.PcbSimulationIntegration;
+- PcbExecutionSimulationReplayProjection and independent validation;
+- real SimulationSessionRuntime + real ProductionSessionRuntime binding in Smoke;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Real corrections:
+- removed fabricated Production identity from the Smoke;
+- normalized the Smoke to the exact ten-loop/ten-check gate.
+
+Current continuous execution position:
+- completed through Stage 37500;
+- next natural stage: 37501;
+- global one-million-stage horizon remains 2501–1002500.
