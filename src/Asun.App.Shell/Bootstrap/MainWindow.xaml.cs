@@ -143,6 +143,23 @@ public partial class MainWindow : System.Windows.Window
         RefreshDiagnosticStatus();
     }
 
+    private void QualityFilter_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if(!IsInitialized)
+            return;
+
+        RefreshQualityStatus();
+    }
+
+    private static string ReadComboValue(
+        System.Windows.Controls.ComboBox combo)
+    {
+        return (combo.SelectedItem as System.Windows.Controls.ComboBoxItem)?.Content?.ToString()
+            ?? "All";
+    }
+
     private void RunHistoryList_SelectionChanged(
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
