@@ -33,6 +33,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private readonly ClientRoiInteractionWorkspace _roi;
     private readonly ClientQualityWorkspace _quality;
     private readonly ClientAcquisitionWorkspace _acquisition;
+    private readonly ClientAcquisitionCatalog _acquisitionCatalog;
 
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
@@ -52,6 +53,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
         _quality=new ClientQualityWorkspace();
         _acquisition=new ClientAcquisitionWorkspace();
+        _acquisitionCatalog=new ClientAcquisitionCatalog();
         _production.Changed+=OnProductionChanged;
     }
 
@@ -156,6 +158,30 @@ public sealed class ClientInspectionWorkspace : IDisposable
             ThrowIfDisposed();
             return _acquisition.Snapshot;
         }
+    }
+
+    public ClientAcquisitionCatalog AcquisitionCatalog
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _acquisitionCatalog;
+        }
+    }
+
+    public bool BindAcquisitionSource(string sourceId)
+    {
+        ThrowIfDisposed();
+        if(!_acquisitionCatalog.TryCreate(
+            sourceId,
+            out var source,
+            out var descriptor) ||
+           descriptor is null)
+            return false;
+
+        _acquisition.Bind(source,descriptor);
+        ProductionChanged?.Invoke(_production.Snapshot);
+        return true;
     }
 
     public void BindAcquisition(
