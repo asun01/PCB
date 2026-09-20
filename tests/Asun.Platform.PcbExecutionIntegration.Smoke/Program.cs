@@ -13,6 +13,11 @@ await PcbExecutionRoiContextBinding2HundredStageSmoke.RunAsync(Check);
 await PcbExecutionRoiContextBinding3HundredStageSmoke.RunAsync(Check);
 await PcbExecutionRoiContextBinding4HundredStageSmoke.RunAsync(Check);
 await PcbExecutionRoiContextBinding5HundredStageSmoke.RunAsync(Check);
+await PcbExecutionMeasurementComponentBinding1HundredStageSmoke.RunAsync(Check);
+await PcbExecutionMeasurementComponentBinding2HundredStageSmoke.RunAsync(Check);
+await PcbExecutionMeasurementComponentBinding3HundredStageSmoke.RunAsync(Check);
+await PcbExecutionMeasurementComponentBinding4HundredStageSmoke.RunAsync(Check);
+await PcbExecutionMeasurementComponentBinding5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
