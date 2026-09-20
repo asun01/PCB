@@ -8,6 +8,11 @@ void Check(bool condition,string message)
 
 await PcbExecutionSnapshotHundredStageSmoke.RunAsync(Check);
 await PcbExecutionBoardBindingHundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiContextBinding1HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiContextBinding2HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiContextBinding3HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiContextBinding4HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiContextBinding5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
