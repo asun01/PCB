@@ -28,7 +28,7 @@ public static class ProductionSimulationRenderProvenance5HundredStageSmoke
             new ProductionRenderReplayFrameIntegrity(2,"input-b",summaries[1],ViewportRenderFrameFingerprintRuntime.CreateFingerprint(summaries[1]))
         };
         var provenance=ProductionSimulationRenderProvenanceRuntime.Create(simulation,render);
-        var changed=provenance.Select(x=>x.Sequence==null ? x : x with {SimulationObservationFingerprint=new string('z',64)}).ToArray();
+        var changed=provenance.Select(x=>x with {SimulationObservationFingerprint=new string('z',64)}).ToArray();
         for(var i=0;i<10;i++) Check(ProductionSimulationRenderProvenanceRuntime.Validate(simulation,render,provenance).Count==0,"Baseline replay provenance should validate.");
         for(var i=0;i<10;i++) Check(!ProductionSimulationRenderProvenanceRuntime.IsEquivalent(provenance,changed),"Simulation observation mutation should be observable.");
         for(var i=0;i<10;i++) Check(ProductionSimulationRenderProvenanceRuntime.CreateFingerprint(provenance)!=ProductionSimulationRenderProvenanceRuntime.CreateFingerprint(changed),"Simulation mutation should alter fingerprint.");
