@@ -334,6 +334,11 @@ await ViewportInputLifecycleSmoke.RunAsync(Assert);
 
 await ViewportInputBackpressureLifecycleHundredStageSmoke.RunAsync(Assert);
 await ViewportInputBackpressureCoalescingHundredStageSmoke.RunAsync(Assert);
+await ViewportInputRecovery1HundredStageSmoke.RunAsync(Assert);
+await ViewportInputRecovery2HundredStageSmoke.RunAsync(Assert);
+await ViewportInputRecovery3HundredStageSmoke.RunAsync(Assert);
+await ViewportInputRecovery4HundredStageSmoke.RunAsync(Assert);
+await ViewportInputRecovery5HundredStageSmoke.RunAsync(Assert);
 
 if (failures.Count > 0)
 {
