@@ -65,7 +65,23 @@
                     Text="Development-only path. It uses the vendor-neutral Production Runtime with a deterministic simulated frame source; it does not claim hardware or HALCON execution." />
                 <StackPanel Orientation="Horizontal">
                     <Button
+                        x:Name="SelectRoiButton"
+                        Width="100"
+                        Height="32"
+                        Click="SelectRoiButton_Click"
+                        Content="Select ROI"
+                        AutomationProperties.AutomationId="Shell.SelectRoi" />
+                    <Button
+                        x:Name="CreateRoiButton"
+                        Margin="8,0,0,0"
+                        Width="100"
+                        Height="32"
+                        Click="CreateRoiButton_Click"
+                        Content="Create ROI"
+                        AutomationProperties.AutomationId="Shell.CreateRoi" />
+                    <Button
                         x:Name="LoadSimulationButton"
+                        Margin="8,0,0,0"
                         Width="150"
                         Height="32"
                         Click="LoadSimulationButton_Click"
@@ -112,24 +128,42 @@
         <Border
             Grid.Row="3"
             Margin="0,16,0,0"
-            Padding="20"
+            Padding="12"
             BorderThickness="1"
             AutomationProperties.AutomationId="Shell.ContentHost">
-            <StackPanel VerticalAlignment="Center">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="20"
+                    FontSize="18"
                     FontWeight="SemiBold"
-                    Text="Workspace host" />
+                    Text="ROI interaction host" />
+                <Canvas
+                    x:Name="RoiSurface"
+                    Grid.Row="1"
+                    Margin="0,12,0,8"
+                    Focusable="True"
+                    SizeChanged="RoiSurface_SizeChanged"
+                    MouseDown="RoiSurface_MouseDown"
+                    MouseMove="RoiSurface_MouseMove"
+                    MouseUp="RoiSurface_MouseUp"
+                    MouseWheel="RoiSurface_MouseWheel"
+                    KeyDown="RoiSurface_KeyDown">
+                    <TextBlock
+                        x:Name="RoiSurfaceHint"
+                        Margin="16"
+                        Opacity="0.65"
+                        Text="Run the deterministic simulation, then choose Create ROI and drag on this vendor-neutral WPF development surface." />
+                </Canvas>
                 <TextBlock
-                    Margin="0,12,0,0"
-                    HorizontalAlignment="Center"
-                    MaxWidth="760"
-                    TextAlignment="Center"
-                    TextWrapping="Wrap"
-                    Opacity="0.72"
-                    Text="Production commands enter through the vendor-neutral Client Integration boundary. Hardware, HALCON, and DevExpress authority remain isolated behind their recorded environment gates." />
-            </StackPanel>
+                    x:Name="RoiStatus"
+                    Grid.Row="2"
+                    AutomationProperties.AutomationId="Shell.RoiStatus"
+                    Text="ROI: workspace not bound." />
+            </Grid>
         </Border>
     </Grid>
 </Window>
