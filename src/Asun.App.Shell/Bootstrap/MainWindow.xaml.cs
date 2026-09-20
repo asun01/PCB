@@ -28,6 +28,7 @@ public partial class MainWindow : System.Windows.Window
         RefreshProgramStatus();
         RefreshResultStatus();
         RefreshRunHistoryStatus();
+        ApplyWorkspaceView(_workspaceRuntime.Current.Workspace);
         RefreshCommandAvailability();
     }
 
@@ -43,6 +44,7 @@ public partial class MainWindow : System.Windows.Window
     private void OnWorkspaceChanged(ClientWorkspaceSelection selection)
     {
         WorkspaceNavigationStatus.Text=$"Workspace: {selection.Workspace}";
+        ApplyWorkspaceView(selection.Workspace);
         RefreshCommandAvailability();
     }
 
@@ -61,6 +63,39 @@ public partial class MainWindow : System.Windows.Window
 
     private void WorkspaceResultsButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
         _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Results);
+
+    private void ApplyWorkspaceView(ClientWorkspaceKind workspace)
+    {
+        ProgramWorkspace.Visibility =
+            workspace==ClientWorkspaceKind.Program
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+
+        ResultWorkspace.Visibility =
+            workspace is ClientWorkspaceKind.Results or ClientWorkspaceKind.Quality
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+
+        RoiSurface.Visibility =
+            workspace==ClientWorkspaceKind.Inspection
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+
+        RoiWorkspaceTitle.Visibility =
+            workspace==ClientWorkspaceKind.Inspection
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+
+        RoiStatus.Visibility =
+            workspace==ClientWorkspaceKind.Inspection
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+
+        QualityStatus.Visibility =
+            workspace==ClientWorkspaceKind.Quality
+                ? System.Windows.Visibility.Visible
+                : System.Windows.Visibility.Collapsed;
+    }
 
     private void LoadSimulationButton_Click(
         object sender,
