@@ -405,6 +405,31 @@
                             Margin="0,6,0,0"
                             Text="Quality Run: not attached. No Quality authority is being fabricated by the client shell."
                             TextWrapping="Wrap" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock VerticalAlignment="Center" Text="Outcome:" />
+                            <ComboBox
+                                x:Name="QualityOutcomeFilter"
+                                Margin="6,0,12,0"
+                                Width="100"
+                                SelectionChanged="QualityFilter_SelectionChanged">
+                                <ComboBoxItem Content="All" IsSelected="True" />
+                                <ComboBoxItem Content="Pass" />
+                                <ComboBoxItem Content="Fail" />
+                                <ComboBoxItem Content="Review" />
+                            </ComboBox>
+                            <TextBlock VerticalAlignment="Center" Text="Severity:" />
+                            <ComboBox
+                                x:Name="QualitySeverityFilter"
+                                Margin="6,0,0,0"
+                                Width="100"
+                                SelectionChanged="QualityFilter_SelectionChanged">
+                                <ComboBoxItem Content="All" IsSelected="True" />
+                                <ComboBoxItem Content="None" />
+                                <ComboBoxItem Content="Information" />
+                                <ComboBoxItem Content="Warning" />
+                                <ComboBoxItem Content="Critical" />
+                            </ComboBox>
+                        </StackPanel>
                         <ListBox
                             x:Name="QualityFindingList"
                             Margin="0,8,0,0"
