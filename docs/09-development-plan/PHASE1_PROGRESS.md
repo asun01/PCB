@@ -2148,3 +2148,18 @@ No authoritative build/test/CI success is claimed.
 
 Current completed boundary: **47,500**
 Next executable stage: **47,501**
+
+### 47501→48000 Production Evidence → Release Manifest → Replay descriptor — 2026-09-20
+
+Completed stages 47501–48000 as five contiguous 100-stage acceptance blocks.
+
+Implemented `ProductionReleaseReplayDescriptorRuntime` to canonically project Release manifest fingerprint, logical artifact count, factual Release readiness, and deterministic replay descriptor identity. It rejects manifest drift, artifact-count drift, readiness tampering, malformed fingerprints, changed release content, and invalid manifests.
+
+Release persistence remains outside the runtime; the descriptor is a logical/replay identity only.
+
+Added and registered five exact 100-round Smokes and five stage ledgers plus the integration checkpoint. Static audit initially detected 9/8-loop gaps in the generated matrices; all five were corrected and now satisfy 10 loops, 10 Check calls, round==100, balanced braces, and no TODO/NotImplementedException.
+
+No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **48,000**
+Next executable stage: **48,001**
