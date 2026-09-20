@@ -13,18 +13,42 @@ public partial class MainWindow : System.Windows.Window
         RefreshWorkspaceStatus();
     }
 
-    private async void RunSimulationButton_Click(
+    private void LoadSimulationButton_Click(
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        RunSimulationButton.IsEnabled=false;
-        SimulationStatus.Text="Running deterministic simulation...";
-
         try
         {
             var definition=ClientSimulationSessionFactory.CreateDefinition();
             _workspace.Load(definition);
+            SimulationStatus.Text="Simulation session loaded.";
+            ReleaseStatus.Text="Release: not evaluated.";
             RefreshWorkspaceStatus();
+        }
+        catch(Exception exception)
+        {
+            SimulationStatus.Text=$"Load failed · {exception.Message}";
+            ReleaseStatus.Text="Release: not evaluated.";
+            RefreshWorkspaceStatus();
+        }
+    }
+
+    private async void RunSimulationButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        LoadSimulationButton.IsEnabled=false;
+        RunSimulationButton.IsEnabled=false;
+        ResetSessionButton.IsEnabled=false;
+        SimulationStatus.Text="Running deterministic simulation...";
+
+        try
+        {
+            if(_workspace.Snapshot.Status==ClientExecutionStatus.Idle)
+            {
+                _workspace.Load(ClientSimulationSessionFactory.CreateDefinition());
+                RefreshWorkspaceStatus();
+            }
 
             var report=await _workspace.StartAsync(
                 ClientSimulationSessionFactory.CreateSource());
@@ -56,8 +80,20 @@ public partial class MainWindow : System.Windows.Window
         }
         finally
         {
+            LoadSimulationButton.IsEnabled=true;
             RunSimulationButton.IsEnabled=true;
+            ResetSessionButton.IsEnabled=true;
         }
+    }
+
+    private void ResetSessionButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        _workspace.Reset();
+        SimulationStatus.Text="Ready.";
+        ReleaseStatus.Text="Release: not evaluated.";
+        RefreshWorkspaceStatus();
     }
 
     private void RefreshWorkspaceStatus()
