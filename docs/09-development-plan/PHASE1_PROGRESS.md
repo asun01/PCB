@@ -2135,3 +2135,16 @@ Static audit of the five new Smokes: all have 10 loop groups, 10 meaningful Chec
 
 Current completed boundary: **47,000**
 Next executable stage: **47,001**
+
+### 47001→47500 Render → Evidence replay descriptor — 2026-09-20
+
+Completed stages 47001–47500 as five contiguous 100-stage acceptance blocks.
+
+Implemented `ProductionRenderEvidenceReplayDescriptorRuntime` to canonically bind Render replay frame identity to an opaque EvidenceHandle. Descriptors carry sequence, Render fingerprint, opaque Evidence identity, and deterministic descriptor fingerprint; validation rejects missing/duplicate references, render identity drift, opaque-handle drift, malformed descriptors, and changed render content.
+
+Added and registered five exact 100-round Smokes and five stage ledgers plus the integration checkpoint. Static acceptance was actively repaired after detecting initial 9-loop matrices; all five new Smokes now satisfy the 10-loop/10-Check/round-100 structure.
+
+No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **47,500**
+Next executable stage: **47,501**
