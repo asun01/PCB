@@ -30,8 +30,7 @@ public static class PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke
         var restored=PcbEvidenceReleaseAuditTraceJsonRuntime.FromJson(serialized);
         var tampered=serialized+" ";
 
-        for(var i=0;i<10;i++) Check(serialized.Contains("formatVersion",StringComparison.Ordinal),"Serialized trace should carry an explicit format version.");
-        for(var i=0;i<10;i++) Check(serialized.Contains("integrityHash",StringComparison.Ordinal),"Serialized trace should carry an integrity hash.");
+        for(var i=0;i<10;i++) Check(serialized.Contains("formatVersion",StringComparison.Ordinal) && serialized.Contains("integrityHash",StringComparison.Ordinal),"Serialized trace should carry explicit schema version and integrity metadata.");
         for(var i=0;i<10;i++) Check(restored.Fingerprint==appended.Fingerprint,"JSON roundtrip should preserve trace fingerprint.");
         for(var i=0;i<10;i++) Check(restored.Entries.Count==2,"JSON roundtrip should preserve bounded trace entry count.");
         for(var i=0;i<10;i++) Check(restored.Entries[1].Sequence==2,"JSON roundtrip should preserve sequence ordering.");
@@ -40,7 +39,6 @@ public static class PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke
         for(var i=0;i<10;i++) Check(normalized.Fingerprint==appended.Fingerprint,"Whitespace or normalization handling should remain deterministic.");
         for(var i=0;i<10;i++) Check(normalized.Entries.Count==2,"Schema boundary should preserve the bounded trace shape.");
         for(var i=0;i<10;i++) Check(serialized.Trim()==PcbEvidenceReleaseAuditTraceJsonRuntime.ToJson(restored),"JSON boundary should be canonical enough for deterministic re-serialization.");
-        for(var i=0;i<10;i++) Check(normalized.Fingerprint==restored.Fingerprint,"Normalized JSON should preserve identity after whitespace handling.");
         
 
         assert(round==100,$"PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
