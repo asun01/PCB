@@ -26,6 +26,8 @@ public static class ProductionRenderEvidenceReplayDescriptor4HundredStageSmoke
         for(var i=0;i<10;i++) Check(descriptors[0].EvidenceHandle.Value!="","First Evidence handle should remain non-empty.");
         for(var i=0;i<10;i++) Check(descriptors[1].EvidenceHandle.Value!="","Second Evidence handle should remain non-empty.");
         for(var i=0;i<10;i++) Check(ProductionRenderEvidenceReplayDescriptorRuntime.IsEquivalent(descriptors,descriptors),"Descriptor self-equivalence should hold.");
+for(var i=0;i<10;i++) Check(ProductionRenderEvidenceReplayDescriptorRuntime.IsValid(frames,descriptors),"Baseline render/evidence descriptors should remain valid.");
+
         assert(round==100,$"ProductionRenderEvidenceReplayDescriptor4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
