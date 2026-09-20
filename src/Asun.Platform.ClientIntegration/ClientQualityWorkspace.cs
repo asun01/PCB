@@ -25,12 +25,14 @@ public sealed record ClientQualityWorkspaceSnapshot(
     IReadOnlyList<ClientQualityFindingDisplayItem> Findings)
 {
     public string? SelectedFindingId { get; init; }
+    public ClientQualityProviderDescriptor? Provider { get; init; }
 };
 
 public sealed class ClientQualityWorkspace
 {
     private QualityInspectionRun? _run;
     private string? _selectedFindingId;
+    private ClientQualityProviderDescriptor? _provider;
 
     public ClientQualityWorkspaceSnapshot Capture()
     {
@@ -98,17 +100,36 @@ public sealed class ClientQualityWorkspace
             true,
             findings)
         {
-            SelectedFindingId=_selectedFindingId
+            SelectedFindingId=_selectedFindingId,
+            Provider=_provider
         };
     }
 
     public void Bind(QualityInspectionRun run)
     {
+        Bind(
+            run,
+            new ClientQualityProviderDescriptor(
+                "external",
+                "External Quality Run",
+                false));
+    }
+
+    public void Bind(
+        QualityInspectionRun run,
+        ClientQualityProviderDescriptor provider)
+    {
         ArgumentNullException.ThrowIfNull(run);
+        ArgumentNullException.ThrowIfNull(provider);
         if(!QualityInspectionRunValidationRuntime.IsValid(run))
             throw new ArgumentException("Quality inspection run is invalid.",nameof(run));
 
+        if(string.IsNullOrWhiteSpace(provider.ProviderId) ||
+           string.IsNullOrWhiteSpace(provider.DisplayName))
+            throw new ArgumentException("Quality provider descriptor is invalid.",nameof(provider));
+
         _run=run;
+        _provider=provider;
         _selectedFindingId=_run.Results
             .OrderBy(result=>result.Sequence)
             .ThenBy(result=>result.SnapshotId)
@@ -137,6 +158,7 @@ public sealed class ClientQualityWorkspace
     public void Clear()
     {
         _run=null;
+        _provider=null;
         _selectedFindingId=null;
     }
 }
