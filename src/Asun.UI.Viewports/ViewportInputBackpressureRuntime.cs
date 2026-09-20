@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace Asun.UI.Viewports;
 
 public enum ViewportInputDropPolicy
@@ -10,16 +12,23 @@ public enum ViewportInputDropPolicy
 public readonly record struct ViewportInputBackpressureSnapshot(
     int Capacity,
     int Pending,
+    long Accepted,
     long Dropped,
-    long Coalesced);
+    long Coalesced,
+    bool IsCompleted,
+    bool IsCancelled);
 
-public sealed class ViewportInputBackpressureRuntime
+public sealed class ViewportInputBackpressureRuntime : IDisposable
 {
     private readonly object _sync = new();
     private readonly int _capacity;
     private readonly ViewportInputDropPolicy _dropPolicy;
+    private long _accepted;
     private long _dropped;
     private long _coalesced;
+    private int _completed;
+    private int _cancelled;
+    private int _disposed;
 
     public ViewportInputBackpressureRuntime(
         int capacity = 512,
@@ -32,35 +41,39 @@ public sealed class ViewportInputBackpressureRuntime
         _dropPolicy = dropPolicy;
     }
 
-    public ViewportInputBackpressureSnapshot Capture(
-        ViewportInputSubmissionRuntime input)
+    public bool IsCompleted => Volatile.Read(ref _completed) != 0;
+    public bool IsCancelled => Volatile.Read(ref _cancelled) != 0;
+
+    public ViewportInputBackpressureSnapshot Capture(ViewportInputSubmissionRuntime input)
     {
         ArgumentNullException.ThrowIfNull(input);
-
         lock (_sync)
         {
             return new ViewportInputBackpressureSnapshot(
                 _capacity,
                 input.PendingCount,
+                _accepted,
                 _dropped,
-                _coalesced);
+                _coalesced,
+                IsCompleted,
+                IsCancelled);
         }
     }
 
     public bool TrySubmit(
         ViewportInputSubmissionRuntime input,
         ViewportInputEventKind kind,
-        System.Numerics.Vector2 position,
+        Vector2 position,
         int wheelDelta = 0,
         ViewportMouseButton button = ViewportMouseButton.Left)
     {
         ArgumentNullException.ThrowIfNull(input);
-
-        if (input.IsCompleted || input.IsCancelled)
-            return false;
+        ValidatePosition(position);
 
         lock (_sync)
         {
+            ThrowIfUnavailable();
+
             if (input.IsCompleted || input.IsCancelled)
                 return false;
 
@@ -71,16 +84,15 @@ public sealed class ViewportInputBackpressureRuntime
                     case ViewportInputDropPolicy.DropNewest:
                         _dropped++;
                         return false;
-
                     case ViewportInputDropPolicy.DropOldest:
                         input.Drain(1);
                         _dropped++;
                         break;
-
                     case ViewportInputDropPolicy.CoalesceMoves:
                         if (kind == ViewportInputEventKind.PointerMove &&
                             input.TryReplaceLatestMove(position))
                         {
+                            _accepted++;
                             _coalesced++;
                             return true;
                         }
@@ -93,12 +105,8 @@ public sealed class ViewportInputBackpressureRuntime
 
             try
             {
-                input.Submit(
-                    kind,
-                    position,
-                    wheelDelta,
-                    button);
-
+                input.Submit(kind, position, wheelDelta, button);
+                _accepted++;
                 return true;
             }
             catch (InvalidOperationException)
@@ -110,5 +118,54 @@ public sealed class ViewportInputBackpressureRuntime
                 return false;
             }
         }
+    }
+
+    public void Complete(bool cancelPending = false)
+    {
+        if (Interlocked.Exchange(ref _completed, 1) != 0)
+            return;
+
+        if (cancelPending)
+        {
+            lock (_sync)
+            {
+                _dropped++;
+            }
+        }
+    }
+
+    public void Cancel()
+    {
+        if (Interlocked.Exchange(ref _cancelled, 1) == 0)
+            Volatile.Write(ref _completed, 1);
+    }
+
+    public void Reset()
+    {
+        lock (_sync)
+        {
+            ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
+            Volatile.Write(ref _completed, 0);
+            Volatile.Write(ref _cancelled, 0);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _disposed, 1) == 0)
+            Cancel();
+    }
+
+    private void ThrowIfUnavailable()
+    {
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
+        if (IsCompleted || IsCancelled)
+            throw new InvalidOperationException("The input backpressure runtime is not accepting events.");
+    }
+
+    private static void ValidatePosition(Vector2 position)
+    {
+        if (!float.IsFinite(position.X) || !float.IsFinite(position.Y))
+            throw new ArgumentOutOfRangeException(nameof(position));
     }
 }
