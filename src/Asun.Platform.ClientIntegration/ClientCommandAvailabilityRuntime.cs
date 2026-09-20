@@ -23,19 +23,19 @@ public static class ClientCommandAvailabilityRuntime
                 new(true,false,false,false,false,false,false,false),
 
             ClientExecutionStatus.Ready =>
-                new(true,true,false,true,false,false,false,false),
+                new(true,snapshot.Acquisition.CanCapture,false,true,false,false,false,false),
 
             ClientExecutionStatus.Running =>
                 new(false,false,true,false,false,false,false,false),
 
             ClientExecutionStatus.Completed =>
-                new(true,true,false,true,true,true,snapshot.CanUndoRoi,snapshot.CanRedoRoi),
+                new(true,snapshot.Acquisition.CanCapture,false,true,true,true,snapshot.CanUndoRoi,snapshot.CanRedoRoi),
 
             ClientExecutionStatus.Cancelled =>
-                new(true,true,false,true,false,false,false,false),
+                new(true,snapshot.Acquisition.CanCapture,false,true,false,false,false,false),
 
             ClientExecutionStatus.Failed =>
-                new(true,true,false,true,false,false,false,false),
+                new(true,snapshot.Acquisition.CanCapture,false,true,false,false,false,false),
 
             _ =>
                 new(false,false,false,false,false,false,false,false)
