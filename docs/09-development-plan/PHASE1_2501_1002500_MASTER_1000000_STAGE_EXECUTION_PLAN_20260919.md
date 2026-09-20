@@ -2472,3 +2472,13 @@ Current completed boundary: **35,500**
 Next executable stage: **35,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 36000 — 2026-09-20
+
+Closed Unified PCB execution snapshot → Release facts. The complete execution identity can now be projected into Release without making the Release layer responsible for upstream inspection or measurement semantics.
+
+Current completed boundary: **36,000**
+Next executable stage: **36,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
