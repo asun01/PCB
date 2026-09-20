@@ -1,4 +1,6 @@
 using System.Numerics;
+using System.Windows.Media.Imaging;
+using Asun.Device.Contracts;
 using Asun.Platform.ClientIntegration;
 using Asun.Platform.SimulationIntegration;
 using Asun.UI.Viewports;
@@ -67,6 +69,33 @@ public partial class MainWindow : System.Windows.Window
                 RefreshCommandAvailability();
                 RefreshResultStatus();
             }));
+        }
+    }
+
+    private async void PreviewAcquisitionButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        try
+        {
+            var preview=await _client.PreviewAcquisitionAsync();
+            RenderPreview(preview);
+            AcquisitionStatus.Text=
+                $"Acquisition: {preview.PixelFormat} · {preview.Width}×{preview.Height} · Frame {preview.Sequence.Value}.";
+            RefreshDiagnosticStatus();
+        }
+        catch(OperationCanceledException)
+        {
+            AcquisitionStatus.Text="Acquisition preview cancelled.";
+        }
+        catch(Exception exception)
+        {
+            AcquisitionStatus.Text=$"Acquisition preview failed · {exception.Message}";
+            RefreshDiagnosticStatus();
+        }
+        finally
+        {
+            RefreshCommandAvailability();
         }
     }
 
@@ -444,6 +473,42 @@ public partial class MainWindow : System.Windows.Window
         }
     }
 
+    private void RenderPreview(ClientAcquisitionPreviewSnapshot preview)
+    {
+        if(preview.PixelFormat.Equals("Gray8",StringComparison.OrdinalIgnoreCase) &&
+           preview.Width>0 &&
+           preview.Height>0 &&
+           preview.Width<=int.MaxValue &&
+           preview.Height<=int.MaxValue &&
+           preview.Payload.LongLength==preview.Width*preview.Height)
+        {
+            var bitmap=new WriteableBitmap(
+                (int)preview.Width,
+                (int)preview.Height,
+                96,
+                96,
+                System.Windows.Media.PixelFormats.Gray8,
+                null);
+
+            var stride=(int)preview.Width;
+            bitmap.WritePixels(
+                new System.Windows.Int32Rect(
+                    0,
+                    0,
+                    (int)preview.Width,
+                    (int)preview.Height),
+                preview.Payload,
+                stride,
+                0);
+
+            FramePreviewImage.Source=bitmap;
+        }
+        else
+        {
+            FramePreviewImage.Source=null;
+        }
+    }
+
     private void RefreshRoiSurface()
     {
         RoiSurface.Children.Clear();
@@ -503,6 +568,7 @@ public partial class MainWindow : System.Windows.Window
         CreateRoiButton.IsEnabled=routing.CanEditRoi && availability.CanCreateRoi;
         UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
         RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
+        PreviewAcquisitionButton.IsEnabled=routing.CanPreviewAcquisition;
     }
 
     private void RefreshAcquisitionStatus()
