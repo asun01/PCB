@@ -8,5 +8,6 @@
   <ItemGroup>
     <ProjectReference Include="../../src/Asun.Production.Runtime/Asun.Production.Runtime.csproj" />
     <ProjectReference Include="../../src/Asun.Device.Contracts/Asun.Device.Contracts.csproj" />
+    <ProjectReference Include="../../src/Asun.Release.Core/Asun.Release.Core.csproj" />
   </ItemGroup>
 </Project>
