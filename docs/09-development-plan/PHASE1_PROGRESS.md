@@ -2059,3 +2059,20 @@ Static source audit passed; no authoritative build/test/CI success is claimed.
 
 Current completed boundary: **44,500**
 Next executable stage: **44,501**
+
+
+### 44501→45000 Acquisition/Capture → Evidence canonical projection — 2026-09-20
+
+Completed stages 44501–45000 as five contiguous 100-stage acceptance blocks.
+
+Implemented `ProductionCaptureEvidenceCanonicalRuntime` for deterministic per-frame and projection-level SHA-256 identity over capture metadata plus opaque Evidence handles. Hardened the existing Capture→Evidence projection boundary with canonical validation for payload identity, dimensions, pixel format, handle validity, uniqueness, missing/duplicate frames, and deterministic ordering.
+
+Added and registered five exact 100-round Smokes and five stage ledgers plus the 500-stage integration checkpoint.
+
+Verification status:
+- static source/Smoke structure audit performed;
+- no local build/test/CI success is claimed without authoritative execution evidence;
+- vendor-specific HALCON/DevExpress/hardware behavior remains outside this non-blocked chain.
+
+Current completed boundary: **45,000**
+Next executable stage: **45,001**
