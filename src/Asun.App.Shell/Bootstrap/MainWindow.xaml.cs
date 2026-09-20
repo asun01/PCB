@@ -53,9 +53,22 @@ public partial class MainWindow : System.Windows.Window
         System.EventArgs e)
     {
         _client.ProductionChanged-=OnProductionChanged;
+        _client.ProductionChanged-=OnClientProductionChanged;
         _workspaceRuntime.Changed-=OnWorkspaceChanged;
         _workspaceRuntime.Dispose();
         _client.Dispose();
+    }
+
+    private void OnClientProductionChanged(ClientWorkspaceSnapshot snapshot)
+    {
+        if(!Dispatcher.CheckAccess())
+        {
+            _=Dispatcher.InvokeAsync(() => OnClientProductionChanged(snapshot));
+            return;
+        }
+
+        RefreshWorkspaceStatus();
+        RefreshCommandAvailability();
     }
 
     private void OnWorkspaceChanged(ClientWorkspaceSelection selection)
