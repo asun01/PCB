@@ -2452,3 +2452,13 @@ Current completed boundary: **34,500**
 Next executable stage: **34,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 35000 — 2026-09-20
+
+Closed Production → Pipeline replay audit. Every Production frame can now be independently described and rechecked against the actual pipeline stage order and per-frame execution fingerprint.
+
+Current completed boundary: **35,000**
+Next executable stage: **35,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
