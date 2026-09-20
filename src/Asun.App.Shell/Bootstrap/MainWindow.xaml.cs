@@ -302,6 +302,7 @@ public partial class MainWindow : System.Windows.Window
     {
         var history=_client.History;
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
+        RunHistoryList.ItemsSource=ClientRunHistoryPresentationRuntime.CreateItems(history,5);
     }
 
     private void RefreshWorkspaceStatus()
