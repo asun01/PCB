@@ -300,6 +300,22 @@
                             Margin="0,6,0,0"
                             Text="Quality Run: not attached. No Quality authority is being fabricated by the client shell."
                             TextWrapping="Wrap" />
+                        <ListBox
+                            x:Name="QualityFindingList"
+                            Margin="0,8,0,0"
+                            Height="100"
+                            AutomationProperties.AutomationId="Shell.QualityFindingList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="80" Text="{Binding Outcome}" />
+                                        <TextBlock Width="90" Text="{Binding Severity}" />
+                                        <TextBlock Width="100" Text="{Binding RuleCode}" />
+                                        <TextBlock Text="{Binding Message}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
                     </StackPanel>
                 </Border>
                 <Border
