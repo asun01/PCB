@@ -6,12 +6,12 @@ namespace Asun.Platform.ClientIntegration.Smoke;
 
 public static class ClientProductionProgress3HundredStageSmoke
 {
-    private sealed class BlockingProgressRunner : IProductionSessionRunner, IProductionSessionProgressRunner
+    private class BlockingProgressRunner : IProductionSessionRunner, IProductionSessionProgressRunner
     {
-        public readonly TaskCompletionSource Reported =
+        public readonly TaskCompletionSource<bool> Reported =
             new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        public TaskCompletionSource? Gate { get; set; }
+        public TaskCompletionSource<bool>? Gate { get; set; }
 
         public ValueTask<ProductionSessionReport> RunAsync(
             ProductionSessionDefinition definition,
@@ -30,7 +30,7 @@ public static class ClientProductionProgress3HundredStageSmoke
                 1,
                 definition.FrameCount,
                 FrameSequence.Create(1)));
-            Reported.TrySetResult();
+            Reported.TrySetResult(true);
 
             if(Gate is not null)
                 await Gate.Task.WaitAsync(cancellationToken);
@@ -86,7 +86,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -104,7 +104,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -122,7 +122,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -140,7 +140,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -158,7 +158,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -176,7 +176,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -194,7 +194,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -212,7 +212,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -230,7 +230,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
@@ -248,7 +248,7 @@ public static class ClientProductionProgress3HundredStageSmoke
             var task=workspace.StartAsync(new Asun.Device.Impl.SimulatedFrameSource(8,8));
             await runner.Reported.Task;
             var running=workspace.Snapshot;
-            gate.SetResult();
+            gate.SetResult(true);
             await task;
             Check(running.LastSequence?.Value==1 &&
                   running.FramesProcessed==1,
