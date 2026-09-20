@@ -56,7 +56,16 @@ static PcbEvidenceReleaseAuditTrace AuditTrace(string manifest)
         1,evidence,manifest,transition,qualityRunId,1,1,0,true);
     var canonical=string.Join(
         "|",
-        capacity,manifest,"1",evidence,transition,qualityRunId,"1","1","0","True",""|");
+        capacity,
+        manifest,
+        entry.Sequence,
+        entry.EvidenceReleaseFactFingerprint,
+        entry.AuditTransitionFingerprint,
+        entry.QualityRunId,
+        entry.RequestedCount,
+        entry.FoundCount,
+        entry.MissingCount,
+        entry.AllRequestedResolved)+ "|";
     var fingerprint=Convert.ToHexString(
         System.Security.Cryptography.SHA256.HashData(
             System.Text.Encoding.UTF8.GetBytes(canonical)))
