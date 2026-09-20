@@ -74,6 +74,12 @@ await ProductionCaptureEvidenceReleaseReplayBinding3HundredStageSmoke.RunAsync(C
 await ProductionCaptureEvidenceReleaseReplayBinding4HundredStageSmoke.RunAsync(Check);
 await ProductionCaptureEvidenceReleaseReplayBinding5HundredStageSmoke.RunAsync(Check);
 
+await ProductionCaptureEvidenceReleaseAuditTraceReplayBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceReleaseAuditTraceReplayBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceReleaseAuditTraceReplayBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceReleaseAuditTraceReplayBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureEvidenceReleaseAuditTraceReplayBinding5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
