@@ -1,3 +1,4 @@
+using Asun.Platform.ReplayIntegration;
 using Asun.Platform.QualityEvidenceIntegration;
 using Asun.Platform.ReleaseIntegration;
 
