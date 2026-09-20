@@ -12,14 +12,25 @@ public static class ClientInspectionDiagnostics5HundredStageSmoke
         {
             round++;
                 using var client=new ClientInspectionWorkspace(new Vector2(100,100),new Vector2(400,400),historyCapacity:2);
-                for(var run=0;run<3;run++)
-                {
-                    client.Load(ClientWorkspaceSmokeFixture.CreateDefinition(
-                        Guid.Parse($"77000000-0000-0000-0000-{run+1:000000000000}")));
-                    await client.ExecuteAsync(
-                        new Asun.Device.Impl.SimulatedFrameSource(8,8),
-                        ClientWorkspaceSmokeFixture.CreateReleaseManifest());
-                }
+
+                client.Load(ClientWorkspaceSmokeFixture.CreateDefinition(
+                    Guid.Parse("77000000-0000-0000-0000-000000000001")));
+                await client.ExecuteAsync(
+                    new Asun.Device.Impl.SimulatedFrameSource(8,8),
+                    ClientWorkspaceSmokeFixture.CreateReleaseManifest());
+
+                client.Load(ClientWorkspaceSmokeFixture.CreateDefinition(
+                    Guid.Parse("77000000-0000-0000-0000-000000000002")));
+                await client.ExecuteAsync(
+                    new Asun.Device.Impl.SimulatedFrameSource(8,8),
+                    ClientWorkspaceSmokeFixture.CreateReleaseManifest());
+
+                client.Load(ClientWorkspaceSmokeFixture.CreateDefinition(
+                    Guid.Parse("77000000-0000-0000-0000-000000000003")));
+                await client.ExecuteAsync(
+                    new Asun.Device.Impl.SimulatedFrameSource(8,8),
+                    ClientWorkspaceSmokeFixture.CreateReleaseManifest());
+
                 var diagnostic=ClientInspectionDiagnosticsRuntime.Analyze(client.Capture());
                 Check(diagnostic.IsCoherent &&
                       client.History.Entries.Count==2 &&
