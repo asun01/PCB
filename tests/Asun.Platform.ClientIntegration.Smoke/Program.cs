@@ -132,6 +132,12 @@ await ClientAcquisitionWorkspace3HundredStageSmoke.RunAsync(Check);
 await ClientAcquisitionWorkspace4HundredStageSmoke.RunAsync(Check);
 await ClientAcquisitionWorkspace5HundredStageSmoke.RunAsync(Check);
 
+await ClientAcquisitionCommandGate1HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionCommandGate2HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionCommandGate3HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionCommandGate4HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionCommandGate5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
