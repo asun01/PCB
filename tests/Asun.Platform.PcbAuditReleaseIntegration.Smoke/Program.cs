@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 await PcbAuditReleaseTransitionHundredStageSmoke.RunAsync(Check);
+await PcbAuditReleaseTransitionRuntimeHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
@@ -18,3 +19,4 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.PcbAuditReleaseIntegration smoke tests passed.");
 return 0;
+}
