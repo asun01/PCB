@@ -1954,3 +1954,10 @@ Verification boundary:
 
 Current completed boundary: **39,500**
 Next executable stage: **39,501**
+
+### Execution checkpoint: Stage 40000 — 2026-09-20
+
+Closed stages 39501–40000 for Production Runtime → PCB execution identity. Added `PcbExecutionBoardBinding` with independent validation, deterministic canonical key, equivalence checking, and a persistence-neutral replay descriptor. Registered the exact-100-round board-binding Smoke in the existing PCB execution Smoke program. Added five 100-stage ledgers and PHASE1_39501_40000_INTEGRATION_CHECKPOINT_20260920.md. Static source evidence only; no authoritative build/test/CI success is claimed.
+
+Current completed boundary: **40,000**
+Next executable stage: **40,001**
