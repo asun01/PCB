@@ -8,5 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Asun.Platform.ClientIntegration/Asun.Platform.ClientIntegration.csproj" />
+    <ProjectReference Include="../Asun.Platform.SimulationIntegration/Asun.Platform.SimulationIntegration.csproj" />
   </ItemGroup>
 </Project>
