@@ -25,11 +25,18 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public ClientInspectionWorkspace(
         Vector2 imageSize,
         Vector2 viewportSize,
-        int historyCapacity=20)
+        int historyCapacity=20,
+        IProductionSessionRunner? productionRunner=null)
     {
-        _production=new ClientProductionWorkspace();
+        _production=new ClientProductionWorkspace(productionRunner);
         _history=new ClientProductionRunHistory(historyCapacity);
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
+    }
+
+    public void CancelExecution()
+    {
+        ThrowIfDisposed();
+        _production.Cancel();
     }
 
     public ClientWorkspaceSnapshot Production
