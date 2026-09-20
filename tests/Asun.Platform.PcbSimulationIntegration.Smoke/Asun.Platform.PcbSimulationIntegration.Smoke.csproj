@@ -7,5 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Asun.Platform.PcbSimulationIntegration/Asun.Platform.PcbSimulationIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Device.Impl/Asun.Device.Impl.csproj" />
   </ItemGroup>
 </Project>
