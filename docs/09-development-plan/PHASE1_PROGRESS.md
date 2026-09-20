@@ -1961,3 +1961,10 @@ Closed stages 39501–40000 for Production Runtime → PCB execution identity. A
 
 Current completed boundary: **40,000**
 Next executable stage: **40,001**
+
+### Execution checkpoint: Stage 40500 — 2026-09-20
+
+Closed stages 40001–40500 for Metrology / Production → PCB placement provenance. Added `ProductionMeasurementPcbBindingRuntime` to bind Production measurement facts to calibrated PCB placement observations, with independent validation, deterministic key/equivalence, and replay descriptor. Registered the exact-100-round Smoke and added five 100-stage ledgers plus PHASE1_40001_40500_INTEGRATION_CHECKPOINT_20260920.md. Static source evidence only; no authoritative build/test/CI success is claimed.
+
+Current completed boundary: **40,500**
+Next executable stage: **40,501**
