@@ -2589,3 +2589,12 @@ Current completed boundary: **40,000**
 Next executable stage: **40,001**
 
 The one-million-stage horizon remains 2,501–1,002,500.
+
+## Execution checkpoint: Stage 40500 — 2026-09-20
+
+Closed 40001–40500 as Metrology / Production → PCB placement provenance integration. Production measurement facts are now explicitly bound to calibrated PCB component observations and their calibration/observation fingerprints, with validation, canonical identity, equivalence, and replay handoff. Five 100-stage ledgers and the 500-stage integration checkpoint are present. No authoritative build/test/CI success is inferred.
+
+Current completed boundary: **40,500**
+Next executable stage: **40,501**
+
+The one-million-stage horizon remains 2,501–1,002,500.
