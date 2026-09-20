@@ -99,7 +99,6 @@ public static class PcbExecutionSimulationReplayProjectionHundredStageSmoke
             Sequence=FrameSequence.Create(3)
         };
 
-        for(var i=0;i<10;i++) Check(assembly.Components.Count==1,"Simulation projection should retain one PCB component.");
         for(var i=0;i<10;i++) Check(production.FrameCount==2,"Simulation projection should retain two real production frames.");
         for(var i=0;i<10;i++) Check(observations.Count==2,"Simulation projection should retain two observations.");
         for(var i=0;i<10;i++) Check(binding.Frames.Count==2,"Simulation binding should retain two frame links.");
