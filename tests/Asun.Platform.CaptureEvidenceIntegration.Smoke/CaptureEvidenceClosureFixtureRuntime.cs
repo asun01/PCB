@@ -1,5 +1,6 @@
 using Asun.Device.Contracts;
 using Asun.Device.Impl;
+using Asun.Platform.CaptureEvidenceIntegration;
 using Asun.Platform.Evidence;
 using Asun.Platform.Pipeline;
 using Asun.Production.Runtime;
