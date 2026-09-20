@@ -40,6 +40,12 @@ public static class ProductionSimulationRenderReplayHundredStageSmoke
                 : frame)
             .ToArray();
         var missing=replay.Skip(1).ToArray();
+        var duplicateSimulation=simulation
+            .Select(frame=>frame with {SimulationSequence=1})
+            .ToArray();
+        var invalidRender=render
+            .Select(frame=>frame.Sequence==2 ? frame with {RenderFingerprint="bad"} : frame)
+            .ToArray();
 
         for(var i=0;i<10;i++) Check(simulation.Length==2,"Simulation replay input should contain two frames.");
         for(var i=0;i<10;i++) Check(render.Length==2,"Render replay input should contain two frames.");
@@ -51,6 +57,8 @@ public static class ProductionSimulationRenderReplayHundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionSimulationRenderReplayRuntime.IsValid(simulation,render,replay.Reverse().ToArray()),"Replay ordering should be canonicalized.");
         for(var i=0;i<10;i++) Check(!ProductionSimulationRenderReplayRuntime.IsValid(simulation,render,tampered),"Simulation fingerprint tampering should be rejected.");
         for(var i=0;i<10;i++) Check(!ProductionSimulationRenderReplayRuntime.IsValid(simulation,render,shifted),"Simulation/Render sequence drift should be rejected.");
+        for(var i=0;i<10;i++) Check(!ProductionSimulationRenderReplayRuntime.IsValid(duplicateSimulation,render,replay),"Duplicate simulation sequence should be rejected.");
+        for(var i=0;i<10;i++) Check(!ProductionSimulationRenderReplayRuntime.IsValid(simulation,invalidRender,replay),"Invalid render fingerprint should be rejected.");
 
         assert(round==100,$"Simulation Render replay smoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
