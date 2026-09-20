@@ -25,15 +25,15 @@ public static class ProductionMeasurementQualityEvidenceReleaseBinding4HundredSt
         var badReady=binding with {ReleaseReady=!binding.ReleaseReady};
 var malformed=binding with {Fingerprint="bad"};
 for(var i=0;i<10;i++) Check(!ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,badReady),"Readiness tampering should be rejected.");
-for(var i=0;i<10;i++) Check(!ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,malformed),"Malformed fingerprint should be rejected.");
-for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Validate(measurementEvidenceBinding,manifest,badReady).Count>0,"Readiness tampering should produce diagnostics.");
-for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Validate(measurementEvidenceBinding,manifest,malformed).Count>0,"Malformed fingerprint should produce diagnostics.");
-for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Baseline readiness should remain canonical.");
-for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline Manifest identity should remain canonical.");
-for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint==measurementEvidenceBinding.EvidenceFingerprint,"Baseline Evidence identity should remain canonical.");
-for(var i=0;i<10;i++) Check(binding.Fingerprint.All(Uri.IsHexDigit),"Baseline fingerprint should remain hexadecimal.");
-for(var i=0;i<10;i++) Check(binding.QualityResultId==measurementEvidenceBinding.QualityResultId,"Baseline Quality identity should remain stable.");
-for(var i=0;i<10;i++) Check(binding.ComponentId==measurementEvidenceBinding.ComponentId,"Baseline component identity should remain stable.");
+for(var i=0;i<10;i++) Check(!ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,malformed),"Fingerprint tampering should be rejected.");
+for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Validate(measurementEvidenceBinding,manifest,badReady).Count>0,"Readiness tampering should emit diagnostics.");
+for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.Validate(measurementEvidenceBinding,manifest,malformed).Count>0,"Fingerprint tampering should emit diagnostics.");
+for(var i=0;i<10;i++) Check(binding.ProductionInputFingerprint==measurementEvidenceBinding.ProductionInputFingerprint,"Baseline input identity remains stable.");
+for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline manifest identity remains stable.");
+for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Baseline readiness remains stable.");
+for(var i=0;i<10;i++) Check(binding.QualityResultId==measurementEvidenceBinding.QualityResultId,"Baseline Quality identity remains stable.");
+for(var i=0;i<10;i++) Check(binding.ComponentId==measurementEvidenceBinding.ComponentId,"Baseline component remains stable.");
+for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseBindingRuntime.IsValid(measurementEvidenceBinding,manifest,binding),"Baseline binding remains valid.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceReleaseBinding4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
