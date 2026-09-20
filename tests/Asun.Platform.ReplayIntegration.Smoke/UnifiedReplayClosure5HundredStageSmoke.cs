@@ -37,6 +37,8 @@ for(var i=0;i<10;i++) Check(closure.ProgramFingerprint.Length==64,"Program ident
 for(var i=0;i<10;i++) Check(closure.SimulationDescriptorFingerprint.Length==64,"Simulation identity should be fixed width.");
 for(var i=0;i<10;i++) Check(closure.QualityReleaseDescriptorFingerprint.Length==64,"Quality/Release identity should be fixed width.");
 for(var i=0;i<10;i++) Check(UnifiedReplayClosureRuntime.IsValid(pipelineIdentity,simulationDescriptor,renderDescriptors,qualityReleaseDescriptor,releaseBinding,closure),"Final unified closure validation should remain clean.");
+for(var i=0;i<10;i++) Check(UnifiedReplayClosureRuntime.Create(pipelineIdentity,simulationDescriptor,renderDescriptors,qualityReleaseDescriptor,releaseBinding).Fingerprint==closure.Fingerprint,"Recreated unified closure should remain deterministic.");
+
         assert(round==100,$"UnifiedReplayClosure5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
