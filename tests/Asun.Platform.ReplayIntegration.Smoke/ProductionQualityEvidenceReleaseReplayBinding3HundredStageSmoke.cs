@@ -57,6 +57,8 @@ for(var i=0;i<10;i++) Check(binding.QualityRunId==qualityRun.RunId,"Baseline Qua
 for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReleaseReplayBindingRuntime.IsValid(definition,production,qualityRun,evidence,bundle,manifest,binding),"Baseline binding should remain valid.");
 for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline manifest identity should remain stable.");
 for(var i=0;i<10;i++) Check(binding.ReplayBundleFingerprint==bundle.Fingerprint,"Baseline bundle identity should remain stable.");
+for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Baseline binding fingerprint should remain fixed width.");
+
         assert(round==100,$"ProductionQualityEvidenceReleaseReplayBinding3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
