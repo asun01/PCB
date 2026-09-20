@@ -165,11 +165,23 @@ public static class CaptureSessionProductionBindingRuntime
 
         if(productionReport.Frames.Count==captureSession.Fingerprints.Count)
         {
-            for(var index=0;index<productionReport.Frames.Count;index++)
+            var orderedProductionFrames=productionReport.Frames
+                .OrderBy(frame=>frame.Sequence.Value)
+                .ToArray();
+
+            if(orderedProductionFrames.Length>0 &&
+               captureSession.FirstSequence is FrameSequence first &&
+               first.Value!=orderedProductionFrames[0].Sequence.Value)
+                errors.Add("Capture first sequence must match Production first sequence.");
+
+            if(orderedProductionFrames.Length>0 &&
+               captureSession.LastSequence is FrameSequence last &&
+               last.Value!=orderedProductionFrames[^1].Sequence.Value)
+                errors.Add("Capture last sequence must match Production last sequence.");
+
+            for(var index=0;index<orderedProductionFrames.Length;index++)
             {
-                var productionFrame=productionReport.Frames
-                    .OrderBy(frame=>frame.Sequence.Value)
-                    .ElementAt(index);
+                var productionFrame=orderedProductionFrames[index];
 
                 if(productionFrame.InputFingerprint!=captureSession.Fingerprints[index])
                     errors.Add($"Capture frame fingerprint at index {index} must match Production input fingerprint.");
