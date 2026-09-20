@@ -53,6 +53,8 @@ for(var i=0;i<10;i++) Check(descriptor.QualityRunId==qualityRun.RunId,"Baseline 
 for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReplayDescriptorRuntime.IsValid(definition,production,qualityRun,evidence,bundle,descriptor),"Baseline descriptor should remain valid.");
 for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.Length==64,"Baseline descriptor fingerprint should remain fixed width.");
 for(var i=0;i<10;i++) Check(descriptor.BundleFingerprint==bundle.Fingerprint,"Baseline bundle identity should remain stable.");
+for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReplayDescriptorRuntime.Create(definition,production,qualityRun,evidence,bundle).BundleFingerprint==descriptor.BundleFingerprint,"Recreated descriptor should preserve bundle identity.");
+
         assert(round==100,$"ProductionQualityEvidenceReplayDescriptor2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
