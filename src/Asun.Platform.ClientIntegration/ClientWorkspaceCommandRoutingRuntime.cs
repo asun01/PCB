@@ -11,6 +11,7 @@ public sealed record ClientWorkspaceCommandRouting(
     bool CanReviewResults)
 {
     public bool CanPreviewAcquisition { get; init; }
+    public bool CanEvaluateSimulationQuality { get; init; }
 };
 
 public static class ClientWorkspaceCommandRoutingRuntime
@@ -79,7 +80,10 @@ public static class ClientWorkspaceCommandRoutingRuntime
         {
             CanPreviewAcquisition=
                 workspace.Workspace==ClientWorkspaceKind.Inspection &&
-                availability.CanPreviewAcquisition
+                availability.CanPreviewAcquisition,
+            CanEvaluateSimulationQuality=
+                workspace.Workspace==ClientWorkspaceKind.Quality &&
+                availability.CanEvaluateSimulationQuality
         };
     }
 }
