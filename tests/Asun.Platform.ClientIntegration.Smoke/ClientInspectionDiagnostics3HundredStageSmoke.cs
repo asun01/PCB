@@ -25,16 +25,17 @@ public static class ClientInspectionDiagnostics3HundredStageSmoke
                 catch(OperationCanceledException)
                 {
                 }
+
                 var snapshot=client.Capture();
-                var tampered=snapshot with
-                {
-                    Release=snapshot.Release is null
-                        ? null
-                        : snapshot.Release with
-                        {
-                            ProductionSessionId=Guid.NewGuid()
-                        }
-                };
+                var illegalRelease=new ClientReleaseProjection(
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                    new string('a',64),
+                    true,
+                    "illegal/release.pcb",
+                    new string('b',64),
+                    new string('c',64));
+                var tampered=snapshot with { Release=illegalRelease };
                 var diagnostic=ClientInspectionDiagnosticsRuntime.Analyze(tampered);
                 Check(!diagnostic.IsCoherent &&
                       diagnostic.Errors.Any(error=>error.Contains("Non-completed",StringComparison.Ordinal)),
