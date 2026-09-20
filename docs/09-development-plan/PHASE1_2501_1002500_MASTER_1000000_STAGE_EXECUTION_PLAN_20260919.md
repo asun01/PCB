@@ -2691,3 +2691,13 @@ Next executable stage: **43,501**
 - Both cells contain five 100-stage ledgers, five registered exact-100-round Smokes, and integration checkpoints.
 - Static Smoke acceptance was actively repaired where loop-group gaps were detected.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
+
+
+## Live execution synchronization — Stage 47000 — 2026-09-20
+
+- Completed boundary: **47,000**
+- Next executable stage: **47,001**
+- Active macro horizon: **41,501–141,500**
+- 46501–47000: **Production → Simulation replay descriptor**.
+- Acceptance: five 100-stage ledgers, five registered exact-100-round Smokes, integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
