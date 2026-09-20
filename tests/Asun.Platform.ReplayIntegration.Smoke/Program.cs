@@ -89,6 +89,11 @@ await ProductionCapturePcbAuditReplayConvergence2HundredStageSmoke.RunAsync(Chec
 await ProductionCapturePcbAuditReplayConvergence3HundredStageSmoke.RunAsync(Check);
 await ProductionCapturePcbAuditReplayConvergence4HundredStageSmoke.RunAsync(Check);
 await ProductionCapturePcbAuditReplayConvergence5HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationRenderReplayConvergence1HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationRenderReplayConvergence2HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationRenderReplayConvergence3HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationRenderReplayConvergence4HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationRenderReplayConvergence5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
