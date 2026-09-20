@@ -2462,3 +2462,13 @@ Current completed boundary: **35,000**
 Next executable stage: **35,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 35500 — 2026-09-20
+
+Closed the unified PCB execution snapshot chain. The repository now has an executable aggregate integrity boundary combining board identity, source provenance, pipeline replay, calibrated measurement facts, Quality, and opaque Evidence references.
+
+Current completed boundary: **35,500**
+Next executable stage: **35,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
