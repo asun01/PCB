@@ -51,6 +51,12 @@ await ProductionExecutionReleaseCandidateAuditClosure3HundredStageSmoke.RunAsync
 await ProductionExecutionReleaseCandidateAuditClosure4HundredStageSmoke.RunAsync(Check);
 await ProductionExecutionReleaseCandidateAuditClosure5HundredStageSmoke.RunAsync(Check);
 
+await ProductionReleaseCandidatePcbAuditReplayClosure1HundredStageSmoke.RunAsync(Check);
+await ProductionReleaseCandidatePcbAuditReplayClosure2HundredStageSmoke.RunAsync(Check);
+await ProductionReleaseCandidatePcbAuditReplayClosure3HundredStageSmoke.RunAsync(Check);
+await ProductionReleaseCandidatePcbAuditReplayClosure4HundredStageSmoke.RunAsync(Check);
+await ProductionReleaseCandidatePcbAuditReplayClosure5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
