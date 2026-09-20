@@ -87,22 +87,24 @@ public static class ClientInspectionExecutionPresentationSmoke
     }
 
     private static ClientInspectionWorkspaceSnapshot Create(
-        ClientExecutionStatus status,int processed,int target) =>
-        new(
-            new ClientWorkspaceSnapshot(null,null,Guid.Parse("33333333-3333-3333-3333-333333333333"),
-                status,processed,null,null)
+        ClientExecutionStatus status,int processed,int target)
+    {
+        using var workspace=new ClientInspectionWorkspace(
+            new System.Numerics.Vector2(640,480),
+            new System.Numerics.Vector2(640,480));
+
+        var captured=workspace.Capture();
+        return captured with
+        {
+            Production=captured.Production with
             {
+                Status=status,
                 FramesProcessed=processed,
                 TargetFrameCount=target,
                 LastFrameCount=processed
-            },
-            null,null,null,
-            new ClientProductionRunHistorySnapshot(Array.Empty<ClientProductionRunHistoryEntry>()))
-        {
-            Program=null,
-            Acquisition=new ClientAcquisitionWorkspaceSnapshot(
-                ClientAcquisitionState.Unbound,null,null,false)
+            }
         };
+    }
 
     private static void Check(bool condition,string message)
     {
