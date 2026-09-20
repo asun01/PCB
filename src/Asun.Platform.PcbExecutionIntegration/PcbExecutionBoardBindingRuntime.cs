@@ -29,6 +29,7 @@ public static class PcbExecutionBoardBindingRuntime
             throw new ArgumentException("PCB assembly snapshot is invalid.",nameof(assembly));
         if(executionSnapshot.AssemblyFingerprint!=assembly.Fingerprint)
             throw new ArgumentException("Execution snapshot must belong to the PCB assembly.",nameof(executionSnapshot));
+        ValidateExecutionIdentity(executionSnapshot);
 
         var fingerprint=CreateFingerprint(
             assembly.Fingerprint,
@@ -56,6 +57,7 @@ public static class PcbExecutionBoardBindingRuntime
             errors.Add("PCB assembly snapshot is invalid.");
         if(executionSnapshot.AssemblyFingerprint!=assembly.Fingerprint)
             errors.Add("Execution snapshot must belong to the PCB assembly.");
+        errors.AddRange(ValidateExecutionIdentity(executionSnapshot));
         if(binding.AssemblyFingerprint!=assembly.Fingerprint)
             errors.Add("Board binding assembly fingerprint must match.");
         if(binding.ProductionSessionId!=executionSnapshot.ProductionSessionId)
@@ -117,6 +119,16 @@ public static class PcbExecutionBoardBindingRuntime
             binding.AssemblyFingerprint,
             binding.ProductionSessionId,
             binding.ExecutionFingerprint);
+    }
+
+    private static IReadOnlyList<string> ValidateExecutionIdentity(PcbExecutionSnapshot executionSnapshot)
+    {
+        var errors=new List<string>();
+        if(executionSnapshot.ProductionSessionId==Guid.Empty)
+            errors.Add("Execution snapshot Production session id is invalid.");
+        if(executionSnapshot.Fingerprint.Length!=64)
+            errors.Add("Execution snapshot fingerprint must be 64 characters.");
+        return errors;
     }
 
     internal static string CreateFingerprint(
