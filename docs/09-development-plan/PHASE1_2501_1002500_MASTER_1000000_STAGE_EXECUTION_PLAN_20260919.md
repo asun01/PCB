@@ -2542,3 +2542,24 @@ Current completed boundary: **39,000**
 Next executable stage: **39,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution cadence revision — 100,000-stage macro batches — 2026-09-20
+
+The autonomous execution unit is now **100,000 stages per macro-batch**.
+
+The previous 500-stage cadence is retained internally as a safety/integration checkpoint, and the 100-stage cadence remains the executable acceptance cell. This preserves continuous defect detection while allowing the product program to advance through much larger horizons without treating each 500-stage checkpoint as a stop condition.
+
+### Macro-batch partition
+- Macro-batch 01: 2,501–102,500
+- Macro-batch 02: 102,501–202,500
+- Macro-batch 03: 202,501–302,500
+- Macro-batch 04: 302,501–402,500
+- Macro-batch 05: 402,501–502,500
+- Macro-batch 06: 502,501–602,500
+- Macro-batch 07: 602,501–702,500
+- Macro-batch 08: 702,501–802,500
+- Macro-batch 09: 802,501–902,500
+- Macro-batch 10: 902,501–1,002,500
+
+Macro-batches are planning horizons only. Actual implementation is still committed incrementally through executable 100-stage cells and 500-stage integration checkpoints. No historical stage counts or checkpoints are rewritten.
