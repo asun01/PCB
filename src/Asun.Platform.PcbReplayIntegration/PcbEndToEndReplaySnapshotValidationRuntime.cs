@@ -37,6 +37,11 @@ public static class PcbEndToEndReplaySnapshotValidationRuntime
 
         if(renderReplayFrames.Select(frame=>frame.Sequence).Distinct().Count()!=renderReplayFrames.Count)
             errors.Add("Render replay sequences must be unique.");
+        var canonicalRenderSequences=renderReplayFrames.OrderBy(frame=>frame.Sequence).Select(frame=>frame.Sequence).ToArray();
+        if(!renderReplayFrames.Select(frame=>frame.Sequence).SequenceEqual(canonicalRenderSequences))
+            errors.Add("Render replay frames must use canonical sequence order.");
+        if(renderReplayFrames.Select(frame=>frame.Sequence).OrderBy(sequence=>sequence).SequenceEqual(Enumerable.Range(1,renderReplayFrames.Count).Select(value=>(long)value))==false)
+            errors.Add("Render replay sequences must be contiguous from one.");
         if(renderReplayFrames.Any(frame=>frame.RenderFingerprint.Length!=64))
             errors.Add("Render replay fingerprints must use 64-character SHA-256 shape.");
 
