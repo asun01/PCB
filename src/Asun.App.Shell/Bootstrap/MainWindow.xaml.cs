@@ -26,6 +26,7 @@ public partial class MainWindow : System.Windows.Window
 
         RefreshWorkspaceStatus();
         RefreshProgramStatus();
+        RefreshResultStatus();
         RefreshRunHistoryStatus();
         RefreshCommandAvailability();
     }
@@ -79,6 +80,8 @@ public partial class MainWindow : System.Windows.Window
             DiagnosticStatus.Text="Diagnostic: not evaluated.";
             RefreshWorkspaceStatus();
             RefreshProgramStatus();
+            RefreshResultStatus();
+            RefreshRunHistoryStatus();
             RefreshRoiSurface();
         }
         catch(Exception exception)
@@ -182,6 +185,7 @@ public partial class MainWindow : System.Windows.Window
                 : "Release: Not ready.";
             RefreshWorkspaceStatus();
             RefreshProgramStatus();
+            RefreshResultStatus();
             RefreshRunHistoryStatus();
             RefreshDiagnosticStatus(diagnostic);
             RefreshRoiSurface();
@@ -225,6 +229,7 @@ public partial class MainWindow : System.Windows.Window
         SimulationStatus.Text="Ready.";
         RefreshWorkspaceStatus();
         RefreshProgramStatus();
+        RefreshResultStatus();
         RefreshRunHistoryStatus();
         RefreshRoiSurface();
     }
@@ -382,7 +387,21 @@ public partial class MainWindow : System.Windows.Window
         }
 
         var items=ClientProgramPresentationRuntime.CreateItems(_client.CurrentProgram);
+        ProgramStepList.ItemsSource=items;
         ProgramStatus.Text=$"Program: {snapshot.Name} · v{snapshot.Version} · {items.Count} step(s).";
+    }
+
+    private void RefreshResultStatus()
+    {
+        var snapshot=_client.Capture();
+        var result=ClientResultsPresentationRuntime.CreateCurrent(snapshot);
+
+        ResultStatus.Text=$"Status: {result.Status}";
+        ResultSession.Text=$"{result.SessionText} · {result.FrameCount} frame(s)";
+        ResultReplay.Text=result.ReplayText;
+        ResultRelease.Text=result.ReleaseText;
+        QualityStatus.Text=
+            "Quality Run: not attached. Quality facts remain outside this client projection until an authoritative Quality run is available.";
     }
 
     private void RefreshDiagnosticStatus(
