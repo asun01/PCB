@@ -76,6 +76,15 @@ public sealed class ViewportInputRecoveryRuntime : IDisposable
         }
     }
 
+    public IReadOnlyList<ViewportInputEvent> DrainPending(int maxCount=256)
+    {
+        lock(_sync)
+        {
+            ThrowIfDisposed();
+            return _input.Drain(maxCount);
+        }
+    }
+
     public void RequestStop()
     {
         lock(_sync)
