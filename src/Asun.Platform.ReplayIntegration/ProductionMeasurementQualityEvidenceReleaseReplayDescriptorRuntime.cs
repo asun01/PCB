@@ -8,6 +8,7 @@ public sealed record ProductionMeasurementQualityEvidenceReleaseReplayDescriptor
     Guid ProductionSessionId,
     Guid QualityRunId,
     long Sequence,
+    string ProductionInputFingerprint,
     Guid QualityResultId,
     string ComponentId,
     string EvidenceFingerprint,
@@ -34,6 +35,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
             replayBinding.ProductionSessionId,
             replayBinding.QualityRunId,
             measurementReleaseBinding.Sequence,
+            measurementReleaseBinding.ProductionInputFingerprint,
             measurementReleaseBinding.QualityResultId,
             measurementReleaseBinding.ComponentId,
             measurementReleaseBinding.EvidenceFingerprint,
@@ -46,6 +48,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
             replayBinding.ProductionSessionId,
             replayBinding.QualityRunId,
             measurementReleaseBinding.Sequence,
+            measurementReleaseBinding.ProductionInputFingerprint,
             measurementReleaseBinding.QualityResultId,
             measurementReleaseBinding.ComponentId,
             measurementReleaseBinding.EvidenceFingerprint,
@@ -73,6 +76,8 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
             errors.Add("Replay descriptor Quality run identity must match.");
         if(descriptor.Sequence!=measurementReleaseBinding.Sequence)
             errors.Add("Replay descriptor sequence must match.");
+        if(descriptor.ProductionInputFingerprint!=measurementReleaseBinding.ProductionInputFingerprint)
+            errors.Add("Replay descriptor Production input fingerprint must match.");
         if(descriptor.QualityResultId!=measurementReleaseBinding.QualityResultId)
             errors.Add("Replay descriptor Quality result identity must match.");
         if(descriptor.ComponentId!=measurementReleaseBinding.ComponentId)
@@ -97,6 +102,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
                 replayBinding.ProductionSessionId,
                 replayBinding.QualityRunId,
                 measurementReleaseBinding.Sequence,
+                measurementReleaseBinding.ProductionInputFingerprint,
                 measurementReleaseBinding.QualityResultId,
                 measurementReleaseBinding.ComponentId,
                 measurementReleaseBinding.EvidenceFingerprint,
@@ -121,6 +127,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
         Guid productionSessionId,
         Guid qualityRunId,
         long sequence,
+        string productionInputFingerprint,
         Guid qualityResultId,
         string componentId,
         string evidenceFingerprint,
@@ -134,6 +141,7 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
             productionSessionId,
             qualityRunId,
             sequence,
+            productionInputFingerprint,
             qualityResultId,
             componentId,
             evidenceFingerprint,
@@ -153,6 +161,8 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptorR
 
         if(measurementReleaseBinding.Fingerprint.Length!=64 || !IsLowerHex(measurementReleaseBinding.Fingerprint))
             errors.Add("Measurement release binding fingerprint is malformed.");
+        if(!IsLowerHex(measurementReleaseBinding.ProductionInputFingerprint))
+            errors.Add("Measurement Release binding Production input fingerprint must be 64 lowercase hexadecimal characters.");
         if(replayBinding.ProductionSessionId==Guid.Empty)
             errors.Add("Replay binding production session identity is invalid.");
         if(replayBinding.QualityRunId==Guid.Empty)
