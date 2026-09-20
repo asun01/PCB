@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 await ProductionMeasurementFactHundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementPcbBindingHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
