@@ -1848,3 +1848,19 @@ Current continuous execution position:
 - completed through Stage 36500;
 - next natural stage: 36501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 36501→37000 Evidence resolution → Release facts — 2026-09-20
+
+Completed stages 36501–37000.
+
+Implemented:
+- Asun.Platform.PcbEvidenceReleaseIntegration;
+- PcbEvidenceReleaseFactProjection and independent validation;
+- factual found/missing/all-resolved evidence release facts;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 37000;
+- next natural stage: 37001;
+- global one-million-stage horizon remains 2501–1002500.
