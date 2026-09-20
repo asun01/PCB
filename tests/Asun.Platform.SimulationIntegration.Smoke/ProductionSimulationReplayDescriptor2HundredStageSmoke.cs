@@ -30,6 +30,8 @@ public static class ProductionSimulationReplayDescriptor2HundredStageSmoke
         for(var i=0;i<10;i++) Check(descriptor.ProductionSessionId==production.SessionId,"Baseline session identity should remain stable.");
         for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.Length==64,"Baseline descriptor fingerprint should remain fixed width.");
         for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.IsValid(production,observations,binding,descriptor),"Baseline descriptor should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).BindingFingerprint==descriptor.BindingFingerprint,"Recreated replay descriptor should preserve the canonical binding fingerprint.");
+
         assert(round==100,$"ProductionSimulationReplayDescriptor2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
