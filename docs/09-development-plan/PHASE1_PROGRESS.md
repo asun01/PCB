@@ -2815,3 +2815,25 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 75501–76000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 76500 — 2026-09-20
+
+- Completed boundary: **76,500**
+- Next executable stage: **76,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 76001–76500: **Client Inspection Workspace -> Injectable Production Runner -> Cancellation -> Recovery**.
+- Added optional `IProductionSessionRunner` injection and `CancelExecution()`.
+- Added five exact-100-round execution-control Smoke matrices and wired them into ClientIntegration Smoke.
+- Added five stage ledgers and the 76001–76500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 77000 — 2026-09-20
+
+- Completed boundary: **77,000**
+- Next executable stage: **77,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 76501–77000: **WPF Cancel Command -> Client Inspection Workspace -> Cancellation Feedback -> Reset/Recovery**.
+- WPF Shell now exposes an explicit Cancel button and restores command availability through the execution finally path.
+- Cancellation/failure paths clear Release evaluation text so stale readiness cannot remain visible.
+- Added five stage ledgers and the 76501–77000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
