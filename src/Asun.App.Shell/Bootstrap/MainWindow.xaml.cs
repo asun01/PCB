@@ -11,6 +11,8 @@ public partial class MainWindow : System.Windows.Window
 {
     private readonly ClientInspectionWorkspace _client;
     private readonly ClientWorkspaceRuntime _workspaceRuntime;
+    private ClientRunHistorySelection _runHistorySelection=
+        ClientRunHistorySelectionRuntime.CreateInitial();
     private WpfRoiInputAdapter _roiInputAdapter;
 
     public MainWindow()
@@ -736,6 +738,22 @@ public partial class MainWindow : System.Windows.Window
         HomeFingerprint.Text=$"Overview: {home.Fingerprint[..12]}...";
         HomeWorkflowStatus.Text=$"Workflow: {workflow.Step}";
         HomeWorkflowMessage.Text=workflow.Message;
+    }
+
+    private void RunHistoryList_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if(RunHistoryList.SelectedItem is not ClientRunHistoryDisplayItem item)
+            return;
+
+        var history=_client.History;
+        _runHistorySelection=ClientRunHistorySelectionRuntime.Select(
+            history,
+            item.Ordinal,
+            _runHistorySelection.SelectionSequence);
+
+        RunHistorySelectionStatus.Text=_runHistorySelection.StatusText;
     }
 
     private void RefreshWorkspaceStatus()
