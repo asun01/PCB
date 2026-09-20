@@ -37,6 +37,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
+    private long? _selectedHistoryOrdinal;
     private int _disposed;
 
     public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
@@ -79,6 +80,39 @@ public sealed class ClientInspectionWorkspace : IDisposable
             ThrowIfDisposed();
             return _history.Capture();
         }
+    }
+
+    public long? SelectedHistoryOrdinal
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _selectedHistoryOrdinal;
+        }
+    }
+
+    public ClientProductionRunHistoryEntry? SelectedHistory
+    {
+        get
+        {
+            ThrowIfDisposed();
+            var ordinal=_selectedHistoryOrdinal;
+            return ordinal is null
+                ? null
+                : _history.Capture().Entries.FirstOrDefault(entry=>entry.Ordinal==ordinal.Value);
+        }
+    }
+
+    public bool SelectHistory(long ordinal)
+    {
+        ThrowIfDisposed();
+        var entry=_history.Capture().Entries.FirstOrDefault(item=>item.Ordinal==ordinal);
+        if(entry is null)
+            return false;
+
+        _selectedHistoryOrdinal=ordinal;
+        ProductionChanged?.Invoke(_production.Snapshot);
+        return true;
     }
 
     public ClientInspectionWorkspaceSnapshot Capture()
@@ -236,7 +270,9 @@ public sealed class ClientInspectionWorkspace : IDisposable
             _replay,
             releaseManifest);
 
-        _history.Append(_replay,_release);
+        var historyEntry=_history.Append(_replay,_release);
+        _selectedHistoryOrdinal=historyEntry.Ordinal;
+        ProductionChanged?.Invoke(_production.Snapshot);
         return report;
     }
 
@@ -337,12 +373,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _quality.Clear();
         _replay=null;
         _release=null;
+        _selectedHistoryOrdinal=null;
     }
 
     public void ResetHistory()
     {
         ThrowIfDisposed();
         _history.Reset();
+        _selectedHistoryOrdinal=null;
+        ProductionChanged?.Invoke(_production.Snapshot);
     }
 
     public void Dispose()
