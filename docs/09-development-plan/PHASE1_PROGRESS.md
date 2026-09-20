@@ -2452,3 +2452,18 @@ Next executable stage: **51,501**
 - The new bridge validates sequence identity, Production input provenance, Render fingerprint linkage, descriptor counts, and deterministic convergence.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 \n
+
+## Live execution synchronization — Stage 61500 — 2026-09-20
+
+- Completed boundary: **61,500**
+- Next executable stage: **61,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 60501–61000: **Viewport ROI Input Recovery -> ROI Snapshot -> Production Session Context**.
+- Added `Asun.Platform.RoiProductionIntegration` and `ProductionRoiInteractionContextRuntime`, binding existing ROI/input recovery state to an existing Production session as explicit context without mutating Production authority.
+- Added five exact-100-round Smoke matrices, a dedicated smoke project, solution registration, five stage ledgers, and the 60501–61000 integration checkpoint.
+- 61001–61500: **Production ROI Context -> Production Render Replay -> Deterministic Render Correlation**.
+- Added `ProductionRoiRenderReplayContextRuntime`, correlating the ROI production context with existing Render replay frames while explicitly avoiding any unsupported claim that the renderer applied the ROI.
+- Added five exact-100-round Smoke matrices and the 61001–61500 integration checkpoint.
+- Static audit: all ten new Smoke matrices satisfy 10 for-loop groups, 10 actual Check call sites, round==100, balanced delimiters, and no TODO/NotImplementedException.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
