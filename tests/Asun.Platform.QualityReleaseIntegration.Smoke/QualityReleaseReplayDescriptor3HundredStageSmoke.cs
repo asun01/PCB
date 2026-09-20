@@ -47,6 +47,8 @@ public static class QualityReleaseReplayDescriptor3HundredStageSmoke
         for(var i=0;i<10;i++) Check(descriptor.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline manifest identity should remain stable.");
         for(var i=0;i<10;i++) Check(descriptor.ProjectionFingerprint.Length==64,"Baseline projection fingerprint should remain fixed width.");
         for(var i=0;i<10;i++) Check(QualityReleaseReplayDescriptorRuntime.IsValid(run,manifest,descriptor),"Baseline descriptor should remain valid.");
+for(var i=0;i<10;i++) Check(QualityReleaseReplayDescriptorRuntime.Create(run,manifest).ProjectionFingerprint==descriptor.ProjectionFingerprint,"Recreated release descriptor should preserve the projection fingerprint.");
+
         assert(round==100,$"QualityReleaseReplayDescriptor3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
