@@ -16,6 +16,12 @@ await ProductionRoiRenderReplayContext2HundredStageSmoke.RunAsync(Check);
 await ProductionRoiRenderReplayContext3HundredStageSmoke.RunAsync(Check);
 await ProductionRoiRenderReplayContext4HundredStageSmoke.RunAsync(Check);
 await ProductionRoiRenderReplayContext5HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderEvidenceReplayContext1HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderEvidenceReplayContext2HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderEvidenceReplayContext3HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderEvidenceReplayContext4HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderEvidenceReplayContext5HundredStageSmoke.RunAsync(Check);
+
 
 
 if(failures.Count>0)
