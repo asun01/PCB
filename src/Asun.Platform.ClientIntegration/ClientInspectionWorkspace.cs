@@ -233,6 +233,16 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ProductionChanged?.Invoke(_production.Snapshot);
     }
 
+    public bool SelectQualityFinding(string findingId)
+    {
+        ThrowIfDisposed();
+        var selected=_quality.SelectFinding(findingId);
+        if(selected)
+            ProductionChanged?.Invoke(_production.Snapshot);
+
+        return selected;
+    }
+
     public void ClearQualityRun()
     {
         ThrowIfDisposed();
