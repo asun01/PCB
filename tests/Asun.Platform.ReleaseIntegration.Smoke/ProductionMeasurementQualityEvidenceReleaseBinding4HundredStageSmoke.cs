@@ -32,6 +32,8 @@ for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evalua
 for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline Manifest identity should remain canonical.");
 for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint==measurementEvidenceBinding.EvidenceFingerprint,"Baseline Evidence identity should remain canonical.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.All(Uri.IsHexDigit),"Baseline fingerprint should remain hexadecimal.");
+for(var i=0;i<10;i++) Check(binding.QualityResultId==measurementEvidenceBinding.QualityResultId,"Baseline Quality identity should remain stable.");
+for(var i=0;i<10;i++) Check(binding.ComponentId==measurementEvidenceBinding.ComponentId,"Baseline component identity should remain stable.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceReleaseBinding4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
