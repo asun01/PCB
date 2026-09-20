@@ -2580,3 +2580,12 @@ Current completed boundary: **39,500**
 Next executable stage: **39,501**
 
 The one-million-stage horizon remains 2,501–1,002,500.
+
+## Execution checkpoint: Stage 40000 — 2026-09-20
+
+Closed 39501–40000 as Production Runtime → PCB execution identity integration. The PCB execution snapshot now has an explicit board binding that independently validates assembly ownership, Production session identity, execution fingerprint, deterministic binding key, equivalence, and replay descriptor. Five 100-stage ledgers and the 500-stage integration checkpoint are present. No authoritative build/test/CI success is inferred.
+
+Current completed boundary: **40,000**
+Next executable stage: **40,001**
+
+The one-million-stage horizon remains 2,501–1,002,500.
