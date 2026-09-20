@@ -65,12 +65,28 @@
                     Text="Development-only path. It uses the vendor-neutral Production Runtime with a deterministic simulated frame source; it does not claim hardware or HALCON execution." />
                 <StackPanel Orientation="Horizontal">
                     <Button
+                        x:Name="LoadSimulationButton"
+                        Width="150"
+                        Height="32"
+                        Click="LoadSimulationButton_Click"
+                        Content="Load Simulation"
+                        AutomationProperties.AutomationId="Shell.LoadSimulation" />
+                    <Button
                         x:Name="RunSimulationButton"
-                        Width="180"
+                        Margin="8,0,0,0"
+                        Width="150"
                         Height="32"
                         Click="RunSimulationButton_Click"
                         Content="Run Simulation"
                         AutomationProperties.AutomationId="Shell.RunSimulation" />
+                    <Button
+                        x:Name="ResetSessionButton"
+                        Margin="8,0,0,0"
+                        Width="130"
+                        Height="32"
+                        Click="ResetSessionButton_Click"
+                        Content="Reset Session"
+                        AutomationProperties.AutomationId="Shell.ResetSession" />
                     <TextBlock
                         x:Name="SimulationStatus"
                         Margin="16,7,0,0"
