@@ -57,6 +57,9 @@ for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReleaseReplayBindingRuntime
 for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Baseline readiness should remain canonical.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.All(Uri.IsHexDigit),"Baseline fingerprint should remain hexadecimal.");
 for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReleaseReplayBindingRuntime.IsValid(definition,production,qualityRun,evidence,bundle,manifest,binding),"Baseline binding should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReleaseReplayBindingRuntime.Create(definition,production,qualityRun,evidence,bundle,manifest).Fingerprint==binding.Fingerprint,"Recreated binding should remain deterministic.");
+for(var i=0;i<10;i++) Check(binding.ReplayBundleFingerprint==bundle.Fingerprint,"Baseline replay bundle identity should remain stable.");
+
         assert(round==100,$"ProductionQualityEvidenceReleaseReplayBinding4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
