@@ -227,6 +227,12 @@ await ClientRunHistorySelection3HundredStageSmoke.RunAsync(Check);
 await ClientRunHistorySelection4HundredStageSmoke.RunAsync(Check);
 await ClientRunHistorySelection5HundredStageSmoke.RunAsync(Check);
 
+await ClientQualityFilter1HundredStageSmoke.RunAsync(Check);
+await ClientQualityFilter2HundredStageSmoke.RunAsync(Check);
+await ClientQualityFilter3HundredStageSmoke.RunAsync(Check);
+await ClientQualityFilter4HundredStageSmoke.RunAsync(Check);
+await ClientQualityFilter5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
