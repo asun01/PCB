@@ -9,5 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="../Asun.Platform.ClientIntegration/Asun.Platform.ClientIntegration.csproj" />
     <ProjectReference Include="../Asun.Platform.SimulationIntegration/Asun.Platform.SimulationIntegration.csproj" />
+    <ProjectReference Include="../Asun.UI.Viewports/Asun.UI.Viewports.csproj" />
   </ItemGroup>
 </Project>
