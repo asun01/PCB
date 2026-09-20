@@ -110,6 +110,45 @@ public static class ProductionRoiInteractionContextRuntime
         ViewportRoiInputRecoverySnapshot roiSnapshot)=>
         Validate(productionReport,roiSnapshot).Count==0;
 
+    public static IReadOnlyList<string> ValidateBinding(
+        ProductionRoiInteractionContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        var errors=new List<string>();
+        if(context.ProductionSessionId==Guid.Empty)
+            errors.Add("Production session id cannot be empty.");
+        if(context.ProductionFrameCount<=0)
+            errors.Add("Production frame count must be positive.");
+        if(context.FirstProductionSequence<=0 ||
+           context.LastProductionSequence<context.FirstProductionSequence)
+            errors.Add("Production sequence bounds are invalid.");
+
+        foreach(var pair in new[]
+        {
+            (nameof(context.ProductionFingerprint),context.ProductionFingerprint),
+            (nameof(context.RoiFingerprint),context.RoiFingerprint),
+            (nameof(context.InputRecoveryFingerprint),context.InputRecoveryFingerprint),
+            (nameof(context.BindingFingerprint),context.BindingFingerprint)
+        })
+        {
+            if(pair.Item2 is null || pair.Item2.Length!=64 || !IsLowerHex(pair.Item2))
+                errors.Add(pair.Item1+" must be 64 lowercase hexadecimal characters.");
+        }
+
+        if(context.RoiCount<0)
+            errors.Add("ROI count cannot be negative.");
+
+        if(context.SelectedRoiId is Guid selected && selected==Guid.Empty)
+            errors.Add("Selected ROI id cannot be empty.");
+
+        return errors;
+    }
+
+    public static bool IsValidBinding(
+        ProductionRoiInteractionContext context)=>
+        ValidateBinding(context).Count==0;
+
     public static bool IsEquivalent(
         ProductionRoiInteractionContext left,
         ProductionRoiInteractionContext right)
