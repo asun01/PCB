@@ -1884,3 +1884,22 @@ Current continuous execution position:
 - completed through Stage 37500;
 - next natural stage: 37501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 37501→38000 unified end-to-end replay snapshot — 2026-09-20
+
+Completed stages 37501–38000.
+
+Implemented:
+- Asun.Platform.PcbReplayIntegration;
+- PcbEndToEndReplaySnapshot and independent validation;
+- canonical Render replay ordering and aggregate fingerprint;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Real correction:
+- render replay ordering is now explicitly validated instead of being normalized away during fingerprinting.
+
+Current continuous execution position:
+- completed through Stage 38000;
+- next natural stage: 38001;
+- global one-million-stage horizon remains 2501–1002500.
