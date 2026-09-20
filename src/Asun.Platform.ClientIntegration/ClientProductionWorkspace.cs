@@ -99,7 +99,7 @@ public sealed class ClientProductionWorkspace
             null,
             null)
         {
-            TargetFrameCount=0,
+            TargetFrameCount=definition.FrameCount,
             FramesProcessed=0,
             LastSequence=null
         };
