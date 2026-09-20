@@ -24,7 +24,7 @@ public static class QualityFindingEvidenceReplayDescriptor5HundredStageSmoke
                         new QualityFinding(secondFindingId,"AOI.PAD.MISSING",QualityOutcome.Fail,QualitySeverity.Minor,"Pad missing")}),
                     new QualityFindingEvidenceSet(new[]{
                         new QualityFindingEvidenceLink(findingId,firstKey),
-                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))}});
+                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))});
         var bindings=new[]{
             new QualityEvidenceHandleBinding(findingId,firstKey,EvidenceHandle.Create("evidence/frame/10/component")),
             new QualityEvidenceHandleBinding(secondFindingId,secondKey,EvidenceHandle.Create("evidence/frame/10/pad"))};
@@ -44,6 +44,7 @@ for(var i=0;i<10;i++) Check(changedDescriptors[0].EvidenceHandles[0].Value=="evi
 for(var i=0;i<10;i++) Check(descriptors[0].EvidenceHandles[0].Value=="evidence/frame/10/component","Original Evidence identity should remain unchanged.");
 for(var i=0;i<10;i++) Check(descriptors[1].EvidenceHandles[0].Value=="evidence/frame/10/pad","Second Evidence identity should remain unchanged.");
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.Create(run,bindings,resolutions)[0].FindingId==findingId,"Original descriptor creation should remain deterministic.");
+for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.IsValid(run,bindings,resolutions,descriptors),"Final canonical replay descriptor validation should remain clean.");
         assert(round==100,$"QualityFindingEvidenceReplayDescriptor5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
