@@ -81,6 +81,22 @@
                         Content="Create ROI"
                         AutomationProperties.AutomationId="Shell.CreateRoi" />
                     <Button
+                        x:Name="UndoRoiButton"
+                        Margin="8,0,0,0"
+                        Width="90"
+                        Height="32"
+                        Click="UndoRoiButton_Click"
+                        Content="Undo ROI"
+                        AutomationProperties.AutomationId="Shell.UndoRoi" />
+                    <Button
+                        x:Name="RedoRoiButton"
+                        Margin="8,0,0,0"
+                        Width="90"
+                        Height="32"
+                        Click="RedoRoiButton_Click"
+                        Content="Redo ROI"
+                        AutomationProperties.AutomationId="Shell.RedoRoi" />
+                    <Button
                         x:Name="LoadSimulationButton"
                         Margin="8,0,0,0"
                         Width="150"
