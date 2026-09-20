@@ -59,6 +59,7 @@ public partial class MainWindow : System.Windows.Window
             _=Dispatcher.BeginInvoke(new Action(() =>
             {
                 RefreshWorkspaceStatus();
+                RefreshAcquisitionStatus();
                 RefreshCommandAvailability();
                 RefreshResultStatus();
             }));
@@ -125,6 +126,12 @@ public partial class MainWindow : System.Windows.Window
                 ClientSimulationSessionFactory.CreatePipeline(),
                 definition.SessionId,
                 definition.FrameCount);
+            _client.BindAcquisition(
+                ClientSimulationSessionFactory.CreateSource(),
+                new ClientAcquisitionDescriptor(
+                    "simulation",
+                    "Deterministic Simulation Source",
+                    true));
             SimulationStatus.Text="Simulation session loaded.";
             RefreshCommandAvailability();
             ReleaseStatus.Text="Release: not evaluated.";
@@ -218,7 +225,6 @@ public partial class MainWindow : System.Windows.Window
             RefreshCommandAvailability();
 
             var execution=_client.ExecuteAsync(
-                ClientSimulationSessionFactory.CreateSource(),
                 ClientSimulationSessionFactory.CreateReleaseManifest());
 
             RefreshWorkspaceStatus();
@@ -280,6 +286,7 @@ public partial class MainWindow : System.Windows.Window
         SimulationStatus.Text="Ready.";
         RefreshWorkspaceStatus();
         RefreshProgramStatus();
+        RefreshAcquisitionStatus();
         RefreshResultStatus();
         RefreshRunHistoryStatus();
         RefreshRoiSurface();
@@ -426,6 +433,21 @@ public partial class MainWindow : System.Windows.Window
         CreateRoiButton.IsEnabled=routing.CanEditRoi && availability.CanCreateRoi;
         UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
         RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
+    }
+
+    private void RefreshAcquisitionStatus()
+    {
+        var acquisition=_client.Acquisition;
+        AcquisitionStatus.Text=acquisition.State switch
+        {
+            ClientAcquisitionState.Unbound=>"Acquisition: unbound.",
+            ClientAcquisitionState.Ready =>
+                $"Acquisition: {acquisition.Descriptor?.DisplayName}" +
+                (acquisition.Descriptor?.IsSimulation==true ? " · Simulation" : " · External source"),
+            ClientAcquisitionState.Faulted =>
+                $"Acquisition: Faulted · {acquisition.LastError}",
+            _=>"Acquisition: unknown."
+        };
     }
 
     private void RefreshProgramStatus()
