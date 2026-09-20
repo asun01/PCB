@@ -29,6 +29,9 @@ public static class ProductionSimulationReplayDescriptor4HundredStageSmoke
         for(var i=0;i<10;i++) Check(descriptor.ProductionSessionId!=Guid.Empty,"Baseline session identity should be valid.");
         for(var i=0;i<10;i++) Check(descriptor.FrameCount>0,"Baseline frame count should be positive.");
         for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.IsValid(production,observations,binding,descriptor),"Baseline descriptor should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.Create(production,observations,binding).DescriptorFingerprint==descriptor.DescriptorFingerprint,"Recreated replay descriptor should preserve the canonical fingerprint.");
+        for(var i=0;i<10;i++) Check(ProductionSimulationReplayDescriptorRuntime.IsValid(production,observations,binding,descriptor),"Repeated canonical validation should remain clean.");
+
         assert(round==100,$"ProductionSimulationReplayDescriptor4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
