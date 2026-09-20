@@ -333,6 +333,7 @@ ViewportRenderSchedulerGenerationSmoke.Run(Assert);
 await ViewportInputLifecycleSmoke.RunAsync(Assert);
 
 await ViewportInputBackpressureLifecycleHundredStageSmoke.RunAsync(Assert);
+await ViewportInputBackpressureCoalescingHundredStageSmoke.RunAsync(Assert);
 
 if (failures.Count > 0)
 {
