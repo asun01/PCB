@@ -3,6 +3,7 @@ using Asun.Device.Impl;
 using Asun.Platform.Pipeline;
 using Asun.Program.Core;
 using Asun.Production.Runtime;
+using Asun.Release.Core;
 
 namespace Asun.Platform.SimulationIntegration;
 
@@ -67,4 +68,19 @@ public static class ClientSimulationSessionFactory
 
     public static IFrameSource CreateSource()=>
         new SimulatedFrameSource(64,64);
+
+    public static ReleaseManifest CreateReleaseManifest()=>
+        new(
+            new ReleaseIdentity(
+                "Asun PCB Simulation",
+                new Version(1,0,0),
+                "simulation"),
+            new[]
+            {
+                new ReleaseArtifact(
+                    "simulation/client-release.pcb",
+                    new string('a',64),
+                    2048)
+            },
+            new string('b',64));
 }
