@@ -125,7 +125,15 @@ public sealed class ClientProductionWorkspace
 
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         _activeCancellation=linked;
-        _snapshot=_snapshot with { Status=ClientExecutionStatus.Running,LastError=null };
+        _snapshot=_snapshot with
+        {
+            Status=ClientExecutionStatus.Running,
+            LastFrameCount=0,
+            LastReportFingerprint=null,
+            LastError=null,
+            FramesProcessed=0,
+            LastSequence=null
+        };
         Publish();
 
         try
