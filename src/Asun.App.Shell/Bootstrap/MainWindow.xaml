@@ -237,33 +237,104 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
                 <TextBlock
+                    Grid.ColumnSpan="2"
                     FontSize="18"
                     FontWeight="SemiBold"
-                    Text="ROI interaction host" />
-                <Canvas
-                    x:Name="RoiSurface"
+                    Text="Client workspace content" />
+                <Border
                     Grid.Row="1"
-                    Margin="0,12,0,8"
-                    Focusable="True"
-                    SizeChanged="RoiSurface_SizeChanged"
-                    MouseDown="RoiSurface_MouseDown"
-                    MouseMove="RoiSurface_MouseMove"
-                    MouseUp="RoiSurface_MouseUp"
-                    MouseWheel="RoiSurface_MouseWheel"
-                    KeyDown="RoiSurface_KeyDown">
-                    <TextBlock
-                        x:Name="RoiSurfaceHint"
-                        Margin="16"
-                        Opacity="0.65"
-                        Text="Run the deterministic simulation, then choose Create ROI and drag on this vendor-neutral WPF development surface." />
-                </Canvas>
-                <TextBlock
-                    x:Name="RoiStatus"
+                    Margin="0,12,8,8"
+                    Padding="12"
+                    BorderThickness="1"
+                    AutomationProperties.AutomationId="Shell.ProgramWorkspace">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Text="Program steps" />
+                        <ListBox
+                            x:Name="ProgramStepList"
+                            Grid.Row="1"
+                            Margin="0,8,0,0"
+                            AutomationProperties.AutomationId="Shell.ProgramStepList">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Width="44" Text="{Binding Order}" />
+                                        <TextBlock Width="180" Text="{Binding Name}" />
+                                        <TextBlock Width="110" Text="{Binding Kind}" />
+                                        <TextBlock Text="{Binding ParameterCount}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </Border>
+                <Border
+                    Grid.Column="1"
+                    Grid.Row="1"
+                    Margin="8,12,0,8"
+                    Padding="12"
+                    BorderThickness="1"
+                    AutomationProperties.AutomationId="Shell.ResultWorkspace">
+                    <StackPanel>
+                        <TextBlock FontWeight="SemiBold" Text="Inspection result" />
+                        <TextBlock x:Name="ResultStatus" Margin="0,8,0,0" Text="Idle" />
+                        <TextBlock x:Name="ResultSession" Margin="0,4,0,0" Text="Session not loaded" TextWrapping="Wrap" />
+                        <TextBlock x:Name="ResultReplay" Margin="0,4,0,0" Text="Replay not available" />
+                        <TextBlock x:Name="ResultRelease" Margin="0,4,0,0" Text="Release not evaluated" TextWrapping="Wrap" />
+                        <Separator Margin="0,12,0,8" />
+                        <TextBlock FontWeight="SemiBold" Text="Quality workspace" />
+                        <TextBlock
+                            x:Name="QualityStatus"
+                            Margin="0,6,0,0"
+                            Text="Quality Run: not attached. No Quality authority is being fabricated by the client shell."
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+                <Border
                     Grid.Row="2"
-                    AutomationProperties.AutomationId="Shell.RoiStatus"
-                    Text="ROI: workspace not bound." />
-            </Grid>
+                    Grid.ColumnSpan="2"
+                    Margin="0,0,0,8"
+                    Padding="12"
+                    BorderThickness="1">
+                    <Grid>
+                        <TextBlock
+                            x:Name="RoiWorkspaceTitle"
+                            FontWeight="SemiBold"
+                            Text="ROI interaction host" />
+                        <Canvas
+                            x:Name="RoiSurface"
+                            Margin="0,28,0,24"
+                            Focusable="True"
+                            SizeChanged="RoiSurface_SizeChanged"
+                            MouseDown="RoiSurface_MouseDown"
+                            MouseMove="RoiSurface_MouseMove"
+                            MouseUp="RoiSurface_MouseUp"
+                            MouseWheel="RoiSurface_MouseWheel"
+                            KeyDown="RoiSurface_KeyDown">
+                            <TextBlock
+                                x:Name="RoiSurfaceHint"
+                                Margin="16"
+                                Opacity="0.65"
+                                Text="Run the deterministic simulation, then choose Create ROI and drag on this vendor-neutral WPF development surface." />
+                        </Canvas>
+                        <TextBlock
+                            x:Name="RoiStatus"
+                            Margin="0,0,0,0"
+                            VerticalAlignment="Bottom"
+                            AutomationProperties.AutomationId="Shell.RoiStatus"
+                            Text="ROI: workspace not bound." />
+                    </Grid>
+                </Border>            </Grid>
         </Border>
     </Grid>
 </Window>
