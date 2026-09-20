@@ -53,9 +53,19 @@ public static class ClientInspectionExecutionSurfaceSmoke
 
     private static void StatusRemainsAuthoritative()
     {
-        var surface=Create(ClientExecutionStatus.Cancelled,2,3);
-        Check(surface.Presentation.ExecutionStatus=="Cancelled",
-            "Surface status must project Production status.");
+        var routing=new ClientWorkspaceCommandRouting(
+            ClientWorkspaceKind.Inspection,
+            false,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false);
+        var surface=Create(ClientExecutionStatus.Cancelled,2,3,routing);
+        Check(surface.Presentation.ExecutionStatus=="Cancelled" &&
+              surface.CommandRouting?.CanCancelInspection==true,
+            "Surface must preserve authoritative status and supplied command routing.");
     }
 
     private static void FrameProgressRemainsVisible()
@@ -89,7 +99,8 @@ public static class ClientInspectionExecutionSurfaceSmoke
     private static ClientInspectionExecutionSurface Create(
         ClientExecutionStatus status,
         int processed,
-        int target)
+        int target,
+        ClientWorkspaceCommandRouting? commandRouting=null)
     {
         using var workspace=new ClientInspectionWorkspace(
             new System.Numerics.Vector2(640,480),
@@ -108,7 +119,9 @@ public static class ClientInspectionExecutionSurfaceSmoke
             }
         };
 
-        return ClientInspectionExecutionSurfaceRuntime.Create(snapshot);
+        return commandRouting is null
+            ? ClientInspectionExecutionSurfaceRuntime.Create(snapshot)
+            : ClientInspectionExecutionSurfaceRuntime.Create(snapshot,commandRouting);
     }
 
     private static void Check(bool condition,string message)
