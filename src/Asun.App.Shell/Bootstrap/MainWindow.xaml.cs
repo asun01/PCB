@@ -21,11 +21,7 @@ public partial class MainWindow : System.Windows.Window
             historyCapacity:20);
 
         _workspaceRuntime=new ClientWorkspaceRuntime();
-        _workspaceRuntime.Changed+=selection =>
-        {
-            WorkspaceNavigationStatus.Text=$"Workspace: {selection.Workspace}";
-            RefreshCommandAvailability();
-        };
+        _workspaceRuntime.Changed+=OnWorkspaceChanged;
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
 
         RefreshWorkspaceStatus();
@@ -38,8 +34,15 @@ public partial class MainWindow : System.Windows.Window
         object? sender,
         System.EventArgs e)
     {
+        _workspaceRuntime.Changed-=OnWorkspaceChanged;
+        _workspaceRuntime.Dispose();
         _client.Dispose();
-        _workspaceRuntime.Reset();
+    }
+
+    private void OnWorkspaceChanged(ClientWorkspaceSelection selection)
+    {
+        WorkspaceNavigationStatus.Text=$"Workspace: {selection.Workspace}";
+        RefreshCommandAvailability();
     }
 
 
