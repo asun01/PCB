@@ -2974,3 +2974,15 @@ Next executable stage: **51,501**
 - Static audit passed: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 72500 — 2026-09-20
+
+- Completed boundary: **72,500**
+- Next executable stage: **72,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 72001–72500: **WPF Client Shutdown -> Workspace Event Detachment -> Workspace Runtime Disposal -> Production Client Disposal**.
+- Hardened `ClientWorkspaceRuntime` with idempotent disposal and post-disposal navigation rejection.
+- Corrected WPF close ordering so the workspace event callback cannot access the disposed inspection client.
+- Added five exact-100-round lifecycle Smoke matrices and registered them in ClientIntegration Smoke.
+- Static audit passed: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
