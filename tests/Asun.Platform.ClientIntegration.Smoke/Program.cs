@@ -18,6 +18,12 @@ await ClientProductionReplaySnapshot3HundredStageSmoke.RunAsync(Check);
 await ClientProductionReplaySnapshot4HundredStageSmoke.RunAsync(Check);
 await ClientProductionReplaySnapshot5HundredStageSmoke.RunAsync(Check);
 
+await ClientReleaseProjection1HundredStageSmoke.RunAsync(Check);
+await ClientReleaseProjection2HundredStageSmoke.RunAsync(Check);
+await ClientReleaseProjection3HundredStageSmoke.RunAsync(Check);
+await ClientReleaseProjection4HundredStageSmoke.RunAsync(Check);
+await ClientReleaseProjection5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
