@@ -2177,3 +2177,17 @@ No authoritative build/test/CI success is claimed.
 
 Current completed boundary: **48,500**
 Next executable stage: **48,501**
+
+
+### 48501→49000 Quality Finding → opaque Evidence replay descriptor — 2026-09-20
+
+Completed stages 48501–49000 as five contiguous 100-stage acceptance blocks.
+
+Implemented `QualityFindingEvidenceReplayDescriptorRuntime` over the existing finding/evidence resolution boundary. Each relationship now has deterministic Finding identity, opaque Evidence handles, resolution fingerprint, and descriptor fingerprint. Missing/duplicate relationships, handle/fingerprint tampering, malformed descriptors, and ordering drift are rejected.
+
+Added and registered five exact 100-round Smokes and five stage ledgers plus integration checkpoint. Static acceptance required and received active correction of generated syntax, delimiter, and loop-count defects before closure.
+
+No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **49,000**
+Next executable stage: **49,001**
