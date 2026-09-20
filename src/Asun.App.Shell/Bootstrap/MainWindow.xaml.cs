@@ -1,6 +1,5 @@
 using Asun.Platform.ClientIntegration;
 using Asun.Platform.SimulationIntegration;
-using Asun.Platform.ClientIntegration;
 
 namespace Asun.App.Shell.Bootstrap;
 
