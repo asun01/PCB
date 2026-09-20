@@ -24,7 +24,7 @@ public static class ClientInspectionExecutionPresentationRuntime
 
         var roi=snapshot.Roi is null
             ? "ROI — unavailable until Production completes"
-            : $"ROI — {snapshot.Roi.Document.Shapes.Count} shapes";
+            : "ROI — available";
 
         var acquisition=snapshot.Acquisition.State==ClientAcquisitionState.Bound
             ? $"Acquisition — {snapshot.Acquisition.Descriptor?.DisplayName ?? snapshot.Acquisition.Descriptor?.Id ?? "bound"}"
