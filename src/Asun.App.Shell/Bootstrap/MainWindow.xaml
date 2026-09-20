@@ -282,6 +282,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <TextBlock
                             FontWeight="SemiBold"
@@ -305,8 +306,8 @@
                         </ListBox>
                         <TextBlock
                             x:Name="ProgramStepDetails"
-                            Grid.Row="1"
-                            Margin="0,108,0,0"
+                            Grid.Row="2"
+                            Margin="0,8,0,0"
                             TextWrapping="Wrap"
                             AutomationProperties.AutomationId="Shell.ProgramStepDetails"
                             Text="No Program step selected." />
