@@ -43,10 +43,12 @@ public sealed class ClientAcquisitionWorkspace
         new(
             _source is null
                 ? ClientAcquisitionState.Unbound
-                : ClientAcquisitionState.Ready,
+                : _lastError is null
+                    ? ClientAcquisitionState.Ready
+                    : ClientAcquisitionState.Faulted,
             _descriptor,
             _lastError,
-            _source is not null)
+            _source is not null && _lastError is null)
         {
             Preview=_preview
         };
