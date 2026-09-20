@@ -26,6 +26,9 @@ public static class ProductionReleaseReplayDescriptor3HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.Validate(manifest,upper).Count>0,"Uppercase fingerprint should produce diagnostics.");
         for(var i=0;i<10;i++) Check(descriptor.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Baseline readiness should remain stable.");
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.IsValid(manifest,descriptor),"Baseline descriptor should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.IsValid(manifest,descriptor),"Baseline release descriptor should remain valid.");
+        for(var i=0;i<10;i++) Check(descriptor.ReleaseManifestFingerprint==manifest.Fingerprint,"Baseline release manifest identity should remain stable.");
+
         assert(round==100,$"ProductionReleaseReplayDescriptor3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
