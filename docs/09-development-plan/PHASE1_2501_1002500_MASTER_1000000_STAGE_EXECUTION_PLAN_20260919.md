@@ -2616,3 +2616,16 @@ Current completed boundary: **41,500**
 Next executable stage: **41,501**
 
 The one-million-stage horizon remains 2,501–1,002,500.
+
+## Next macro-batch execution horizon — 41,501–141,500
+
+The next autonomous macro-batch is now explicitly planned as **100,000 stages**, represented by 200 internal 500-stage integration cells and 1,000 100-stage acceptance cells. Detailed execution matrix: `PHASE1_41501_141500_100000_STAGE_MACROBATCH_PLAN_20260920.md`.
+
+Planning is not completion evidence.
+
+## Execution checkpoint: Stage 42000 — 2026-09-20
+
+Closed 41501–42000 as Quality Finding → opaque Evidence resolution. Finding-level resolution is deterministic, independently validated, tamper-resistant, and replay-ready while Evidence remains opaque and storage-neutral. Five 100-stage ledgers and the 500-stage checkpoint are present.
+
+Current completed boundary: **42,000**
+Next executable stage: **42,001**
