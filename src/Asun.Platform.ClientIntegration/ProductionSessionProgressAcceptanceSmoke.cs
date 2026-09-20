@@ -78,7 +78,14 @@ public static class ProductionSessionProgressAcceptanceSmoke
         var workspace=new ClientProductionWorkspace(runner);
         workspace.Load(CreateDefinition(3));
         Check(workspace.Snapshot.Status==ClientExecutionStatus.Ready,"Load must enter Ready.");
+        var sawRunningProgress=false;
+        workspace.Changed+=snapshot =>
+        {
+            if(snapshot.Status==ClientExecutionStatus.Running && snapshot.FramesProcessed>0)
+                sawRunningProgress=true;
+        };
         _=workspace.StartAsync(new EmptyFrameSource()).AsTask().GetAwaiter().GetResult();
+        Check(sawRunningProgress,"Progress callbacks must be visible while Running.");
         Check(workspace.Snapshot.Status==ClientExecutionStatus.Completed,"Completion must enter Completed.");
         Check(workspace.Snapshot.FramesProcessed==3,"Completed must report all processed frames.");
         Check(workspace.Snapshot.TargetFrameCount==3,"Completed must retain definition target.");
