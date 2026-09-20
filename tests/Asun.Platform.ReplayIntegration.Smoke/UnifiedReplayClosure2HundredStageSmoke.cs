@@ -37,6 +37,8 @@ for(var i=0;i<10;i++) Check(closure.SimulationDescriptorFingerprint==simulationD
 for(var i=0;i<10;i++) Check(UnifiedReplayClosureRuntime.IsValid(pipelineIdentity,simulationDescriptor,renderDescriptors,qualityReleaseDescriptor,releaseBinding,closure),"Baseline closure should remain valid.");
 for(var i=0;i<10;i++) Check(closure.RenderEvidenceDescriptorCount==renderDescriptors.Count,"Baseline render descriptor count should remain aligned.");
 for(var i=0;i<10;i++) Check(closure.Fingerprint.Length==64,"Baseline closure fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(closure.RenderEvidenceDescriptorCount==renderDescriptors.Count,"Baseline Render descriptor count should remain aligned.");
+
         assert(round==100,$"UnifiedReplayClosure2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
