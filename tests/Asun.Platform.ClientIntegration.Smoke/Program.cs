@@ -114,6 +114,12 @@ await ClientQualityWorkspace3HundredStageSmoke.RunAsync(Check);
 await ClientQualityWorkspace4HundredStageSmoke.RunAsync(Check);
 await ClientQualityWorkspace5HundredStageSmoke.RunAsync(Check);
 
+await ClientProductionProgress1HundredStageSmoke.RunAsync(Check);
+await ClientProductionProgress2HundredStageSmoke.RunAsync(Check);
+await ClientProductionProgress3HundredStageSmoke.RunAsync(Check);
+await ClientProductionProgress4HundredStageSmoke.RunAsync(Check);
+await ClientProductionProgress5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
