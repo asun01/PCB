@@ -49,7 +49,7 @@ public static class PcbEndToEndReplaySnapshotRuntime
             fingerprint);
     }
 
-    internal static string CreateRenderFingerprint(
+    public static string CreateRenderFingerprint(
         IReadOnlyList<ProductionRenderReplayFrameIntegrity> frames)
     {
         var canonical=new StringBuilder();
