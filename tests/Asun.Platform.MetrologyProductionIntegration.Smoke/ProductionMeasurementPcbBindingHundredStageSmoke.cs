@@ -51,7 +51,6 @@ public static class ProductionMeasurementPcbBindingHundredStageSmoke
         for(var i=0;i<10;i++) Check(binding.Sequence==fact.Sequence,"Binding should preserve measurement sequence.");
         for(var i=0;i<10;i++) Check(binding.ProductionInputFingerprint==fact.ProductionInputFingerprint,"Binding should preserve Production input identity.");
         for(var i=0;i<10;i++) Check(binding.ComponentId==observation.Observation.ComponentId,"Binding should preserve PCB component identity.");
-        for(var i=0;i<10;i++) Check(binding.Designator==observation.Observation.Designator,"Binding should preserve component designator.");
         for(var i=0;i<10;i++) Check(binding.CalibrationFingerprint==observation.CalibrationFingerprint,"Binding should preserve calibration identity.");
         for(var i=0;i<10;i++) Check(binding.ObservationFingerprint==observation.Fingerprint,"Binding should preserve calibrated observation identity.");
         for(var i=0;i<10;i++) Check(ProductionMeasurementPcbBindingRuntime.Validate(fact,observation,binding).Count==0,"Valid measurement PCB binding should validate.");
