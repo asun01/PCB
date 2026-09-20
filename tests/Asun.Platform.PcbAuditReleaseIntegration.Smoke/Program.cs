@@ -19,4 +19,3 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.PcbAuditReleaseIntegration smoke tests passed.");
 return 0;
-}
