@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 await QualityEvidenceHandleProjectionHundredStageSmoke.RunAsync(Check);
+await QualityFindingEvidenceResolutionHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
