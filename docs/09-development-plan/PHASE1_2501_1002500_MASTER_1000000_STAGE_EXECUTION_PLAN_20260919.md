@@ -2442,3 +2442,13 @@ Current completed boundary: **34,000**
 Next executable stage: **34,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 34500 — 2026-09-20
+
+Closed Metrology measurement facts → Quality findings. Measurement data now enters Quality through an explicit rule-injection boundary rather than hard-coded acceptance policy.
+
+Current completed boundary: **34,500**
+Next executable stage: **34,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
