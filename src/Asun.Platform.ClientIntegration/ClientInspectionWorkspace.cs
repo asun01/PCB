@@ -34,6 +34,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private readonly ClientQualityWorkspace _quality;
     private readonly ClientAcquisitionWorkspace _acquisition;
     private readonly ClientAcquisitionCatalog _acquisitionCatalog;
+    private readonly ClientQualityProviderCatalog _qualityProviderCatalog;
 
     private ProductionSessionReport? _lastProductionReport;
     private ClientProductionReplaySnapshot? _replay;
@@ -56,6 +57,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _quality=new ClientQualityWorkspace();
         _acquisition=new ClientAcquisitionWorkspace();
         _acquisitionCatalog=new ClientAcquisitionCatalog();
+        _qualityProviderCatalog=new ClientQualityProviderCatalog();
         _production.Changed+=OnProductionChanged;
     }
 
@@ -195,6 +197,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         }
     }
 
+    public ClientQualityProviderCatalog QualityProviderCatalog
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _qualityProviderCatalog;
+        }
+    }
+
     public ClientAcquisitionCatalog AcquisitionCatalog
     {
         get
@@ -250,6 +261,18 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ThrowIfDisposed();
         _quality.Bind(run);
         ProductionChanged?.Invoke(_production.Snapshot);
+    }
+
+    public ClientQualityWorkspaceSnapshot EvaluateQualityProvider(
+        string providerId)
+    {
+        ThrowIfDisposed();
+        if(!_qualityProviderCatalog.TryCreate(providerId,out var provider))
+            throw new ArgumentException(
+                $"Quality provider '{providerId}' is not registered.",
+                nameof(providerId));
+
+        return EvaluateQuality(provider);
     }
 
     public ClientQualityWorkspaceSnapshot EvaluateQuality(
