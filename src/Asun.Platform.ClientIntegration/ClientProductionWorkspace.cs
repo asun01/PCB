@@ -97,7 +97,12 @@ public sealed class ClientProductionWorkspace
             ClientExecutionStatus.Ready,
             0,
             null,
-            null);
+            null)
+        {
+            TargetFrameCount=0,
+            FramesProcessed=0,
+            LastSequence=null
+        };
     }
 
     public async ValueTask<ProductionSessionReport> StartAsync(
@@ -126,7 +131,12 @@ public sealed class ClientProductionWorkspace
                 Status=ClientExecutionStatus.Completed,
                 LastFrameCount=report.FrameCount,
                 LastReportFingerprint=report.Fingerprint,
-                LastError=null
+                LastError=null,
+                TargetFrameCount=report.FrameCount,
+                FramesProcessed=report.FrameCount,
+                LastSequence=report.Frames.Count==0
+                    ? null
+                    : report.Frames.MaxBy(frame=>frame.Sequence.Value)!.Sequence
             };
             return report;
         }
