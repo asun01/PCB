@@ -5,8 +5,8 @@
 - Start: **57,001**
 - End: **1,057,000**
 - Size: **1,000,000 stages**
-- Completed before this interval: **67,500**
-- Next executable stage: **67,501**
+- Completed before this interval: **68,000**
+- Next executable stage: **68,001**
 
 This is the active autonomous execution interval requested for the continuing PCB product-chain development. Existing historical stage numbers and checkpoints are not rewritten.
 
@@ -34,6 +34,6 @@ Static source checks may be reported. Local build/test and CI success must only 
 
 ## Current cell
 
-**67001-67500** — Frame/Measurement/Quality Provenance → Opaque Evidence → Logical Release Replay Closure.
+**67501-68000** — Quality/Evidence/Release Replay → Audit Trace → Audit Replay Closure.
 
-After closure, continue from **67501** without waiting for another planning request.
+After closure, continue from **68001** without waiting for another planning request.
