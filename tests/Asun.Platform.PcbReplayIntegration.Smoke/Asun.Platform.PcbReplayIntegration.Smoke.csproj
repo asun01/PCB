@@ -7,6 +7,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../src/Asun.Platform.PcbReplayIntegration/Asun.Platform.PcbReplayIntegration.csproj" />
-    <ProjectReference Include="../../src/Asun.Platform.UI.Viewports/Asun.UI.Viewports.csproj" />
+    <ProjectReference Include="../../src/Asun.UI.Viewports/Asun.UI.Viewports.csproj" />
   </ItemGroup>
 </Project>
