@@ -29,6 +29,52 @@
                 FontSize="14"
                 Opacity="0.72"
                 Text="Client shell · .NET 10 · WPF" />
+            <StackPanel
+                Margin="0,16,0,0"
+                Orientation="Horizontal"
+                AutomationProperties.AutomationId="Shell.WorkspaceNavigation">
+                <Button
+                    Width="90"
+                    Height="30"
+                    Margin="0,0,8,0"
+                    Click="WorkspaceHomeButton_Click"
+                    Content="Home"
+                    AutomationProperties.AutomationId="Shell.WorkspaceHome" />
+                <Button
+                    Width="100"
+                    Height="30"
+                    Margin="0,0,8,0"
+                    Click="WorkspaceInspectionButton_Click"
+                    Content="Inspection"
+                    AutomationProperties.AutomationId="Shell.WorkspaceInspection" />
+                <Button
+                    Width="90"
+                    Height="30"
+                    Margin="0,0,8,0"
+                    Click="WorkspaceProgramButton_Click"
+                    Content="Program"
+                    AutomationProperties.AutomationId="Shell.WorkspaceProgram" />
+                <Button
+                    Width="90"
+                    Height="30"
+                    Margin="0,0,8,0"
+                    Click="WorkspaceQualityButton_Click"
+                    Content="Quality"
+                    AutomationProperties.AutomationId="Shell.WorkspaceQuality" />
+                <Button
+                    Width="90"
+                    Height="30"
+                    Click="WorkspaceResultsButton_Click"
+                    Content="Results"
+                    AutomationProperties.AutomationId="Shell.WorkspaceResults" />
+                <TextBlock
+                    x:Name="WorkspaceNavigationStatus"
+                    Margin="16,7,0,0"
+                    VerticalAlignment="Center"
+                    AutomationProperties.AutomationId="Shell.WorkspaceNavigationStatus"
+                    Text="Workspace: Home" />
+            </StackPanel>
+
         </StackPanel>
 
         <Border
