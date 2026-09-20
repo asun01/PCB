@@ -116,3 +116,13 @@ Within each 100,000-stage macro-batch, product chains continue to rotate dynamic
 The current global horizon remains 2501–1,002,500, so it is naturally partitioned into ten 100,000-stage macro-batches (with the final residual 2,500 stages handled as the closing macro-batch).
 
 Historical 500-stage checkpoints remain valid evidence and are not rewritten. This rule changes the **future execution cadence**, not the historical stage accounting.
+
+## Live execution synchronization — 2026-09-20
+
+- Active branch: `codex/phase1-nonblocked-automation-20260919`
+- Completed boundary: **42,000**
+- Next executable stage: **42,001**
+- Current macro horizon: **41,501–141,500**
+- Macro plan: `PHASE1_41501_141500_100000_STAGE_MACROBATCH_PLAN_20260920.md`
+
+The current rotation has moved through Production→PCB, Metrology→PCB, Viewport backpressure/coalescing, and Quality→Evidence. The next cells continue dynamic rotation rather than locking the repository to a single subsystem.
