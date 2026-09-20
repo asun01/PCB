@@ -11,12 +11,11 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptor1
             7,
             new string('c',64),
             Guid.Parse("E7000000-0000-0000-0000-000000000001"),
-            Asun.Domain.Quality.QualityFindingId.Create("PCB.PLACEMENT.OBSERVED"),
             "C1",
-            new string('a',64),
-            1,
             new string('d',64),
-            new string('e',64));
+            new string('e',64),
+            true,
+            new string('f',64));
         var replayBinding=new ProductionQualityEvidenceReleaseReplayBinding(
             Guid.Parse("E7000000-0000-0000-0000-000000000010"),
             Guid.Parse("E7000000-0000-0000-0000-000000000011"),
@@ -24,17 +23,16 @@ public static class ProductionMeasurementQualityEvidenceReleaseReplayDescriptor1
             new string('e',64),
             true,
             new string('f',64));
-        var descriptor=ProductionMeasurementQualityEvidenceReleaseReplayDescriptorRuntime.Create(
-            measurementBinding,replayBinding);
-for(var i=0;i<10;i++) Check(descriptor.ProductionSessionId==replayBinding.ProductionSessionId,"Production session identity should match replay binding.");
-for(var i=0;i<10;i++) Check(descriptor.QualityRunId==replayBinding.QualityRunId,"Quality run identity should match replay binding.");
-for(var i=0;i<10;i++) Check(descriptor.Sequence==measurementBinding.Sequence,"Sequence should match measurement Release binding.");
-for(var i=0;i<10;i++) Check(descriptor.QualityResultId==measurementBinding.QualityResultId,"Quality result identity should match.");
-for(var i=0;i<10;i++) Check(descriptor.ComponentId==measurementBinding.ComponentId,"Component identity should match.");
-for(var i=0;i<10;i++) Check(descriptor.EvidenceFingerprint==measurementBinding.EvidenceFingerprint,"Evidence identity should match.");
-for(var i=0;i<10;i++) Check(descriptor.ReplayBundleFingerprint==replayBinding.ReplayBundleFingerprint,"Replay bundle identity should match.");
-for(var i=0;i<10;i++) Check(descriptor.ReleaseManifestFingerprint==replayBinding.ReleaseManifestFingerprint,"Release manifest identity should converge.");
-for(var i=0;i<10;i++) Check(descriptor.ReleaseReady==replayBinding.ReleaseReady,"Release readiness should converge.");
+        var descriptor=ProductionMeasurementQualityEvidenceReleaseReplayDescriptorRuntime.Create(measurementBinding,replayBinding);
+        for(var i=0;i<10;i++) Check(descriptor.ProductionInputFingerprint==measurementBinding.ProductionInputFingerprint,"Replay descriptor should preserve Production input identity.");
+for(var i=0;i<10;i++) Check(descriptor.ProductionSessionId==replayBinding.ProductionSessionId,"Production session should match.");
+for(var i=0;i<10;i++) Check(descriptor.QualityRunId==replayBinding.QualityRunId,"Quality run should match.");
+for(var i=0;i<10;i++) Check(descriptor.Sequence==measurementBinding.Sequence,"Sequence should match.");
+for(var i=0;i<10;i++) Check(descriptor.QualityResultId==measurementBinding.QualityResultId,"Quality result should match.");
+for(var i=0;i<10;i++) Check(descriptor.ComponentId==measurementBinding.ComponentId,"Component should match.");
+for(var i=0;i<10;i++) Check(descriptor.EvidenceFingerprint==measurementBinding.EvidenceFingerprint,"Evidence should match.");
+for(var i=0;i<10;i++) Check(descriptor.ReleaseManifestFingerprint==replayBinding.ReleaseManifestFingerprint,"Manifest should match.");
+for(var i=0;i<10;i++) Check(descriptor.ReleaseReady==replayBinding.ReleaseReady,"Readiness should match.");
 for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceReleaseReplayDescriptorRuntime.IsValid(measurementBinding,replayBinding,descriptor),"Canonical replay descriptor should validate.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceReleaseReplayDescriptor1HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
