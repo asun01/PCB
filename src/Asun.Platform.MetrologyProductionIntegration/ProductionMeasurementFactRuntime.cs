@@ -21,15 +21,17 @@ public static class ProductionMeasurementFactRuntime
         }
 
         var productionFrames=productionReport.Frames.OrderBy(frame=>frame.Sequence.Value).ToArray();
-        var orderedSequences=sequences.OrderBy(sequence=>sequence).ToArray();
-        var orderedObservations=observations.OrderBy(observation=>observation.Observation.ComponentId.Value,StringComparer.Ordinal).ToArray();
+        var expectedSequences=productionFrames.Select(frame=>frame.Sequence.Value).ToArray();
+        if(!sequences.SequenceEqual(expectedSequences))
+            throw new ArgumentException("Measurement sequences must match production frame order.",nameof(sequences));
+
         var result=new List<ProductionMeasurementFact>(observations.Count);
 
         for(var index=0;index<productionFrames.Length;index++)
         {
             var production=productionFrames[index];
-            var sequence=orderedSequences[index];
-            var observation=orderedObservations[index];
+            var sequence=sequences[index];
+            var observation=observations[index];
 
             if(sequence!=production.Sequence.Value)
                 throw new ArgumentException($"Measurement sequence {sequence} does not match production sequence {production.Sequence.Value}.");
