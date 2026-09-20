@@ -3173,3 +3173,13 @@ Next executable stage: **51,501**
 - Added `ClientInspectionExecutionSurfaceSmoke` with ten exact-100-round matrices covering completed-result state, pending-result protection, Acquisition-unbound state, ROI gating, authoritative Production status, frame/target progress, Program-unbound state, and failure-result protection.
 - Registered the new smoke in `docs/01-validation/SMOKE-REGISTRY.md`.
 - Static source structure is recorded; no authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73508 — 2026-09-21
+
+- Completed boundary: **73,508**
+- Next executable stage: **73,509**
+- 73508: **Inspection Execution Surface -> Existing ClientWorkspaceCommandRouting**.
+- `ClientInspectionExecutionSurfaceRuntime` now accepts the already-existing `ClientWorkspaceCommandRouting` projection, keeping UI presentation and command availability synchronized without introducing a second command authority.
+- Smoke coverage was tightened to verify supplied Inspection routing survives the surface projection.
+- Structural source inspection confirms the Smoke retains 10 loop groups, explicit `round==100` guards, and 10 actual `Check(...)` invocation sites; runtime/build/test execution remains unclaimed.
