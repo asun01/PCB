@@ -14,6 +14,7 @@ public sealed record ClientInspectionWorkspaceSnapshot(
 {
     public bool CanUndoRoi { get; init; }
     public bool CanRedoRoi { get; init; }
+    public ClientProgramWorkspaceSnapshot? Program { get; init; }
 }
 
 public sealed class ClientInspectionWorkspace : IDisposable
@@ -79,7 +80,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
             _history.Capture())
         {
             CanUndoRoi=_roi.Document.CanUndo,
-            CanRedoRoi=_roi.Document.CanRedo
+            CanRedoRoi=_roi.Document.CanRedo,
+            Program=_program.Snapshot
         };
     }
 
