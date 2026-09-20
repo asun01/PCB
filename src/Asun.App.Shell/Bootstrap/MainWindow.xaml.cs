@@ -1,5 +1,6 @@
 using Asun.Platform.ClientIntegration;
 using Asun.Platform.SimulationIntegration;
+using Asun.Platform.ClientIntegration;
 
 namespace Asun.App.Shell.Bootstrap;
 
@@ -29,17 +30,29 @@ public partial class MainWindow : System.Windows.Window
             var report=await _workspace.StartAsync(
                 ClientSimulationSessionFactory.CreateSource());
 
-            SimulationStatus.Text=$"Completed · {report.FrameCount} frames · {report.Fingerprint[..12]}...";
+            var replay=ClientProductionReplaySnapshotRuntime.Create(
+                _workspace.Snapshot,
+                report);
+            var release=ClientReleaseProjectionRuntime.Create(
+                replay,
+                ClientSimulationSessionFactory.CreateReleaseManifest());
+
+            SimulationStatus.Text=$"Completed · {report.FrameCount} frames · replay {replay.ReplayFingerprint[..12]}...";
+            ReleaseStatus.Text=release.ReleaseReady
+                ? $"Release: Ready · {release.ArtifactPath}"
+                : "Release: Not ready.";
             RefreshWorkspaceStatus();
         }
         catch(OperationCanceledException)
         {
             SimulationStatus.Text="Cancelled.";
+            ReleaseStatus.Text="Release: not evaluated.";
             RefreshWorkspaceStatus();
         }
         catch(Exception exception)
         {
             SimulationStatus.Text=$"Failed · {exception.Message}";
+            ReleaseStatus.Text="Release: not evaluated.";
             RefreshWorkspaceStatus();
         }
         finally
