@@ -305,6 +305,7 @@ public partial class MainWindow : System.Windows.Window
         }
 
         RoiStatus.Text=$"ROI: {snapshot.Items.Count} items · selected {snapshot.Document.SelectedId}.";
+        RefreshCommandAvailability();
     }
 
     private void RefreshCommandAvailability()
