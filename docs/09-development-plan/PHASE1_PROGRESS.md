@@ -1742,3 +1742,22 @@ Current continuous execution position:
 - completed through Stage 33000;
 - next natural stage: 33001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 33501→34000 Metrology → Production measurement facts — 2026-09-20
+
+Completed stages 33501–34000.
+
+Implemented:
+- Asun.Platform.MetrologyProductionIntegration;
+- ProductionMeasurementFact and independent validation;
+- real binding of calibrated placement observations to Production frame sequence/input fingerprint;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Real correction:
+- eliminated silent observation reordering by ComponentId; Production sequence order is now explicit.
+
+Current continuous execution position:
+- completed through Stage 34000;
+- next natural stage: 34001;
+- global one-million-stage horizon remains 2501–1002500.
