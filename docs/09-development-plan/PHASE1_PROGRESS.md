@@ -3025,3 +3025,17 @@ Next executable stage: **51,501**
 - Static audit passed for the new matrices: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 75000 — 2026-09-20
+
+- Completed boundary: **75,000**
+- Next executable stage: **75,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 74001–74500: **Program -> Acquisition Source Binding -> Production Session -> Inspection Run Command Gate**.
+- Added vendor-neutral `ClientAcquisitionWorkspace`, bound it into `ClientInspectionWorkspace`, and made Inspection Run availability depend on Acquisition readiness.
+- Added five Acquisition Workspace Smoke matrices and five Acquisition Command Gate matrices.
+- 74501–75000: **Acquisition Source Catalog -> Source Definition -> FrameSource Creation -> Client Acquisition Binding -> Production Preparation**.
+- Added `ClientAcquisitionCatalog` with deterministic registration, duplicate identity rejection, and source factory creation; Simulation now registers through the same source-definition boundary.
+- Added five Acquisition Catalog Smoke matrices and wired the source selector into the WPF Shell.
+- Static audit passed for newly added matrices: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
