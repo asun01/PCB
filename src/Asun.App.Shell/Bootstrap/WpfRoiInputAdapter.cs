@@ -13,7 +13,7 @@ public sealed class WpfRoiInputAdapter
     private readonly FrameworkElement _host;
 
     public WpfRoiInputAdapter(
-        ClientIntegration.ClientRoiInteractionWorkspace workspace,
+        ClientInspectionWorkspace workspace,
         FrameworkElement host)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -42,7 +42,7 @@ public sealed class WpfRoiInputAdapter
     {
         ArgumentNullException.ThrowIfNull(args);
         var point=ToVector(args.GetPosition(_host));
-        return _workspace.Submit(
+        return _workspace.SubmitRoiInput(
             ViewportInputEventKind.PointerMove,
             point);
     }
@@ -51,7 +51,7 @@ public sealed class WpfRoiInputAdapter
     {
         ArgumentNullException.ThrowIfNull(args);
         var point=ToVector(args.GetPosition(_host));
-        return _workspace.Submit(
+        return _workspace.SubmitRoiInput(
             ViewportInputEventKind.PointerUp,
             point);
     }
@@ -60,7 +60,7 @@ public sealed class WpfRoiInputAdapter
     {
         ArgumentNullException.ThrowIfNull(args);
         var point=ToVector(args.GetPosition(_host));
-        return _workspace.Submit(
+        return _workspace.SubmitRoiInput(
             ViewportInputEventKind.Wheel,
             point,
             args.Delta);
@@ -72,7 +72,7 @@ public sealed class WpfRoiInputAdapter
             (float)(_host.ActualWidth/2d),
             (float)(_host.ActualHeight/2d));
 
-        return _workspace.Submit(
+        return _workspace.SubmitRoiInput(
             ViewportInputEventKind.Escape,
             point);
     }
