@@ -1,3 +1,5 @@
+using Asun.Platform.ClientIntegration;
+
 namespace Asun.Platform.ClientIntegration.Smoke;
 
 public static class ClientWorkspaceRuntime2HundredStageSmoke
