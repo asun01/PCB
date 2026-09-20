@@ -12,6 +12,11 @@ await PcbEvidenceReleaseAuditTrace2HundredStageSmoke.RunAsync(Check);
 await PcbEvidenceReleaseAuditTrace3HundredStageSmoke.RunAsync(Check);
 await PcbEvidenceReleaseAuditTrace4HundredStageSmoke.RunAsync(Check);
 await PcbEvidenceReleaseAuditTrace5HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTraceJson1HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTraceJson2HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTraceJson3HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTraceJson4HundredStageSmoke.RunAsync(Check);
+await PcbEvidenceReleaseAuditTraceJson5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
