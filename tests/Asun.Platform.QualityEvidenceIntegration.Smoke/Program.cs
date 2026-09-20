@@ -8,6 +8,11 @@ void Check(bool condition,string message)
 
 await QualityEvidenceHandleProjectionHundredStageSmoke.RunAsync(Check);
 await QualityFindingEvidenceResolutionHundredStageSmoke.RunAsync(Check);
+await QualityFindingEvidenceReplayDescriptor1HundredStageSmoke.RunAsync(Check);
+await QualityFindingEvidenceReplayDescriptor2HundredStageSmoke.RunAsync(Check);
+await QualityFindingEvidenceReplayDescriptor3HundredStageSmoke.RunAsync(Check);
+await QualityFindingEvidenceReplayDescriptor4HundredStageSmoke.RunAsync(Check);
+await QualityFindingEvidenceReplayDescriptor5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
