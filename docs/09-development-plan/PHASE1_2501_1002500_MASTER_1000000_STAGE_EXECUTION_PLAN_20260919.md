@@ -2512,3 +2512,13 @@ Current completed boundary: **37,500**
 Next executable stage: **37,501**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 38000 — 2026-09-20
+
+Closed unified end-to-end replay aggregation. Render, Simulation, Evidence Resolution, and Release identities are now joined to the same executable PCB execution snapshot through a deterministic replay boundary.
+
+Current completed boundary: **38,000**
+Next executable stage: **38,001**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
