@@ -179,6 +179,12 @@ await ClientRoiImageSizeBinding3HundredStageSmoke.RunAsync(Check);
 await ClientRoiImageSizeBinding4HundredStageSmoke.RunAsync(Check);
 await ClientRoiImageSizeBinding5HundredStageSmoke.RunAsync(Check);
 
+await ClientHomePresentation1HundredStageSmoke.RunAsync(Check);
+await ClientHomePresentation2HundredStageSmoke.RunAsync(Check);
+await ClientHomePresentation3HundredStageSmoke.RunAsync(Check);
+await ClientHomePresentation4HundredStageSmoke.RunAsync(Check);
+await ClientHomePresentation5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
