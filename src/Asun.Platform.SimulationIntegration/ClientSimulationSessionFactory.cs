@@ -4,6 +4,7 @@ using Asun.Platform.Pipeline;
 using Asun.Program.Core;
 using Asun.Production.Runtime;
 using Asun.Release.Core;
+using Asun.Platform.ClientIntegration;
 
 namespace Asun.Platform.SimulationIntegration;
 
@@ -71,6 +72,14 @@ public static class ClientSimulationSessionFactory
 
     public static IFrameSource CreateSource() =>
         new SimulatedFrameSource(64,64);
+
+    public static ClientAcquisitionSourceDefinition CreateSourceDefinition() =>
+        new(
+            new ClientAcquisitionDescriptor(
+                "simulation",
+                "Deterministic Simulation Source",
+                true),
+            CreateSource);
 
     public static ReleaseManifest CreateReleaseManifest() =>
         new(
