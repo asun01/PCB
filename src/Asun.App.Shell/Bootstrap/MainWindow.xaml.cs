@@ -23,6 +23,10 @@ public partial class MainWindow : System.Windows.Window
         _workspaceRuntime=new ClientWorkspaceRuntime();
         _workspaceRuntime.Changed+=OnWorkspaceChanged;
         _client.ProductionChanged+=OnProductionChanged;
+        _client.AcquisitionCatalog.Register(
+            ClientSimulationSessionFactory.CreateSourceDefinition());
+        AcquisitionSourceComboBox.ItemsSource=_client.AcquisitionCatalog.Sources;
+        AcquisitionSourceComboBox.SelectedIndex=0;
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
 
         RefreshWorkspaceStatus();
@@ -64,6 +68,26 @@ public partial class MainWindow : System.Windows.Window
                 RefreshResultStatus();
             }));
         }
+    }
+
+    private void BindAcquisitionButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        if(AcquisitionSourceComboBox.SelectedItem
+            is ClientAcquisitionSourceDefinition definition &&
+           _client.BindAcquisitionSource(definition.Descriptor.SourceId))
+        {
+            AcquisitionStatus.Text=$"Acquisition: {definition.Descriptor.DisplayName}" +
+                (definition.Descriptor.IsSimulation ? " · Simulation" : " · External source");
+        }
+        else
+        {
+            AcquisitionStatus.Text="Acquisition: source binding failed.";
+        }
+
+        RefreshCommandAvailability();
+        RefreshDiagnosticStatus();
     }
 
     private void WorkspaceHomeButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
@@ -126,12 +150,7 @@ public partial class MainWindow : System.Windows.Window
                 ClientSimulationSessionFactory.CreatePipeline(),
                 definition.SessionId,
                 definition.FrameCount);
-            _client.BindAcquisition(
-                ClientSimulationSessionFactory.CreateSource(),
-                new ClientAcquisitionDescriptor(
-                    "simulation",
-                    "Deterministic Simulation Source",
-                    true));
+            _client.BindAcquisitionSource("simulation");
             SimulationStatus.Text="Simulation session loaded.";
             RefreshCommandAvailability();
             ReleaseStatus.Text="Release: not evaluated.";
