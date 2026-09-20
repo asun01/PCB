@@ -3088,3 +3088,15 @@ Next executable stage: **51,501**
 - Static audit passed: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 77500 — 2026-09-20
+
+- Completed boundary: **77,500**
+- Next executable stage: **77,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 77001–77500: **Home Overview -> Acquisition Fault State -> Command Blocking -> Source Rebind -> Ready State Recovery**.
+- Fixed Acquisition state derivation so a bound source with an explicit fault is reported as Faulted and loses capture capability until rebound.
+- Inspection Run availability continues to require Acquisition readiness.
+- Added five exact-100-round Acquisition fault/recovery matrices; Home presentation matrices were statically audited and satisfy the standard Smoke structure gate.
+- Added five stage ledgers and the 77001–77500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
