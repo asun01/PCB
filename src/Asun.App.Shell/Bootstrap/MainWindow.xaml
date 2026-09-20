@@ -281,6 +281,46 @@
                     Text="Client workspace content" />
                 <Border
                     Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="0,12,8,8"
+                    Padding="20"
+                    BorderThickness="1"
+                    x:Name="HomeWorkspace"
+                    AutomationProperties.AutomationId="Shell.HomeWorkspace">
+                    <StackPanel>
+                        <TextBlock
+                            FontSize="22"
+                            FontWeight="SemiBold"
+                            Text="Inspection Client Overview" />
+                        <TextBlock
+                            x:Name="HomeProgramStatus"
+                            Margin="0,12,0,0"
+                            Text="Program: not loaded." />
+                        <TextBlock
+                            x:Name="HomeAcquisitionStatus"
+                            Margin="0,6,0,0"
+                            Text="Acquisition: not bound." />
+                        <TextBlock
+                            x:Name="HomeProductionStatus"
+                            Margin="0,6,0,0"
+                            Text="Production: idle." />
+                        <TextBlock
+                            x:Name="HomeQualityStatus"
+                            Margin="0,6,0,0"
+                            Text="Quality: not attached." />
+                        <TextBlock
+                            x:Name="HomeResultsStatus"
+                            Margin="0,6,0,0"
+                            Text="Results: no history." />
+                        <TextBlock
+                            x:Name="HomeFingerprint"
+                            Margin="0,12,0,0"
+                            Opacity="0.65"
+                            Text="Overview fingerprint unavailable." />
+                    </StackPanel>
+                </Border>
+                <Border
+                    Grid.Row="1"
                     Margin="0,12,8,8"
                     Padding="12"
                     BorderThickness="1"
