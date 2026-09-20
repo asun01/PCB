@@ -34,16 +34,10 @@ public static class ProductionMeasurementFactRuntime
             if(sequence!=production.Sequence.Value)
                 throw new ArgumentException($"Measurement sequence {sequence} does not match production sequence {production.Sequence.Value}.");
 
-            if(!CalibratedPcbPlacementObservationValidationRuntime.IsValid(
-                CreateComponentPlaceholder(observation),
-                observation.SourceMeasuredPosition,
-                CreateCorrespondencesPlaceholder(observation),
-                CreateCalibrationPlaceholder(observation),
-                observation))
-            {
-                // The source calibrated observation is expected to have been validated by its producer;
-                // this bridge only binds its factual values to production sequence/input identity.
-            }
+            if(!IsValidObservationFact(observation))
+                throw new ArgumentException(
+                    $"Calibrated measurement observation {index} contains invalid factual values.",
+                    nameof(observations));
 
             result.Add(
                 new ProductionMeasurementFact(
@@ -59,15 +53,24 @@ public static class ProductionMeasurementFactRuntime
         return result;
     }
 
-    private static PcbComponentReference CreateComponentPlaceholder(
-        CalibratedPcbPlacementObservation observation)=>
-        throw new NotSupportedException();
+    private static bool IsValidObservationFact(
+        CalibratedPcbPlacementObservation observation)
+    {
+        var measured=observation.Observation;
 
-    private static IEnumerable<CalibrationCorrespondence2D> CreateCorrespondencesPlaceholder(
-        CalibratedPcbPlacementObservation observation)=>
-        throw new NotSupportedException();
-
-    private static AffineCalibrationResult2D CreateCalibrationPlaceholder(
-        CalibratedPcbPlacementObservation observation)=>
-        throw new NotSupportedException();
+        return observation.SourceMeasuredPosition.IsFinite &&
+            measured.ExpectedPosition.IsFinite &&
+            measured.MeasuredPosition.IsFinite &&
+            measured.Delta.IsFinite &&
+            double.IsFinite(measured.ErrorDistance) &&
+            measured.ErrorDistance>=0 &&
+            observation.CalibrationFingerprint.Length==64 &&
+            observation.CalibrationFingerprint.All(character=>
+                Uri.IsHexDigit(character) &&
+                char.ToLowerInvariant(character)==character) &&
+            observation.Fingerprint.Length==64 &&
+            observation.Fingerprint.All(character=>
+                Uri.IsHexDigit(character) &&
+                char.ToLowerInvariant(character)==character);
+    }
 }
