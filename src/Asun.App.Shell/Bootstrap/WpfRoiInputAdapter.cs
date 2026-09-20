@@ -2,13 +2,14 @@ using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Asun.Platform.ClientIntegration;
 using Asun.UI.Viewports;
 
 namespace Asun.App.Shell.Bootstrap;
 
 public sealed class WpfRoiInputAdapter
 {
-    private readonly ClientIntegration.ClientRoiInteractionWorkspace _workspace;
+    private readonly ClientRoiInteractionWorkspace _workspace;
     private readonly FrameworkElement _host;
 
     public WpfRoiInputAdapter(
