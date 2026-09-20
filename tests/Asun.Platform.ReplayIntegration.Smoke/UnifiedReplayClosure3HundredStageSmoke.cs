@@ -37,6 +37,8 @@ for(var i=0;i<10;i++) Check(closure.QualityReleaseDescriptorFingerprint==quality
 for(var i=0;i<10;i++) Check(closure.RenderEvidenceDescriptorFingerprint==UnifiedReplayClosureRuntime.CreateRenderDescriptorFingerprint(renderDescriptors),"Baseline Render fingerprint should remain stable.");
 for(var i=0;i<10;i++) Check(closure.BundleReleaseBindingFingerprint==releaseBinding.Fingerprint,"Baseline Release binding identity should remain stable.");
 for(var i=0;i<10;i++) Check(closure.Fingerprint.Length==64,"Baseline closure fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(closure.QualityReleaseDescriptorFingerprint==qualityReleaseDescriptor.DescriptorFingerprint,"Baseline Quality/Release identity should remain aligned.");
+
         assert(round==100,$"UnifiedReplayClosure3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
