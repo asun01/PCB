@@ -2728,3 +2728,23 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 71501–72000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 72500 — 2026-09-20
+
+- Completed boundary: **72,500**
+- Next executable stage: **72,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 72001–72500: **WPF Load -> Client Workspace Ready -> Run -> Production Runtime -> Replay/Release Result -> Reset**.
+- WPF now exposes explicit Load Simulation, Run Simulation, and Reset Session commands.
+- Added five stage ledgers and the 72001–72500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 73000 — 2026-09-20
+
+- Completed boundary: **73,000**
+- Next executable stage: **73,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 72501–73000: **WPF Command Surface -> Lifecycle Ordering -> Running Guard -> Failure/Cancel Reset -> Replay/Release Diagnostics**.
+- WPF disables Load/Run/Reset controls during active simulation execution and clears stale Release evaluation text on cancellation, failure, and reset.
+- Added five stage ledgers and the 72501–73000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
