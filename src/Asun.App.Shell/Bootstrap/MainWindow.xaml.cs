@@ -7,14 +7,19 @@ namespace Asun.App.Shell.Bootstrap;
 
 public partial class MainWindow : System.Windows.Window
 {
-    private readonly ClientProductionWorkspace _workspace=new();
-    private readonly ClientProductionRunHistory _runHistory=new(20);
-    private ClientRoiInteractionWorkspace? _roiWorkspace;
-    private WpfRoiInputAdapter? _roiInputAdapter;
+    private readonly ClientInspectionWorkspace _client;
+    private WpfRoiInputAdapter _roiInputAdapter;
 
     public MainWindow()
     {
         InitializeComponent();
+
+        _client=new ClientInspectionWorkspace(
+            new Vector2(100,100),
+            new Vector2(1,1),
+            historyCapacity:20);
+        _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
+
         RefreshWorkspaceStatus();
         RefreshRunHistoryStatus();
     }
@@ -25,11 +30,9 @@ public partial class MainWindow : System.Windows.Window
     {
         try
         {
-            EnsureRoiWorkspace();
-            var definition=ClientSimulationSessionFactory.CreateDefinition();
-            _workspace.Load(definition);
-            ReleaseStatus.Text="Release: not evaluated.";
+            _client.Load(ClientSimulationSessionFactory.CreateDefinition());
             SimulationStatus.Text="Simulation session loaded.";
+            ReleaseStatus.Text="Release: not evaluated.";
             RefreshWorkspaceStatus();
             RefreshRoiSurface();
         }
@@ -45,13 +48,13 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        if(_roiWorkspace is null)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
         {
-            RoiStatus.Text="ROI: load and run a client session first.";
+            RoiStatus.Text="ROI: run a completed client session first.";
             return;
         }
 
-        _roiWorkspace.Mode=RoiEditorMode.Select;
+        _client.SetRoiMode(RoiEditorMode.Select);
         RoiSurface.Focus();
         RoiStatus.Text="ROI: Select mode.";
     }
@@ -60,13 +63,13 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        if(_roiWorkspace is null)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
         {
-            RoiStatus.Text="ROI: load and run a client session first.";
+            RoiStatus.Text="ROI: run a completed client session first.";
             return;
         }
 
-        _roiWorkspace.Mode=RoiEditorMode.CreateRectangle;
+        _client.SetRoiMode(RoiEditorMode.CreateRectangle);
         RoiSurface.Focus();
         RoiStatus.Text="ROI: Create Rectangle mode.";
     }
@@ -85,21 +88,16 @@ public partial class MainWindow : System.Windows.Window
         try
         {
             var definition=ClientSimulationSessionFactory.CreateDefinition();
-            _workspace.Load(definition);
-            EnsureRoiWorkspace();
+            _client.Load(definition);
 
-            var report=await _workspace.StartAsync(
-                ClientSimulationSessionFactory.CreateSource());
-
-            _roiWorkspace!.BindProductionReport(report);
-            var replay=ClientProductionReplaySnapshotRuntime.Create(
-                _workspace.Snapshot,
-                report);
-            var release=ClientReleaseProjectionRuntime.Create(
-                replay,
+            var report=await _client.ExecuteAsync(
+                ClientSimulationSessionFactory.CreateSource(),
                 ClientSimulationSessionFactory.CreateReleaseManifest());
 
-            _runHistory.Append(replay,release);
+            var snapshot=_client.Capture();
+            var replay=snapshot.Replay!;
+            var release=snapshot.Release!;
+
             SimulationStatus.Text=$"Completed · {report.FrameCount} frames · replay {replay.ReplayFingerprint[..12]}...";
             ReleaseStatus.Text=release.ReleaseReady
                 ? $"Release: Ready · {release.ArtifactPath}"
@@ -134,8 +132,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        _workspace.Reset();
-        _roiWorkspace?.Reset();
+        _client.ResetCurrentSession();
         ReleaseStatus.Text="Release: not evaluated.";
         SimulationStatus.Text="Ready.";
         RefreshWorkspaceStatus();
@@ -147,10 +144,10 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.SizeChangedEventArgs e)
     {
-        if(_roiWorkspace is null || e.NewSize.Width<=0 || e.NewSize.Height<=0)
+        if(e.NewSize.Width<=0 || e.NewSize.Height<=0)
             return;
 
-        _roiWorkspace.ResizeViewport(
+        _client.ResizeRoiViewport(
             new Vector2((float)e.NewSize.Width,(float)e.NewSize.Height));
         RefreshRoiSurface();
     }
@@ -159,7 +156,10 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseButtonEventArgs e)
     {
-        if(_roiInputAdapter?.MouseDown(e)==true)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+            return;
+
+        if(_roiInputAdapter.MouseDown(e))
         {
             e.Handled=true;
             RefreshRoiSurface();
@@ -170,7 +170,10 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseEventArgs e)
     {
-        if(_roiInputAdapter?.MouseMove(e)==true)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+            return;
+
+        if(_roiInputAdapter.MouseMove(e))
         {
             e.Handled=true;
             RefreshRoiSurface();
@@ -181,7 +184,10 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseButtonEventArgs e)
     {
-        if(_roiInputAdapter?.MouseUp(e)==true)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+            return;
+
+        if(_roiInputAdapter.MouseUp(e))
         {
             e.Handled=true;
             RefreshRoiSurface();
@@ -192,7 +198,10 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseWheelEventArgs e)
     {
-        if(_roiInputAdapter?.MouseWheel(e)==true)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+            return;
+
+        if(_roiInputAdapter.MouseWheel(e))
         {
             e.Handled=true;
             RefreshRoiSurface();
@@ -203,42 +212,28 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.KeyEventArgs e)
     {
-        if(e.Key==System.Windows.Input.Key.Escape &&
-           _roiInputAdapter is not null &&
-           _roiInputAdapter.Escape())
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+            return;
+
+        if(e.Key==System.Windows.Input.Key.Escape && _roiInputAdapter.Escape())
         {
             e.Handled=true;
             RefreshRoiSurface();
         }
     }
 
-    private void EnsureRoiWorkspace()
-    {
-        if(_roiWorkspace is not null)
-            return;
-
-        _roiWorkspace=new ClientRoiInteractionWorkspace(
-            new Vector2(100,100),
-            new Vector2(
-                Math.Max(1d,RoiSurface.ActualWidth),
-                Math.Max(1d,RoiSurface.ActualHeight)));
-
-        _roiInputAdapter=new WpfRoiInputAdapter(
-            _roiWorkspace,
-            RoiSurface);
-    }
-
     private void RefreshRoiSurface()
     {
         RoiSurface.Children.Clear();
 
-        if(_roiWorkspace is null)
+        if(_client.Production.Status!=ClientExecutionStatus.Completed)
         {
+            RoiSurface.Children.Add(RoiSurfaceHint);
             RoiStatus.Text="ROI: workspace not bound.";
             return;
         }
 
-        var snapshot=_roiWorkspace.CaptureViewportSnapshot();
+        var snapshot=_client.CaptureRoiViewport();
         foreach(var item in snapshot.Items)
         {
             var bounds=item.Geometry.GetBounds();
@@ -271,13 +266,13 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshRunHistoryStatus()
     {
-        var history=_runHistory.Capture();
+        var history=_client.History;
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
     }
 
     private void RefreshWorkspaceStatus()
     {
-        var snapshot=_workspace.Snapshot;
+        var snapshot=_client.Production;
         WorkspaceStatus.Text=snapshot.Status switch
         {
             ClientExecutionStatus.Idle=>"Idle — no production session loaded.",
