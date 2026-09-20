@@ -6,7 +6,10 @@ public sealed record ClientRunHistoryDisplayItem(
     string FrameText,
     string ReleaseText,
     string ReplayText,
-    bool ReleaseReady);
+    bool ReleaseReady)
+{
+    public Guid ProductionSessionId { get; init; }
+};
 
 public static class ClientRunHistoryPresentationRuntime
 {
@@ -29,7 +32,10 @@ public static class ClientRunHistoryPresentationRuntime
                     ? $"Release Ready · {entry.ArtifactPath}"
                     : "Release Not Ready",
                 $"Replay {entry.ReplayFingerprint[..12]}...",
-                entry.ReleaseReady))
+                entry.ReleaseReady)
+            {
+                ProductionSessionId=entry.ProductionSessionId
+            })
             .ToArray();
     }
 
