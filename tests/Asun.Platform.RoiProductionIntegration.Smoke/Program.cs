@@ -46,3 +46,9 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.RoiProductionIntegration smoke tests passed.");
 return 0;
+
+await ProductionRoiRenderFrameProvenanceBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderFrameProvenanceBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderFrameProvenanceBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderFrameProvenanceBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionRoiRenderFrameProvenanceBinding5HundredStageSmoke.RunAsync(Check);
