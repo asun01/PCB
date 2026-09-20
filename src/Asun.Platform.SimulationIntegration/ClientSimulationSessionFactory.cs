@@ -9,14 +9,8 @@ namespace Asun.Platform.SimulationIntegration;
 
 public static class ClientSimulationSessionFactory
 {
-    public static ProductionSessionDefinition CreateDefinition(
-        Guid? sessionId=null,
-        int frameCount=3)
-    {
-        if(frameCount<=0)
-            throw new ArgumentOutOfRangeException(nameof(frameCount));
-
-        var program=new InspectionProgram(
+    public static InspectionProgram CreateProgram() =>
+        new(
             Guid.Parse("73000000-0000-0000-0000-000000000001"),
             "ClientSimulationProgram",
             new Version(1,0,0),
@@ -42,8 +36,8 @@ public static class ClientSimulationSessionFactory
                     new[]{new ProgramParameter("mode","simulation")})
             });
 
-        var plan=ProgramExecutionPlanRuntime.Create(program);
-        var pipeline=PipelineDefinitionRuntime.Create(new[]
+    public static PipelineDefinition<CapturedFrame> CreatePipeline() =>
+        new(new[]
         {
             new PipelineStage<CapturedFrame>(
                 1,
@@ -59,17 +53,26 @@ public static class ClientSimulationSessionFactory
                 frame=>frame)
         });
 
+    public static ProductionSessionDefinition CreateDefinition(
+        Guid? sessionId=null,
+        int frameCount=3)
+    {
+        if(frameCount<=0)
+            throw new ArgumentOutOfRangeException(nameof(frameCount));
+
+        var programPlan=ProgramExecutionPlanRuntime.Create(CreateProgram());
+
         return new ProductionSessionDefinition(
             sessionId ?? Guid.Parse("73000000-0000-0000-0000-000000000201"),
-            plan,
-            pipeline,
+            programPlan,
+            CreatePipeline(),
             frameCount);
     }
 
-    public static IFrameSource CreateSource()=>
+    public static IFrameSource CreateSource() =>
         new SimulatedFrameSource(64,64);
 
-    public static ReleaseManifest CreateReleaseManifest()=>
+    public static ReleaseManifest CreateReleaseManifest() =>
         new(
             new ReleaseIdentity(
                 "Asun PCB Simulation",
