@@ -18,12 +18,12 @@ public static class ClientProductionWorkspaceEvent3HundredStageSmoke
             workspace.Load(definition);
             var execution=workspace.StartAsync(new NeverFrameSource());
             await runner.ProgressReached.WaitAsync(TimeSpan.FromSeconds(2));
-            Check(last==ClientExecutionStatus.Running,
-                  "client Production workspace event stream must reach Running state");
+            var runningObserved=last==ClientExecutionStatus.Running;
             runner.Release();
             await execution;
-            Check(last==ClientExecutionStatus.Completed,
-                  "client Production workspace event stream must reach Completed state");
+            Check(runningObserved &&
+                  last==ClientExecutionStatus.Completed,
+                  "client Production workspace event stream must reach Running and then Completed state");
         }
         for(var iteration1=0;iteration1<10;iteration1++)
         {
