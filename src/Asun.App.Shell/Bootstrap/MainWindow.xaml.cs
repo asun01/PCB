@@ -40,6 +40,7 @@ public partial class MainWindow : System.Windows.Window
             _client.Load(ClientSimulationSessionFactory.CreateDefinition());
             SimulationStatus.Text="Simulation session loaded.";
             ReleaseStatus.Text="Release: not evaluated.";
+            DiagnosticStatus.Text="Diagnostic: not evaluated.";
             RefreshWorkspaceStatus();
             RefreshRoiSurface();
         }
@@ -103,6 +104,7 @@ public partial class MainWindow : System.Windows.Window
                 ClientSimulationSessionFactory.CreateReleaseManifest());
 
             var snapshot=_client.Capture();
+            var diagnostic=ClientInspectionDiagnosticsRuntime.Analyze(snapshot);
             var replay=snapshot.Replay!;
             var release=snapshot.Release!;
 
@@ -112,6 +114,7 @@ public partial class MainWindow : System.Windows.Window
                 : "Release: Not ready.";
             RefreshWorkspaceStatus();
             RefreshRunHistoryStatus();
+            RefreshDiagnosticStatus();
             RefreshRoiSurface();
         }
         catch(OperationCanceledException)
@@ -279,6 +282,20 @@ public partial class MainWindow : System.Windows.Window
         }
 
         RoiStatus.Text=$"ROI: {snapshot.Items.Count} items · selected {snapshot.Document.SelectedId}.";
+    }
+
+    private void RefreshDiagnosticStatus(
+        ClientInspectionDiagnosticSnapshot? diagnostic=null)
+    {
+        if(diagnostic is null)
+        {
+            DiagnosticStatus.Text="Diagnostic: not evaluated.";
+            return;
+        }
+
+        DiagnosticStatus.Text=diagnostic.IsCoherent
+            ? $"Diagnostic: Coherent · {diagnostic.Fingerprint[..12]}..."
+            : $"Diagnostic: {diagnostic.Errors.Count} error(s).";
     }
 
     private void RefreshRunHistoryStatus()
