@@ -26,6 +26,8 @@ public static class ProductionRenderEvidenceReplayDescriptor5HundredStageSmoke
         for(var i=0;i<10;i++) Check(descriptors[0].DescriptorFingerprint.Length==64,"Baseline first descriptor fingerprint should remain valid.");
         for(var i=0;i<10;i++) Check(descriptors[1].DescriptorFingerprint.Length==64,"Baseline second descriptor fingerprint should remain valid.");
         for(var i=0;i<10;i++) Check(ProductionRenderEvidenceReplayDescriptorRuntime.IsValid(frames,descriptors),"Baseline render/evidence replay should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionRenderEvidenceReplayDescriptorRuntime.Create(frames,handles).Count==2,"Recreated descriptor set should preserve cardinality.");
+
         assert(round==100,$"ProductionRenderEvidenceReplayDescriptor5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
