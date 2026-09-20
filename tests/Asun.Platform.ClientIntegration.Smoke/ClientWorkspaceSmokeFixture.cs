@@ -54,4 +54,25 @@ internal static class ClientWorkspaceSmokeFixture
 
     public static ClientProductionWorkspace CreateWorkspace()=>
         new(new ProductionSessionRuntimeAdapter());
+    public static Asun.Release.Core.ReleaseManifest CreateReleaseManifest(
+        bool valid=true,
+        Guid? versionId=null)
+    {
+        var identity=new Asun.Release.Core.ReleaseIdentity(
+            "Asun PCB",
+            new Version(1,0,0),
+            "simulation");
+        var artifactSha=new string(valid?'c':'Z',64);
+        var artifact=new Asun.Release.Core.ReleaseArtifact(
+            "simulation/release.pcb",
+            artifactSha,
+            1024);
+        return new Asun.Release.Core.ReleaseManifest(
+            identity,
+            new[]{artifact},
+            versionId is null
+                ? new string('d',64)
+                : new string('e',64));
+    }
+
 }
