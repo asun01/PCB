@@ -1,12 +1,17 @@
+using Asun.Device.Contracts;
+using Asun.Device.Impl;
 using Asun.Domain.Pcb;
 using Asun.Platform.PcbExecutionIntegration;
 using Asun.Platform.PcbSimulationIntegration;
+using Asun.Platform.Pipeline;
 using Asun.Platform.SimulationIntegration;
+using Asun.Program.Core;
+using Asun.Production.Runtime;
 using Asun.Simulation.Core;
 
 public static class PcbExecutionSimulationReplayProjectionHundredStageSmoke
 {
-    public static ValueTask RunAsync(Action<bool,string> assert)
+    public static async ValueTask RunAsync(Action<bool,string> assert)
     {
         var round=0;
 
@@ -32,33 +37,70 @@ public static class PcbExecutionSimulationReplayProjectionHundredStageSmoke
             new PcbCoordinate(20,30),
             0);
         var assembly=PcbAssemblySnapshotRuntime.Create(board,new[]{component});
+
         var scenario=SimulationScenarioRuntime.Create(assembly,7);
         var observations=SimulationSessionRuntime.Run(scenario,2);
-        var snapshot=new PcbExecutionSnapshot(
-            assembly.Fingerprint,
-            Guid.Parse("BD000000-0000-0000-0000-000000000001"),
-            new string('a',64),
-            new string('b',64),
-            2,
-            2,
-            Guid.Parse("BE000000-0000-0000-0000-000000000001"),
-            new string('c',64),
-            new string('d',64));
-        var binding=new ProductionSimulationReplayBinding(
-            snapshot.ProductionSessionId,
-            snapshot.ProductionFingerprint,
+
+        var program=new InspectionProgram(
+            Guid.Parse("BF000000-0000-0000-0000-000000000001"),
+            "SimulationReplayProductionProgram",
+            new Version(1,0,0),
             new[]
             {
-                new ProductionSimulationFrameLink(1,new string('1',64),1,observations[0].Fingerprint),
-                new ProductionSimulationFrameLink(2,new string('2',64),2,observations[1].Fingerprint)
-            },
-            new string('e',64));
-        var projection=PcbExecutionSimulationReplayProjectionRuntime.Create(snapshot,observations,binding);
-        var tampered=projection with {SimulationBindingFingerprint=new string('f',64)};
+                new ProgramStep(
+                    Guid.Parse("C0000000-0000-0000-0000-000000000001"),
+                    1,
+                    ProgramStepKind.Acquire,
+                    "Acquire",
+                    Array.Empty<ProgramParameter>())
+            });
+        var plan=ProgramExecutionPlanRuntime.Create(program);
+        var pipeline=PipelineDefinitionRuntime.Create(
+            new[]
+            {
+                new PipelineStage<CapturedFrame>(
+                    1,
+                    "Acquire",
+                    frame=>frame)
+            });
+        var definition=new ProductionSessionDefinition(
+            Guid.Parse("C1000000-0000-0000-0000-000000000001"),
+            plan,
+            pipeline,
+            2);
+        var production=await ProductionSessionRuntime.RunAsync(
+            definition,
+            new SimulatedFrameSource(4,4));
+        var binding=ProductionSimulationReplayBindingRuntime.Create(
+            production,
+            observations);
+
+        var snapshot=new PcbExecutionSnapshot(
+            assembly.Fingerprint,
+            production.SessionId,
+            production.Fingerprint,
+            new string('b',64),
+            production.FrameCount,
+            production.FrameCount,
+            Guid.Parse("C2000000-0000-0000-0000-000000000001"),
+            new string('c',64),
+            new string('d',64));
+        var projection=PcbExecutionSimulationReplayProjectionRuntime.Create(
+            snapshot,
+            observations,
+            binding);
+        var tampered=projection with
+        {
+            SimulationBindingFingerprint=new string('f',64)
+        };
         var shifted=observations.ToArray();
-        shifted[1]=shifted[1] with {Sequence=Asun.Device.Contracts.FrameSequence.Create(3)};
+        shifted[1]=shifted[1] with
+        {
+            Sequence=FrameSequence.Create(3)
+        };
 
         for(var i=0;i<10;i++) Check(assembly.Components.Count==1,"Simulation projection should retain one PCB component.");
+        for(var i=0;i<10;i++) Check(production.FrameCount==2,"Simulation projection should retain two real production frames.");
         for(var i=0;i<10;i++) Check(observations.Count==2,"Simulation projection should retain two observations.");
         for(var i=0;i<10;i++) Check(binding.Frames.Count==2,"Simulation binding should retain two frame links.");
         for(var i=0;i<10;i++) Check(projection.FrameCount==2,"Projection should retain two frame facts.");
@@ -70,6 +112,5 @@ public static class PcbExecutionSimulationReplayProjectionHundredStageSmoke
         for(var i=0;i<10;i++) Check(!PcbExecutionSimulationReplayProjectionValidationRuntime.IsValid(snapshot,shifted,binding,projection),"Simulation sequence drift should be rejected.");
 
         assert(round==100,$"PCB simulation replay projection smoke should execute exactly 100 numbered rounds; actual {round}.");
-        return ValueTask.CompletedTask;
     }
 }
