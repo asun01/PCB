@@ -13,12 +13,15 @@ public static class PcbExecutionBoardBindingHundredStageSmoke
             assert(condition,$"Round {round}: {message}");
         }
 
+        var board=new PcbBoardDefinition(
+            Guid.Parse("D0000000-0000-0000-0000-000000000001"),
+            "PCB-BOARD-001",
+            100,
+            80,
+            4);
         var assembly=PcbAssemblySnapshotRuntime.Create(
-            PcbAssemblyRuntime.Create(
-                "PCB-BOARD-001",
-                new Version(1,0,0),
-                Array.Empty<PcbComponent>(),
-                Array.Empty<PcbNet>()));
+            board,
+            Array.Empty<PcbComponentReference>());
         var execution=new PcbExecutionSnapshot(
             assembly.Fingerprint,
             Guid.Parse("D1000000-0000-0000-0000-000000000001"),
