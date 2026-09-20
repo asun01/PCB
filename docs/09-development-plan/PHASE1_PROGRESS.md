@@ -2939,3 +2939,26 @@ Next executable stage: **51,501**
 - Static audit repaired the fifth matrix to exactly 10 Check call sites; all five are required to have 10 loop groups, round==100, balanced delimiters, no TODO/NotImplementedException.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 71000 — 2026-09-20
+
+- Completed boundary: **71,000**
+- Next executable stage: **71,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 70501–71000: **Client Workspace Runtime -> WPF Workspace Navigation -> Program / Inspection / Quality / Results presentation boundary**.
+- Moved workspace navigation state into reusable `Asun.Platform.ClientIntegration`.
+- Bound WPF Home / Inspection / Program / Quality / Results navigation buttons to the shared workspace runtime.
+- Added five exact-100-round workspace navigation Smoke matrices; static audit was corrected so each matrix has exactly 10 loop groups and 10 actual Check call sites.
+- No new Production/Quality/Evidence/Release authority was created.
+
+## Live execution synchronization — Stage 71500 — 2026-09-20
+
+- Completed boundary: **71,500**
+- Next executable stage: **71,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 71001–71500: **Workspace Navigation -> Workspace-Aware Command Routing -> Home / Program / Inspection / Quality / Results command boundaries**.
+- Added reusable `ClientWorkspaceCommandRoutingRuntime` to keep UI command availability aligned with the active client workspace.
+- Connected WPF command enablement to the shared routing runtime.
+- Added five exact-100-round command-routing Smoke matrices and registered them in ClientIntegration Smoke.
+- Static audit: 10 loop groups, 10 actual Check call sites, explicit round==100 guard, balanced delimiters, no TODO/NotImplementedException.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
