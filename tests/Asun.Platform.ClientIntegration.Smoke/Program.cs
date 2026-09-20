@@ -150,6 +150,12 @@ await ClientProgramStepSelection3HundredStageSmoke.RunAsync(Check);
 await ClientProgramStepSelection4HundredStageSmoke.RunAsync(Check);
 await ClientProgramStepSelection5HundredStageSmoke.RunAsync(Check);
 
+await ClientResultHistorySelection1HundredStageSmoke.RunAsync(Check);
+await ClientResultHistorySelection2HundredStageSmoke.RunAsync(Check);
+await ClientResultHistorySelection3HundredStageSmoke.RunAsync(Check);
+await ClientResultHistorySelection4HundredStageSmoke.RunAsync(Check);
+await ClientResultHistorySelection5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
