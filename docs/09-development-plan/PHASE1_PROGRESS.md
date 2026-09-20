@@ -1711,3 +1711,18 @@ Current continuous execution position:
 - completed through Stage 32000;
 - next natural stage: 32001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 32001→32500 acquisition → render provenance — 2026-09-20
+
+Completed stages 32001–32500.
+
+Implemented:
+- ProductionCaptureRenderProvenance;
+- capture-to-render runtime/validation over real ProductionSessionReport, ProductionFrameProvenance, and ViewportRenderFrameSummary;
+- exact 100-round Smoke using real RecordingFrameSource, ProductionSessionRuntime, and ViewportRenderPipelineRuntime.
+
+Current continuous execution position:
+- completed through Stage 32500;
+- next natural stage: 32501;
+- global one-million-stage horizon remains 2501–1002500.
