@@ -221,6 +221,12 @@ await ClientProductionWorkspaceEvent3HundredStageSmoke.RunAsync(Check);
 await ClientProductionWorkspaceEvent4HundredStageSmoke.RunAsync(Check);
 await ClientProductionWorkspaceEvent5HundredStageSmoke.RunAsync(Check);
 
+await ClientRunHistorySelection1HundredStageSmoke.RunAsync(Check);
+await ClientRunHistorySelection2HundredStageSmoke.RunAsync(Check);
+await ClientRunHistorySelection3HundredStageSmoke.RunAsync(Check);
+await ClientRunHistorySelection4HundredStageSmoke.RunAsync(Check);
+await ClientRunHistorySelection5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
