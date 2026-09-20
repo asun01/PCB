@@ -156,9 +156,9 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure1HundredStageSmoke
                       closure.ReleaseReady &&
                       closure.ClosureFingerprint.Length==64 && "clean ROI/quality release replay closure must be valid");
         }
-        if(round!=100)
-            throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
+        if(round==100)
+            return Task.CompletedTask;
 
-        return Task.CompletedTask;
+        throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
     }
 }
