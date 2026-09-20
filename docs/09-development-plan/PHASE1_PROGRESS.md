@@ -1935,3 +1935,22 @@ Current continuous execution position:
 - completed through Stage 39000;
 - next natural stage: 39001;
 - global one-million-stage horizon remains 2501–1002500.
+
+### Execution checkpoint: Stage 39500 — 2026-09-20
+
+Closed stages 39001–39500 for the PCB Production Evidence Envelope → Quality Audit → Release transition chain.
+
+- 39001–39100: completed the executable audit/release transition projection with independent validation and exact-100-round Smoke.
+- 39101–39200: added deterministic transition-key generation for replay/deduplication identity.
+- 39201–39300: added canonical persistence-neutral transition identity generation.
+- 39301–39400: added deterministic transition equivalence checking.
+- 39401–39500: added a persistence-neutral replay descriptor preserving transition, envelope, Quality, audit-window, and Release identities.
+- Added five 100-stage ledgers and PHASE1_39001_39500_INTEGRATION_CHECKPOINT_20260920.md.
+- The new runtime Smoke uses 10 loop groups, 10 meaningful Check call sites, and an explicit round==100 assertion.
+
+Verification boundary:
+- Static source audit only; no authoritative build/test/CI result is claimed.
+- Vendor-authoritative HALCON/DevExpress/hardware behavior remains outside this chain.
+
+Current completed boundary: **39,500**
+Next executable stage: **39,501**
