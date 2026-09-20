@@ -125,6 +125,12 @@ await PcbExecutionRoiQualityReleaseReplayClosure3HundredStageSmoke.RunAsync(Chec
 await PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke.RunAsync(Check);
 await PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke.RunAsync(Check);
 
+await PcbExecutionRoiQualityReleaseAuditReplayClosure1HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseAuditReplayClosure2HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseAuditReplayClosure3HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseAuditReplayClosure4HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseAuditReplayClosure5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
