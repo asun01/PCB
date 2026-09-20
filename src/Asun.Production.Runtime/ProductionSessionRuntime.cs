@@ -8,7 +8,12 @@ public sealed record ProductionSessionProgress(
     Guid SessionId,
     int CompletedFrames,
     int TotalFrames,
-    FrameSequence? LastSequence);
+    FrameSequence? LastSequence)
+{
+    public long Width { get; init; }
+    public long Height { get; init; }
+    public string PixelFormat { get; init; }="";
+};
 
 public static class ProductionSessionRuntime
 {
@@ -84,7 +89,12 @@ public static class ProductionSessionRuntime
                     definition.SessionId,
                     frameExecutions.Count,
                     definition.FrameCount,
-                    frame.Metadata.Sequence));
+                    frame.Metadata.Sequence)
+                {
+                    Width=frame.Metadata.Width,
+                    Height=frame.Metadata.Height,
+                    PixelFormat=frame.Metadata.PixelFormat
+                });
         }
 
         var fingerprint=ProductionSessionFingerprintRuntime.CreateFingerprint(
