@@ -2682,3 +2682,27 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 69501–70000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 70500 — 2026-09-20
+
+- Completed boundary: **70,500**
+- Next executable stage: **70,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 70001–70500: **Client Workspace -> Production Command Boundary -> Production Runtime -> Simulation Frame Source -> WPF Client Feedback**.
+- Added `Asun.Platform.ClientIntegration` with `ClientProductionWorkspace` and an explicit `IProductionSessionRunner` application port over the existing Production Runtime.
+- Added deterministic `ClientSimulationSessionFactory` under SimulationIntegration.
+- WPF shell now exposes a clearly labeled development-only **Run Simulation** command and displays workspace/execution status.
+- Added five exact-100-round ClientIntegration Smoke matrices and one dedicated smoke project; all are registered in the solution and test entry.
+- Added five stage ledgers and the 70001–70500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 71000 — 2026-09-20
+
+- Completed boundary: **71,000**
+- Next executable stage: **71,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 70501–71000: **Client Production Execution -> Production Report -> Client Replay Snapshot -> Deterministic Diagnostic Identity**.
+- Added `ClientProductionReplaySnapshotRuntime`, binding completed Client Workspace state to the matching Production Session Report without introducing a second production authority.
+- Added five exact-100-round ClientIntegration Replay Smoke matrices and registered them before the terminal failure gate.
+- Added five stage ledgers and the 70501–71000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
