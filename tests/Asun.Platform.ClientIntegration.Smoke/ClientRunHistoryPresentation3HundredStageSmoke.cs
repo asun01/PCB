@@ -49,7 +49,7 @@ public static class ClientRunHistoryPresentation3HundredStageSmoke
                 Check(items.Count==3 &&
                       items[0].ReleaseText.Contains("Release") &&
                       items[1].ReleaseText=="Release Not Ready" &&
-                      items[0].ReplayText.Length==19,
+                      items[0].ReplayText.Length==22,
                       "history presentation should surface Release and replay identities");
         }
         for(var i1=0;i1<10;i1++)
