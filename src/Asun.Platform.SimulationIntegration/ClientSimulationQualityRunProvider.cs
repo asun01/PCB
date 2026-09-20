@@ -11,6 +11,11 @@ public sealed class ClientSimulationQualityRunProvider :
 {
     public static ClientSimulationQualityRunProvider Instance { get; }=new();
 
+    public static ClientQualityProviderDefinition CreateDefinition() =>
+        new(
+            Instance.Descriptor,
+            () => Instance);
+
     public ClientQualityProviderDescriptor Descriptor { get; }=
         new(
             "simulation-quality",
