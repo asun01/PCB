@@ -675,13 +675,18 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshHomeStatus()
     {
-        var home=ClientHomePresentationRuntime.Create(_client.Capture());
+        var snapshot=_client.Capture();
+        var home=ClientHomePresentationRuntime.Create(snapshot);
+        var workflow=ClientInspectionWorkflowRuntime.Evaluate(snapshot);
+
         HomeProgramStatus.Text=$"Program: {home.ProgramStatus}";
         HomeAcquisitionStatus.Text=$"Acquisition: {home.AcquisitionStatus}";
         HomeProductionStatus.Text=$"Production: {home.ProductionStatus}";
         HomeQualityStatus.Text=$"Quality: {home.QualityStatus}";
         HomeResultsStatus.Text=$"Results: {home.ResultsStatus}";
         HomeFingerprint.Text=$"Overview: {home.Fingerprint[..12]}...";
+        HomeWorkflowStatus.Text=$"Workflow: {workflow.Step}";
+        HomeWorkflowMessage.Text=workflow.Message;
     }
 
     private void RefreshWorkspaceStatus()
