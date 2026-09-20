@@ -10,5 +10,6 @@
     <ProjectReference Include="../../src/Asun.Platform.Evidence/Asun.Platform.Evidence.csproj" />
     <ProjectReference Include="../../src/Asun.Production.Runtime/Asun.Production.Runtime.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.PcbExecutionIntegration/Asun.Platform.PcbExecutionIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.PcbAuditReleaseIntegration/Asun.Platform.PcbAuditReleaseIntegration.csproj" />
   </ItemGroup>
 </Project>
