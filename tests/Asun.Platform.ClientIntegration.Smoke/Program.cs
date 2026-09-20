@@ -197,6 +197,12 @@ await ClientInspectionExecutionRecovery3HundredStageSmoke.RunAsync(Check);
 await ClientInspectionExecutionRecovery4HundredStageSmoke.RunAsync(Check);
 await ClientInspectionExecutionRecovery5HundredStageSmoke.RunAsync(Check);
 
+await ClientInspectionWorkflow1HundredStageSmoke.RunAsync(Check);
+await ClientInspectionWorkflow2HundredStageSmoke.RunAsync(Check);
+await ClientInspectionWorkflow3HundredStageSmoke.RunAsync(Check);
+await ClientInspectionWorkflow4HundredStageSmoke.RunAsync(Check);
+await ClientInspectionWorkflow5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
