@@ -22,6 +22,8 @@ public partial class MainWindow : System.Windows.Window
             new Vector2(1,1),
             historyCapacity:20);
 
+        _client.ProductionChanged+=OnClientProductionChanged;
+
         _workspaceRuntime=new ClientWorkspaceRuntime();
         _workspaceRuntime.Changed+=OnWorkspaceChanged;
         _client.ProductionChanged+=OnProductionChanged;
