@@ -112,6 +112,36 @@ public sealed class ClientInspectionWorkspace : IDisposable
         return _roi.Capture();
     }
 
+    public bool CanUndoRoi
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _roi.Document.CanUndo;
+        }
+    }
+
+    public bool CanRedoRoi
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _roi.Document.CanRedo;
+        }
+    }
+
+    public bool UndoRoi()
+    {
+        ThrowIfDisposed();
+        return _roi.Document.Undo();
+    }
+
+    public bool RedoRoi()
+    {
+        ThrowIfDisposed();
+        return _roi.Document.Redo();
+    }
+
     public void SetRoiMode(RoiEditorMode mode)
     {
         ThrowIfDisposed();
