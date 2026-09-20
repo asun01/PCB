@@ -2837,3 +2837,24 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 76501–77000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 77500 — 2026-09-20
+
+- Completed boundary: **77,500**
+- Next executable stage: **77,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 77001–77500: **Client Inspection Workspace -> Cross-layer Diagnostics -> Production/Replay/Release/ROI/History Coherence**.
+- Added `ClientInspectionDiagnosticsRuntime` with coherent-state validation, error/warning reporting, and deterministic diagnostic fingerprinting.
+- Added five exact-100-round diagnostic Smoke matrices and normalized the cancelled-state case to an explicit illegal Release attachment.
+- Added five stage ledgers and the 77001–77500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 78000 — 2026-09-20
+
+- Completed boundary: **78,000**
+- Next executable stage: **78,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 77501–78000: **WPF Client -> Diagnostic Snapshot -> Coherence Status -> Result/Reset Lifecycle**.
+- WPF Shell now displays Diagnostic coherence/fingerprint after completed runs and clears it on failure/cancellation/reset.
+- Added five stage ledgers and the 77501–78000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
