@@ -12,6 +12,11 @@ await ProductionCaptureEvidenceCanonical2HundredStageSmoke.RunAsync(Check);
 await ProductionCaptureEvidenceCanonical3HundredStageSmoke.RunAsync(Check);
 await ProductionCaptureEvidenceCanonical4HundredStageSmoke.RunAsync(Check);
 await ProductionCaptureEvidenceCanonical5HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureSessionReconciliation1HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureSessionReconciliation2HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureSessionReconciliation3HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureSessionReconciliation4HundredStageSmoke.RunAsync(Check);
+await ProductionCaptureSessionReconciliation5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
