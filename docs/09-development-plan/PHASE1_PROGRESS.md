@@ -2558,3 +2558,16 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 64501–65000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 65500 — 2026-09-20
+
+- Completed boundary: **65,500**
+- Next executable stage: **65,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 65001–65500: **Production Measurement/PCB Component -> Production Frame Provenance -> Quality/Evidence/Release Replay Descriptor -> Component + Frame Provenance Replay Context**.
+- Added `PcbMeasurementProvenanceReplayContextRuntime`, tying the existing Measurement/PCB component identity to the existing Production frame provenance and Release replay provenance descriptor.
+- The bridge rejects sequence, Production input, component/input, dimension, pixel-format, timestamp, and replay-identity drift.
+- Added five exact-100-round Replay Smoke matrices and registered them in ReplayIntegration Smoke.
+- Static audit passed: 10 nested loop groups, 10 actual Check call sites, round==100, balanced delimiters, no TODO/NotImplementedException.
+- Added five stage ledgers and the 65001–65500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
