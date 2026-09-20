@@ -1968,3 +1968,12 @@ Closed stages 40001–40500 for Metrology / Production → PCB placement provena
 
 Current completed boundary: **40,500**
 Next executable stage: **40,501**
+
+### Execution checkpoint: Stage 41000 — 2026-09-20
+
+Closed stages 40501–41000 on the active branch as a concrete Render/Presentation input-runtime chain. Hardened bounded viewport input backpressure lifecycle with accepted/dropped/coalesced accounting, capacity policy, finite-coordinate validation, completion/cancellation state, reset/disposal lifecycle, and a registered exact-100-round Smoke. Added five 100-stage ledgers and `PHASE1_40501_41000_INTEGRATION_CHECKPOINT_20260920.md`.
+
+Static source audit passed for the new Smoke: 10 loop groups, 10 Check call sites, round==100, balanced delimiters, no TODO/NotImplementedException. No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **41,000**
+Next executable stage: **41,001**
