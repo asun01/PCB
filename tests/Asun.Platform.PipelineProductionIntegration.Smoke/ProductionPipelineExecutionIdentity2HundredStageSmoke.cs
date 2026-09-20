@@ -44,6 +44,8 @@ public static class ProductionPipelineExecutionIdentity2HundredStageSmoke
         for(var i=0;i<10;i++) Check(identity.PipelineFingerprint==ProductionPipelineExecutionIdentityRuntime.Create(definition,production).PipelineFingerprint,"Baseline pipeline identity should remain stable.");
         for(var i=0;i<10;i++) Check(identity.Fingerprint.Length==64,"Baseline identity fingerprint should remain valid.");
         for(var i=0;i<10;i++) Check(ProductionPipelineExecutionIdentityRuntime.IsValid(definition,production,identity),"Negative cases must not mutate the baseline.");
+for(var i=0;i<10;i++) Check(ProductionPipelineExecutionIdentityRuntime.Create(definition,production).Fingerprint==identity.Fingerprint,"Recreated execution identity should match the canonical fingerprint.");
+
         assert(round==100,$"ProductionPipelineExecutionIdentity2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
