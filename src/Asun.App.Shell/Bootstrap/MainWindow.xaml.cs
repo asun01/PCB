@@ -89,6 +89,7 @@ public partial class MainWindow : System.Windows.Window
         RunSimulationButton.IsEnabled=false;
         ResetSessionButton.IsEnabled=false;
         SelectRoiButton.IsEnabled=false;
+        CancelSimulationButton.IsEnabled=true;
         CreateRoiButton.IsEnabled=false;
         SimulationStatus.Text="Running deterministic simulation...";
 
@@ -132,7 +133,16 @@ public partial class MainWindow : System.Windows.Window
             ResetSessionButton.IsEnabled=true;
             SelectRoiButton.IsEnabled=true;
             CreateRoiButton.IsEnabled=true;
+            CancelSimulationButton.IsEnabled=false;
         }
+    }
+
+    private void CancelSimulationButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        _client.CancelExecution();
+        SimulationStatus.Text="Cancellation requested...";
     }
 
     private void ResetSessionButton_Click(
