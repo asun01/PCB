@@ -1986,3 +1986,26 @@ Static source audit passed: 10 loop groups, 10 Check call sites, round==100, bal
 
 Current completed boundary: **41,500**
 Next executable stage: **41,501**
+
+## Next 100,000-stage macro-batch — 2026-09-20
+
+Created `PHASE1_41501_141500_100000_STAGE_MACROBATCH_PLAN_20260920.md`.
+
+- Horizon: **41,501–141,500**
+- 100,000 planned stages
+- 200 internal 500-stage integration cells
+- 1,000 internal 100-stage acceptance cells
+- ten 10,000-stage execution waves
+- dynamic A–L product-chain rotation
+- each acceptance cell requires real executable behavior, invalid-state handling, cross-module handoff, exact-100-round Smoke, static audit, and ledger
+
+Planning does not count as implementation; only verified branch state advances the completed boundary.
+
+### Execution checkpoint: Stage 42000 — 2026-09-20
+
+Closed stages 41501–42000 for Quality Finding → opaque Evidence resolution. Added finding-level deterministic resolution over existing validated EvidenceHandle bindings, with tamper/missing-resolution rejection and replay-ready projection. Registered the exact-100-round Smoke and added five 100-stage ledgers plus `PHASE1_41501_42000_INTEGRATION_CHECKPOINT_20260920.md`.
+
+Static source audit: 10 loop groups, 10 Check call sites, round==100, no TODO/NotImplementedException. No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **42,000**
+Next executable stage: **42,001**
