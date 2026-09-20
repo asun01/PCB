@@ -13,6 +13,8 @@ public partial class MainWindow : System.Windows.Window
     private readonly ClientWorkspaceRuntime _workspaceRuntime;
     private ClientRunHistorySelection _runHistorySelection=
         ClientRunHistorySelectionRuntime.CreateInitial();
+    private ClientQualityFindingSelection _qualityFindingSelection=
+        ClientQualityFindingSelectionRuntime.CreateInitial();
     private WpfRoiInputAdapter _roiInputAdapter;
 
     public MainWindow()
@@ -141,6 +143,28 @@ public partial class MainWindow : System.Windows.Window
 
         RefreshCommandAvailability();
         RefreshDiagnosticStatus();
+    }
+
+    private void QualityFindingList_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if(QualityFindingList.SelectedItem is not ClientQualityFindingDisplayItem item)
+            return;
+
+        var quality=_client.Quality;
+        var filtered=ClientQualityFilterRuntime.Apply(
+            quality,
+            new ClientQualityFilter(
+                ReadComboValue(QualityOutcomeFilter),
+                ReadComboValue(QualitySeverityFilter)));
+
+        _qualityFindingSelection=ClientQualityFindingSelectionRuntime.Select(
+            filtered,
+            item.FindingId,
+            _qualityFindingSelection.SelectionSequence);
+
+        QualityFindingSelectionStatus.Text=_qualityFindingSelection.StatusText;
     }
 
     private void QualityFilter_SelectionChanged(
@@ -703,6 +727,7 @@ public partial class MainWindow : System.Windows.Window
             QualityStatus.Text=
                 "Quality Run: not attached. Quality facts remain outside this client projection until an authoritative Quality run is available.";
             QualityFindingList.ItemsSource=Array.Empty<ClientQualityFindingDisplayItem>();
+            QualityFindingSelectionStatus.Text=_qualityFindingSelection.StatusText;
             QualityFindingDetails.Text="No Quality finding selected.";
             return;
         }
