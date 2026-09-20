@@ -28,6 +28,8 @@ public static class ProductionReleaseReplayDescriptor5HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.Create(manifest).DescriptorFingerprint==descriptor.DescriptorFingerprint,"Original descriptor creation should remain deterministic.");
         for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.IsValid(manifest,descriptor),"Original descriptor should remain valid.");
         for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.All(Uri.IsHexDigit),"Original descriptor fingerprint should remain hexadecimal.");
+for(var i=0;i<10;i++) Check(ProductionReleaseReplayDescriptorRuntime.Create(manifest).ReleaseManifestFingerprint==descriptor.ReleaseManifestFingerprint,"Recreated release descriptor should preserve manifest identity.");
+
         assert(round==100,$"ProductionReleaseReplayDescriptor5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
