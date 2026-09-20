@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 await PcbExecutionSnapshotHundredStageSmoke.RunAsync(Check);
+await PcbExecutionBoardBindingHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
