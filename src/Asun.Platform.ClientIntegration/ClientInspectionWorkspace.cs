@@ -282,6 +282,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         var report=await _production.StartAsync(source,cancellationToken);
 
         _roi.BindProductionReport(report);
+
+        var production=_production.Snapshot;
+        if(production.LastFrameWidth>0 &&
+           production.LastFrameHeight>0)
+        {
+            _roi.SetImageSize(new Vector2(
+                (float)production.LastFrameWidth,
+                (float)production.LastFrameHeight));
+        }
         _replay=ClientProductionReplaySnapshotRuntime.Create(
             _production.Snapshot,
             report);
