@@ -67,6 +67,17 @@ public sealed record ClientWorkspaceSnapshot(
 
 public sealed class ClientProductionWorkspace
 {
+    private sealed class InlineProgress<T> : IProgress<T>
+    {
+        private readonly Action<T> _handler;
+
+        public InlineProgress(Action<T> handler)
+        {
+            _handler=handler;
+        }
+
+        public void Report(T value) => _handler(value);
+    }
     private readonly IProductionSessionRunner _runner;
     private ProductionSessionDefinition? _definition;
     private CancellationTokenSource? _activeCancellation;
@@ -138,7 +149,7 @@ public sealed class ClientProductionWorkspace
 
         try
         {
-            var progress=new Progress<ProductionSessionProgress>(UpdateProgress);
+            var progress=new InlineProgress<ProductionSessionProgress>(UpdateProgress);
 
             var report= _runner is IProductionSessionProgressRunner progressRunner
                 ? await progressRunner.RunAsync(_definition,source,progress,linked.Token)
