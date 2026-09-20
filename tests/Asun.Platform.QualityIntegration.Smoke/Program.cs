@@ -7,6 +7,11 @@ void Check(bool condition,string message)
 }
 
 await PcbPlacementQualityEvaluationHundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityBinding5HundredStageSmoke.RunAsync(Check);
 await PcbPlacementQualityReplayDescriptor1HundredStageSmoke.RunAsync(Check);
 await PcbPlacementQualityReplayDescriptor2HundredStageSmoke.RunAsync(Check);
 await PcbPlacementQualityReplayDescriptor3HundredStageSmoke.RunAsync(Check);
