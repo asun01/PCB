@@ -484,7 +484,7 @@ public partial class MainWindow : System.Windows.Window
         {
             ClientExecutionStatus.Idle=>"Idle — no production session loaded.",
             ClientExecutionStatus.Ready=>$"Ready — Program {snapshot.ProgramId} · Session {snapshot.ActiveSessionId}.",
-            ClientExecutionStatus.Running=>$"Running — Session {snapshot.ActiveSessionId}.",
+            ClientExecutionStatus.Running=>$"Running — Session {snapshot.ActiveSessionId} · {snapshot.FramesProcessed}/{snapshot.TargetFrameCount} frames.",
             ClientExecutionStatus.Completed=>$"Completed — {snapshot.LastFrameCount} frames; report fingerprint is available.",
             ClientExecutionStatus.Cancelled=>"Cancelled — client session execution was cancelled.",
             ClientExecutionStatus.Failed=>$"Failed — {snapshot.LastError}",
