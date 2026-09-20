@@ -2792,3 +2792,26 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 74501–75000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 75500 — 2026-09-20
+
+- Completed boundary: **75,500**
+- Next executable stage: **75,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 75001–75500: **Production Command -> ROI Interaction -> Replay -> Release -> Bounded History -> Client Inspection Workspace**.
+- Added `ClientInspectionWorkspace` as the client application-level composition service.
+- Production, ROI, Replay, Release, and bounded History now close through one reusable application boundary.
+- Added five exact-100-round composed Workspace Smoke matrices and corrected the repeated-execution matrix to the strict 10-loop/10-Check structure.
+- Added five stage ledgers and the 75001–75500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 76000 — 2026-09-20
+
+- Completed boundary: **76,000**
+- Next executable stage: **76,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 75501–76000: **WPF Shell -> Client Inspection Workspace -> ROI Input Adapter -> Production/Replay/Release/History**.
+- Refactored WPF Shell to route client execution through `ClientInspectionWorkspace` instead of independently orchestrating Production/Replay/Release/History.
+- `WpfRoiInputAdapter` now routes pointer input through the composed client service.
+- Added five stage ledgers and the 75501–76000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
