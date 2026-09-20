@@ -13,6 +13,11 @@ await QualityFindingEvidenceReplayDescriptor2HundredStageSmoke.RunAsync(Check);
 await QualityFindingEvidenceReplayDescriptor3HundredStageSmoke.RunAsync(Check);
 await QualityFindingEvidenceReplayDescriptor4HundredStageSmoke.RunAsync(Check);
 await QualityFindingEvidenceReplayDescriptor5HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceBinding5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
@@ -24,9 +29,3 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.QualityEvidenceIntegration smoke tests passed.");
 return 0;
-
-await ProductionMeasurementQualityEvidenceBinding1HundredStageSmoke.RunAsync(Check);
-await ProductionMeasurementQualityEvidenceBinding2HundredStageSmoke.RunAsync(Check);
-await ProductionMeasurementQualityEvidenceBinding3HundredStageSmoke.RunAsync(Check);
-await ProductionMeasurementQualityEvidenceBinding4HundredStageSmoke.RunAsync(Check);
-await ProductionMeasurementQualityEvidenceBinding5HundredStageSmoke.RunAsync(Check);
