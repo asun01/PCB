@@ -54,6 +54,8 @@ for(var i=0;i<10;i++) Check(descriptor.DescriptorFingerprint.All(Uri.IsHexDigit)
 for(var i=0;i<10;i++) Check(descriptor.EvidenceFrameCount==2,"Baseline evidence count should remain stable.");
 for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReplayDescriptorRuntime.IsValid(definition,production,qualityRun,evidence,bundle,descriptor),"Baseline descriptor should remain valid.");
 for(var i=0;i<10;i++) Check(descriptor.QualityResultCount==qualityRun.ResultCount,"Baseline Quality count should remain stable.");
+for(var i=0;i<10;i++) Check(descriptor.QualityResultCount==qualityRun.ResultCount,"Baseline Quality count should remain aligned.");
+
         assert(round==100,$"ProductionQualityEvidenceReplayDescriptor4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
