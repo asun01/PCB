@@ -94,6 +94,11 @@ await ProductionSimulationRenderReplayConvergence2HundredStageSmoke.RunAsync(Che
 await ProductionSimulationRenderReplayConvergence3HundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderReplayConvergence4HundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderReplayConvergence5HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiReplayBinding1HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiReplayBinding2HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiReplayBinding3HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiReplayBinding4HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiReplayBinding5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
