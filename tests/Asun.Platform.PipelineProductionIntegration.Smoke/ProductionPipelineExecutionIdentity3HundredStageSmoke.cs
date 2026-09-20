@@ -45,6 +45,8 @@ public static class ProductionPipelineExecutionIdentity3HundredStageSmoke
         for(var i=0;i<10;i++) Check(identity.FrameCount==production.FrameCount,"Baseline frame count should remain stable.");
         for(var i=0;i<10;i++) Check(identity.ProductionFingerprint==production.Fingerprint,"Baseline production identity should remain stable.");
         for(var i=0;i<10;i++) Check(identity.ReplayAuditFingerprint.Length==64,"Baseline replay identity should remain fixed width.");
+for(var i=0;i<10;i++) Check(ProductionPipelineExecutionIdentityRuntime.Create(definition,production).ProductionFingerprint==production.Fingerprint,"Recreated execution identity should preserve the production fingerprint.");
+
         assert(round==100,$"ProductionPipelineExecutionIdentity3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
