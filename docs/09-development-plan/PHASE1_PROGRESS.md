@@ -2076,3 +2076,20 @@ Verification status:
 
 Current completed boundary: **45,000**
 Next executable stage: **45,001**
+
+
+### 45001→45500 PCB placement → Quality replay descriptor — 2026-09-20
+
+Completed stages 45001–45500 as five contiguous 100-stage acceptance blocks.
+
+Implemented `PcbPlacementQualityReplayDescriptorRuntime` to carry PCB component identity, measurement sequence, Quality result/snapshot identity, evaluation fingerprint, and deterministic descriptor fingerprint. Validation rejects identity drift and malformed/tampered replay descriptors while leaving customer acceptance policy in the injected rule evaluator.
+
+Added and registered five exact 100-round Smokes and five stage ledgers plus the 500-stage integration checkpoint.
+
+Verification status:
+- static source/Smoke structure audit performed;
+- no local build/test/CI success is claimed without authoritative execution evidence;
+- no new HALCON/DevExpress/hardware dependency introduced.
+
+Current completed boundary: **45,500**
+Next executable stage: **45,501**
