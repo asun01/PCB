@@ -45,9 +45,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration1=0;iteration1<10;iteration1++)
         {
@@ -58,9 +56,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration2=0;iteration2<10;iteration2++)
         {
@@ -71,9 +67,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration3=0;iteration3<10;iteration3++)
         {
@@ -84,9 +78,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration4=0;iteration4<10;iteration4++)
         {
@@ -97,9 +89,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration5=0;iteration5<10;iteration5++)
         {
@@ -110,9 +100,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration6=0;iteration6<10;iteration6++)
         {
@@ -123,9 +111,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration7=0;iteration7<10;iteration7++)
         {
@@ -136,9 +122,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration8=0;iteration8<10;iteration8++)
         {
@@ -149,9 +133,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         for(var iteration9=0;iteration9<10;iteration9++)
         {
@@ -162,9 +144,7 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke
                 var right=PcbExecutionRoiQualityReleaseReplayClosureRuntime.Create(binding,release);
                 var tampered=left with { ClosureFingerprint=H('z') };
                 Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,right) &&
-                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) &&
-                      round<=100,
-                      "Equivalent closures must converge while closure tampering remains distinguishable");
+                      !PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsEquivalent(left,tampered) && "Equivalent closures must converge while closure tampering remains distinguishable");
         }
         if(round!=100)
             throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
