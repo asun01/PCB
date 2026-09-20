@@ -1903,3 +1903,19 @@ Current continuous execution position:
 - completed through Stage 38000;
 - next natural stage: 38001;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 38001→38500 production evidence envelope — 2026-09-20
+
+Completed stages 38001–38500.
+
+Implemented:
+- Asun.Platform.PcbEvidenceEnvelopeIntegration;
+- PcbProductionEvidenceEnvelope and independent validation;
+- top-level deterministic identity boundary across PCB, Production, replay, Evidence resolution, and Release;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 38500;
+- next natural stage: 38501;
+- global one-million-stage horizon remains 2501–1002500.
