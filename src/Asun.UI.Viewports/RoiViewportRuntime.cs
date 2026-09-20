@@ -145,6 +145,17 @@ public sealed class RoiViewportRuntime
         }
     }
 
+    public void SetImageSize(Vector2 imageSize)
+    {
+        lock (_sync)
+        {
+            _transform = ViewportTransform.Fit(
+                imageSize,
+                _transform.ViewportSize);
+            RefreshHoverUnsafe();
+        }
+    }
+
     public void ResizeViewport(Vector2 viewportSize)
     {
         lock (_sync)
