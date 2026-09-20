@@ -11,7 +11,7 @@ public static class ProductionQualityEvidenceReplayDescriptor4HundredStageSmoke
     public static async ValueTask RunAsync(Action<bool,string> assert)
     {
         var round=0;
-        void Check(bool condition,string message){round++;assert(condition,$"Round {round}: {message");}
+        void Check(bool condition,string message){round++;assert(condition,$"Round {round}: {message}");}
         var program=new InspectionProgram(
             Guid.Parse("8A000000-0000-0000-0000-000000000001"),
             "ReplayDescriptorProgram",
