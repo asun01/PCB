@@ -2337,3 +2337,14 @@ Next executable stage: **51,501**
 - Added five exact-100-round Smokes; the initial 9-loop matrix was caught by static audit and repaired to 10 loops / 10 actual Check call sites before closure.
 - Added five stage ledgers and the 54001–54500 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 55000 — 2026-09-20
+
+- Completed boundary: **55,000**
+- Next executable stage: **55,001**
+- Active 100,000-stage execution interval: **53,501–153,500**.
+- 54501–55000: **Viewport Input Recovery -> ROI Viewport -> ROI Editing -> Deterministic ROI Snapshot**.
+- Added `ViewportRoiInputRecoveryRuntime` and exposed bounded `DrainPending` from the recovery orchestration layer so accepted events are actually consumed by ROI editing.
+- The bridge records processed/rejected events and a deterministic ROI snapshot fingerprint derived from transform, selection, ROI identity, geometry, and polygon vertices.
+- Five exact-100-round Smokes passed static structure audit; five stage ledgers and the 54501–55000 checkpoint are present.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
