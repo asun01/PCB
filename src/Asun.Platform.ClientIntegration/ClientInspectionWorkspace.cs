@@ -42,8 +42,6 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private long? _selectedHistoryOrdinal;
     private int _disposed;
 
-    public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
-
     public ClientInspectionWorkspace(
         Vector2 imageSize,
         Vector2 viewportSize,
@@ -470,7 +468,6 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public void ResetCurrentSession()
     {
         ThrowIfDisposed();
-        _program.Reset();
         _program.Reset();
         _production.Reset();
         _lastProductionReport=null;
