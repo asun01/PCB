@@ -1,5 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
+using Asun.Platform.MeasurementQualityIntegration;
+
 namespace Asun.Platform.QualityEvidenceIntegration;
 
 public sealed record ProductionFrameMeasurementQualityEvidenceProvenanceBinding(
