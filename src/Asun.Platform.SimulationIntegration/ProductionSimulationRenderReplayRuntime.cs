@@ -18,6 +18,7 @@ public static class ProductionSimulationRenderReplayRuntime
 
         var simulation=simulationFrames.OrderBy(frame=>frame.SimulationSequence).ToArray();
         var render=renderFrames.OrderBy(frame=>frame.Sequence).ToArray();
+        ValidateSourceIdentity(simulation,render);
         if(simulation.Length!=render.Length)
             throw new ArgumentException("Simulation and Render replay frame counts must match.",nameof(renderFrames));
 
@@ -48,6 +49,7 @@ public static class ProductionSimulationRenderReplayRuntime
         var errors=new List<string>();
         var simulation=simulationFrames.OrderBy(frame=>frame.SimulationSequence).ToArray();
         var render=renderFrames.OrderBy(frame=>frame.Sequence).ToArray();
+        errors.AddRange(ValidateSourceIdentity(simulation,render));
         var actual=replay.OrderBy(frame=>frame.Sequence).ToArray();
 
         if(simulation.Length!=render.Length || actual.Length!=render.Length)
@@ -75,4 +77,25 @@ public static class ProductionSimulationRenderReplayRuntime
         IReadOnlyList<ProductionRenderReplayFrameIntegrity> renderFrames,
         IReadOnlyList<ProductionSimulationRenderReplayFrame> replay)=>
         Validate(simulationFrames,renderFrames,replay).Count==0;
+
+    private static IReadOnlyList<string> ValidateSourceIdentity(
+        IReadOnlyList<ProductionSimulationFrameLink> simulation,
+        IReadOnlyList<ProductionRenderReplayFrameIntegrity> render)
+    {
+        var errors=new List<string>();
+
+        if(simulation.Select(frame=>frame.SimulationSequence).Distinct().Count()!=simulation.Count)
+            errors.Add("Simulation replay sequences must be unique.");
+        if(render.Select(frame=>frame.Sequence).Distinct().Count()!=render.Count)
+            errors.Add("Render replay sequences must be unique.");
+
+        if(simulation.Any(frame=>string.IsNullOrWhiteSpace(frame.SimulationObservationFingerprint) ||
+                                  frame.SimulationObservationFingerprint.Length!=64))
+            errors.Add("Simulation observation fingerprints must be 64 characters.");
+        if(render.Any(frame=>string.IsNullOrWhiteSpace(frame.RenderFingerprint) ||
+                              frame.RenderFingerprint.Length!=64))
+            errors.Add("Render fingerprints must be 64 characters.");
+
+        return errors;
+    }
 }
