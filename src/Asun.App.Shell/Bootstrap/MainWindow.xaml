@@ -103,6 +103,26 @@
                     Margin="0,6,0,0"
                     AutomationProperties.AutomationId="Shell.AcquisitionStatus"
                     Text="Acquisition: unbound." />
+                <StackPanel
+                    Margin="0,6,0,0"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="Source:" />
+                    <ComboBox
+                        x:Name="AcquisitionSourceComboBox"
+                        Width="240"
+                        Margin="8,0,0,0"
+                        DisplayMemberPath="Descriptor.DisplayName"
+                        AutomationProperties.AutomationId="Shell.AcquisitionSource" />
+                    <Button
+                        x:Name="BindAcquisitionButton"
+                        Width="110"
+                        Margin="8,0,0,0"
+                        Click="BindAcquisitionButton_Click"
+                        Content="Bind Source"
+                        AutomationProperties.AutomationId="Shell.BindAcquisition" />
+                </StackPanel>
             </StackPanel>
         </Border>
 
