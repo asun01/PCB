@@ -1919,3 +1919,19 @@ Current continuous execution position:
 - completed through Stage 38500;
 - next natural stage: 38501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 38501→39000 production evidence envelope → Quality audit window — 2026-09-20
+
+Completed stages 38501–39000.
+
+Implemented:
+- Asun.Platform.PcbAuditIntegration;
+- PcbExecutionAuditWindowProjection and independent validation;
+- real QualityInspectionAuditWindowRuntime integration;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 39000;
+- next natural stage: 39001;
+- global one-million-stage horizon remains 2501–1002500.
