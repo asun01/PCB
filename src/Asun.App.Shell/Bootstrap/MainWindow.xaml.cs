@@ -71,6 +71,22 @@ public partial class MainWindow : System.Windows.Window
         RoiStatus.Text="ROI: Select mode.";
     }
 
+    private void UndoRoiButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        if(_client.UndoRoi())
+            RefreshRoiSurface();
+    }
+
+    private void RedoRoiButton_Click(
+        object sender,
+        System.Windows.RoutedEventArgs e)
+    {
+        if(_client.RedoRoi())
+            RefreshRoiSurface();
+    }
+
     private void CreateRoiButton_Click(
         object sender,
         System.Windows.RoutedEventArgs e)
@@ -300,6 +316,8 @@ public partial class MainWindow : System.Windows.Window
         ResetSessionButton.IsEnabled=availability.CanReset;
         SelectRoiButton.IsEnabled=availability.CanSelectRoi;
         CreateRoiButton.IsEnabled=availability.CanCreateRoi;
+        UndoRoiButton.IsEnabled=availability.CanUndoRoi;
+        RedoRoiButton.IsEnabled=availability.CanRedoRoi;
     }
 
     private void RefreshDiagnosticStatus(
