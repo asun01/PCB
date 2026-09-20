@@ -313,6 +313,16 @@
                             Margin="0,6,0,0"
                             Text="Results: no history." />
                         <TextBlock
+                            x:Name="HomeWorkflowStatus"
+                            Margin="0,12,0,0"
+                            FontWeight="SemiBold"
+                            Text="Workflow: Load Program." />
+                        <TextBlock
+                            x:Name="HomeWorkflowMessage"
+                            Margin="0,4,0,0"
+                            TextWrapping="Wrap"
+                            Text="Load a valid inspection Program." />
+                        <TextBlock
                             x:Name="HomeFingerprint"
                             Margin="0,12,0,0"
                             Opacity="0.65"
