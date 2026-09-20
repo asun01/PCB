@@ -1781,3 +1781,19 @@ Current continuous execution position:
 - completed through Stage 34500;
 - next natural stage: 34501;
 - global one-million-stage horizon remains 2501–1002500.
+
+
+### 34501→35000 Production → Pipeline replay audit — 2026-09-20
+
+Completed stages 34501–35000.
+
+Implemented:
+- Asun.Platform.PipelineProductionIntegration;
+- ProductionPipelineReplayFrameAudit and aggregate audit;
+- independent replay validation against actual pipeline stage order and per-frame PipelineExecutionReport fingerprints;
+- exact 100-round Smoke registered in AsunVision.slnx.
+
+Current continuous execution position:
+- completed through Stage 35000;
+- next natural stage: 35001;
+- global one-million-stage horizon remains 2501–1002500.
