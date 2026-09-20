@@ -8,6 +8,11 @@ void Check(bool condition,string message)
 
 await ProductionPipelineReplayAuditHundredStageSmoke.RunAsync(Check);
 await ProductionPipelineReleaseHandoffHundredStageSmoke.RunAsync(Check);
+await ProductionPipelineExecutionIdentity1HundredStageSmoke.RunAsync(Check);
+await ProductionPipelineExecutionIdentity2HundredStageSmoke.RunAsync(Check);
+await ProductionPipelineExecutionIdentity3HundredStageSmoke.RunAsync(Check);
+await ProductionPipelineExecutionIdentity4HundredStageSmoke.RunAsync(Check);
+await ProductionPipelineExecutionIdentity5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
