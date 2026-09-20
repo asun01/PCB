@@ -119,6 +119,11 @@ await PcbMeasurementProvenanceReplayContext2HundredStageSmoke.RunAsync(Check);
 await PcbMeasurementProvenanceReplayContext3HundredStageSmoke.RunAsync(Check);
 await PcbMeasurementProvenanceReplayContext4HundredStageSmoke.RunAsync(Check);
 await PcbMeasurementProvenanceReplayContext5HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseReplayClosure1HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseReplayClosure2HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseReplayClosure3HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke.RunAsync(Check);
+await PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
@@ -130,9 +135,3 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.ReplayIntegration smoke tests passed.");
 return 0;
-
-await PcbExecutionRoiQualityReleaseReplayClosure1HundredStageSmoke.RunAsync(Check);
-await PcbExecutionRoiQualityReleaseReplayClosure2HundredStageSmoke.RunAsync(Check);
-await PcbExecutionRoiQualityReleaseReplayClosure3HundredStageSmoke.RunAsync(Check);
-await PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke.RunAsync(Check);
-await PcbExecutionRoiQualityReleaseReplayClosure5HundredStageSmoke.RunAsync(Check);
