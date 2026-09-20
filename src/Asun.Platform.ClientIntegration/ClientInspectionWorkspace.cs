@@ -32,9 +32,23 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _roi=new ClientRoiInteractionWorkspace(imageSize,viewportSize);
     }
 
-    public ClientWorkspaceSnapshot Production => _production.Snapshot;
+    public ClientWorkspaceSnapshot Production
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _production.Snapshot;
+        }
+    }
 
-    public ClientProductionRunHistorySnapshot History => _history.Capture();
+    public ClientProductionRunHistorySnapshot History
+    {
+        get
+        {
+            ThrowIfDisposed();
+            return _history.Capture();
+        }
+    }
 
     public ClientInspectionWorkspaceSnapshot Capture()
     {
