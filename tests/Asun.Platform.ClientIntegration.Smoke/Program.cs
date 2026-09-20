@@ -162,6 +162,12 @@ await ClientQualityFindingSelection3HundredStageSmoke.RunAsync(Check);
 await ClientQualityFindingSelection4HundredStageSmoke.RunAsync(Check);
 await ClientQualityFindingSelection5HundredStageSmoke.RunAsync(Check);
 
+await ClientAcquisitionPreview1HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionPreview2HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionPreview3HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionPreview4HundredStageSmoke.RunAsync(Check);
+await ClientAcquisitionPreview5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
