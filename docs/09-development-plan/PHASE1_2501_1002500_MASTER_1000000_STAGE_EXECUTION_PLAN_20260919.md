@@ -2412,3 +2412,13 @@ Current completed boundary: **32,000**
 Next executable stage: **32,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 32500 — 2026-09-20
+
+Closed Acquisition / Production provenance → Render replay. Source payload identity and capture metadata are now bound to render generation/summary/fingerprint facts at one explicit cross-chain boundary.
+
+Current completed boundary: **32,500**
+Next executable stage: **32,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
