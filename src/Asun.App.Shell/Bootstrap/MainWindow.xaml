@@ -131,6 +131,12 @@
                         VerticalAlignment="Center"
                         AutomationProperties.AutomationId="Shell.RunHistoryStatus"
                         Text="History: 0 runs." />
+                    <TextBlock
+                        x:Name="DiagnosticStatus"
+                        Margin="16,7,0,0"
+                        VerticalAlignment="Center"
+                        AutomationProperties.AutomationId="Shell.DiagnosticStatus"
+                        Text="Diagnostic: not evaluated." />
                 </StackPanel>
             </StackPanel>
         </Border>
