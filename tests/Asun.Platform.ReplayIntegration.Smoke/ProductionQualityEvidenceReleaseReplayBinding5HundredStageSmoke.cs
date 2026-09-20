@@ -57,6 +57,8 @@ for(var i=0;i<10;i++) Check(changedBinding.ReplayBundleFingerprint==bundle.Finge
 for(var i=0;i<10;i++) Check(binding.ReleaseManifestFingerprint==manifest.Fingerprint,"Original manifest identity should remain stable.");
 for(var i=0;i<10;i++) Check(ProductionQualityEvidenceReleaseReplayBindingRuntime.Create(definition,production,qualityRun,evidence,bundle,manifest).Fingerprint==binding.Fingerprint,"Original binding creation should remain deterministic.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Original binding fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(binding.ReleaseReady==ReleaseReadinessRuntime.Evaluate(manifest).Ready,"Original release readiness should remain stable.");
+
         assert(round==100,$"ProductionQualityEvidenceReleaseReplayBinding5HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
