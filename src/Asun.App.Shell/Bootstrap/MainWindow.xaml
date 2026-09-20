@@ -122,6 +122,13 @@
                         Click="BindAcquisitionButton_Click"
                         Content="Bind Source"
                         AutomationProperties.AutomationId="Shell.BindAcquisition" />
+                    <Button
+                        x:Name="PreviewAcquisitionButton"
+                        Width="100"
+                        Margin="8,0,0,0"
+                        Click="PreviewAcquisitionButton_Click"
+                        Content="Preview"
+                        AutomationProperties.AutomationId="Shell.PreviewAcquisition" />
                 </StackPanel>
             </StackPanel>
         </Border>
@@ -374,6 +381,14 @@
                             x:Name="RoiWorkspaceTitle"
                             FontWeight="SemiBold"
                             Text="ROI interaction host" />
+                        <Image
+                            x:Name="FramePreviewImage"
+                            Stretch="Uniform"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            MaxWidth="620"
+                            MaxHeight="360"
+                            AutomationProperties.AutomationId="Shell.FramePreviewImage" />
                         <Canvas
                             x:Name="RoiSurface"
                             Margin="0,28,0,24"
