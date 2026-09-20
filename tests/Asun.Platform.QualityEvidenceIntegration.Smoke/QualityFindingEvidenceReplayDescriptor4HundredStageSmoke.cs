@@ -24,7 +24,7 @@ public static class QualityFindingEvidenceReplayDescriptor4HundredStageSmoke
                         new QualityFinding(secondFindingId,"AOI.PAD.MISSING",QualityOutcome.Fail,QualitySeverity.Minor,"Pad missing")}),
                     new QualityFindingEvidenceSet(new[]{
                         new QualityFindingEvidenceLink(findingId,firstKey),
-                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))}});
+                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))});
         var bindings=new[]{
             new QualityEvidenceHandleBinding(findingId,firstKey,EvidenceHandle.Create("evidence/frame/10/component")),
             new QualityEvidenceHandleBinding(secondFindingId,secondKey,EvidenceHandle.Create("evidence/frame/10/pad"))};
@@ -40,6 +40,7 @@ for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.Create
 for(var i=0;i<10;i++) Check(QualityFindingEvidenceReplayDescriptorRuntime.IsValid(run,bindings,resolutions,descriptors),"Baseline descriptors should remain valid.");
 for(var i=0;i<10;i++) Check(descriptors[0].EvidenceHandles.Count==1 && descriptors[1].EvidenceHandles.Count==1,"Every finding should retain exactly one opaque handle.");
 for(var i=0;i<10;i++) Check(descriptors[0].FindingId!=descriptors[1].FindingId,"Finding descriptor identities should be unique.");
+for(var i=0;i<10;i++) Check(descriptors.Count==2,"Final descriptor cardinality should remain stable.");
         assert(round==100,$"QualityFindingEvidenceReplayDescriptor4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
