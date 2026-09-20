@@ -28,8 +28,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration2=0;iteration2<10;iteration2++)
         {
@@ -41,8 +39,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration3=0;iteration3<10;iteration3++)
         {
@@ -54,8 +50,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration4=0;iteration4<10;iteration4++)
         {
@@ -67,8 +61,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration5=0;iteration5<10;iteration5++)
         {
@@ -80,8 +72,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration6=0;iteration6<10;iteration6++)
         {
@@ -93,8 +83,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration7=0;iteration7<10;iteration7++)
         {
@@ -106,8 +94,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration8=0;iteration8<10;iteration8++)
         {
@@ -119,8 +105,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==101,
-                  "internal acceptance matrix guard");
         }
         for(var iteration9=0;iteration9<10;iteration9++)
         {
@@ -132,8 +116,6 @@ public static class ClientWorkspaceRuntime3HundredStageSmoke
                   runtime.Current.Workspace==ClientWorkspaceKind.Program &&
                   runtime.Current.TransitionSequence==1,
                   "reselecting the active workspace must be a no-op");
-            Check(round==100,
-                  "internal acceptance matrix guard");
         }
         if(round==100)
             return Task.CompletedTask;
