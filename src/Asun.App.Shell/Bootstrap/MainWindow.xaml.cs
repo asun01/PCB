@@ -24,6 +24,7 @@ public partial class MainWindow : System.Windows.Window
         _workspaceRuntime.Changed+=selection =>
         {
             WorkspaceNavigationStatus.Text=$"Workspace: {selection.Workspace}";
+            RefreshCommandAvailability();
         };
         _roiInputAdapter=new WpfRoiInputAdapter(_client,RoiSurface);
 
@@ -348,14 +349,18 @@ public partial class MainWindow : System.Windows.Window
     private void RefreshCommandAvailability()
     {
         var availability=ClientCommandAvailabilityRuntime.Create(_client.Capture());
-        LoadSimulationButton.IsEnabled=availability.CanLoad;
-        RunSimulationButton.IsEnabled=availability.CanRun;
-        CancelSimulationButton.IsEnabled=availability.CanCancel;
-        ResetSessionButton.IsEnabled=availability.CanReset;
-        SelectRoiButton.IsEnabled=availability.CanSelectRoi;
-        CreateRoiButton.IsEnabled=availability.CanCreateRoi;
-        UndoRoiButton.IsEnabled=availability.CanUndoRoi;
-        RedoRoiButton.IsEnabled=availability.CanRedoRoi;
+        var routing=ClientWorkspaceCommandRoutingRuntime.Create(
+            _workspaceRuntime.Current,
+            availability);
+
+        LoadSimulationButton.IsEnabled=routing.CanLoadProgram;
+        RunSimulationButton.IsEnabled=routing.CanRunInspection;
+        CancelSimulationButton.IsEnabled=routing.CanCancelInspection;
+        ResetSessionButton.IsEnabled=routing.CanResetSession;
+        SelectRoiButton.IsEnabled=routing.CanEditRoi && availability.CanSelectRoi;
+        CreateRoiButton.IsEnabled=routing.CanEditRoi && availability.CanCreateRoi;
+        UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
+        RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
     }
 
     private void RefreshDiagnosticStatus(
