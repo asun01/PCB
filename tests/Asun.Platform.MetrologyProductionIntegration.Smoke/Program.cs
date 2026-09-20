@@ -8,6 +8,11 @@ void Check(bool condition,string message)
 
 await ProductionMeasurementFactHundredStageSmoke.RunAsync(Check);
 await ProductionMeasurementPcbBindingHundredStageSmoke.RunAsync(Check);
+await ProductionFrameMeasurementProvenanceBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionFrameMeasurementProvenanceBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionFrameMeasurementProvenanceBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionFrameMeasurementProvenanceBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionFrameMeasurementProvenanceBinding5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
