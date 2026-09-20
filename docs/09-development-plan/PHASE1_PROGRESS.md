@@ -2706,3 +2706,25 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 70501–71000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 71500 — 2026-09-20
+
+- Completed boundary: **71,500**
+- Next executable stage: **71,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 71001–71500: **Client Replay Snapshot -> Logical Release Manifest -> Release Readiness Authority -> User-visible Result Projection**.
+- Added `ClientReleaseProjectionRuntime` to consume the existing Release Manifest/Readiness authority without creating a client-side Release authority.
+- Added five exact-100-round ClientIntegration Release projection Smoke matrices and registered them.
+- Added five stage ledgers and the 71001–71500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 72000 — 2026-09-20
+
+- Completed boundary: **72,000**
+- Next executable stage: **72,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 71501–72000: **WPF Client Simulation -> Production Report -> Replay Snapshot -> Logical Release Projection -> User-visible Result Closure**.
+- WPF shell now displays deterministic Simulation completion, Replay fingerprint, logical Release readiness, and artifact path.
+- Cancellation/failure paths clear Release evaluation text so a stale Ready state is not displayed.
+- Added five stage ledgers and the 71501–72000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
