@@ -19,13 +19,17 @@ public sealed record ClientProgramWorkspaceSnapshot(
     Version? Version,
     int StepCount,
     string? ExecutionPlanFingerprint,
-    IReadOnlyList<string> Errors);
+    IReadOnlyList<string> Errors)
+{
+    public Guid? SelectedStepId { get; init; }
+};
 
 public sealed class ClientProgramWorkspace
 {
     private InspectionProgram? _program;
     private ProgramExecutionPlan? _executionPlan;
     private IReadOnlyList<string> _errors=Array.Empty<string>();
+    private Guid? _selectedStepId;
 
     public ClientProgramWorkspaceSnapshot Snapshot
     {
@@ -40,7 +44,10 @@ public sealed class ClientProgramWorkspace
                     null,
                     0,
                     null,
-                    Array.Empty<string>());
+                    Array.Empty<string>())
+                {
+                    SelectedStepId=null
+                };
             }
 
             return new ClientProgramWorkspaceSnapshot(
@@ -52,7 +59,10 @@ public sealed class ClientProgramWorkspace
                 _program.Version,
                 _program.Steps.Count,
                 _executionPlan?.Fingerprint,
-                _errors.ToArray());
+                _errors.ToArray())
+            {
+                SelectedStepId=_selectedStepId
+            };
         }
     }
 
@@ -73,7 +83,36 @@ public sealed class ClientProgramWorkspace
         else
             _executionPlan=null;
 
+        _selectedStepId=_errors.Count==0
+            ? program.Steps.OrderBy(step=>step.Order).ThenBy(step=>step.StepId)
+                .Select(step=>(Guid?)step.StepId).FirstOrDefault()
+            : null;
+
         return Snapshot;
+    }
+
+    public ProgramStep? SelectedStep
+    {
+        get
+        {
+            if(_program is null || _selectedStepId is not Guid selected)
+                return null;
+
+            return _program.Steps.FirstOrDefault(step=>step.StepId==selected);
+        }
+    }
+
+    public bool SelectStep(Guid stepId)
+    {
+        if(_program is null || _errors.Count!=0)
+            return false;
+
+        var step=_program.Steps.FirstOrDefault(candidate=>candidate.StepId==stepId);
+        if(step is null)
+            return false;
+
+        _selectedStepId=step.StepId;
+        return true;
     }
 
     public ProductionSessionDefinition CreateSessionDefinition(
@@ -102,5 +141,6 @@ public sealed class ClientProgramWorkspace
         _program=null;
         _executionPlan=null;
         _errors=Array.Empty<string>();
+        _selectedStepId=null;
     }
 }
