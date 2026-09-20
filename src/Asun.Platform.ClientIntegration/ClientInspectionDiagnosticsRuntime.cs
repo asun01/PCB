@@ -20,6 +20,7 @@ public static class ClientInspectionDiagnosticsRuntime
         var warnings=new List<string>();
 
         ValidateProductionState(snapshot,errors,warnings);
+        ValidateProgramAlignment(snapshot,errors);
         ValidateReleaseAndReplay(snapshot,errors);
         ValidateRoi(snapshot,errors);
         ValidateHistory(snapshot.History,errors);
@@ -83,6 +84,32 @@ public static class ClientInspectionDiagnosticsRuntime
                 errors.Add("Unknown client execution status.");
                 break;
         }
+    }
+
+    private static void ValidateProgramAlignment(
+        ClientInspectionWorkspaceSnapshot snapshot,
+        List<string> errors)
+    {
+        if(snapshot.Program is null)
+            return;
+
+        if(snapshot.Program.Status==ClientProgramLoadStatus.Invalid)
+        {
+            errors.Add("Client inspection snapshot cannot expose an invalid Program as the active Program projection.");
+            return;
+        }
+
+        if(snapshot.Production.ProgramId is Guid productionProgramId &&
+           snapshot.Program.ProgramId!=productionProgramId)
+            errors.Add("Client Program identity must match the Production workspace Program identity.");
+
+        if(snapshot.Production.ProgramVersion is Version productionVersion &&
+           snapshot.Program.Version!=productionVersion)
+            errors.Add("Client Program version must match the Production workspace Program version.");
+
+        if(snapshot.Production.Status!=ClientExecutionStatus.Idle &&
+           snapshot.Program.Status!=ClientProgramLoadStatus.Ready)
+            errors.Add("A non-idle Production workspace requires a Ready Program projection.");
     }
 
     private static void ValidateReleaseAndReplay(
