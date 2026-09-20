@@ -74,6 +74,18 @@ public sealed class ClientRoiInteractionWorkspace : IDisposable
         }
     }
 
+    public void ResizeViewport(Vector2 viewportSize)
+    {
+        ThrowIfDisposed();
+        _runtime.RoiViewport.ResizeViewport(viewportSize);
+    }
+
+    public RoiViewportSnapshot CaptureViewportSnapshot()
+    {
+        ThrowIfDisposed();
+        return _runtime.RoiViewport.CreateSnapshot();
+    }
+
     public bool Submit(
         ViewportInputEventKind kind,
         Vector2 viewportPoint,
