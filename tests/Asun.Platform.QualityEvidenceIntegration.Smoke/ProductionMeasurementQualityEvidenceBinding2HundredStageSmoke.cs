@@ -58,6 +58,8 @@ for(var i=0;i<10;i++) Check(binding.FindingId==findingId,"Baseline finding ident
 for(var i=0;i<10;i++) Check(binding.EvidenceFingerprint.Length==64,"Baseline evidence identity should remain fixed width.");
 for(var i=0;i<10;i++) Check(ProductionMeasurementQualityEvidenceBindingRuntime.IsValid(qualityBinding,qualityRun,evidenceBindings,binding),"Baseline binding should remain valid.");
 for(var i=0;i<10;i++) Check(binding.ComponentId==componentId.Value,"Baseline component identity should remain stable.");
+for(var i=0;i<10;i++) Check(binding.ComponentId==componentId.Value,"Baseline component identity should remain stable.");
+for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Baseline binding fingerprint should remain fixed width.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceBinding2HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
