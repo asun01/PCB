@@ -27,6 +27,8 @@ public static class ProductionRenderEvidenceReplayDescriptor3HundredStageSmoke
         for(var i=0;i<10;i++) Check(ProductionRenderEvidenceReplayDescriptorRuntime.IsValid(frames,descriptors),"Baseline descriptor should remain valid.");
         for(var i=0;i<10;i++) Check(descriptors.Count==2,"Baseline descriptor count should remain stable.");
         for(var i=0;i<10;i++) Check(descriptors.All(item=>item.Sequence>0),"Baseline descriptor sequences should remain positive.");
+for(var i=0;i<10;i++) Check(descriptors[1].Sequence==2,"Baseline second descriptor sequence should remain canonical.");
+
         assert(round==100,$"ProductionRenderEvidenceReplayDescriptor3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
