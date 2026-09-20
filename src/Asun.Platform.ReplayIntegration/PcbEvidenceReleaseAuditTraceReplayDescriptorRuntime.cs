@@ -83,7 +83,8 @@ public static class PcbEvidenceReleaseAuditTraceReplayDescriptorRuntime
             errors.Add("Replay descriptor entry count must match trace.");
         if(auditReplay.ReleaseManifestFingerprint!=trace.ReleaseManifestFingerprint)
             errors.Add("Audit replay manifest must match trace.");
-        if(auditReplay.QualityRunId!=trace.Entries[^1].QualityRunId)
+        if(trace.Entries.Count>0 &&
+           auditReplay.QualityRunId!=trace.Entries[^1].QualityRunId)
             errors.Add("Audit replay Quality identity must match trace latest entry.");
         if(restored.Fingerprint!=trace.Fingerprint)
             errors.Add("Trace JSON roundtrip fingerprint must remain stable.");
