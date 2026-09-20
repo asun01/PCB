@@ -163,7 +163,7 @@ public sealed class ClientProductionWorkspace
                 LastFrameCount=report.FrameCount,
                 LastReportFingerprint=report.Fingerprint,
                 LastError=null,
-                TargetFrameCount=report.FrameCount,
+                TargetFrameCount=_definition.FrameCount,
                 FramesProcessed=report.FrameCount,
                 LastSequence=report.Frames.Count==0
                     ? null
