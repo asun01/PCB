@@ -10,5 +10,9 @@
     <ProjectReference Include="../../src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.Evidence/Asun.Platform.Evidence.csproj" />
     <ProjectReference Include="../../src/Asun.Release.Core/Asun.Release.Core.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.PipelineProductionIntegration/Asun.Platform.PipelineProductionIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.SimulationIntegration/Asun.Platform.SimulationIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.RenderIntegration/Asun.Platform.RenderIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.QualityReleaseIntegration/Asun.Platform.QualityReleaseIntegration.csproj" />
   </ItemGroup>
 </Project>
