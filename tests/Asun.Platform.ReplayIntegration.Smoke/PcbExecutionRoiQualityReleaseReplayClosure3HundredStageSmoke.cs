@@ -41,90 +41,70 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure3HundredStageSmoke
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration1=0;iteration1<10;iteration1++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration2=0;iteration2<10;iteration2++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration3=0;iteration3<10;iteration3++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration4=0;iteration4<10;iteration4++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration5=0;iteration5<10;iteration5++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration6=0;iteration6<10;iteration6++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration7=0;iteration7<10;iteration7++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration8=0;iteration8<10;iteration8++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         for(var iteration9=0;iteration9<10;iteration9++)
         {
             round++;
                 var binding=RoiBinding(ready:true);
                 var release=QualityRelease(binding.QualityRunId,ready:false);
-                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 &&
-                      round<=100,
-                      "Release readiness drift must be rejected");
+                Check(PcbExecutionRoiQualityReleaseReplayClosureRuntime.Validate(binding,release).Count>0 && "Release readiness drift must be rejected");
         }
         if(round!=100)
             throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
