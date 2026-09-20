@@ -24,7 +24,7 @@ public static class QualityFindingEvidenceReplayDescriptor1HundredStageSmoke
                         new QualityFinding(secondFindingId,"AOI.PAD.MISSING",QualityOutcome.Fail,QualitySeverity.Minor,"Pad missing")}),
                     new QualityFindingEvidenceSet(new[]{
                         new QualityFindingEvidenceLink(findingId,firstKey),
-                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))}});
+                        new QualityFindingEvidenceLink(secondFindingId,secondKey)})))});
         var bindings=new[]{
             new QualityEvidenceHandleBinding(findingId,firstKey,EvidenceHandle.Create("evidence/frame/10/component")),
             new QualityEvidenceHandleBinding(secondFindingId,secondKey,EvidenceHandle.Create("evidence/frame/10/pad"))};
