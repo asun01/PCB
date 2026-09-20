@@ -2482,3 +2482,13 @@ Current completed boundary: **36,000**
 Next executable stage: **36,001**
 
 The one-million-stage horizon remains unchanged at 2501–1,002,500.
+
+
+## Execution checkpoint: Stage 36500 — 2026-09-20
+
+Closed unified execution → Evidence catalog resolution. The opaque evidence layer can now report catalog found/missing facts against the unified execution identity without taking ownership of Evidence storage.
+
+Current completed boundary: **36,500**
+Next executable stage: **36,501**
+
+The one-million-stage horizon remains unchanged at 2501–1,002,500.
