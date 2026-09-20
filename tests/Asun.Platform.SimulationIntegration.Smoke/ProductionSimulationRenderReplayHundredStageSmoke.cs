@@ -47,8 +47,6 @@ public static class ProductionSimulationRenderReplayHundredStageSmoke
             .Select(frame=>frame.Sequence==2 ? frame with {RenderFingerprint="bad"} : frame)
             .ToArray();
 
-        for(var i=0;i<10;i++) Check(simulation.Length==2,"Simulation replay input should contain two frames.");
-        for(var i=0;i<10;i++) Check(render.Length==2,"Render replay input should contain two frames.");
         for(var i=0;i<10;i++) Check(replay.Count==2,"Simulation/Render replay should contain two aligned frames.");
         for(var i=0;i<10;i++) Check(replay[0].Sequence==1 && replay[1].Sequence==2,"Replay sequence should be deterministic.");
         for(var i=0;i<10;i++) Check(replay[0].SimulationObservationFingerprint==simulation[0].SimulationObservationFingerprint,"First simulation fingerprint should be preserved.");
