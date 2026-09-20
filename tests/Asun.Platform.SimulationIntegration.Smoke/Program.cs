@@ -9,6 +9,11 @@ void Check(bool condition,string message)
 await ProductionSimulationReplayBindingHundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderReplayHundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderReplayDescriptorHundredStageSmoke.RunAsync(Check);
+await ProductionSimulationReplayDescriptor1HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationReplayDescriptor2HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationReplayDescriptor3HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationReplayDescriptor4HundredStageSmoke.RunAsync(Check);
+await ProductionSimulationReplayDescriptor5HundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderProvenance1HundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderProvenance2HundredStageSmoke.RunAsync(Check);
 await ProductionSimulationRenderProvenance3HundredStageSmoke.RunAsync(Check);
