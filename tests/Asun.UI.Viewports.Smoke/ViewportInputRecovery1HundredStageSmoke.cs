@@ -31,6 +31,7 @@ public static class ViewportInputRecovery1HundredStageSmoke
         for(var i=0;i<10;i++) Check(active.Backpressure.Accepted==2,"Backpressure snapshot should preserve accepted count.");
         for(var i=0;i<10;i++) Check(active.Backpressure.Capacity==2,"Backpressure capacity should remain bounded.");
         for(var i=0;i<10;i++) Check(!active.Submission.IsCompleted && !active.Backpressure.IsCompleted,"Active snapshot should not report terminal input state.");
+        for(var i=0;i<10;i++) Check(active.Backpressure.Dropped>=0,"Backpressure drop accounting should remain non-negative.");
 
         runtime.Complete();
         snapshot=runtime.Capture();
