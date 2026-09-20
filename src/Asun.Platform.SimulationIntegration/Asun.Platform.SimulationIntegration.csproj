@@ -11,5 +11,6 @@
     <ProjectReference Include="../../src/Asun.Platform.RenderIntegration/Asun.Platform.RenderIntegration.csproj" />
     <ProjectReference Include="../../src/Asun.Program.Core/Asun.Program.Core.csproj" />
     <ProjectReference Include="../../src/Asun.Device.Impl/Asun.Device.Impl.csproj" />
+    <ProjectReference Include="../../src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
   </ItemGroup>
 </Project>
