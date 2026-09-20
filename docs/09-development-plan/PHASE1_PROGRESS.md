@@ -2769,3 +2769,26 @@ Next executable stage: **51,501**
 - Added five stage ledgers and the 73501–74000 integration checkpoint.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 74500 — 2026-09-20
+
+- Completed boundary: **74,500**
+- Next executable stage: **74,501**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 74001–74500: **Production Session -> Client ROI Workspace -> ROI Input Recovery -> ROI Document -> Production/ROI Context**.
+- Added `ClientRoiInteractionWorkspace` and five exact-100-round ROI client Smoke matrices.
+- Static audit passed: every new ROI matrix has 10 loop groups, 10 actual Check call sites, round==100, balanced delimiters, no TODO/NotImplementedException, and no tautological Check(true).
+- Added five stage ledgers and the 74001–74500 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
+## Live execution synchronization — Stage 75000 — 2026-09-20
+
+- Completed boundary: **75,000**
+- Next executable stage: **75,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 74501–75000: **WPF ROI Surface -> WPF Input Adapter -> Client ROI Workspace -> ROI Snapshot -> Visual Rectangle Projection**.
+- Added `WpfRoiInputAdapter` and wired the WPF Shell to actual pointer-driven ROI Select/Create interaction and visual rectangle feedback.
+- Added explicit ROI mode commands, viewport resize propagation, Escape handling, and ROI status display.
+- The WPF surface is explicitly a vendor-neutral development host; final DevExpress/Skia integration remains an external authority/environment gate.
+- Added five stage ledgers and the 74501–75000 integration checkpoint.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
