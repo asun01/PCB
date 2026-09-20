@@ -55,11 +55,10 @@ internal static class ProductionCapturePcbAuditReplayConvergenceSmokeFixtures
             pcbAuditReplay,
             manifest);
 
-        return (baseFixture is { } ?
-            ProductionCaptureEvidenceAuditReplayConvergenceRuntime.Create(
-                baseFixture.Binding,
-                baseFixture.Descriptor) :
-            throw new InvalidOperationException(),
-            pcb);
+        var capture=ProductionCaptureEvidenceAuditReplayConvergenceRuntime.Create(
+            baseFixture.Binding,
+            baseFixture.Descriptor);
+
+        return (capture,pcb);
     }
 }
