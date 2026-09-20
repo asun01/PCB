@@ -7,6 +7,11 @@ void Check(bool condition,string message)
 }
 
 await QualityReleaseFactProjectionHundredStageSmoke.RunAsync(Check);
+await QualityReleaseReplayDescriptor1HundredStageSmoke.RunAsync(Check);
+await QualityReleaseReplayDescriptor2HundredStageSmoke.RunAsync(Check);
+await QualityReleaseReplayDescriptor3HundredStageSmoke.RunAsync(Check);
+await QualityReleaseReplayDescriptor4HundredStageSmoke.RunAsync(Check);
+await QualityReleaseReplayDescriptor5HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
