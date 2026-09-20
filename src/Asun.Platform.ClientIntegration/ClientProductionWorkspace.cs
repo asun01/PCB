@@ -83,6 +83,10 @@ public sealed class ClientProductionWorkspace
 
     public ClientWorkspaceSnapshot Snapshot=>_snapshot;
 
+    public event Action<ClientWorkspaceSnapshot>? Changed;
+
+    private void Publish() => Changed?.Invoke(_snapshot);
+
     public void Load(ProductionSessionDefinition definition)
     {
         ArgumentNullException.ThrowIfNull(definition);
@@ -103,6 +107,7 @@ public sealed class ClientProductionWorkspace
             FramesProcessed=0,
             LastSequence=null
         };
+        Publish();
     }
 
     public async ValueTask<ProductionSessionReport> StartAsync(
@@ -118,6 +123,7 @@ public sealed class ClientProductionWorkspace
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         _activeCancellation=linked;
         _snapshot=_snapshot with { Status=ClientExecutionStatus.Running,LastError=null };
+        Publish();
 
         try
         {
@@ -138,11 +144,13 @@ public sealed class ClientProductionWorkspace
                     ? null
                     : report.Frames.MaxBy(frame=>frame.Sequence.Value)!.Sequence
             };
+            Publish();
             return report;
         }
         catch(OperationCanceledException)
         {
             _snapshot=_snapshot with { Status=ClientExecutionStatus.Cancelled };
+            Publish();
             throw;
         }
         catch(Exception exception)
@@ -152,6 +160,7 @@ public sealed class ClientProductionWorkspace
                 Status=ClientExecutionStatus.Failed,
                 LastError=exception.Message
             };
+            Publish();
             throw;
         }
         finally
@@ -171,6 +180,7 @@ public sealed class ClientProductionWorkspace
             TargetFrameCount=progress.TotalFrames,
             LastSequence=progress.LastSequence
         };
+        Publish();
     }
 
     public void Cancel()=>
@@ -194,5 +204,6 @@ public sealed class ClientProductionWorkspace
             FramesProcessed=0,
             LastSequence=null
         };
+        Publish();
     }
 }
