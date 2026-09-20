@@ -11,13 +11,31 @@ public interface IProductionSessionRunner
         CancellationToken cancellationToken=default);
 }
 
-public sealed class ProductionSessionRuntimeAdapter : IProductionSessionRunner
+public interface IProductionSessionProgressRunner
+{
+    ValueTask<ProductionSessionReport> RunAsync(
+        ProductionSessionDefinition definition,
+        IFrameSource source,
+        IProgress<ProductionSessionProgress> progress,
+        CancellationToken cancellationToken=default);
+}
+
+public sealed class ProductionSessionRuntimeAdapter :
+    IProductionSessionRunner,
+    IProductionSessionProgressRunner
 {
     public ValueTask<ProductionSessionReport> RunAsync(
         ProductionSessionDefinition definition,
         IFrameSource source,
         CancellationToken cancellationToken=default)=>
         ProductionSessionRuntime.RunAsync(definition,source,cancellationToken);
+
+    public ValueTask<ProductionSessionReport> RunAsync(
+        ProductionSessionDefinition definition,
+        IFrameSource source,
+        IProgress<ProductionSessionProgress> progress,
+        CancellationToken cancellationToken=default)=>
+        ProductionSessionRuntime.RunAsync(definition,source,cancellationToken,progress);
 }
 
 public enum ClientExecutionStatus
@@ -37,7 +55,12 @@ public sealed record ClientWorkspaceSnapshot(
     ClientExecutionStatus Status,
     int LastFrameCount,
     string? LastReportFingerprint,
-    string? LastError);
+    string? LastError)
+{
+    public int TargetFrameCount { get; init; }
+    public int FramesProcessed { get; init; }
+    public FrameSequence? LastSequence { get; init; }
+};
 
 public sealed class ClientProductionWorkspace
 {
@@ -93,7 +116,11 @@ public sealed class ClientProductionWorkspace
 
         try
         {
-            var report=await _runner.RunAsync(_definition,source,linked.Token);
+            var progress=new Progress<ProductionSessionProgress>(UpdateProgress);
+
+            var report= _runner is IProductionSessionProgressRunner progressRunner
+                ? await progressRunner.RunAsync(_definition,source,progress,linked.Token)
+                : await _runner.RunAsync(_definition,source,linked.Token);
             _snapshot=_snapshot with
             {
                 Status=ClientExecutionStatus.Completed,
@@ -123,6 +150,19 @@ public sealed class ClientProductionWorkspace
         }
     }
 
+    private void UpdateProgress(ProductionSessionProgress progress)
+    {
+        if(progress.SessionId!=_snapshot.ActiveSessionId)
+            return;
+
+        _snapshot=_snapshot with
+        {
+            FramesProcessed=progress.CompletedFrames,
+            TargetFrameCount=progress.TotalFrames,
+            LastSequence=progress.LastSequence
+        };
+    }
+
     public void Cancel()=>
         _activeCancellation?.Cancel();
 
@@ -138,6 +178,11 @@ public sealed class ClientProductionWorkspace
             ClientExecutionStatus.Idle,
             0,
             null,
-            null);
+            null)
+        {
+            TargetFrameCount=0,
+            FramesProcessed=0,
+            LastSequence=null
+        };
     }
 }
