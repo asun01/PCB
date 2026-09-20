@@ -3076,3 +3076,15 @@ Next executable stage: **51,501**
 - Static audit passed: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 77000 — 2026-09-20
+
+- Completed boundary: **77,000**
+- Next executable stage: **77,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 76501–77000: **Production Frame Metadata -> Client Last Frame Dimensions -> ROI Image Size -> ViewportTransform Fit -> WPF Frame Preview / ROI Host**.
+- Production progress now carries actual Width, Height, and PixelFormat into ClientProductionWorkspace.
+- ClientInspectionWorkspace rebinds ROI image coordinates to the latest completed frame dimensions, eliminating the former fixed 100×100 assumption after actual frame metadata is known.
+- Added five exact-100-round Production frame-metadata matrices and five ROI image-size matrices, five stage ledgers, and the 76501–77000 checkpoint.
+- Static audit passed: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
