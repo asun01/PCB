@@ -6,12 +6,12 @@ namespace Asun.Platform.ClientIntegration.Smoke;
 
 public static class ClientProductionProgress1HundredStageSmoke
 {
-    private sealed class BlockingProgressRunner : IProductionSessionRunner, IProductionSessionProgressRunner
+    private class BlockingProgressRunner : IProductionSessionRunner, IProductionSessionProgressRunner
     {
-        public readonly TaskCompletionSource Reported =
+        public readonly TaskCompletionSource<bool> Reported =
             new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        public TaskCompletionSource? Gate { get; set; }
+        public TaskCompletionSource<bool>? Gate { get; set; }
 
         public ValueTask<ProductionSessionReport> RunAsync(
             ProductionSessionDefinition definition,
@@ -30,7 +30,7 @@ public static class ClientProductionProgress1HundredStageSmoke
                 1,
                 definition.FrameCount,
                 FrameSequence.Create(1)));
-            Reported.TrySetResult();
+            Reported.TrySetResult(true);
 
             if(Gate is not null)
                 await Gate.Task.WaitAsync(cancellationToken);
