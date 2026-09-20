@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -26,7 +27,7 @@
                 AutomationProperties.AutomationId="Shell.Subtitle"
                 FontSize="14"
                 Opacity="0.72"
-                Text="Bootstrap shell · .NET 10 · WPF" />
+                Text="Client shell · .NET 10 · WPF" />
         </StackPanel>
 
         <Border
@@ -39,16 +40,49 @@
                 <TextBlock
                     AutomationProperties.AutomationId="Shell.StatusLabel"
                     FontWeight="SemiBold"
-                    Text="Repository bootstrap status" />
+                    Text="Client workspace" />
                 <TextBlock
+                    x:Name="WorkspaceStatus"
                     Margin="0,6,0,0"
-                    AutomationProperties.AutomationId="Shell.StatusValue"
-                    Text="Ready — vendor-neutral shell boundary is running." />
+                    AutomationProperties.AutomationId="Shell.WorkspaceStatus"
+                    Text="Idle — no production session loaded." />
             </StackPanel>
         </Border>
 
         <Border
             Grid.Row="2"
+            Margin="0,16,0,0"
+            Padding="16"
+            BorderThickness="1"
+            CornerRadius="6">
+            <StackPanel>
+                <TextBlock
+                    FontWeight="SemiBold"
+                    Text="Deterministic simulation" />
+                <TextBlock
+                    Margin="0,4,0,12"
+                    Opacity="0.72"
+                    Text="Development-only path. It uses the vendor-neutral Production Runtime with a deterministic simulated frame source; it does not claim hardware or HALCON execution." />
+                <StackPanel Orientation="Horizontal">
+                    <Button
+                        x:Name="RunSimulationButton"
+                        Width="180"
+                        Height="32"
+                        Click="RunSimulationButton_Click"
+                        Content="Run Simulation"
+                        AutomationProperties.AutomationId="Shell.RunSimulation" />
+                    <TextBlock
+                        x:Name="SimulationStatus"
+                        Margin="16,7,0,0"
+                        VerticalAlignment="Center"
+                        AutomationProperties.AutomationId="Shell.SimulationStatus"
+                        Text="Ready." />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border
+            Grid.Row="3"
             Margin="0,16,0,0"
             Padding="20"
             BorderThickness="1"
@@ -66,7 +100,7 @@
                     TextAlignment="Center"
                     TextWrapping="Wrap"
                     Opacity="0.72"
-                    Text="Feature workspaces and production commands are intentionally not bound here yet. They will enter through approved Application Ports and PageContracts after the corresponding authority gates are closed." />
+                    Text="Production commands enter through the vendor-neutral Client Integration boundary. Hardware, HALCON, and DevExpress authority remain isolated behind their recorded environment gates." />
             </StackPanel>
         </Border>
     </Grid>
