@@ -58,6 +58,8 @@ for(var i=0;i<10;i++) Check(binding.ProductionInputFingerprint==qualityBinding.P
 for(var i=0;i<10;i++) Check(binding.CalibrationFingerprint==qualityBinding.CalibrationFingerprint,"Baseline calibration identity should remain stable.");
 for(var i=0;i<10;i++) Check(binding.EvidenceHandleCount==evidenceBindings.Length,"Baseline evidence count should remain aligned.");
 for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Baseline binding fingerprint should remain fixed width.");
+for(var i=0;i<10;i++) Check(binding.EvidenceHandleCount==evidenceBindings.Length,"Baseline evidence count should remain aligned.");
+for(var i=0;i<10;i++) Check(binding.Fingerprint.Length==64,"Baseline binding fingerprint should remain fixed width.");
         assert(round==100,$"ProductionMeasurementQualityEvidenceBinding3HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
         return ValueTask.CompletedTask;
     }
