@@ -90,6 +90,23 @@ public partial class MainWindow : System.Windows.Window
         RefreshDiagnosticStatus();
     }
 
+    private void RunHistoryList_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if(e.AddedItems.Count==0)
+            return;
+
+        if(e.AddedItems[0] is ClientRunHistoryDisplayItem item &&
+           _client.SelectHistory(item.Ordinal))
+        {
+            ResultStatus.Text=$"Historical run · #{item.Ordinal}";
+            ResultSession.Text=$"{item.SessionText} · {item.FrameText}";
+            ResultReplay.Text=item.ReplayText;
+            ResultRelease.Text=item.ReleaseText;
+        }
+    }
+
     private void ProgramStepList_SelectionChanged(
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
@@ -555,7 +572,11 @@ public partial class MainWindow : System.Windows.Window
     {
         var history=_client.History;
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
-        RunHistoryList.ItemsSource=ClientRunHistoryPresentationRuntime.CreateItems(history,5);
+        var items=ClientRunHistoryPresentationRuntime.CreateItems(history,5);
+        RunHistoryList.ItemsSource=items;
+
+        if(_client.SelectedHistoryOrdinal is long selected)
+            RunHistoryList.SelectedItem=items.FirstOrDefault(item=>item.Ordinal==selected);
     }
 
     private void RefreshWorkspaceStatus()
