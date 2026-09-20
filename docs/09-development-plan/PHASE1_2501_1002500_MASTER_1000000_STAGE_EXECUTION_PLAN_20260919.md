@@ -2598,3 +2598,12 @@ Current completed boundary: **40,500**
 Next executable stage: **40,501**
 
 The one-million-stage horizon remains 2,501–1,002,500.
+
+## Execution checkpoint: Stage 41000 — 2026-09-20
+
+Closed 40501–41000 as Viewport bounded input backpressure lifecycle integration. The Presentation input path now has bounded capacity, explicit drop accounting, lifecycle state, finite coordinate validation, and a registered acceptance Smoke. Five 100-stage ledgers and the 500-stage integration checkpoint are present. No authoritative build/test/CI success is inferred.
+
+Current completed boundary: **41,000**
+Next executable stage: **41,001**
+
+The one-million-stage horizon remains 2,501–1,002,500.
