@@ -30,8 +30,7 @@ public static class PcbEvidenceReleaseAuditTraceJson1HundredStageSmoke
         var restored=PcbEvidenceReleaseAuditTraceJsonRuntime.FromJson(serialized);
         var tampered=serialized.Replace("\\"formatVersion\\":1","\\"formatVersion\\":2",StringComparison.Ordinal);
 
-        for(var i=0;i<10;i++) Check(serialized.Contains("formatVersion",StringComparison.Ordinal),"Serialized trace should carry an explicit format version.");
-        for(var i=0;i<10;i++) Check(serialized.Contains("integrityHash",StringComparison.Ordinal),"Serialized trace should carry an integrity hash.");
+        for(var i=0;i<10;i++) Check(serialized.Contains("formatVersion",StringComparison.Ordinal) && serialized.Contains("integrityHash",StringComparison.Ordinal),"Serialized trace should carry explicit schema version and integrity metadata.");
         for(var i=0;i<10;i++) Check(restored.Fingerprint==appended.Fingerprint,"JSON roundtrip should preserve trace fingerprint.");
         for(var i=0;i<10;i++) Check(restored.Entries.Count==2,"JSON roundtrip should preserve bounded trace entry count.");
         for(var i=0;i<10;i++) Check(restored.Entries[1].Sequence==2,"JSON roundtrip should preserve sequence ordering.");
