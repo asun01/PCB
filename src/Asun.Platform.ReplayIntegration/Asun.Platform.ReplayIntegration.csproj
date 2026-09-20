@@ -15,5 +15,6 @@
     <ProjectReference Include="../../src/Asun.Platform.RenderIntegration/Asun.Platform.RenderIntegration.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.QualityReleaseIntegration/Asun.Platform.QualityReleaseIntegration.csproj" />
     <ProjectReference Include="../../src/Asun.Platform.ReleaseIntegration/Asun.Platform.ReleaseIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.PcbExecutionIntegration/Asun.Platform.PcbExecutionIntegration.csproj" />
   </ItemGroup>
 </Project>
