@@ -107,6 +107,22 @@ public partial class MainWindow : System.Windows.Window
         }
     }
 
+    private void QualityFindingList_SelectionChanged(
+        object sender,
+        System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if(e.AddedItems.Count==0)
+            return;
+
+        if(e.AddedItems[0] is ClientQualityFindingDisplayItem item &&
+           _client.SelectQualityFinding(item.FindingId))
+        {
+            QualityFindingDetails.Text=
+                $"{item.RuleCode} · {item.Outcome} · {item.Severity}\n" +
+                $"Evidence links: {item.EvidenceCount}\n{item.Message}";
+        }
+    }
+
     private void ProgramStepList_SelectionChanged(
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
@@ -546,12 +562,17 @@ public partial class MainWindow : System.Windows.Window
             QualityStatus.Text=
                 "Quality Run: not attached. Quality facts remain outside this client projection until an authoritative Quality run is available.";
             QualityFindingList.ItemsSource=Array.Empty<ClientQualityFindingDisplayItem>();
+            QualityFindingDetails.Text="No Quality finding selected.";
             return;
         }
 
         QualityStatus.Text=
             $"Quality Run {quality.RunId} · Results {quality.ResultCount} · Findings {quality.FindingCount} · Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount} · Evidence links {quality.EvidenceLinkCount}.";
         QualityFindingList.ItemsSource=quality.Findings;
+
+        if(quality.SelectedFindingId is string selected)
+            QualityFindingList.SelectedItem=quality.Findings
+                .FirstOrDefault(item=>item.FindingId==selected);
     }
 
     private void RefreshDiagnosticStatus(
