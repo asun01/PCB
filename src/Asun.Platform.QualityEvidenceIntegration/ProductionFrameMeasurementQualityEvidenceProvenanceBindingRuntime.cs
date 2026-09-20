@@ -1,7 +1,5 @@
 using System.Security.Cryptography;
 using System.Text;
-using Asun.Platform.MeasurementQualityIntegration;
-
 namespace Asun.Platform.QualityEvidenceIntegration;
 
 public sealed record ProductionFrameMeasurementQualityEvidenceProvenanceBinding(
@@ -55,14 +53,6 @@ public static class ProductionFrameMeasurementQualityEvidenceProvenanceBindingRu
         ArgumentNullException.ThrowIfNull(evidenceBinding);
 
         var errors=new List<string>();
-        if(!ProductionFrameMeasurementQualityProvenanceBindingRuntime.IsValid(
-            GetFrameBinding(qualityProvenanceBinding),
-            GetQualityEvaluationPlaceholder(qualityProvenanceBinding)))
-        {
-            // The authoritative upstream validation is performed when the source binding is created.
-            // This bridge only validates the carried identities below.
-        }
-
         if(qualityProvenanceBinding.Sequence!=evidenceBinding.Sequence)
             errors.Add("Quality/evidence sequence must match frame/measurement/quality provenance.");
         if(qualityProvenanceBinding.ProductionInputFingerprint!=evidenceBinding.ProductionInputFingerprint)
@@ -101,7 +91,4 @@ public static class ProductionFrameMeasurementQualityEvidenceProvenanceBindingRu
     private static string Hash(string value)=>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
 
-    // The bridge intentionally treats upstream source bindings as opaque validated facts.
-    private static object GetFrameBinding(ProductionFrameMeasurementQualityProvenanceBinding value)=>value;
-    private static object GetQualityEvaluationPlaceholder(ProductionFrameMeasurementQualityProvenanceBinding value)=>value;
 }
