@@ -9,7 +9,7 @@ namespace Asun.App.Shell.Bootstrap;
 
 public sealed class WpfRoiInputAdapter
 {
-    private readonly ClientRoiInteractionWorkspace _workspace;
+    private readonly ClientInspectionWorkspace _workspace;
     private readonly FrameworkElement _host;
 
     public WpfRoiInputAdapter(
@@ -32,7 +32,7 @@ public sealed class WpfRoiInputAdapter
             ? ViewportMouseButton.Right
             : ViewportMouseButton.Left;
 
-        return _workspace.Submit(
+        return _workspace.SubmitRoiInput(
             ViewportInputEventKind.PointerDown,
             point,
             button:button);
