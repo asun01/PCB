@@ -97,3 +97,22 @@ Historical commits are evidence of history only; active completion is determined
 - Next: 18,001
 - Global horizon: 2,501–1,002,500
 - Active non-blocked execution window: 4,501–104,500
+
+## 100,000-stage macro-batch execution rule — effective 2026-09-20
+
+The previous 500-stage grouping is retained as an **internal quality-control cell**, not as the maximum autonomous execution size.
+
+The execution hierarchy is now:
+
+- **100,000 stages = one macro-batch**: the primary planning and continuous-execution unit.
+- **500 stages = one integration checkpoint cell**: used for concrete cross-chain closure, five 100-stage ledgers, and a checkpoint document inside the macro-batch.
+- **100 stages = one acceptance cell**: requires real executable work, invalid-state handling, an exact 100-round Smoke, registration/static audit, and a ledger.
+- **10-round loops = Smoke implementation discipline**: ten meaningful Check call sites, explicit round == 100, balanced delimiters, no TODO/NotImplementedException, and no tautological assertions.
+
+The macro-batch therefore does **not** mean that 100,000 files/tasks are fabricated in advance or that one tool call must contain 100,000 mutations. It means the autonomous execution horizon is planned and rotated as a 100,000-stage product program while implementation is continuously committed through the internal 500/100 acceptance cells.
+
+Within each 100,000-stage macro-batch, product chains continue to rotate dynamically. A chain may be revisited whenever a real cross-module dependency or integration bottleneck appears; the macro-batch is a horizon, not a promise to execute one subsystem for 100,000 consecutive stages.
+
+The current global horizon remains 2501–1,002,500, so it is naturally partitioned into ten 100,000-stage macro-batches (with the final residual 2,500 stages handled as the closing macro-batch).
+
+Historical 500-stage checkpoints remain valid evidence and are not rewritten. This rule changes the **future execution cadence**, not the historical stage accounting.
