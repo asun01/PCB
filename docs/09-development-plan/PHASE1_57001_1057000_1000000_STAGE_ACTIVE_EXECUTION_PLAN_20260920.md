@@ -5,8 +5,8 @@
 - Start: **57,001**
 - End: **1,057,000**
 - Size: **1,000,000 stages**
-- Completed before this interval: **57,000**
-- Next executable stage: **57,001**
+- Completed before this interval: **63,500**
+- Next executable stage: **63,501**
 
 This is the active autonomous execution interval requested for the continuing PCB product-chain development. Existing historical stage numbers and checkpoints are not rewritten.
 
@@ -34,6 +34,6 @@ Static source checks may be reported. Local build/test and CI success must only 
 
 ## Current cell
 
-**57001-57500** — Device Capture Session → Production Session Report → Capture/Production Session Reconciliation → Deterministic Replay Identity.
+**63001-63500** — PCB Execution Snapshot → ROI Production Context → Deterministic PCB/ROI Binding.
 
-After closure, continue from **57501** without waiting for another planning request.
+After closure, continue from **63501** without waiting for another planning request.
