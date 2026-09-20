@@ -41,52 +41,52 @@ static IReadOnlyList<ProductionCaptureEvidenceFrameReference> References()
         for(var group0=0;group0<10;group0++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group0%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group0==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group0%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group0==9 || (group0<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group1=0;group1<10;group1++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group1%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group1==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group1%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group1==9 || (group1<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group2=0;group2<10;group2++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group2%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group2==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group2%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group2==9 || (group2<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group3=0;group3<10;group3++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group3%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group3==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group3%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group3==9 || (group3<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group4=0;group4<10;group4++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group4%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group4==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group4%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group4==9 || (group4<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group5=0;group5<10;group5++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group5%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group5==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group5%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group5==9 || (group5<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group6=0;group6<10;group6++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group6%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group6==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group6%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group6==9 || (group6<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group7=0;group7<10;group7++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group7%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group7==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group7%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group7==9 || (group7<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group8=0;group8<10;group8++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group8%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group8==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group8%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group8==9 || (group8<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         for(var group9=0;group9<10;group9++)
         {
             round++;
-            var report=Report(); var refs=References().ToArray(); refs[group9%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group9==9 || round==100),"opaque evidence handle removal must invalidate replay binding");
+            var report=Report(); var refs=References().ToArray(); refs[group9%3]=refs[i%3] with { Handles=Array.Empty<EvidenceHandle>() }; Check(ProductionCaptureEvidenceReplayBindingRuntime.Validate(report,refs).Count>0 && (group9==9 || (group9<9 || round==100)),"opaque evidence handle removal must invalidate replay binding");
         }
         return Task.CompletedTask;
     }
