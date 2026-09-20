@@ -126,9 +126,9 @@ public static class PcbExecutionRoiQualityReleaseReplayClosure4HundredStageSmoke
                 var tampered=closure with { RoiBindingFingerprint=H('z') };
                 Check(!PcbExecutionRoiQualityReleaseReplayClosureRuntime.IsValidClosure(binding,release,tampered) && "ROI binding identity tamper must be rejected");
         }
-        if(round!=100)
-            throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
+        if(round==100)
+            return Task.CompletedTask;
 
-        return Task.CompletedTask;
+        throw new InvalidOperationException("acceptance matrix must execute exactly 100 rounds");
     }
 }
