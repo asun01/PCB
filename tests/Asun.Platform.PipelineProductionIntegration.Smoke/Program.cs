@@ -7,6 +7,7 @@ void Check(bool condition,string message)
 }
 
 await ProductionPipelineReplayAuditHundredStageSmoke.RunAsync(Check);
+await ProductionPipelineReleaseHandoffHundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
