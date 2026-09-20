@@ -43,13 +43,13 @@ public static class ClientProgramWorkspace5HundredStageSmoke
             round++;
             var workspace=new ClientProgramWorkspace();
             workspace.Load(Program());
-            Check(workspace.Snapshot.Status==ClientProgramLoadStatus.Ready,
-                  "program should be Ready before reset");
+            var readyBeforeReset=workspace.Snapshot.Status==ClientProgramLoadStatus.Ready;
             workspace.Reset();
-            Check(workspace.Snapshot.Status==ClientProgramLoadStatus.Empty &&
+            Check(readyBeforeReset &&
+                  workspace.Snapshot.Status==ClientProgramLoadStatus.Empty &&
                   workspace.Snapshot.ProgramId is null &&
                   workspace.ExecutionPlan is null,
-                  "reset must clear the presentation program boundary");
+                  "program must be Ready before reset and Empty afterward");
         }
         for(var iteration1=0;iteration1<10;iteration1++)
         {
