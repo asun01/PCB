@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Asun.Domain.Pcb/Asun.Domain.Pcb.csproj" />
+    <ProjectReference Include="../../src/Asun.Production.Runtime/Asun.Production.Runtime.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.MetrologyProductionIntegration/Asun.Platform.MetrologyProductionIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.PipelineProductionIntegration/Asun.Platform.PipelineProductionIntegration.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.Evidence/Asun.Platform.Evidence.csproj" />
+    <ProjectReference Include="../../src/Asun.Domain.Quality/Asun.Domain.Quality.csproj" />
+    <ProjectReference Include="../../src/Asun.Platform.QualityEvidenceIntegration/Asun.Platform.QualityEvidenceIntegration.csproj" />
+  </ItemGroup>
+</Project>
