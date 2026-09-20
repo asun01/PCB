@@ -6,7 +6,11 @@ public sealed record ClientProgramDisplayItem(
     int Order,
     string Name,
     string Kind,
-    int ParameterCount);
+    int ParameterCount)
+{
+    public Guid StepId { get; init; }
+    public string ParameterSummary { get; init; }="";
+};
 
 public static class ClientProgramPresentationRuntime
 {
@@ -29,7 +33,15 @@ public static class ClientProgramPresentationRuntime
                 step.Order,
                 step.Name,
                 step.Kind.ToString(),
-                step.Parameters.Count))
+                step.Parameters.Count)
+            {
+                StepId=step.StepId,
+                ParameterSummary=string.Join(
+                    ", ",
+                    step.Parameters
+                        .OrderBy(parameter=>parameter.Key,StringComparer.Ordinal)
+                        .Select(parameter=>$"{parameter.Key}={parameter.Value}"))
+            })
             .ToArray();
     }
 
