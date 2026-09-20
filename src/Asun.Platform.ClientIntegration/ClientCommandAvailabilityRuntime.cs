@@ -6,7 +6,9 @@ public sealed record ClientCommandAvailability(
     bool CanCancel,
     bool CanReset,
     bool CanSelectRoi,
-    bool CanCreateRoi);
+    bool CanCreateRoi,
+    bool CanUndoRoi,
+    bool CanRedoRoi);
 
 public static class ClientCommandAvailabilityRuntime
 {
@@ -18,25 +20,25 @@ public static class ClientCommandAvailabilityRuntime
         return snapshot.Production.Status switch
         {
             ClientExecutionStatus.Idle =>
-                new(true,false,false,false,false,false),
+                new(true,false,false,false,false,false,false,false),
 
             ClientExecutionStatus.Ready =>
-                new(true,true,false,true,false,false),
+                new(true,true,false,true,false,false,false,false),
 
             ClientExecutionStatus.Running =>
-                new(false,false,true,false,false,false),
+                new(false,false,true,false,false,false,false,false),
 
             ClientExecutionStatus.Completed =>
-                new(true,true,false,true,true,true),
+                new(true,true,false,true,true,true,snapshot.Roi?.RoiCount>0,false),
 
             ClientExecutionStatus.Cancelled =>
-                new(true,true,false,true,false,false),
+                new(true,true,false,true,false,false,false,false),
 
             ClientExecutionStatus.Failed =>
                 new(true,true,false,true,false,false),
 
             _ =>
-                new(false,false,false,false,false,false)
+                new(false,false,false,false,false,false,false,false)
         };
     }
 }
