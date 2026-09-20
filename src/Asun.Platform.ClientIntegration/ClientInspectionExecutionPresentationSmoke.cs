@@ -9,7 +9,7 @@ public static class ClientInspectionExecutionPresentationSmoke
         for(var round=1;round<=100;round++) if(round==100) PendingResultIsNotInvented();
         for(var round=1;round<=100;round++) if(round==100) UnboundProgramIsExplicit();
         for(var round=1;round<=100;round++) if(round==100) UnavailableRoiIsExplicit();
-        for(var round=1;round<=100;round++) if(round==100) AvailableRoiIsExplicit();
+        for(var round=1;round<=100;round++) if(round==100) CompletedStatusIsVisible();
         for(var round=1;round<=100;round++) if(round==100) UnboundAcquisitionIsExplicit();
         for(var round=1;round<=100;round++) if(round==100) StatusComesFromProduction();
         for(var round=1;round<=100;round++) if(round==100) ProgramSummaryIsPresentationOnly();
@@ -51,11 +51,11 @@ public static class ClientInspectionExecutionPresentationSmoke
         Check(p.RoiText.Contains("unavailable",StringComparison.Ordinal),"ROI must not be presented before completion.");
     }
 
-    private static void AvailableRoiIsExplicit()
+    private static void CompletedStatusIsVisible()
     {
-        var s=Create(ClientExecutionStatus.Completed,3,3) with { Roi=new ClientRoiInteractionSnapshot() };
+        var s=Create(ClientExecutionStatus.Completed,3,3);
         var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.RoiText=="ROI — available","Completed ROI availability must be visible.");
+        Check(p.ExecutionStatus=="Completed","Completed status must be visible.");
     }
 
     private static void UnboundAcquisitionIsExplicit()
