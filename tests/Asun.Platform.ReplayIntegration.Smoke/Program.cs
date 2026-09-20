@@ -29,3 +29,9 @@ await ProductionQualityEvidenceReleaseReplayBinding2HundredStageSmoke.RunAsync(C
 await ProductionQualityEvidenceReleaseReplayBinding3HundredStageSmoke.RunAsync(Check);
 await ProductionQualityEvidenceReleaseReplayBinding4HundredStageSmoke.RunAsync(Check);
 await ProductionQualityEvidenceReleaseReplayBinding5HundredStageSmoke.RunAsync(Check);
+
+await UnifiedReplayClosure1HundredStageSmoke.RunAsync(Check);
+await UnifiedReplayClosure2HundredStageSmoke.RunAsync(Check);
+await UnifiedReplayClosure3HundredStageSmoke.RunAsync(Check);
+await UnifiedReplayClosure4HundredStageSmoke.RunAsync(Check);
+await UnifiedReplayClosure5HundredStageSmoke.RunAsync(Check);
