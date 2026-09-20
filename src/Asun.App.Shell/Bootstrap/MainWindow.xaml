@@ -137,6 +137,23 @@
                         VerticalAlignment="Center"
                         AutomationProperties.AutomationId="Shell.DiagnosticStatus"
                         Text="Diagnostic: not evaluated." />
+                    <ListBox
+                        x:Name="RunHistoryList"
+                        Margin="0,8,0,0"
+                        Height="92"
+                        AutomationProperties.AutomationId="Shell.RunHistoryList">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Width="42" Text="{Binding Ordinal}" />
+                                    <TextBlock Width="250" Text="{Binding SessionText}" />
+                                    <TextBlock Width="92" Text="{Binding FrameText}" />
+                                    <TextBlock Width="220" Text="{Binding ReleaseText}" />
+                                    <TextBlock Text="{Binding ReplayText}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </StackPanel>
             </StackPanel>
         </Border>
