@@ -2018,3 +2018,15 @@ Static source audit passed: 10 loop groups, 10 Check call sites, round==100, bal
 
 Current completed boundary: **42,500**
 Next executable stage: **42,501**
+
+### Execution checkpoint: Stage 43500 — 2026-09-20
+
+Dynamic rotation continued through Render→Evidence and Simulation→Render.
+
+- **42501–43000:** Render frame → opaque Evidence reference. Added `ProductionRenderEvidenceReferenceRuntime`, validation for sequence/render-fingerprint/opaque-handle identity, duplicate and tamper rejection, and registered 100-round Smoke.
+- **43001–43500:** Simulation replay → Render replay. Added `ProductionSimulationRenderReplayRuntime`, explicit SimulationIntegration→RenderIntegration dependency, sequence/fingerprint alignment validation, and registered 100-round Smoke.
+
+Both cells have five 100-stage ledgers and integration checkpoints. Static Smoke audits satisfy the 10-loop / 10-Check / round-100 / delimiter / no-TODO gates. No authoritative build/test/CI success is claimed.
+
+Current completed boundary: **43,500**
+Next executable stage: **43,501**
