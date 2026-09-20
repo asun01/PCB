@@ -339,6 +339,7 @@
                             x:Name="QualityFindingList"
                             Margin="0,8,0,0"
                             Height="100"
+                            SelectionChanged="QualityFindingList_SelectionChanged"
                             AutomationProperties.AutomationId="Shell.QualityFindingList">
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -351,6 +352,11 @@
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
+                        <TextBlock
+                            x:Name="QualityFindingDetails"
+                            Margin="0,8,0,0"
+                            TextWrapping="Wrap"
+                            Text="No Quality finding selected." />
                     </StackPanel>
                 </Border>
                 <Border
