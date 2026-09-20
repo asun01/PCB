@@ -99,6 +99,12 @@
                         VerticalAlignment="Center"
                         AutomationProperties.AutomationId="Shell.ReleaseStatus"
                         Text="Release: not evaluated." />
+                    <TextBlock
+                        x:Name="RunHistoryStatus"
+                        Margin="16,7,0,0"
+                        VerticalAlignment="Center"
+                        AutomationProperties.AutomationId="Shell.RunHistoryStatus"
+                        Text="History: 0 runs." />
                 </StackPanel>
             </StackPanel>
         </Border>
