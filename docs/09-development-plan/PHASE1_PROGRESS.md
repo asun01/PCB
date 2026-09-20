@@ -3112,3 +3112,15 @@ Next executable stage: **51,501**
 - Static audit passed: 10 loop groups, 10 actual Check call sites, explicit round==100, balanced delimiters, no TODO/NotImplementedException.
 - No authoritative build/test/CI success is inferred without direct execution evidence.
 
+## Live execution synchronization — Stage 74000 — 2026-09-20
+
+- Completed boundary: **74,000**
+- Next executable stage: **74,001**
+- Active autonomous execution interval: **57,001–1,057,000**, exactly **1,000,000 stages**.
+- 73501–74000: **Production Runtime -> Frame Progress -> ClientProductionWorkspace Snapshot -> Production Change Event -> WPF Dispatcher Refresh -> Execution Progress Bar**.
+- Added frame-level Production progress reporting with session identity, completed frames, target frames, and last sequence.
+- ClientProductionWorkspace now publishes deterministic state changes and exposes progress through its snapshot.
+- WPF now refreshes Production status/progress through the client event stream and displays a live execution progress bar.
+- Added progress and workspace-event acceptance matrices; static audit caught and repaired the remaining Smoke structural defects before closure.
+- No authoritative build/test/CI success is inferred without direct execution evidence.
+
