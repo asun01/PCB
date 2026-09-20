@@ -168,6 +168,17 @@ await ClientAcquisitionPreview3HundredStageSmoke.RunAsync(Check);
 await ClientAcquisitionPreview4HundredStageSmoke.RunAsync(Check);
 await ClientAcquisitionPreview5HundredStageSmoke.RunAsync(Check);
 
+await ProductionSessionProgressMetadata1HundredStageSmoke.RunAsync(Check);
+await ProductionSessionProgressMetadata2HundredStageSmoke.RunAsync(Check);
+await ProductionSessionProgressMetadata3HundredStageSmoke.RunAsync(Check);
+await ProductionSessionProgressMetadata4HundredStageSmoke.RunAsync(Check);
+await ProductionSessionProgressMetadata5HundredStageSmoke.RunAsync(Check);
+await ClientRoiImageSizeBinding1HundredStageSmoke.RunAsync(Check);
+await ClientRoiImageSizeBinding2HundredStageSmoke.RunAsync(Check);
+await ClientRoiImageSizeBinding3HundredStageSmoke.RunAsync(Check);
+await ClientRoiImageSizeBinding4HundredStageSmoke.RunAsync(Check);
+await ClientRoiImageSizeBinding5HundredStageSmoke.RunAsync(Check);
+
 if(failures.Count>0)
 {
     foreach(var failure in failures)
