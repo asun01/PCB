@@ -6,6 +6,7 @@ namespace Asun.App.Shell.Bootstrap;
 public partial class MainWindow : System.Windows.Window
 {
     private readonly ClientProductionWorkspace _workspace=new();
+    private readonly ClientProductionRunHistory _runHistory=new(20);
 
     public MainWindow()
     {
@@ -24,6 +25,7 @@ public partial class MainWindow : System.Windows.Window
             SimulationStatus.Text="Simulation session loaded.";
             ReleaseStatus.Text="Release: not evaluated.";
             RefreshWorkspaceStatus();
+            RefreshRunHistoryStatus();
         }
         catch(Exception exception)
         {
@@ -64,7 +66,9 @@ public partial class MainWindow : System.Windows.Window
             ReleaseStatus.Text=release.ReleaseReady
                 ? $"Release: Ready · {release.ArtifactPath}"
                 : "Release: Not ready.";
+            _runHistory.Append(replay,release);
             RefreshWorkspaceStatus();
+            RefreshRunHistoryStatus();
         }
         catch(OperationCanceledException)
         {
@@ -94,6 +98,13 @@ public partial class MainWindow : System.Windows.Window
         SimulationStatus.Text="Ready.";
         ReleaseStatus.Text="Release: not evaluated.";
         RefreshWorkspaceStatus();
+        RefreshRunHistoryStatus();
+    }
+
+    private void RefreshRunHistoryStatus()
+    {
+        var history=_runHistory.Capture();
+        RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
     }
 
     private void RefreshWorkspaceStatus()
