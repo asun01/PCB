@@ -67,6 +67,21 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _production.Cancel();
     }
 
+    public event Action<ClientWorkspaceSnapshot>? ProductionChanged
+    {
+        add
+        {
+            ThrowIfDisposed();
+            _production.Changed+=value;
+        }
+        remove
+        {
+            if(Volatile.Read(ref _disposed)!=0)
+                return;
+            _production.Changed-=value;
+        }
+    }
+
     public ClientWorkspaceSnapshot Production
     {
         get
