@@ -44,6 +44,8 @@ public static class ProductionPipelineExecutionIdentity4HundredStageSmoke
         for(var i=0;i<10;i++) Check(identity.Fingerprint.All(Uri.IsHexDigit),"Execution fingerprint should be hexadecimal.");
         for(var i=0;i<10;i++) Check(identity.PipelineFingerprint.All(Uri.IsHexDigit),"Pipeline fingerprint should be hexadecimal.");
         for(var i=0;i<10;i++) Check(ProductionPipelineExecutionIdentityRuntime.IsValid(definition,production,identity),"Baseline identity should remain valid.");
+for(var i=0;i<10;i++) Check(ProductionPipelineExecutionIdentityRuntime.Create(definition,production).SessionId==production.SessionId,"Recreated execution identity should preserve the session identity.");
+
         assert(round==100,$"ProductionPipelineExecutionIdentity4HundredStageSmoke should execute exactly 100 numbered rounds; actual {round}.");
     }
 }
