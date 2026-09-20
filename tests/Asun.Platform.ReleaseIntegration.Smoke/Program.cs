@@ -23,3 +23,9 @@ if(failures.Count>0)
 
 Console.WriteLine("Asun.Platform.ReleaseIntegration smoke tests passed.");
 return 0;
+
+await ProductionMeasurementQualityEvidenceReleaseBinding1HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceReleaseBinding2HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceReleaseBinding3HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceReleaseBinding4HundredStageSmoke.RunAsync(Check);
+await ProductionMeasurementQualityEvidenceReleaseBinding5HundredStageSmoke.RunAsync(Check);
