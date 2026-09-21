@@ -214,6 +214,19 @@ public sealed class ClientInspectionWorkspace : IDisposable
         };
     }
 
+    public ClientInspectionWorkspaceSnapshot CaptureValidated()
+    {
+        ThrowIfDisposed();
+
+        var snapshot=Capture();
+        var errors=ClientInspectionWorkflowIntegrityRuntime.Validate(snapshot);
+        if(errors.Count>0)
+            throw new InvalidOperationException(
+                string.Join(" ",errors));
+
+        return snapshot;
+    }
+
     public ClientProgramWorkspaceSnapshot LoadProgram(
         Asun.Program.Core.InspectionProgram program,
         Asun.Platform.Pipeline.PipelineDefinition<Asun.Device.Contracts.CapturedFrame> pipeline,
@@ -604,7 +617,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private void PublishChanged()
     {
         ProductionChanged?.Invoke(_production.Snapshot);
-        _changed?.Invoke(Capture());
+        _changed?.Invoke(CaptureValidated());
     }
 
     private void PublishRoiChanged()
