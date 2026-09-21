@@ -112,11 +112,20 @@ public static class ClientQualityCommandSmoke
     private static void CallerRoutingIsAuthoritative()
     {
         using var workspace=CreateWorkspace();
-        var routing=Routing(ClientWorkspaceKind.Quality,true,true);
-        Check(routing.Workspace==ClientWorkspaceKind.Quality &&
+        var routing=Routing(ClientWorkspaceKind.Quality,true,true) with
+        {
+            CanEvaluateSimulationQuality=false
+        };
+        var rejected=ExpectInvalidOperation(() =>
+            ClientQualityCommandRuntime.EvaluateProvider(
+                workspace,
+                routing,
+                "simulation"));
+        Check(rejected &&
+              routing.Workspace==ClientWorkspaceKind.Quality &&
               routing.CanReviewQuality &&
               routing.CanResetSession,
-            "Quality commands must consume caller-provided routing authority.");
+            "Quality evaluation must consume explicit caller-provided evaluation authority.");
     }
 
     private static ClientInspectionWorkspace CreateWorkspace() =>
