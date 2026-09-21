@@ -206,7 +206,9 @@ public sealed class ClientInspectionWorkspace : IDisposable
             CanRedoRoi=_roi.Document.CanRedo,
             SelectedHistoryOrdinal=_selectedHistoryOrdinal,
             Program=_program.Snapshot,
-            ProgramItems=ClientProgramPresentationRuntime.CreateItems(_program.CurrentProgram),
+            ProgramItems=_program.Snapshot.Status==ClientProgramLoadStatus.Ready
+                ? ClientProgramPresentationRuntime.CreateItems(_program.CurrentProgram)
+                : Array.Empty<ClientProgramDisplayItem>(),
             Quality=_quality.Capture(),
             Acquisition=_acquisition.Snapshot
         };
