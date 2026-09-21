@@ -3652,3 +3652,13 @@ Next executable stage: **51,501**
 - 73,663: Results Surface smoke now exercises both the absence of Replay and a malformed short Replay fingerprint while retaining the existing 10×100 acceptance structure.
 - 73,664: the Result boundary now follows the same non-invention rule as Program/Acquisition/Readiness: missing evidence stays unavailable, malformed evidence stays invalid, and the WPF-facing projection does not manufacture a usable result state.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,665–73,670 — 2026-09-21
+
+- 73,665: Inspection execution command authorization now explicitly checks the authoritative machine-readable Run Readiness state before delegating to Production execution.
+- 73,666: execution authorization acceptance coverage was extended for stale capability/readiness disagreement.
+- 73,667–73,670: Production restart/recovery semantics were hardened: a Completed, Cancelled, or Failed session can no longer be started again implicitly; the client must explicitly Reset or Load a fresh session before another Start.
+- This closes the Inspection → Production hand-off and prevents a stale Production session from becoming an accidental second execution.
+- The chain remains vendor-neutral and does not bypass HALCON, DevExpress, hardware, or external test gates.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
