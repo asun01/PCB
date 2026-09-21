@@ -14,6 +14,8 @@ public static class ClientInspectionExecutionPresentationSmoke
         for(var round=1;round<=100;round++) if(round==100) StatusComesFromProduction();
         for(var round=1;round<=100;round++) if(round==100) ProgramSummaryIsPresentationOnly();
         for(var round=1;round<=100;round++) if(round==100) ResultUsesObservedFrameCount();
+        for(var round=1;round<=100;round++) if(round==100) UncapturedPreviewIsExplicit();
+        for(var round=1;round<=100;round++) if(round==100) PreviewUsesObservedMetadata();
     }
 
     private static void CompletedShowsResult()
@@ -77,6 +79,37 @@ public static class ClientInspectionExecutionPresentationSmoke
         var s=Create(ClientExecutionStatus.Ready,0,3);
         var p=ClientInspectionExecutionPresentationRuntime.Create(s);
         Check(p.ProgramSummary.StartsWith("Program —",StringComparison.Ordinal),"Program summary must remain a presentation projection.");
+    }
+
+    private static void UncapturedPreviewIsExplicit()
+    {
+        var s=Create(ClientExecutionStatus.Ready,0,3);
+        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
+        Check(p.AcquisitionPreviewText=="Preview — not captured",
+            "Inspection presentation must not invent an acquisition preview.");
+    }
+
+    private static void PreviewUsesObservedMetadata()
+    {
+        var s=Create(ClientExecutionStatus.Ready,0,3) with
+        {
+            Acquisition=s.Acquisition with
+            {
+                Preview=new ClientAcquisitionPreviewSnapshot(
+                    new FrameSequence(7),
+                    640,
+                    480,
+                    "Mono8",
+                    DateTimeOffset.UnixEpoch,
+                    "preview-fingerprint",
+                    Array.Empty<byte>())
+            }
+        };
+        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
+        Check(p.AcquisitionPreviewText.Contains("640×480",StringComparison.Ordinal) &&
+              p.AcquisitionPreviewText.Contains("Mono8",StringComparison.Ordinal) &&
+              p.AcquisitionPreviewText.Contains("Frame 7",StringComparison.Ordinal),
+            "Inspection presentation must project observed preview metadata.");
     }
 
     private static void ResultUsesObservedFrameCount()
