@@ -460,7 +460,12 @@ public partial class MainWindow : System.Windows.Window
             return;
         }
 
-        _client.SetRoiMode(RoiEditorMode.Select);
+        ClientInspectionExecutionCommandRuntime.SetRoiMode(
+            _client,
+            ClientInspectionExecutionSurfaceRuntime.Create(
+                _client.Capture(),
+                CreateRouting(ClientWorkspaceKind.Inspection)),
+            RoiEditorMode.Select);
         RefreshCommandAvailability();
         RoiSurface.Focus();
         RoiStatus.Text="ROI: Select mode.";
@@ -470,7 +475,11 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        if(_client.UndoRoi())
+        if(ClientInspectionExecutionCommandRuntime.UndoRoi(
+               _client,
+               ClientInspectionExecutionSurfaceRuntime.Create(
+                   _client.Capture(),
+                   CreateRouting(ClientWorkspaceKind.Inspection))))
             RefreshRoiSurface();
     }
 
@@ -478,7 +487,11 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        if(_client.RedoRoi())
+        if(ClientInspectionExecutionCommandRuntime.RedoRoi(
+               _client,
+               ClientInspectionExecutionSurfaceRuntime.Create(
+                   _client.Capture(),
+                   CreateRouting(ClientWorkspaceKind.Inspection))))
             RefreshRoiSurface();
     }
 
@@ -492,7 +505,12 @@ public partial class MainWindow : System.Windows.Window
             return;
         }
 
-        _client.SetRoiMode(RoiEditorMode.CreateRectangle);
+        ClientInspectionExecutionCommandRuntime.SetRoiMode(
+            _client,
+            ClientInspectionExecutionSurfaceRuntime.Create(
+                _client.Capture(),
+                CreateRouting(ClientWorkspaceKind.Inspection)),
+            RoiEditorMode.CreateRectangle);
         RefreshCommandAvailability();
         RoiSurface.Focus();
         RoiStatus.Text="ROI: Create Rectangle mode.";
@@ -579,7 +597,11 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        _client.CancelExecution();
+        ClientInspectionExecutionCommandRuntime.Cancel(
+            _client,
+            ClientInspectionExecutionSurfaceRuntime.Create(
+                _client.Capture(),
+                CreateRouting(ClientWorkspaceKind.Inspection)));
         SimulationStatus.Text="Cancellation requested...";
     }
 
@@ -587,7 +609,11 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        _client.ResetCurrentSession();
+        ClientInspectionExecutionCommandRuntime.Reset(
+            _client,
+            ClientInspectionExecutionSurfaceRuntime.Create(
+                _client.Capture(),
+                CreateRouting(ClientWorkspaceKind.Inspection)));
         ReleaseStatus.Text="Release: not evaluated.";
         RefreshDiagnosticStatus();
         RefreshCommandAvailability();
