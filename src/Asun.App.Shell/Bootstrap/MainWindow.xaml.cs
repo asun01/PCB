@@ -279,7 +279,7 @@ public partial class MainWindow : System.Windows.Window
             return;
 
         var filtered=ClientQualityFilterRuntime.Apply(
-            _client.Quality,
+            _clientProjection.Snapshot.Content.Quality.Snapshot,
             filter);
 
         _qualityFindingSelection=ClientQualityFindingSelectionRuntime.Select(
@@ -897,7 +897,8 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshQualityStatus()
     {
-        var quality=_client.Quality;
+        var qualitySurface=_clientProjection.Snapshot.Content.Quality;
+        var quality=qualitySurface.Snapshot;
 
         if(!quality.IsBound)
         {
@@ -915,10 +916,10 @@ public partial class MainWindow : System.Windows.Window
         _isSynchronizingClientControls=true;
         try
         {
-            QualityFindingList.ItemsSource=quality.Findings;
+            QualityFindingList.ItemsSource=qualitySurface.VisibleFindings;
 
             if(quality.SelectedFindingId is string selected)
-                QualityFindingList.SelectedItem=quality.Findings
+                QualityFindingList.SelectedItem=qualitySurface.VisibleFindings
                     .FirstOrDefault(item=>item.FindingId==selected);
         }
         finally
@@ -943,17 +944,16 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshRunHistoryStatus()
     {
-        var history=_client.History;
-        RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
-        var items=ClientRunHistoryPresentationRuntime.CreateItems(history,5);
+        var results=_clientProjection.Snapshot.Content.Results;
+        var history=results.History;
+        RunHistoryStatus.Text=$"History: {history.Count} runs.";
+        var items=results.History;
 
         _isSynchronizingClientControls=true;
         try
         {
             RunHistoryList.ItemsSource=items;
-
-            if(_client.SelectedHistoryOrdinal is long selected)
-                RunHistoryList.SelectedItem=items.FirstOrDefault(item=>item.Ordinal==selected);
+            RunHistoryList.SelectedItem=results.SelectedHistoryItem;
         }
         finally
         {
