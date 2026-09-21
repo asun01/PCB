@@ -158,6 +158,9 @@ public partial class MainWindow : System.Windows.Window
         }
 
         RunHistorySelectionStatus.Text=results.SelectionText;
+        RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selected
+            ? $"History authority: {selected.QualityText} · {selected.ReplayText} · {(selected.ReleaseReady ? "Release Ready" : "Release Not Ready")}."
+            : "History authority: none.";
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
     }
 
