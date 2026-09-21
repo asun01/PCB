@@ -11,6 +11,7 @@ public partial class MainWindow : System.Windows.Window
 {
     private readonly ClientInspectionWorkspace _client;
     private readonly ClientWorkspaceRuntime _workspaceRuntime;
+    private readonly ClientWorkspaceClientProjection _clientProjection;
     private ClientRunHistorySelection _runHistorySelection=
         ClientRunHistorySelectionRuntime.CreateInitial();
     private ClientQualityFindingSelection _qualityFindingSelection=
@@ -30,7 +31,13 @@ public partial class MainWindow : System.Windows.Window
 
         _workspaceRuntime=new ClientWorkspaceRuntime();
         _workspaceRuntime.Changed+=OnWorkspaceChanged;
-        _client.ProductionChanged+=OnProductionChanged;
+        _clientProjection=new ClientWorkspaceClientProjection(
+            _workspaceRuntime,
+            _client,
+            CreateRouting);
+        _clientProjection.Changed+=OnClientProjectionChanged;
+        _clientProjection.ExecutionChanged+=OnClientExecutionChanged;
+        _clientProjection.RoiPulseChanged+=OnClientRoiPulseChanged;
         _client.AcquisitionCatalog.Register(
             ClientSimulationSessionFactory.CreateSourceDefinition());
 
@@ -56,23 +63,13 @@ public partial class MainWindow : System.Windows.Window
         object? sender,
         System.EventArgs e)
     {
-        _client.ProductionChanged-=OnProductionChanged;
-        _client.ProductionChanged-=OnClientProductionChanged;
+        _clientProjection.Changed-=OnClientProjectionChanged;
+        _clientProjection.ExecutionChanged-=OnClientExecutionChanged;
+        _clientProjection.RoiPulseChanged-=OnClientRoiPulseChanged;
+        _clientProjection.Dispose();
         _workspaceRuntime.Changed-=OnWorkspaceChanged;
         _workspaceRuntime.Dispose();
         _client.Dispose();
-    }
-
-    private void OnClientProductionChanged(ClientWorkspaceSnapshot snapshot)
-    {
-        if(!Dispatcher.CheckAccess())
-        {
-            _=Dispatcher.InvokeAsync(() => OnClientProductionChanged(snapshot));
-            return;
-        }
-
-        RefreshWorkspaceStatus();
-        RefreshCommandAvailability();
     }
 
     private void OnWorkspaceChanged(ClientWorkspaceSelection selection)
@@ -83,19 +80,54 @@ public partial class MainWindow : System.Windows.Window
     }
 
 
-    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot)
+    private void OnClientProjectionChanged(
+        ClientWorkspaceClientSnapshot snapshot)
     {
-        if(!Dispatcher.HasShutdownStarted)
+        if(!Dispatcher.CheckAccess())
         {
-            _=Dispatcher.BeginInvoke(new Action(() =>
-            {
-                RefreshWorkspaceStatus();
-                RefreshAcquisitionStatus();
-                RefreshHomeStatus();
-                RefreshCommandAvailability();
-                RefreshResultStatus();
-            }));
+            _=Dispatcher.InvokeAsync(() => OnClientProjectionChanged(snapshot));
+            return;
         }
+
+        WorkspaceNavigationStatus.Text=$"Workspace: {snapshot.Selection.Workspace}";
+        ApplyWorkspaceView(snapshot.Selection.Workspace);
+        RefreshWorkspaceStatus();
+        RefreshAcquisitionStatus();
+        RefreshHomeStatus();
+        RefreshProgramStatus();
+        RefreshQualityStatus();
+        RefreshResultStatus();
+        RefreshRunHistoryStatus();
+        RefreshCommandAvailability();
+    }
+
+    private void OnClientExecutionChanged(
+        ClientWorkspaceClientExecutionPulse pulse)
+    {
+        if(!Dispatcher.CheckAccess())
+        {
+            _=Dispatcher.InvokeAsync(() => OnClientExecutionChanged(pulse));
+            return;
+        }
+
+        WorkspaceNavigationStatus.Text=$"Workspace: {pulse.Selection.Workspace}";
+        WorkspaceStatus.Text=pulse.Progress.StatusText;
+        var target=pulse.Progress.TargetFrameCount;
+        ExecutionProgress.Maximum=Math.Max(1,target);
+        ExecutionProgress.Value=Math.Clamp(pulse.Progress.FramesProcessed,0,Math.Max(1,target));
+        RefreshCommandAvailability();
+    }
+
+    private void OnClientRoiPulseChanged(
+        ClientInspectionRoiPulse pulse)
+    {
+        if(!Dispatcher.CheckAccess())
+        {
+            _=Dispatcher.InvokeAsync(() => OnClientRoiPulseChanged(pulse));
+            return;
+        }
+
+        RefreshRoiSurface();
     }
 
     private async void PreviewAcquisitionButton_Click(
@@ -149,15 +181,24 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if(QualityFindingList.SelectedItem is not ClientQualityFindingDisplayItem item)
+        if(e.AddedItems.Count==0 ||
+           e.AddedItems[0] is not ClientQualityFindingDisplayItem item)
             return;
 
-        var quality=_client.Quality;
+        var filter=new ClientQualityFilter(
+            ReadComboValue(QualityOutcomeFilter),
+            ReadComboValue(QualitySeverityFilter));
+
+        if(!ClientQualityCommandRuntime.SelectVisibleFinding(
+            _client,
+            CreateRouting(ClientWorkspaceKind.Quality),
+            filter,
+            item.FindingId))
+            return;
+
         var filtered=ClientQualityFilterRuntime.Apply(
-            quality,
-            new ClientQualityFilter(
-                ReadComboValue(QualityOutcomeFilter),
-                ReadComboValue(QualitySeverityFilter)));
+            _client.Quality,
+            filter);
 
         _qualityFindingSelection=ClientQualityFindingSelectionRuntime.Select(
             filtered,
@@ -165,6 +206,11 @@ public partial class MainWindow : System.Windows.Window
             _qualityFindingSelection.SelectionSequence);
 
         QualityFindingSelectionStatus.Text=_qualityFindingSelection.StatusText;
+        QualityFindingDetails.Text=
+            $"{item.RuleCode} · {item.Outcome} · {item.Severity}
+" +
+            $"Evidence links: {item.EvidenceCount}
+{item.Message}";
     }
 
     private void QualityFilter_SelectionChanged(
@@ -184,23 +230,6 @@ public partial class MainWindow : System.Windows.Window
             ?? "All";
     }
 
-    private void RunHistoryList_SelectionChanged(
-        object sender,
-        System.Windows.Controls.SelectionChangedEventArgs e)
-    {
-        if(e.AddedItems.Count==0)
-            return;
-
-        if(e.AddedItems[0] is ClientRunHistoryDisplayItem item &&
-           _client.SelectHistory(item.Ordinal))
-        {
-            ResultStatus.Text=$"Historical run · #{item.Ordinal}";
-            ResultSession.Text=$"{item.SessionText} · {item.FrameText}";
-            ResultReplay.Text=item.ReplayText;
-            ResultRelease.Text=item.ReleaseText;
-        }
-    }
-
     private void RunQualityButton_Click(
         object sender,
         System.Windows.RoutedEventArgs e)
@@ -213,7 +242,10 @@ public partial class MainWindow : System.Windows.Window
                 throw new InvalidOperationException("No Quality provider is selected.");
             }
 
-            _client.EvaluateQualityProvider(definition.Descriptor.ProviderId);
+            ClientQualityCommandRuntime.EvaluateProvider(
+                _client,
+                CreateRouting(ClientWorkspaceKind.Quality),
+                definition.Descriptor.ProviderId);
             RefreshQualityStatus();
             RefreshHomeStatus();
             RefreshDiagnosticStatus();
@@ -253,13 +285,27 @@ public partial class MainWindow : System.Windows.Window
 
         if(e.AddedItems[0] is ClientProgramDisplayItem item)
         {
-            _client.SelectProgramStep(item.StepId);
+            ClientProgramCommandRuntime.SelectStep(
+                _client,
+                CreateRouting(ClientWorkspaceKind.Program),
+                item.StepId);
             ProgramStepDetails.Text=
                 $"Step {item.Order} · {item.Name} · {item.Kind}\n" +
                 (string.IsNullOrWhiteSpace(item.ParameterSummary)
                     ? "Parameters: none"
                     : $"Parameters: {item.ParameterSummary}");
         }
+    }
+
+    private ClientWorkspaceCommandRouting CreateRouting(
+        ClientWorkspaceSelection selection)
+    {
+        var availability=ClientCommandAvailabilityRuntime.Create(
+            _client.Capture());
+
+        return ClientWorkspaceCommandRoutingRuntime.Create(
+            selection,
+            availability);
     }
 
     private void WorkspaceHomeButton_Click(object sender, System.Windows.RoutedEventArgs e) =>
