@@ -85,6 +85,29 @@ public static class ClientInspectionWorkflowIntegrityRuntime
             errors.Add("Quality cannot be bound before completed Production.");
         }
 
+        foreach(var entry in snapshot.History.Entries)
+        {
+            if(!IsLowerHex(entry.ReplayFingerprint))
+                errors.Add($"History entry {entry.Ordinal} has an invalid Replay fingerprint.");
+
+            if(!IsLowerHex(entry.QualityFingerprint))
+                errors.Add($"History entry {entry.Ordinal} has an invalid Quality fingerprint.");
+        }
+
+        if(snapshot.Replay is not null &&
+           snapshot.Release is not null &&
+           snapshot.Quality.IsBound)
+        {
+            var currentHistory=snapshot.History.Entries.LastOrDefault(entry=>
+                entry.ProductionSessionId==snapshot.Replay.ProductionSessionId &&
+                entry.ReplayFingerprint==snapshot.Replay.ReplayFingerprint);
+
+            if(currentHistory is null)
+                errors.Add("Finalized Replay/Release authority must be represented in Run History.");
+            else if(currentHistory.QualityFingerprint!=snapshot.Quality.Fingerprint)
+                errors.Add("Current Run History Quality fingerprint must match authoritative Quality.");
+        }
+
         if(snapshot.SelectedHistoryOrdinal is long selectedOrdinal &&
            !snapshot.History.Entries.Any(entry=>entry.Ordinal==selectedOrdinal))
         {
@@ -97,4 +120,9 @@ public static class ClientInspectionWorkflowIntegrityRuntime
     public static bool IsValid(
         ClientInspectionWorkspaceSnapshot snapshot)=>
         Validate(snapshot).Count==0;
+
+    private static bool IsLowerHex(string value)=>
+        value is not null &&
+        value.Length==64 &&
+        value.All(c=>Uri.IsHexDigit(c) && char.ToLowerInvariant(c)==c);
 }
