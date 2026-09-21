@@ -991,7 +991,7 @@ public partial class MainWindow : System.Windows.Window
             item.Ordinal))
             return;
 
-        var history=_client.History;
+        var history=_clientProjection.Snapshot.Content.Results.History;
         _runHistorySelection=ClientRunHistorySelectionRuntime.Select(
             history,
             item.Ordinal,
@@ -1008,11 +1008,4 @@ public partial class MainWindow : System.Windows.Window
         RefreshProgressPresentation(inspection.Presentation.ProgressText);
     }
 
-    private void RefreshProgressPresentation(string progressText)
-    {
-        var progress=_clientProjection.Snapshot.Content.Inspection.Presentation;
-        var snapshot=_clientProjection.Snapshot.Content.Inspection.ResultDisplay;
-        _=progressText;
-        _=snapshot;
-    }
 }
