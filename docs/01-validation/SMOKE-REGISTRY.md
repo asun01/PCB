@@ -6,6 +6,8 @@
 | ClientProductionProgressPresentationSmoke.Run100Stages | Asun.Platform.ClientIntegration | Client-visible Production status/session/frame progress projection | Source registered; execution not claimed |
 | ClientInspectionExecutionPresentationSmoke.Run100Stages | Asun.Platform.ClientIntegration | Program/status/progress/ROI/Acquisition/result presentation boundary | Source registered; execution not claimed |
 | ClientInspectionExecutionSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Inspection execution surface; result/ROI/Acquisition availability projection | Source registered; execution not claimed |
+| ClientInspectionExecutionCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Inspection preview/run/cancel/reset/ROI command facade over existing workspace authority | Source registered; execution not claimed |
+| ClientAcquisitionPreviewFaultSmoke.Run100Stages | Asun.Platform.ClientIntegration | Acquisition preview lifecycle, stale-preview invalidation, fault/recovery, metadata/fingerprint | Source registered; execution not claimed |
 
 ## Structural contract
 
