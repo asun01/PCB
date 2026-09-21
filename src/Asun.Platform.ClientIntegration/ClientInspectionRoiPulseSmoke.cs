@@ -82,13 +82,16 @@ public static class ClientInspectionRoiPulseSmoke
     {
         using var workspace=CreateWorkspace();
         RoiViewportSnapshot? latest=null;
+        ClientInspectionRoiPulse? latestPulse=null;
         workspace.RoiChanged+=value=>latest=value;
+        workspace.RoiPulseChanged+=value=>latestPulse=value;
         workspace.ResizeRoiViewport(new System.Numerics.Vector2(800,600));
         workspace.ResizeRoiViewport(new System.Numerics.Vector2(1024,768));
         Check(latest?.ViewportSize.X==1024 &&
-              latest.ViewportSize.Y==768,
-            "Repeated ROI pulses must expose the latest viewport state.");
-    }
+              latest.ViewportSize.Y==768 &&
+              latestPulse?.Snapshot.ViewportSize.X==1024 &&
+              latestPulse.Sequence==2,
+            "Repeated ROI pulses must expose the latest viewport state with a monotonic sequence.");
 
     private static void DisposeDetachesRoiPulse()
     {
@@ -130,12 +133,16 @@ public static class ClientInspectionRoiPulseSmoke
                 true,false,false,true,false,false,false));
 
         RoiViewportSnapshot? latest=null;
+        ClientInspectionRoiPulse? latestPulse=null;
         projection.RoiChanged+=value=>latest=value;
+        projection.RoiPulseChanged+=value=>latestPulse=value;
         inspection.ResizeRoiViewport(new System.Numerics.Vector2(900,700));
 
         Check(latest?.ViewportSize.X==900 &&
-              latest.ViewportSize.Y==700,
-            "Unified client projection must bridge the dedicated ROI pulse.");
+              latest.ViewportSize.Y==700 &&
+              latestPulse?.Snapshot.ViewportSize.X==900 &&
+              latestPulse.Sequence==1,
+            "Unified client projection must bridge both raw and sequenced ROI pulses.");
     }
 
     private static ClientInspectionWorkspace CreateWorkspace() =>
