@@ -3254,3 +3254,14 @@ Next executable stage: **51,501**
 - Extended the existing ten-matrix change-stream Smoke to cover both authority isolation and post-disposal subscription rejection without violating the 10×100 acceptance contract.
 - Static audit remains clean: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73526 — 2026-09-21
+
+- Completed boundary: **73,526**
+- Next executable stage: **73,527**
+- 73525–73526: **Inspection Surface -> ROI Undo/Redo state -> ROI command facade**.
+- Inspection execution surface now carries the existing ROI document Undo/Redo state and derives command availability from the existing ROI and workspace command authorities.
+- `ClientInspectionExecutionCommandRuntime` now exposes Undo/Redo operations without creating a second ROI document or command state.
+- Inspection command Smoke verifies ROI input, Undo, and Redo remain blocked before legitimate completed-ROI authority is present.
+- No authoritative build/test/CI execution is claimed.
