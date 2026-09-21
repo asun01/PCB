@@ -3183,3 +3183,17 @@ Next executable stage: **51,501**
 - `ClientInspectionExecutionSurfaceRuntime` now accepts the already-existing `ClientWorkspaceCommandRouting` projection, keeping UI presentation and command availability synchronized without introducing a second command authority.
 - Smoke coverage was tightened to verify supplied Inspection routing survives the surface projection.
 - Structural source inspection confirms the Smoke retains 10 loop groups, explicit `round==100` guards, and 10 actual `Check(...)` invocation sites; runtime/build/test execution remains unclaimed.
+
+
+## Live execution synchronization — Stage 73512 — 2026-09-21
+
+- Completed boundary: **73,512**
+- Next executable stage: **73,513**
+- 73509–73512: **Inspection Execution Surface -> Command Facade -> Acquisition Preview -> Acquisition Fault/Recovery**.
+- Added `ClientInspectionExecutionCommandRuntime` for Preview, Run, Cancel, Reset, and ROI input; it delegates to the existing `ClientInspectionWorkspace` and consumes existing command-routing authority rather than creating duplicate state.
+- Exposed Acquisition Preview availability/metadata through `ClientInspectionExecutionSurface`.
+- Corrected a real Acquisition contract defect: execution presentation/surface had referenced nonexistent `ClientAcquisitionState.Bound`; state projection now uses the actual `Ready` / `Faulted` / `Unbound` contract.
+- Corrected stale-preview behavior: `ClientAcquisitionWorkspace.SetFault(...)` now clears the prior preview before publishing Faulted state.
+- Added and registered `ClientInspectionExecutionCommandSmoke` and `ClientAcquisitionPreviewFaultSmoke`.
+- Static source audit: new Smoke files each contain 10 loop groups, explicit `round==100`, 10 actual `Check(...)` invocation sites (11 textual matches including the Check method declaration), balanced braces, and no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
