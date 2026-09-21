@@ -115,9 +115,23 @@ public static class ClientResultsSurfaceSmoke
     private static void ReplayIsNotFabricated()
     {
         var surface=CreateSurface();
+        var workspace=CreateWorkspace();
+        var malformed=workspace.Capture() with
+        {
+            Replay=new ClientProductionReplaySnapshot(
+                Guid.NewGuid(),
+                new Version(1,0),
+                Guid.NewGuid(),
+                ClientExecutionStatus.Completed,
+                1,
+                new string('a',64),
+                "short")
+        };
+        var malformedDisplay=ClientResultsPresentationRuntime.CreateCurrent(malformed);
         Check(surface.Current.ReplayText=="Replay not available" &&
-              !surface.ReleaseReplay.ReplayAvailable,
-            "Results surface must not fabricate Replay.");
+              !surface.ReleaseReplay.ReplayAvailable &&
+              malformedDisplay.ReplayText=="Replay fingerprint invalid",
+            "Results surface must not fabricate Replay and must not throw on malformed replay evidence.");
     }
 
     private static void ReleaseIsNotFabricated()
