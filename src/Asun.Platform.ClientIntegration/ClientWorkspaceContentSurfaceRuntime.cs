@@ -3,6 +3,7 @@ namespace Asun.Platform.ClientIntegration;
 public sealed record ClientWorkspaceContentSurface(
     ClientWorkspaceSelection Selection,
     ClientWorkspaceCommandRouting Routing,
+    ClientProgramSurface Program,
     ClientInspectionExecutionSurface Inspection,
     ClientQualitySurface Quality,
     ClientResultsSurface Results);
@@ -24,6 +25,7 @@ public static class ClientWorkspaceContentSurfaceRuntime
         return new ClientWorkspaceContentSurface(
             selection,
             routing,
+            ClientProgramSurfaceRuntime.Create(snapshot),
             ClientInspectionExecutionSurfaceRuntime.Create(snapshot,routing),
             ClientQualitySurfaceRuntime.Create(snapshot),
             ClientResultsSurfaceRuntime.Create(snapshot));
