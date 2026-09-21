@@ -132,6 +132,7 @@ public partial class MainWindow : System.Windows.Window
     {
         AcquisitionStatus.Text=inspection.Presentation.AcquisitionText;
         AcquisitionPreviewStatus.Text=inspection.Presentation.AcquisitionPreviewText;
+        RunReadinessStatus.Text=inspection.RunReadinessText;
         RenderPreview(inspection.AcquisitionPreview);
     }
 
