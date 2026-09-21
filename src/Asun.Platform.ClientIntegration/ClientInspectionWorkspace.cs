@@ -236,6 +236,17 @@ public sealed class ClientInspectionWorkspace : IDisposable
         return snapshot;
     }
 
+    public bool SelectProgramStep(Guid stepId)
+    {
+        ThrowIfDisposed();
+
+        var selected=_program.SelectStep(stepId);
+        if(selected)
+            PublishChanged();
+
+        return selected;
+    }
+
     public ClientProgramWorkspaceSnapshot Program
     {
         get
