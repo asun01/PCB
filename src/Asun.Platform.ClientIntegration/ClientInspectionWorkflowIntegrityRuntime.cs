@@ -52,6 +52,11 @@ public static class ClientInspectionWorkflowIntegrityRuntime
                 errors.Add("Bound Quality must finalize Release projection.");
         }
 
+        if(snapshot.Release is not null && snapshot.Replay is null)
+        {
+            errors.Add("Release projection requires an authoritative Replay context.");
+        }
+
         if(snapshot.Replay is not null)
         {
             if(!snapshot.Quality.IsBound)
