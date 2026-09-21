@@ -3467,3 +3467,17 @@ Next executable stage: **51,501**
 - Added and registered `ClientInspectionRoiPulseSmoke`.
 - Static audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73600 — 2026-09-21
+
+- Completed boundary: **73,600**
+- Next executable stage: **73,601**
+- 73583–73600: **Program integration + invalid-load cleanup + unified five-area client checkpoint**.
+- Canonical ProgramItems are now part of `ClientInspectionWorkspaceSnapshot`, with Invalid Program capture guarded so strict Program presentation validation is only invoked for Ready Programs.
+- Program Step selection now travels through `ClientInspectionWorkspace` and `ClientProgramCommandRuntime` into the unified client projection.
+- Invalid Program Load clears dependent Production/Acquisition/Quality/Replay/Release state before publishing the new client snapshot.
+- Unified Workspace Content now includes Home, Program, Inspection, Quality, and Results.
+- Added `docs/00-baseline/INTEGRATION-CHECKPOINT-73600.md` as the formal 73,600 implementation checkpoint.
+- Static Smoke audits across the current interval remain at the required 10×100 structure with 10 actual `Check(...)` sites, balanced braces, and no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
