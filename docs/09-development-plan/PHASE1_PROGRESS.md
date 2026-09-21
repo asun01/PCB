@@ -3231,3 +3231,15 @@ Next executable stage: **51,501**
 - Updated the Production execution error text to reflect the Ready Acquisition contract.
 - Acquisition Preview/Fault Smoke now verifies stale-preview removal and that Faulted Acquisition blocks Production source access until successful recovery.
 - Static source audit remains clean for the modified Smoke files; no authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73522 — 2026-09-21
+
+- Completed boundary: **73,522**
+- Next executable stage: **73,523**
+- 73521–73522: **Inspection Workspace full-snapshot change stream**.
+- Added `ClientInspectionWorkspace.Changed` carrying `ClientInspectionWorkspaceSnapshot` for full client state boundaries, while preserving the existing `ProductionChanged` stream for high-frequency production updates.
+- Acquisition binding, preview, Quality clear, History reset, Session reset, and rebinding now publish the full inspection snapshot through the new event path.
+- Added and registered `ClientInspectionWorkspaceChangedSmoke` with ten exact-100-round matrices.
+- Static source audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
