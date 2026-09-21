@@ -3297,3 +3297,14 @@ Next executable stage: **51,501**
 - Corrected `Load(ProductionSessionDefinition)` so prior report/Quality/Acquisition/Replay/Release state is cleared before Production publishes its Load event.
 - This prevents mixed snapshots where a new Program/Production session is momentarily paired with stale result context.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73534 — 2026-09-21
+
+- Completed boundary: **73,534**
+- Next executable stage: **73,535**
+- 73533–73534: **Inspection Workspace change-stream performance/coherence boundary**.
+- `ProductionChanged` remains the high-frequency frame/status channel; full `ClientInspectionWorkspaceSnapshot` publication is now limited to discrete client-state transitions.
+- Program Load, Production-definition Load, and Session Reset publish the full snapshot only after dependent Quality/Acquisition/Replay/Release state has been reset, preventing mixed-state callbacks and avoiding per-frame full-history allocation.
+- Existing Change-stream Smoke still covers binding, preview, Quality/History/Session transitions and remains within the strict 10×100 structure.
+- No authoritative build/test/CI execution is claimed.
