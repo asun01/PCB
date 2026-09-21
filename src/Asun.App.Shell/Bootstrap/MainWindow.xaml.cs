@@ -541,7 +541,10 @@ public partial class MainWindow : System.Windows.Window
                 ClientSimulationSessionFactory.CreatePipeline(),
                 definition.SessionId,
                 definition.FrameCount);
-            _client.BindAcquisitionSource("simulation");
+            ClientInspectionAcquisitionCommandRuntime.BindSource(
+                _client,
+                CreateRouting(ClientWorkspaceKind.Inspection),
+                "simulation");
             RefreshWorkspaceStatus();
             RefreshProgramStatus();
             RefreshCommandAvailability();
