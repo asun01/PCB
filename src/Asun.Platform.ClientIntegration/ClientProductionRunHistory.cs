@@ -7,7 +7,10 @@ public sealed record ClientProductionRunHistoryEntry(
     int FrameCount,
     string ReplayFingerprint,
     bool ReleaseReady,
-    string ArtifactPath);
+    string ArtifactPath)
+{
+    public string QualityFingerprint { get; init; }="";
+}
 
 public sealed record ClientProductionRunHistorySnapshot(
     int Capacity,
@@ -58,6 +61,19 @@ public sealed class ClientProductionRunHistory
            replaySnapshot.ProductionSessionId!=releaseProjection.ProductionSessionId)
             throw new ArgumentException("Run history identities must agree across replay and Release projections.");
 
+        if(!IsLowerHex(replaySnapshot.ReplayFingerprint))
+            throw new ArgumentException("Run history requires a valid Replay fingerprint.",nameof(replaySnapshot));
+
+        if(string.IsNullOrWhiteSpace(replaySnapshot.QualityFingerprint) ||
+           !IsLowerHex(replaySnapshot.QualityFingerprint))
+            throw new ArgumentException("Run history requires an authoritative Quality fingerprint.",nameof(replaySnapshot));
+
+        if(replaySnapshot.QualityFingerprint!=releaseProjection.QualityFingerprint)
+            throw new ArgumentException("Run history Quality fingerprints must agree across replay and Release projections.");
+
+        if(replaySnapshot.ReplayFingerprint!=releaseProjection.ReplayFingerprint)
+            throw new ArgumentException("Run history Replay fingerprints must agree across replay and Release projections.");
+
         lock(_sync)
         {
             var entry=new ClientProductionRunHistoryEntry(
@@ -67,7 +83,10 @@ public sealed class ClientProductionRunHistory
                 replaySnapshot.FrameCount,
                 replaySnapshot.ReplayFingerprint,
                 releaseProjection.ReleaseReady,
-                releaseProjection.ArtifactPath);
+                releaseProjection.ArtifactPath)
+            {
+                QualityFingerprint=replaySnapshot.QualityFingerprint
+            };
 
             if(_entries.Count==_capacity)
             {
@@ -79,6 +98,10 @@ public sealed class ClientProductionRunHistory
             return entry;
         }
     }
+
+    private static bool IsLowerHex(string value)=>
+        value.Length==64 &&
+        value.All(c=>Uri.IsHexDigit(c) && char.ToLowerInvariant(c)==c);
 
     public void Reset()
     {
