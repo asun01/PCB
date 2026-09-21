@@ -76,10 +76,18 @@ public static class ClientQualitySurfaceSmoke
         var surface=ClientQualitySurfaceRuntime.Create(
             workspace.Capture() with { Quality=quality });
 
+        var hiddenSurface=ClientQualitySurfaceRuntime.Create(
+            workspace.Capture() with { Quality=quality },
+            new ClientQualityFilter("Pass","Low"));
+
         Check(surface.SelectedFinding?.FindingId=="finding-1" &&
               surface.SelectedFinding.RuleCode=="RULE-1" &&
-              surface.SelectedFinding.EvidenceCount==2,
-            "Quality surface must project selected finding detail without recomputing it.");
+              surface.SelectedFinding.EvidenceCount==2 &&
+              surface.SelectedFindingVisible &&
+              hiddenSurface.SelectedFinding?.FindingId=="finding-1" &&
+              !hiddenSurface.SelectedFindingVisible &&
+              hiddenSurface.SelectionText.Contains("hidden by the current filter",StringComparison.Ordinal),
+            "Quality surface must distinguish selected finding detail from its current filtered visibility.");
     }
 
     private static void QualityAuthorityIsReused()
