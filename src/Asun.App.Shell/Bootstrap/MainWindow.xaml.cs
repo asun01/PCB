@@ -426,7 +426,10 @@ public partial class MainWindow : System.Windows.Window
                 ClientSimulationSessionFactory.CreatePipeline(),
                 definition.SessionId,
                 definition.FrameCount);
-            _client.BindAcquisitionSource("simulation");
+            ClientInspectionAcquisitionCommandRuntime.BindSource(
+                _client,
+                CreateRouting(ClientWorkspaceKind.Inspection),
+                "simulation");
             SimulationStatus.Text="Simulation session loaded.";
             RefreshCommandAvailability();
             ReleaseStatus.Text="Release: not evaluated.";
