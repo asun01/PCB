@@ -3490,3 +3490,14 @@ Next executable stage: **51,501**
 - Added `ClientInspectionWorkflowIntegrityRuntime` to reject incoherent Program/Acquisition/Production/Quality/History/Replay/Release combinations.
 - Unified Client Snapshot now has a validated creation path; the subscribed Client Projection uses that path before publishing full UI snapshots.
 - Integrity Smoke and Client Snapshot Smoke remain within the 10×100 acceptance contract; no authoritative Build/Test/CI execution is claimed.
+## Live execution synchronization — Stage 73611 — 2026-09-21
+
+- Completed boundary: **73,611**
+- Next executable stage: **73,612**
+- 73605–73611: **Validated Client Content boundary -> real WPF Shell Projection -> Command Facade integration -> UI feedback-loop hardening**.
+- Removed duplicate Quality command implementation and centralized validated Content Surface creation.
+- WPF MainWindow now consumes Unified Client Projection full snapshots, Execution Pulse, and sequenced ROI Pulse; direct Production/Workspace event subscriptions were removed.
+- WPF Program/Quality/History/Inspection actions now use the existing ClientIntegration command facades where their workspace routing applies.
+- Program/Quality/Results ListBox projection refreshes are protected against SelectionChanged feedback loops.
+- Page-level structural audit: all XAML event handlers have exactly one C# handler, no missing handlers, no duplicates, three Unified Projection subscriptions, no legacy direct Production/Navigation subscriptions, balanced braces, no TODO/NotImplementedException.
+- No authoritative Build/Test/CI execution is claimed.
