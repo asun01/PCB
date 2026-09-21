@@ -33,7 +33,7 @@ public static class ClientInspectionExecutionSurfaceRuntime
 
         return new ClientInspectionExecutionSurface(
             presentation,
-            snapshot.Acquisition.State==ClientAcquisitionState.Bound,
+            snapshot.Acquisition.State==ClientAcquisitionState.Ready,
             snapshot.Production.Status==ClientExecutionStatus.Completed,
             snapshot.Roi is not null)
         {
