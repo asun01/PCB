@@ -33,9 +33,25 @@ FORBIDDEN_LEGACY_SUBSCRIPTIONS = (
 
 REQUIRED_COMMAND_FACADES = (
     "ClientInspectionExecutionCommandRuntime.",
+    "ClientInspectionAcquisitionCommandRuntime.",
     "ClientProgramCommandRuntime.",
     "ClientQualityCommandRuntime.",
     "ClientResultsCommandRuntime.",
+)
+
+FORBIDDEN_DIRECT_WORKSPACE_MUTATIONS = (
+    ".BindAcquisitionSource(",
+    ".LoadProgram(",
+    ".ExecuteAsync(",
+    ".CancelExecution(",
+    ".ResetCurrentSession(",
+    ".SetRoiMode(",
+    ".UndoRoi(",
+    ".RedoRoi(",
+    ".SubmitRoiInput(",
+    ".SelectProgramStep(",
+    ".SelectQualityFinding(",
+    ".SelectHistory(",
 )
 
 
@@ -88,6 +104,10 @@ def main() -> int:
     for facade in REQUIRED_COMMAND_FACADES:
         if facade not in code:
             errors.append(f"missing command facade usage: {facade}")
+
+    for mutation in FORBIDDEN_DIRECT_WORKSPACE_MUTATIONS:
+        if mutation in code:
+            errors.append(f"direct workspace mutation must not exist in shell: {mutation}")
 
     open_braces = code.count("{")
     close_braces = code.count("}")
