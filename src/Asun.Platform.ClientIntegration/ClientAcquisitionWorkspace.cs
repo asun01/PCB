@@ -130,6 +130,7 @@ public sealed class ClientAcquisitionWorkspace
             throw new ArgumentException("Acquisition fault message cannot be blank.",nameof(error));
 
         _lastError=error.Trim();
+        _preview=null;
         Publish();
     }
 
