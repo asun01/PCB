@@ -37,7 +37,9 @@ public static class ClientResultsPresentationRuntime
                 : "Session not loaded",
             replay is null
                 ? "Replay not available"
-                : $"Replay {replay.ReplayFingerprint[..12]}...",
+                : replay.ReplayFingerprint.Length>=12
+                    ? $"Replay {replay.ReplayFingerprint[..12]}..."
+                    : "Replay fingerprint invalid",
             release is null
                 ? "Release not evaluated"
                 : release.ReleaseReady
