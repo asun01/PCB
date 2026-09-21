@@ -13,6 +13,7 @@
 | ClientInspectionWorkspaceChangedSmoke.Run100Stages | Asun.Platform.ClientIntegration | Full Inspection snapshot change stream across Acquisition/Quality/History/Session boundaries | Source registered; execution not claimed |
 | ClientResultsCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Results workspace history-selection command facade over existing bounded Run History authority | Source registered; execution not claimed |
 | ClientResultsSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified current-result/history-selection surface over existing Result/Replay/Release/Run History projections | Source registered; execution not claimed |
+| ClientReleaseReplaySurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Replay identity/frame/release-readiness/artifact projection over existing Replay and Release authority | Source registered; execution not claimed |
 | ClientQualityCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Quality finding selection/clear command facade over existing Quality workspace authority | Source registered; execution not claimed |
 | ClientQualitySurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Quality result/finding/selection projection over existing validated Quality authority | Source registered; execution not claimed |
 
