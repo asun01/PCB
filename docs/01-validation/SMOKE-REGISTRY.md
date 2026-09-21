@@ -36,3 +36,5 @@
 - non-tautological assertions
 - no TODO
 - no NotImplementedException
+
+| ClientInspectionAcquisitionCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Inspection Acquisition command boundary: workspace routing, source binding, Ready-state publication, unified projection visibility | Source registered; execution not claimed |
