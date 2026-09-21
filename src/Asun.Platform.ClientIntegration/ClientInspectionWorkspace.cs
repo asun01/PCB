@@ -267,6 +267,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _acquisition.Bind(source,descriptor);
+        ProductionChanged?.Invoke(_production.Snapshot);
     }
 
     public void BindQualityRun(Asun.Domain.Quality.QualityInspectionRun run)
