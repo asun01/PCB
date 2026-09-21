@@ -84,14 +84,25 @@ public static class ClientWorkspaceClientProjectionSmoke
         using var projection=CreateProjection(navigation,inspection);
 
         ClientWorkspaceClientSnapshot? latest=null;
+        ClientWorkspaceSnapshot? productionLatest=null;
+        var productionEvents=0;
         projection.Changed+=value=>latest=value;
+        projection.ProductionChanged+=value =>
+        {
+            productionLatest=value;
+            productionEvents++;
+        };
         var initial=projection.Snapshot.ProjectionSequence;
         navigation.TryNavigate(ClientWorkspaceKind.Quality);
+        inspection.BindAcquisition(
+            new DeterministicSource(),
+            new ClientAcquisitionDescriptor("source","Deterministic",true));
 
         Check(latest?.Selection.Workspace==ClientWorkspaceKind.Quality &&
-              latest.ProjectionSequence>initial,
-            "Projection Changed event must carry the latest navigation snapshot with a newer sequence.");
-    }
+              latest.ProjectionSequence>initial &&
+              productionEvents>0 &&
+              productionLatest is not null,
+            "Projection must bridge both full client snapshots and high-frequency Production state.");
 
     private static void RoutingFactoryDrivesSnapshot()
     {
