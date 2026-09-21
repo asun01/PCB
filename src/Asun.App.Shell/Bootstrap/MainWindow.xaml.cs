@@ -191,14 +191,23 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
+        var routing=CreateRouting(ClientWorkspaceKind.Inspection);
+        if(!routing.CanPreviewAcquisition)
+        {
+            AcquisitionStatus.Text="Acquisition preview unavailable in the current client state.";
+            RefreshCommandAvailability();
+            return;
+        }
+
+        var snapshot=_client.Capture();
         try
         {
             var preview=await ClientInspectionAcquisitionCommandRuntime
                 .Preview(
                     _client,
                     ClientInspectionExecutionSurfaceRuntime.Create(
-                        _client.Capture(),
-                        CreateRouting(ClientWorkspaceKind.Inspection)));
+                        snapshot,
+                        routing));
             RenderPreview(preview);
             AcquisitionStatus.Text=
                 $"Acquisition: {preview.PixelFormat} · {preview.Width}×{preview.Height} · Frame {preview.Sequence.Value}.";
