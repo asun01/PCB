@@ -3564,3 +3564,10 @@ Next executable stage: **51,501**
 - 73,622: added ClientWorkspaceCommandRoutingAcceptanceSmoke with 10 explicit 100-round groups and 10 actual Check(...) call sites covering workspace boundaries, Ready/Running/Completed state behavior, and preservation of existing Inspection commands.
 - These changes close a concrete client-command boundary inconsistency: ClientInspectionAcquisitionCommandRuntime.BindSource now consumes a capability that is produced by the authoritative availability/routing chain rather than an undeclared or implicit permission.
 - Verification status remains source/static implementation only. No local Build/Test/CI success, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
+
+
+### Rolling real-client continuation — stages 73,623–73,624 — 2026-09-21
+
+- 73,623: the WPF acquisition binding control is now enabled from ClientWorkspaceCommandRouting.CanBindAcquisition, so the visible command state follows the same authority used by the command runtime.
+- 73,624: the Bind handler now performs the same routing gate before invoking the acquisition command, preventing an invalid client-state click from escaping as an unhandled command exception; the shell binding validator now guards both the enabled-state and handler guard.
+- Verification remains static/source-level only; no Build/Test/CI success is asserted.
