@@ -3308,3 +3308,14 @@ Next executable stage: **51,501**
 - Program Load, Production-definition Load, and Session Reset publish the full snapshot only after dependent Quality/Acquisition/Replay/Release state has been reset, preventing mixed-state callbacks and avoiding per-frame full-history allocation.
 - Existing Change-stream Smoke still covers binding, preview, Quality/History/Session transitions and remains within the strict 10×100 structure.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73536 — 2026-09-21
+
+- Completed boundary: **73,536**
+- Next executable stage: **73,537**
+- 73535–73536: **Results workspace -> Bounded Run History -> Selection command**.
+- Added `ClientResultsCommandRuntime.SelectHistory(...)`, consuming existing Results routing authority and delegating to the already-existing bounded `ClientInspectionWorkspace.SelectHistory(...)` implementation.
+- Added and registered `ClientResultsCommandSmoke` with ten exact-100-round matrices.
+- Results selection remains presentation/client context only; it does not create Replay, Release, Quality, or Production facts.
+- No authoritative build/test/CI execution is claimed.
