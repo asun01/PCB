@@ -3735,3 +3735,12 @@ Next executable stage: **51,501**
 - 73,750–73,751: Unified Client Projection now exposes the authoritative Workflow snapshot as part of Content, and WPF Home workflow status was migrated from a direct workspace evaluation to that projection.
 - 73,752: added a strict 10×100 Reset/Recovery → History authority → Unified Projection acceptance smoke covering Program preservation, downstream reset clearing, History fingerprint authority, integrity drift rejection, and projected Workflow/Results authority.
 - Static verification status: source-level changes and structural inspection only. No Build/Test/CI success is claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,753–73,762 — 2026-09-21
+
+- 73,753–73,755: closed the Production Cancelled/Failed recovery contract. A Cancelled or Failed session remains non-startable until explicit recovery or Program reload; recovery now returns the retained session definition to Ready without destroying Program/session identity.
+- 73,756–73,758: added deterministic simulation smoke coverage for Cancelled/Failed recovery, including stale report/error/progress/sequence clearing and explicit restart gating. The smoke uses exactly 10 groups × 100 rounds and 10 actual Check call sites.
+- 73,759–73,760: corrected the Unified Client Content Surface so authoritative Workflow state is actually carried by the projection rather than being recomputed by WPF.
+- 73,761–73,762: re-audited WPF MainWindow direct workspace reads; only Acquisition/Quality catalogs, command-input Capture, disposal, and ROI command operations remain. No direct Production/Quality/History/Program/CurrentProgram presentation reads remain.
+- Verification status: source/static structural audit only. Build/Test/CI execution is not claimed for this interval.
