@@ -3455,3 +3455,15 @@ Next executable stage: **51,501**
 - `ClientWorkspaceClientSnapshotFence` now retains the highest accepted `ProjectionSequence` across Reset, so stale snapshots from the prior visible-state epoch cannot be accepted after reset.
 - Fence Smoke was updated and repaired to the strict 10×100 structure; final audit is 10 loop groups, 10 actual `Check(...)` sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73577 — 2026-09-21
+
+- Completed boundary: **73,577**
+- Next executable stage: **73,578**
+- 73575–73577: **Inspection ROI -> dedicated high-frequency pulse -> unified client Projection bridge**.
+- Added `ClientInspectionWorkspace.RoiChanged` for ROI viewport/mode/input updates without forcing full Inspection snapshot allocation.
+- Added `ClientWorkspaceClientProjection.RoiChanged` bridge alongside existing full `Changed` and high-frequency `ProductionChanged` streams.
+- Added and registered `ClientInspectionRoiPulseSmoke`.
+- Static audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
