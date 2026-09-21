@@ -3725,3 +3725,13 @@ Next executable stage: **51,501**
 - 73,741: restored the complete Workflow Integrity acceptance smoke after authority-contract alignment; the strict matrix again contains exactly 10 stage groups and 10 actual Check call sites with balanced braces.
 - 73,742: removed the obsolete pre-authority EmptySnapshot group so the smoke no longer exceeds the required ten-group acceptance boundary.
 - Verification status: source/static structural audit only; no authoritative Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,743–73,752 — 2026-09-21
+
+- 73,743–73,745: Reset/Recovery now preserves the loaded Program definition while clearing the execution context and all downstream runtime evidence. Quality, Replay, Release, Production report, pending Release manifest, Acquisition binding, ROI transient state, and selected History state are still cleared.
+- 73,746–73,748: Run History now retains the authoritative Quality fingerprint alongside Replay/Release identity and refuses append when Quality or Replay authority is malformed or inconsistent.
+- 73,749: Workflow Integrity now validates finalized History entries and requires the current finalized Replay/Release chain to be represented by matching History authority.
+- 73,750–73,751: Unified Client Projection now exposes the authoritative Workflow snapshot as part of Content, and WPF Home workflow status was migrated from a direct workspace evaluation to that projection.
+- 73,752: added a strict 10×100 Reset/Recovery → History authority → Unified Projection acceptance smoke covering Program preservation, downstream reset clearing, History fingerprint authority, integrity drift rejection, and projected Workflow/Results authority.
+- Static verification status: source-level changes and structural inspection only. No Build/Test/CI success is claimed for this interval.
