@@ -3589,3 +3589,12 @@ Next executable stage: **51,501**
 - 73,631: the WPF shell binding validator now statically requires the Preview routing guard in addition to the existing Bind routing guard and command-facade checks.
 - The Acquisition chain remains: authoritative source state → command availability → workspace routing → command facade → observed preview metadata → unified client projection → WPF surface.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI execution, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
+
+
+### Rolling real-client continuation — stages 73,632–73,634 — 2026-09-21
+
+- 73,632: acquisition command acceptance smoke now covers the explicit Preview routing capability and observed preview metadata using a local contract-level frame source; the smoke remains exactly 10×100 with 10 actual `Check(...)` call sites.
+- 73,633: removed an obsolete unregistered smoke case so the acceptance matrix remains strict rather than accumulating dead checks.
+- 73,634: the resulting chain is now statically closed at the Preview command boundary: Inspection routing capability → Preview facade authorization → Acquisition workspace capture → observed frame metadata → unified projection/WPF presentation.
+- Static audit evidence for the modified smoke: 10 loop groups, 10 actual Check call sites, balanced braces, no TODO/NotImplementedException.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI, vendor runtime, hardware/HIL, installer, or final customer-release result is claimed.
