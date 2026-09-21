@@ -89,7 +89,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         return ClientWorkspaceClientSnapshotRuntime.CreateValidated(
             selection,
             routing,
-            _inspection.Capture()) with
+            _inspection.CaptureValidated()) with
         {
             ProjectionSequence=sequence
         };
