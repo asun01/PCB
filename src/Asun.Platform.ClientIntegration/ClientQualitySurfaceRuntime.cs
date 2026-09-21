@@ -7,6 +7,7 @@ public sealed record ClientQualitySurface(
     ClientQualityFindingDisplayItem? SelectedFinding)
 {
     public ClientQualityFilter Filter { get; init; }=ClientQualityFilter.All;
+    public bool SelectedFindingVisible { get; init; }
     public IReadOnlyList<ClientQualityFindingDisplayItem> VisibleFindings { get; init; }=
         Array.Empty<ClientQualityFindingDisplayItem>();
 };
@@ -27,9 +28,14 @@ public static class ClientQualitySurfaceRuntime
             ? null
             : quality.Findings.FirstOrDefault(item=>item.FindingId==selected);
 
-        var selectionText=selectedFinding is not null
-            ? $"Selected finding {selectedFinding.FindingId}"
-            : "No finding selected.";
+        var selectedFindingVisible=selectedFinding is not null &&
+                                   visibleFindings.Any(item=>item.FindingId==selectedFinding.FindingId);
+
+        var selectionText=selectedFinding is null
+            ? "No finding selected."
+            : selectedFindingVisible
+                ? $"Selected finding {selectedFinding.FindingId}"
+                : $"Selected finding {selectedFinding.FindingId} is hidden by the current filter.";
 
         return new ClientQualitySurface(
             quality,
@@ -38,7 +44,8 @@ public static class ClientQualitySurfaceRuntime
             selectedFinding)
         {
             Filter=activeFilter,
-            VisibleFindings=visibleFindings
+            VisibleFindings=visibleFindings,
+            SelectedFindingVisible=selectedFindingVisible
         };
     }
 }
