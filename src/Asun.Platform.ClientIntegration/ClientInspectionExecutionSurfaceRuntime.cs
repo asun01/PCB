@@ -8,6 +8,8 @@ public sealed record ClientInspectionExecutionSurface(
 {
     public ClientWorkspaceCommandRouting? CommandRouting { get; init; }
 
+    public bool HasLoadedProgram { get; init; }
+
     public ClientInspectionResultDisplay ResultDisplay { get; init; } =
         new("Idle",0,"Session not loaded","Replay not available","Release not evaluated",false);
 
@@ -25,7 +27,10 @@ public sealed record ClientInspectionExecutionSurface(
 
     public bool CanPreviewAcquisition => HasAcquisition && CommandRouting?.CanPreviewAcquisition==true;
 
-    public bool CanRunInspection => HasAcquisition && CommandRouting?.CanRunInspection==true;
+    public bool CanRunInspection =>
+        HasLoadedProgram &&
+        HasAcquisition &&
+        CommandRouting?.CanRunInspection==true;
 
     public bool CanCancelInspection => CommandRouting?.CanCancelInspection==true;
 
@@ -56,6 +61,7 @@ public static class ClientInspectionExecutionSurfaceRuntime
             snapshot.Roi is not null)
         {
             ResultDisplay=resultDisplay,
+            HasLoadedProgram=snapshot.Program?.Status==ClientProgramLoadStatus.Ready,
             AcquisitionPreview=preview,
             CanUndoRoi=snapshot.CanUndoRoi,
             CanRedoRoi=snapshot.CanRedoRoi,
