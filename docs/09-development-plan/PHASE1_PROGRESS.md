@@ -3635,3 +3635,12 @@ Next executable stage: **51,501**
 - 73,654: readiness evaluation now prioritizes an invalid/missing Program state before Production/Acquisition status, preventing a stale Ready production state from being presented as executable.
 - 73,655: the Inspection client chain now has both machine-readable command readiness and human-readable WPF projection at the same authoritative boundary.
 - This is still a pre-production implementation boundary. No runtime Build/Test/CI, DevExpress, HALCON, hardware SDK, HIL, installer, or final release success is claimed.
+
+
+### Rolling real-client continuation — stages 73,656–73,660 — 2026-09-21
+
+- 73,656: Inspection execution authorization now requires the machine-readable `ClientRunReadinessState.Ready` state at the Execution Surface boundary, in addition to loaded Program, capturable Acquisition, and routed command capability.
+- 73,657: corrected the existing Run Readiness acceptance smoke so the missing-program case matches the authoritative program-first readiness rule; the smoke no longer expects a contradictory combined prerequisite string.
+- 73,658–73,660: added `ClientInspectionExecutionAuthorizationSmoke` with 10 explicit 100-round groups covering missing Program, Acquisition, Ready authorization, Running/Completed/Cancelled/Failed recovery states, routing denial, workspace mismatch, and readiness/capability agreement.
+- This closes a concrete stale-capability risk: a caller cannot treat raw availability flags as sufficient when the authoritative Inspection Surface is not in the current-run Ready state.
+- Verification remains source/static implementation only. The new acceptance smoke is present in the production project source, but no authoritative compiler/test-run result is claimed.
