@@ -267,6 +267,7 @@
                                     <TextBlock Width="250" Text="{Binding SessionText}" />
                                     <TextBlock Width="92" Text="{Binding FrameText}" />
                                     <TextBlock Width="220" Text="{Binding ReleaseText}" />
+                                    <TextBlock Width="170" Text="{Binding QualityText}" />
                                     <TextBlock Text="{Binding ReplayText}" />
                                 </StackPanel>
                             </DataTemplate>
@@ -277,6 +278,11 @@
                         Margin="0,4,0,0"
                         AutomationProperties.AutomationId="Shell.RunHistorySelectionStatus"
                         Text="No historical run selected." />
+                    <TextBlock
+                        x:Name="RunHistoryAuthorityStatus"
+                        Margin="0,2,0,0"
+                        AutomationProperties.AutomationId="Shell.RunHistoryAuthorityStatus"
+                        Text="History authority: none." />
                 </StackPanel>
             </StackPanel>
         </Border>
