@@ -3571,3 +3571,12 @@ Next executable stage: **51,501**
 - 73,623: the WPF acquisition binding control is now enabled from ClientWorkspaceCommandRouting.CanBindAcquisition, so the visible command state follows the same authority used by the command runtime.
 - 73,624: the Bind handler now performs the same routing gate before invoking the acquisition command, preventing an invalid client-state click from escaping as an unhandled command exception; the shell binding validator now guards both the enabled-state and handler guard.
 - Verification remains static/source-level only; no Build/Test/CI success is asserted.
+
+
+### Rolling real-client continuation — stages 73,625–73,628 — 2026-09-21
+
+- 73,625: acquisition preview became part of the authoritative Inspection presentation projection instead of remaining only an event-handler-local status string.
+- 73,626: the presentation contract now exposes AcquisitionPreviewText, with explicit not-captured state and observed frame metadata when a preview exists.
+- 73,627: added two 100-round smoke groups covering the non-invented preview state and observed width/height/pixel-format/sequence projection.
+- 73,628: WPF Inspection surface now displays the projected preview state through a dedicated AcquisitionPreviewStatus control; no second preview authority was introduced.
+- Verification remains source/static implementation only; authoritative Build/Test/CI and external device/vendor gates remain open.
