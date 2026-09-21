@@ -28,8 +28,8 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Idle,true,false);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — load a program and bind an acquisition source",
-            "An idle client must not claim run readiness merely because a program projection exists.");
+        Check(presentation.RunReadinessText=="Run — load a program" && presentation.RunReadinessState==ClientRunReadinessState.LoadProgram,
+            "An idle client must report the program prerequisite before acquisition readiness.");
     }
 
     private static void ReadyWithoutAcquisitionIsExplicit()
