@@ -46,18 +46,19 @@ public static class ClientInspectionExecutionPresentationRuntime
             ? $"Result — {snapshot.Production.LastFrameCount} frames"
             : "Result — pending";
 
-        var runReadiness=snapshot.Production.Status switch
-        {
-            ClientExecutionStatus.Running => "Run — execution in progress",
-            ClientExecutionStatus.Ready when snapshot.Acquisition.CanCapture => "Run — ready",
-            ClientExecutionStatus.Ready => "Run — bind an acquisition source",
-            ClientExecutionStatus.Completed when snapshot.Acquisition.CanCapture => "Run — ready for next session",
-            ClientExecutionStatus.Completed => "Run — bind an acquisition source for the next session",
-            ClientExecutionStatus.Cancelled when snapshot.Acquisition.CanCapture => "Run — ready after cancellation",
-            ClientExecutionStatus.Failed when snapshot.Acquisition.CanCapture => "Run — ready after failure",
-            _ when snapshot.Program is null => "Run — load a program",
-            _ => "Run — load a program and bind an acquisition source"
-        };
+        var runReadiness=snapshot.Program?.Status!=ClientProgramLoadStatus.Ready
+            ? "Run — load a program"
+            : snapshot.Production.Status switch
+            {
+                ClientExecutionStatus.Running => "Run — execution in progress",
+                ClientExecutionStatus.Ready when snapshot.Acquisition.CanCapture => "Run — ready",
+                ClientExecutionStatus.Ready => "Run — bind an acquisition source",
+                ClientExecutionStatus.Completed when snapshot.Acquisition.CanCapture => "Run — ready for next session",
+                ClientExecutionStatus.Completed => "Run — bind an acquisition source for the next session",
+                ClientExecutionStatus.Cancelled when snapshot.Acquisition.CanCapture => "Run — ready after cancellation",
+                ClientExecutionStatus.Failed when snapshot.Acquisition.CanCapture => "Run — ready after failure",
+                _ => "Run — load a program and bind an acquisition source"
+            };
 
         return new ClientInspectionExecutionPresentation(
             programSummary,
