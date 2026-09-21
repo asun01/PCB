@@ -204,4 +204,3 @@ public static class ClientCancelledFailedRecoverySmoke
                 new InvalidOperationException("deterministic production failure"));
         }
     }
-}
