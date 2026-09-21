@@ -3555,3 +3555,12 @@ Next executable stage: **51,501**
 - `tools/validate_client_shell_bindings.py` now checks required Acquisition/Inspection/Program/Quality/Results command facades, rejects direct workspace mutation patterns, rejects legacy direct Production/Workspace subscriptions, and checks duplicate XAML `x:Name` values.
 - The validator remains static-only and does not claim WPF compilation or runtime execution.
 - No authoritative Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,620–73,622 — 2026-09-21
+
+- 73,620: promoted acquisition-source binding to an explicit client command-availability capability (CanBindAcquisition) instead of relying only on workspace identity.
+- 73,621: propagated that capability through ClientWorkspaceCommandRoutingRuntime; Inspection is the only workspace that can expose the command, while Running execution explicitly blocks rebinding.
+- 73,622: added ClientWorkspaceCommandRoutingAcceptanceSmoke with 10 explicit 100-round groups and 10 actual Check(...) call sites covering workspace boundaries, Ready/Running/Completed state behavior, and preservation of existing Inspection commands.
+- These changes close a concrete client-command boundary inconsistency: ClientInspectionAcquisitionCommandRuntime.BindSource now consumes a capability that is produced by the authoritative availability/routing chain rather than an undeclared or implicit permission.
+- Verification status remains source/static implementation only. No local Build/Test/CI success, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
