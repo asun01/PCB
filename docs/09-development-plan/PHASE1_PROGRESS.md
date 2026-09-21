@@ -3331,3 +3331,14 @@ Next executable stage: **51,501**
 - Added and registered `ClientResultsSurfaceSmoke` with ten exact-100-round matrices.
 - Static source audit: the new Smoke has 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, and no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73543 — 2026-09-21
+
+- Completed boundary: **73,543**
+- Next executable stage: **73,544**
+- 73540–73543: **Quality workspace -> Quality command facade -> Unified Quality surface**.
+- Added `ClientQualityCommandRuntime` for existing finding selection and Quality clearing, gated by caller-provided Quality workspace permissions.
+- Added `ClientQualitySurfaceRuntime` that reuses the validated Quality snapshot and exposes only existing finding/selection state.
+- Added and registered `ClientQualityCommandSmoke` and `ClientQualitySurfaceSmoke`.
+- Both new Smoke matrices satisfy the 10×100 contract; no authoritative build/test/CI execution is claimed.
