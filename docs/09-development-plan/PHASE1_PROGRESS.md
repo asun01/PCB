@@ -3678,3 +3678,11 @@ Next executable stage: **51,501**
 - 73,686–73,688: remaining WPF Inspection/Program/Acquisition presentation reads were migrated to the unified Inspection/Program surfaces; ROI completion gates now consume the projected Inspection surface rather than directly reading Production state.
 - 73,689–73,690: strengthened \`validate_client_shell_bindings.py\` with explicit forbidden direct workspace-state reads, while preserving legitimate catalog registration/access. Static verification confirms balanced WPF code-behind braces and no TODO/NotImplementedException tokens; no compiler/test execution is claimed.
 - This closes another presentation-authority seam: WPF display state is now driven by the same Unified Client Projection that represents Inspection → Production → Result → Quality → Replay → Release state.
+
+
+### Rolling real-client continuation — stages 73,691–73,700 — 2026-09-21
+
+- 73,691–73,695: execution authorization smoke was normalized back to the strict 10×100 acceptance shape while retaining stale-capability coverage inside the final authorization assertion.
+- 73,696–73,700: Results projection now accepts Replay evidence only when the fingerprint is exactly 64 lowercase hexadecimal characters; Results smoke covers both short and malformed-character fingerprints.
+- This keeps malformed Replay evidence visible as invalid instead of allowing presentation code to manufacture a plausible Replay identity.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
