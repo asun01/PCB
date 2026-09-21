@@ -107,10 +107,17 @@ public static class ClientReleaseReplaySurfaceSmoke
         var resolvedSessionId=sessionId ?? Guid.NewGuid();
         var resolvedReplayFingerprint=replayFingerprint ?? new string('a',64);
         var resolvedManifestFingerprint=releaseManifestFingerprint ?? new string('b',64);
+        var qualityFingerprint=new string('e',64);
 
         return ClientReleaseReplaySurfaceRuntime.Create(
             snapshot with
             {
+                Quality=snapshot.Quality with
+                {
+                    IsBound=true,
+                    Fingerprint=qualityFingerprint,
+                    RunId=Guid.NewGuid()
+                },
                 Replay=new ClientProductionReplaySnapshot(
                     resolvedProgramId,
                     new Version(1,0),
@@ -118,7 +125,10 @@ public static class ClientReleaseReplaySurfaceSmoke
                     ClientExecutionStatus.Completed,
                     frameCount,
                     new string('c',64),
-                    resolvedReplayFingerprint),
+                    resolvedReplayFingerprint)
+                {
+                    QualityFingerprint=qualityFingerprint
+                },
                 Release=new ClientReleaseProjection(
                     resolvedProgramId,
                     resolvedSessionId,
@@ -127,6 +137,9 @@ public static class ClientReleaseReplaySurfaceSmoke
                     artifactPath,
                     resolvedManifestFingerprint,
                     new string('d',64))
+                {
+                    QualityFingerprint=qualityFingerprint
+                }
             });
     }
 
