@@ -26,6 +26,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         _inspection.Changed+=OnInspectionChanged;
         _inspection.ProductionChanged+=OnProductionChanged;
         _inspection.RoiChanged+=OnRoiChanged;
+        _inspection.RoiPulseChanged+=OnRoiPulseChanged;
 
         _snapshot=CreateSnapshot(++_projectionSequence);
     }
@@ -35,6 +36,8 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
 
     public event Action<RoiViewportSnapshot>? RoiChanged;
+
+    public event Action<ClientInspectionRoiPulse>? RoiPulseChanged;
 
     public ClientWorkspaceClientSnapshot Snapshot
     {
@@ -61,9 +64,11 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         _inspection.Changed-=OnInspectionChanged;
         _inspection.ProductionChanged-=OnProductionChanged;
         _inspection.RoiChanged-=OnRoiChanged;
+        _inspection.RoiPulseChanged-=OnRoiPulseChanged;
         Changed=null;
         ProductionChanged=null;
         RoiChanged=null;
+        RoiPulseChanged=null;
     }
 
     private ClientWorkspaceClientSnapshot CreateSnapshot(long sequence)
@@ -90,6 +95,9 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
 
     private void OnRoiChanged(RoiViewportSnapshot snapshot) =>
         RoiChanged?.Invoke(snapshot);
+
+    private void OnRoiPulseChanged(ClientInspectionRoiPulse pulse) =>
+        RoiPulseChanged?.Invoke(pulse);
 
     private void Publish()
     {
