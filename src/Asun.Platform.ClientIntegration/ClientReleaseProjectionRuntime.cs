@@ -11,7 +11,10 @@ public sealed record ClientReleaseProjection(
     bool ReleaseReady,
     string ArtifactPath,
     string ReleaseManifestFingerprint,
-    string ProjectionFingerprint);
+    string ProjectionFingerprint)
+{
+    public string? QualityFingerprint { get; init; }
+};
 
 public static class ClientReleaseProjectionRuntime
 {
@@ -33,6 +36,7 @@ public static class ClientReleaseProjectionRuntime
             replaySnapshot.ProgramId,
             replaySnapshot.ProductionSessionId,
             replaySnapshot.ReplayFingerprint,
+            replaySnapshot.QualityFingerprint ?? string.Empty,
             readiness.Ready,
             artifact.Path,
             manifest.Fingerprint);
@@ -44,7 +48,10 @@ public static class ClientReleaseProjectionRuntime
             readiness.Ready,
             artifact.Path,
             manifest.Fingerprint,
-            Hash(canonical));
+            Hash(canonical))
+        {
+            QualityFingerprint=replaySnapshot.QualityFingerprint
+        };
     }
 
     public static IReadOnlyList<string> Validate(
@@ -62,6 +69,9 @@ public static class ClientReleaseProjectionRuntime
             errors.Add("Client Program identity cannot be empty.");
         if(replaySnapshot.ProductionSessionId==Guid.Empty)
             errors.Add("Client Production session identity cannot be empty.");
+        if(!replaySnapshot.QualityFingerprint.HasValue() ||
+           !IsLowerHex(replaySnapshot.QualityFingerprint!))
+            errors.Add("Client release projection requires authoritative Quality evidence.");
         if(!IsLowerHex(replaySnapshot.ReplayFingerprint))
             errors.Add("Client replay fingerprint is malformed.");
         if(!ReleaseManifestValidationRuntime.IsValid(manifest))
@@ -86,6 +96,10 @@ public static class ClientReleaseProjectionRuntime
         value is not null &&
         value.Length==64 &&
         value.All(c=>Uri.IsHexDigit(c) && char.ToLowerInvariant(c)==c);
+
+
+    private static bool HasValue(this string? value)=>
+        !string.IsNullOrWhiteSpace(value);
 
     private static string Hash(string value)=>
         Convert.ToHexString(
