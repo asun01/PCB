@@ -24,11 +24,14 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
 
         _navigation.Changed+=OnNavigationChanged;
         _inspection.Changed+=OnInspectionChanged;
+        _inspection.ProductionChanged+=OnProductionChanged;
 
         _snapshot=CreateSnapshot(++_projectionSequence);
     }
 
     public event Action<ClientWorkspaceClientSnapshot>? Changed;
+
+    public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
 
     public ClientWorkspaceClientSnapshot Snapshot
     {
@@ -53,7 +56,9 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
 
         _navigation.Changed-=OnNavigationChanged;
         _inspection.Changed-=OnInspectionChanged;
+        _inspection.ProductionChanged-=OnProductionChanged;
         Changed=null;
+        ProductionChanged=null;
     }
 
     private ClientWorkspaceClientSnapshot CreateSnapshot(long sequence)
@@ -74,6 +79,9 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
 
     private void OnInspectionChanged(ClientInspectionWorkspaceSnapshot snapshot) =>
         Publish();
+
+    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot) =>
+        ProductionChanged?.Invoke(snapshot);
 
     private void Publish()
     {
