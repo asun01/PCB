@@ -48,6 +48,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
     private long? _selectedHistoryOrdinal;
+    private long _historySelectionSequence;
     private Action<ClientInspectionWorkspaceSnapshot>? _changed;
     private Action<RoiViewportSnapshot>? _roiChanged;
     private Action<ClientInspectionRoiPulse>? _roiPulseChanged;
@@ -184,12 +185,13 @@ public sealed class ClientInspectionWorkspace : IDisposable
         var selection=ClientRunHistorySelectionRuntime.Select(
             history,
             ordinal,
-            _selectedHistoryOrdinal is null ? 0 : 1);
+            _historySelectionSequence);
 
         if(selection.SelectedOrdinal is null)
             return false;
 
         _selectedHistoryOrdinal=selection.SelectedOrdinal;
+        _historySelectionSequence=selection.SelectionSequence;
         PublishChanged();
         return true;
     }
@@ -254,6 +256,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
             _replay=null;
             _release=null;
             _selectedHistoryOrdinal=null;
+            _historySelectionSequence=0;
             _roi.Reset();
 
             var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
@@ -483,6 +486,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _release=null;
         _quality.Clear();
         _selectedHistoryOrdinal=null;
+        _historySelectionSequence=0;
         _pendingReleaseManifest=releaseManifest;
 
         var report=await _production.StartAsync(source,cancellationToken);
@@ -619,6 +623,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _replay=null;
         _release=null;
         _selectedHistoryOrdinal=null;
+        _historySelectionSequence=0;
         PublishChanged();
     }
 
@@ -627,6 +632,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ThrowIfDisposed();
         _history.Reset();
         _selectedHistoryOrdinal=null;
+        _historySelectionSequence=0;
         PublishChanged();
     }
 
