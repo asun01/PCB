@@ -3535,3 +3535,23 @@ Next executable stage: **51,501**
 - The Shell binding validator now requires the Acquisition command facade and rejects direct `_client` authority mutation calls for Acquisition, Program, Production execution, Quality, Results, ROI, Cancel, Reset, and related selection operations.
 - Static source audit of MainWindow.xaml.cs: all direct workspace mutation patterns are absent; braces are balanced; no TODO/NotImplementedException.
 - No authoritative Build/Test/CI execution is claimed.
+
+    
+## Live execution synchronization — Stage 73618 — 2026-09-21
+
+- Completed boundary: **73,618**
+- Next executable stage: **73,619**
+- 73618: **Acquisition Bind permission hardening**.
+- `ClientInspectionAcquisitionCommandRuntime.BindSource(...)` now requires explicit `routing.CanBindAcquisition` in addition to Inspection workspace identity.
+- This closes the remaining gap where a Shell caller could have targeted Inspection but supplied routing that did not explicitly authorize Acquisition binding.
+- Acquisition Command Smoke remains registered under the existing 10×100 acceptance structure.
+- No authoritative Build/Test/CI execution is claimed.
+
+## Live execution synchronization — Stage 73619 — 2026-09-21
+
+- Completed boundary: **73,619**
+- Next executable stage: **73,620**
+- 73619: **WPF Shell static authority fence expansion**.
+- `tools/validate_client_shell_bindings.py` now checks required Acquisition/Inspection/Program/Quality/Results command facades, rejects direct workspace mutation patterns, rejects legacy direct Production/Workspace subscriptions, and checks duplicate XAML `x:Name` values.
+- The validator remains static-only and does not claim WPF compilation or runtime execution.
+- No authoritative Build/Test/CI execution is claimed.
