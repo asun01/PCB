@@ -3,7 +3,10 @@ namespace Asun.Platform.ClientIntegration;
 public sealed record ClientWorkspaceClientSnapshot(
     ClientWorkspaceSelection Selection,
     ClientWorkspaceCommandRouting Routing,
-    ClientWorkspaceContentSurface Content);
+    ClientWorkspaceContentSurface Content)
+{
+    public long ProjectionSequence { get; init; }
+};
 
 public static class ClientWorkspaceClientSnapshotRuntime
 {
