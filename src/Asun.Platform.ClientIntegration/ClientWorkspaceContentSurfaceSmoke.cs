@@ -96,12 +96,30 @@ public static class ClientWorkspaceContentSurfaceSmoke
         var surface=Create(
             new ClientWorkspaceSelection(ClientWorkspaceKind.Home,6),
             snapshot);
+        var invalid=ClientWorkspaceContentSurfaceRuntime.Create(
+            new ClientWorkspaceSelection(ClientWorkspaceKind.Home,7),
+            Routing(ClientWorkspaceKind.Home) with
+            {
+                CanLoadProgram=true
+            },
+            snapshot with
+            {
+                Program=new ClientProgramWorkspaceSnapshot(
+                    ClientProgramLoadStatus.Invalid,
+                    Guid.NewGuid(),
+                    null,
+                    new Version(1,0),
+                    0,
+                    null,
+                    new[] { "Program name cannot be blank." })
+            });
         Check(snapshot.Replay is null &&
               snapshot.Release is null &&
               snapshot.Quality.IsBound==false &&
               surface.Home.ProgramStatus=="Program not loaded" &&
+              invalid.Home.ProgramStatus=="Program invalid" &&
               surface.Results.Current.ReplayText=="Replay not available",
-            "Unified client surface must expose Home while not fabricating Replay, Release, or Quality authority.");
+            "Unified client surface must expose Home Program state without fabricating Replay, Release, or Quality authority.");
     }
 
     private static ClientWorkspaceContentSurface Create(
