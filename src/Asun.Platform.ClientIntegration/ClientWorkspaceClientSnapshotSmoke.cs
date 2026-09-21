@@ -110,12 +110,35 @@ public static class ClientWorkspaceClientSnapshotSmoke
             rejected=true;
         }
 
+        var contentRejected=false;
+        try
+        {
+            _=ClientWorkspaceContentSurfaceRuntime.CreateValidated(
+                new ClientWorkspaceSelection(ClientWorkspaceKind.Home,8),
+                Routing(ClientWorkspaceKind.Home),
+                snapshot with
+                {
+                    Production=snapshot.Production with
+                    {
+                        Status=ClientExecutionStatus.Completed,
+                        ActiveSessionId=Guid.NewGuid(),
+                        LastFrameCount=3,
+                        LastReportFingerprint=new string('a',64)
+                    }
+                });
+        }
+        catch(InvalidOperationException)
+        {
+            contentRejected=true;
+        }
+
         Check(snapshot.Content.Inspection.ResultDisplay.ReplayText=="Replay not available" &&
               snapshot.Content.Quality.Snapshot.IsBound==false &&
               snapshot.Content.Results.Current.ReplayText=="Replay not available" &&
               snapshot.Content.Results.Current.ReleaseText=="Release not evaluated" &&
-              rejected,
-            "Unified client snapshot must not create unsupported authorities and must reject incoherent completed state.");
+              rejected &&
+              contentRejected,
+            "Validated client and validated content factories must reject incoherent completed state.");
     }
 
     private static void CallerRoutingIsRetained()
