@@ -55,6 +55,26 @@ public static class ClientProductionReplaySnapshotRuntime
         };
     }
 
+    public static ClientProductionReplaySnapshot Create(
+        ClientWorkspaceSnapshot workspace,
+        ProductionSessionReport report)
+    {
+        throw new InvalidOperationException(
+            "Replay creation requires an authoritative Quality result.");
+    }
+
+    public static IReadOnlyList<string> Validate(
+        ClientWorkspaceSnapshot workspace,
+        ProductionSessionReport report)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(report);
+        return new[]
+        {
+            "Replay snapshot requires an authoritative bound Quality result."
+        };
+    }
+
     public static IReadOnlyList<string> Validate(
         ClientWorkspaceSnapshot workspace,
         ProductionSessionReport report,
@@ -90,6 +110,11 @@ public static class ClientProductionReplaySnapshotRuntime
 
         return errors;
     }
+
+    public static bool IsValid(
+        ClientWorkspaceSnapshot workspace,
+        ProductionSessionReport report)=>
+        false;
 
     public static bool IsValid(
         ClientWorkspaceSnapshot workspace,
