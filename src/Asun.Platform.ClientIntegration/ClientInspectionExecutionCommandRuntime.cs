@@ -30,8 +30,8 @@ public static class ClientInspectionExecutionCommandRuntime
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(surface);
 
-        if(!surface.CanPreviewAcquisition)
-            throw new InvalidOperationException("Acquisition preview command is not available in the current Inspection surface.");
+        if(surface.CommandRouting?.CanPreviewAcquisition!=true)
+            throw new InvalidOperationException("Acquisition preview command is not available under the current Inspection command routing.");
 
         return workspace.PreviewAcquisitionAsync(cancellationToken);
     }
