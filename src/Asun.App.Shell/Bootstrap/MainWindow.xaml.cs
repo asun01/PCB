@@ -83,11 +83,12 @@ public partial class MainWindow : System.Windows.Window
         ApplyHomeProjection(snapshot.Content.Home);
         ApplyProgramProjection(snapshot.Content.Program);
         ApplyInspectionProjection(snapshot.Content.Inspection);
-        ApplyResultsProjection(snapshot.Content.Results);
+        ApplyResultsProjection(
+            snapshot.Content.Results,
+            snapshot.History);
         RefreshQualityStatus();
         RefreshWorkspaceStatus();
-        RefreshRunHistoryStatus();
-        RefreshCommandAvailability();
+        RefreshCommandAvailability(snapshot);
     }
 
     private void ApplyHomeProjection(ClientHomePresentationSnapshot home)
@@ -132,7 +133,9 @@ public partial class MainWindow : System.Windows.Window
         AcquisitionStatus.Text=inspection.Presentation.AcquisitionText;
     }
 
-    private void ApplyResultsProjection(ClientResultsSurface results)
+    private void ApplyResultsProjection(
+        ClientResultsSurface results,
+        ClientProductionRunHistorySnapshot history)
     {
         ResultStatus.Text=$"Status: {results.Current.Status}";
         ResultSession.Text=$"{results.Current.SessionText} · {results.Current.FrameCount} frame(s)";
@@ -151,6 +154,7 @@ public partial class MainWindow : System.Windows.Window
         }
 
         RunHistorySelectionStatus.Text=results.SelectionText;
+        RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
     }
 
     private void OnClientExecutionChanged(
@@ -753,9 +757,11 @@ public partial class MainWindow : System.Windows.Window
         RefreshCommandAvailability();
     }
 
-    private void RefreshCommandAvailability()
+    private void RefreshCommandAvailability(
+        ClientInspectionWorkspaceSnapshot? snapshot=null)
     {
-        var availability=ClientCommandAvailabilityRuntime.Create(_client.Capture());
+        var clientSnapshot=snapshot ?? _client.Capture();
+        var availability=ClientCommandAvailabilityRuntime.Create(clientSnapshot);
         var routing=ClientWorkspaceCommandRoutingRuntime.Create(
             _workspaceRuntime.Current,
             availability);
