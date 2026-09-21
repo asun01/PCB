@@ -825,6 +825,12 @@ public partial class MainWindow : System.Windows.Window
         if(RunHistoryList.SelectedItem is not ClientRunHistoryDisplayItem item)
             return;
 
+        if(!ClientResultsCommandRuntime.SelectHistory(
+            _client,
+            CreateRouting(ClientWorkspaceKind.Results),
+            item.Ordinal))
+            return;
+
         var history=_client.History;
         _runHistorySelection=ClientRunHistorySelectionRuntime.Select(
             history,
@@ -832,6 +838,7 @@ public partial class MainWindow : System.Windows.Window
             _runHistorySelection.SelectionSequence);
 
         RunHistorySelectionStatus.Text=_runHistorySelection.StatusText;
+        RefreshResultStatus();
     }
 
     private void RefreshWorkspaceStatus()
