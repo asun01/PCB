@@ -33,7 +33,7 @@ public static class ClientInspectionExecutionCommandSmoke
     {
         using var workspace=CreateWorkspace();
         var surface=CreateSurface(workspace,canRun:false);
-        var rejected=ExpectInvalidOperation(
+        var executionRejected=ExpectInvalidOperation(
             () => ClientInspectionExecutionCommandRuntime
                 .ExecuteAsync(
                     workspace,
@@ -42,7 +42,16 @@ public static class ClientInspectionExecutionCommandSmoke
                 .AsTask()
                 .GetAwaiter()
                 .GetResult());
-        Check(rejected,"Run must be blocked before ReleaseManifest validation when command routing is unavailable.");
+        var programRejected=ExpectInvalidOperation(
+            () => ClientInspectionExecutionCommandRuntime.LoadProgram(
+                workspace,
+                surface,
+                null!,
+                null!,
+                Guid.Empty,
+                0));
+        Check(executionRejected && programRejected,
+            "Run and Program Load must be blocked before downstream argument validation when command routing is unavailable.");
     }
 
     private static void CancelRequiresRouting()
