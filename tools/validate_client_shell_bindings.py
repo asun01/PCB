@@ -48,6 +48,12 @@ REQUIRED_HOME_PROJECTION_BINDINGS = (
     "HomeWorkflowMessage.Text=workflow.Message;",
 )
 
+REQUIRED_RESULTS_PROJECTION_BINDINGS = (
+    "RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selected",
+    "selected.QualityText",
+    "selected.ReplayText",
+)
+
 REQUIRED_SHELL_NAMES = (
     'x:Name="RunReadinessStatus"',
 )
@@ -148,6 +154,10 @@ def main() -> int:
         if binding not in code:
             errors.append(f"missing Home projection binding: {binding}")
 
+    for binding in REQUIRED_RESULTS_PROJECTION_BINDINGS:
+        if binding not in code:
+            errors.append(f"missing Results projection binding: {binding}")
+
     for shell_name in REQUIRED_SHELL_NAMES:
         if shell_name not in xaml:
             errors.append(f"missing required WPF shell control: {shell_name}")
@@ -188,6 +198,8 @@ def main() -> int:
         f"routing_gates={sum(item in code for item in REQUIRED_SHELL_ROUTING_GATES)} "
         f"projection_bindings={sum(item in code for item in REQUIRED_INSPECTION_PROJECTION_BINDINGS)} "
         f"home_projection_bindings={sum(item in code for item in REQUIRED_HOME_PROJECTION_BINDINGS)} "
+        f"results_projection_bindings={sum(item in code for item in REQUIRED_RESULTS_PROJECTION_BINDINGS)} "
+
         f"commands={sum(item in code for item in REQUIRED_COMMAND_FACADES)}"
     )
 
