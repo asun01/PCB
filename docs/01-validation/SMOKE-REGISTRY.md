@@ -17,6 +17,7 @@
 | ClientWorkspaceContentSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Home/Program/Inspection/Quality/Results content projection over existing client authorities and routing | Source registered; execution not claimed |
 | ClientWorkspaceClientSnapshotSmoke.Run100Stages | Asun.Platform.ClientIntegration | Single client snapshot entry point combining workspace selection, command routing, and content surfaces | Source registered; execution not claimed |
 | ClientWorkspaceClientProjectionSmoke.Run100Stages | Asun.Platform.ClientIntegration | Subscribed client projection reacting to workspace navigation and Inspection state changes with lifecycle-safe snapshots | Source registered; execution not claimed |
+| ClientWorkspaceClientSnapshotFenceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Latest-wins client snapshot fence rejecting stale/equal projection sequences | Source registered; execution not claimed |
 | ClientQualityCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Quality finding selection/clear command facade over existing Quality workspace authority | Source registered; execution not claimed |
 | ClientQualitySurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Quality result/finding/selection projection over existing validated Quality authority | Source registered; execution not claimed |
 
