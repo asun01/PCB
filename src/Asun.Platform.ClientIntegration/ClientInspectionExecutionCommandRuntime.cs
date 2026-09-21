@@ -89,7 +89,8 @@ public static class ClientInspectionExecutionCommandRuntime
         if(!surface.CanEditRoi)
             return false;
 
-        return workspace.SetRoiMode(mode);
+        workspace.SetRoiMode(mode);
+        return true;
     }
 
     public static bool UndoRoi(
