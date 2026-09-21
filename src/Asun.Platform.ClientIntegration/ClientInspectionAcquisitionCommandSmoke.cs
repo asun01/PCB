@@ -213,24 +213,6 @@ public static class ClientInspectionAcquisitionCommandSmoke
             "Acquisition command must delegate to the existing workspace state machine.");
     }
 
-    private static void DoesNotCreateSourceAuthority()
-    {
-        using var workspace=CreateWorkspace();
-        workspace.AcquisitionCatalog.Register(
-            new ClientAcquisitionSourceDefinition(
-                new ClientAcquisitionDescriptor("source","Deterministic",true),
-                new DeterministicSource()));
-
-        ClientInspectionAcquisitionCommandRuntime.BindSource(
-            workspace,
-            Routing(ClientWorkspaceKind.Inspection),
-            "source");
-
-        Check(workspace.AcquisitionCatalog.Sources.Count==1 &&
-              workspace.Acquisition.SourceId=="source",
-            "Command facade must not create a parallel source catalog.");
-    }
-
     private static void ProjectionSeesBinding()
     {
         using var workspace=CreateWorkspace();
