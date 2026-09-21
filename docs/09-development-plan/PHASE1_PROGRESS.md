@@ -3644,3 +3644,11 @@ Next executable stage: **51,501**
 - 73,658–73,660: added `ClientInspectionExecutionAuthorizationSmoke` with 10 explicit 100-round groups covering missing Program, Acquisition, Ready authorization, Running/Completed/Cancelled/Failed recovery states, routing denial, workspace mismatch, and readiness/capability agreement.
 - This closes a concrete stale-capability risk: a caller cannot treat raw availability flags as sufficient when the authoritative Inspection Surface is not in the current-run Ready state.
 - Verification remains source/static implementation only. The new acceptance smoke is present in the production project source, but no authoritative compiler/test-run result is claimed.
+
+
+### Rolling real-client continuation — stages 73,661–73,664 — 2026-09-21
+
+- 73,661–73,662: Results presentation was hardened against malformed Replay evidence so a short fingerprint cannot cause a projection-time substring exception; malformed evidence is surfaced explicitly as invalid.
+- 73,663: Results Surface smoke now exercises both the absence of Replay and a malformed short Replay fingerprint while retaining the existing 10×100 acceptance structure.
+- 73,664: the Result boundary now follows the same non-invention rule as Program/Acquisition/Readiness: missing evidence stays unavailable, malformed evidence stays invalid, and the WPF-facing projection does not manufacture a usable result state.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
