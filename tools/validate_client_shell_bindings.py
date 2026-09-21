@@ -42,6 +42,12 @@ REQUIRED_INSPECTION_PROJECTION_BINDINGS = (
     "RenderPreview(inspection.AcquisitionPreview);",
 )
 
+REQUIRED_HOME_PROJECTION_BINDINGS = (
+    "var workflow=snapshot.Content.Workflow;",
+    "HomeWorkflowStatus.Text=$\"Workflow: {workflow.Step}\";",
+    "HomeWorkflowMessage.Text=workflow.Message;",
+)
+
 REQUIRED_SHELL_NAMES = (
     'x:Name="RunReadinessStatus"',
 )
@@ -138,6 +144,10 @@ def main() -> int:
         if binding not in code:
             errors.append(f"missing Inspection projection binding: {binding}")
 
+    for binding in REQUIRED_HOME_PROJECTION_BINDINGS:
+        if binding not in code:
+            errors.append(f"missing Home projection binding: {binding}")
+
     for shell_name in REQUIRED_SHELL_NAMES:
         if shell_name not in xaml:
             errors.append(f"missing required WPF shell control: {shell_name}")
@@ -177,6 +187,7 @@ def main() -> int:
         f"legacy_subscriptions={sum(item.search(code) is not None for item in FORBIDDEN_LEGACY_SUBSCRIPTIONS)} "
         f"routing_gates={sum(item in code for item in REQUIRED_SHELL_ROUTING_GATES)} "
         f"projection_bindings={sum(item in code for item in REQUIRED_INSPECTION_PROJECTION_BINDINGS)} "
+        f"home_projection_bindings={sum(item in code for item in REQUIRED_HOME_PROJECTION_BINDINGS)} "
         f"commands={sum(item in code for item in REQUIRED_COMMAND_FACADES)}"
     )
 
