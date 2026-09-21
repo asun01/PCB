@@ -11,18 +11,23 @@ public sealed record ClientProductionReplaySnapshot(
     ClientExecutionStatus Status,
     int FrameCount,
     string ProductionReportFingerprint,
-    string ReplayFingerprint);
+    string ReplayFingerprint)
+{
+    public string? QualityFingerprint { get; init; }
+};
 
 public static class ClientProductionReplaySnapshotRuntime
 {
     public static ClientProductionReplaySnapshot Create(
         ClientWorkspaceSnapshot workspace,
-        ProductionSessionReport report)
+        ProductionSessionReport report,
+        ClientQualityWorkspaceSnapshot quality)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(report);
+        ArgumentNullException.ThrowIfNull(quality);
 
-        var errors=Validate(workspace,report);
+        var errors=Validate(workspace,report,quality);
         if(errors.Count>0)
             throw new ArgumentException(string.Join(" ",errors));
 
@@ -34,6 +39,7 @@ public static class ClientProductionReplaySnapshotRuntime
             report.SessionId,
             report.FrameCount,
             report.Fingerprint,
+            quality.Fingerprint ?? string.Empty,
             workspace.Status);
 
         return new ClientProductionReplaySnapshot(
@@ -43,15 +49,20 @@ public static class ClientProductionReplaySnapshotRuntime
             workspace.Status,
             report.FrameCount,
             report.Fingerprint,
-            Hash(canonical));
+            Hash(canonical))
+        {
+            QualityFingerprint=quality.Fingerprint
+        };
     }
 
     public static IReadOnlyList<string> Validate(
         ClientWorkspaceSnapshot workspace,
-        ProductionSessionReport report)
+        ProductionSessionReport report,
+        ClientQualityWorkspaceSnapshot quality)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(report);
+        ArgumentNullException.ThrowIfNull(quality);
 
         var errors=new List<string>();
         if(workspace.ProgramId is null || workspace.ProgramId==Guid.Empty)
@@ -72,14 +83,19 @@ public static class ClientProductionReplaySnapshotRuntime
             errors.Add("Production report frame count must be positive.");
         if(report.Fingerprint.Length!=64 || !IsLowerHex(report.Fingerprint))
             errors.Add("Production report fingerprint must be 64 lowercase hexadecimal characters.");
+        if(!quality.IsBound || string.IsNullOrWhiteSpace(quality.Fingerprint))
+            errors.Add("Replay snapshot requires an authoritative bound Quality result.");
+        else if(!IsLowerHex(quality.Fingerprint))
+            errors.Add("Quality fingerprint must be 64 lowercase hexadecimal characters.");
 
         return errors;
     }
 
     public static bool IsValid(
         ClientWorkspaceSnapshot workspace,
-        ProductionSessionReport report)=>
-        Validate(workspace,report).Count==0;
+        ProductionSessionReport report,
+        ClientQualityWorkspaceSnapshot quality)=>
+        Validate(workspace,report,quality).Count==0;
 
     public static bool IsEquivalent(
         ClientProductionReplaySnapshot left,
