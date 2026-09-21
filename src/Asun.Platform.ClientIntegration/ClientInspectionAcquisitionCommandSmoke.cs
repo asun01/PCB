@@ -154,12 +154,14 @@ public static class ClientInspectionAcquisitionCommandSmoke
     {
         using var workspace=CreateWorkspace();
         workspace.AcquisitionCatalog.Register(
-            Asun.Platform.SimulationIntegration.ClientSimulationSessionFactory.CreateSourceDefinition());
+            new ClientAcquisitionSourceDefinition(
+            new ClientAcquisitionDescriptor("preview-source","Preview source",true),
+            new PreviewSource()));
 
         ClientInspectionAcquisitionCommandRuntime.BindSource(
             workspace,
             Routing(ClientWorkspaceKind.Inspection),
-            "simulation");
+            "preview-source");
 
         var rejected=false;
         try
@@ -184,7 +186,9 @@ public static class ClientInspectionAcquisitionCommandSmoke
     {
         using var workspace=CreateWorkspace();
         workspace.AcquisitionCatalog.Register(
-            Asun.Platform.SimulationIntegration.ClientSimulationSessionFactory.CreateSourceDefinition());
+            new ClientAcquisitionSourceDefinition(
+            new ClientAcquisitionDescriptor("preview-source","Preview source",true),
+            new PreviewSource()));
 
         var routing=Routing(ClientWorkspaceKind.Inspection) with
         {
@@ -194,7 +198,7 @@ public static class ClientInspectionAcquisitionCommandSmoke
         ClientInspectionAcquisitionCommandRuntime.BindSource(
             workspace,
             routing,
-            "simulation");
+            "preview-source");
 
         var preview=ClientInspectionAcquisitionCommandRuntime.Preview(
             workspace,
@@ -294,6 +298,21 @@ public static class ClientInspectionAcquisitionCommandSmoke
         public ValueTask<CapturedFrame?> CaptureAsync(
             CancellationToken cancellationToken=default) =>
             ValueTask.FromResult<CapturedFrame?>(null);
+    }
+
+    private sealed class PreviewSource : IFrameSource
+    {
+        public ValueTask<CapturedFrame?> CaptureAsync(
+            CancellationToken cancellationToken=default) =>
+            ValueTask.FromResult<CapturedFrame?>(
+                CapturedFrame.Create(
+                    new FrameCaptureMetadata(
+                        new FrameSequence(1),
+                        2,
+                        2,
+                        "Mono8",
+                        DateTimeOffset.UnixEpoch),
+                    new byte[] { 0, 1, 2, 3 }));
     }
 
     private static void Check(bool condition,string message)
