@@ -3718,3 +3718,10 @@ Next executable stage: **51,501**
 - 73,739: the coherent finalized smoke fixture now carries the same Quality fingerprint through Quality → Replay → Release, so the smoke models the current authority contract instead of the pre-authority fixture shape.
 - 73,740: validate_client_shell_bindings.py now uses property-boundary-aware regular expressions for forbidden workspace-state reads, avoiding false positives on legitimate _client.QualityProviderCatalog and _client.AcquisitionCatalog access while continuing to reject direct presentation-state reads.
 - Verification status: source/static implementation and structural audit only. No authoritative Build/Test/CI execution is claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,741–73,742 — 2026-09-21
+
+- 73,741: restored the complete Workflow Integrity acceptance smoke after authority-contract alignment; the strict matrix again contains exactly 10 stage groups and 10 actual Check call sites with balanced braces.
+- 73,742: removed the obsolete pre-authority EmptySnapshot group so the smoke no longer exceeds the required ten-group acceptance boundary.
+- Verification status: source/static structural audit only; no authoritative Build/Test/CI execution is claimed.
