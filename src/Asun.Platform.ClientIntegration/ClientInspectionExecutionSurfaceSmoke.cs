@@ -19,15 +19,21 @@ public static class ClientInspectionExecutionSurfaceSmoke
     private static void CompletedResultIsSurfaced()
     {
         var surface=Create(ClientExecutionStatus.Completed,3,3);
-        Check(surface.HasCompletedResult && surface.Presentation.ResultText=="Result — 3 frames",
-            "Completed Production must expose the observed result count.");
+        Check(surface.HasCompletedResult &&
+              surface.Presentation.ResultText=="Result — 3 frames" &&
+              surface.ResultDisplay.Status=="Completed" &&
+              surface.ResultDisplay.FrameCount==3,
+            "Completed Production must expose the observed result count through the existing Results projection.");
     }
 
     private static void RunningResultRemainsPending()
     {
         var surface=Create(ClientExecutionStatus.Running,1,3);
-        Check(!surface.HasCompletedResult && surface.Presentation.ResultText=="Result — pending",
-            "Running Production must not expose a completed result.");
+        Check(!surface.HasCompletedResult &&
+              surface.Presentation.ResultText=="Result — pending" &&
+              surface.ResultDisplay.ReplayText=="Replay not available" &&
+              surface.ResultDisplay.ReleaseText=="Release not evaluated",
+            "Running Production must not expose fabricated Result/Replay/Release facts.");
     }
 
     private static void UnboundAcquisitionIsProjected()
