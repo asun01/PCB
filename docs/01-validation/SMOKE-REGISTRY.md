@@ -12,6 +12,7 @@
 | ClientInspectionAcquisitionPreviewSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Inspection Surface raw Acquisition preview payload/metadata projection and stale-preview protection | Source registered; execution not claimed |
 | ClientInspectionWorkspaceChangedSmoke.Run100Stages | Asun.Platform.ClientIntegration | Full Inspection snapshot change stream across Acquisition/Quality/History/Session boundaries | Source registered; execution not claimed |
 | ClientResultsCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Results workspace history-selection command facade over existing bounded Run History authority | Source registered; execution not claimed |
+| ClientResultsSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified current-result/history-selection surface over existing Result/Replay/Release/Run History projections | Source registered; execution not claimed |
 
 ## Structural contract
 
