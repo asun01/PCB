@@ -21,9 +21,9 @@ public sealed record ClientInspectionExecutionSurface(
 
     public string AcquisitionPreviewText { get; init; }="Acquisition Preview — unavailable";
 
-    public bool CanPreviewAcquisition => CommandRouting?.CanPreviewAcquisition==true;
+    public bool CanPreviewAcquisition => HasAcquisition && CommandRouting?.CanPreviewAcquisition==true;
 
-    public bool CanRunInspection => CommandRouting?.CanRunInspection==true;
+    public bool CanRunInspection => HasAcquisition && CommandRouting?.CanRunInspection==true;
 
     public bool CanCancelInspection => CommandRouting?.CanCancelInspection==true;
 
