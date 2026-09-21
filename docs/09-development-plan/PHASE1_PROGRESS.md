@@ -3670,3 +3670,11 @@ Next executable stage: **51,501**
 - 73,676–73,680: added \`ClientProgramReloadBoundarySmoke\` with 10 explicit 100-round acceptance groups covering downstream invalidation, fresh Production identity, new Program identity, and post-reload workflow integrity.
 - This closes a concrete stale-context path: a new Program can no longer inherit execution evidence or an Acquisition source from the previous Program.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,681–73,690 — 2026-09-21
+
+- 73,681–73,685: WPF Quality and Run History presentation reads were migrated from direct Inspection workspace state to the Unified Client Projection. The shell now consumes the authoritative Quality surface and Results history surface for display/selection state.
+- 73,686–73,688: remaining WPF Inspection/Program/Acquisition presentation reads were migrated to the unified Inspection/Program surfaces; ROI completion gates now consume the projected Inspection surface rather than directly reading Production state.
+- 73,689–73,690: strengthened \`validate_client_shell_bindings.py\` with explicit forbidden direct workspace-state reads, while preserving legitimate catalog registration/access. Static verification confirms balanced WPF code-behind braces and no TODO/NotImplementedException tokens; no compiler/test execution is claimed.
+- This closes another presentation-authority seam: WPF display state is now driven by the same Unified Client Projection that represents Inspection → Production → Result → Quality → Replay → Release state.
