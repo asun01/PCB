@@ -601,7 +601,9 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public void ResetCurrentSession()
     {
         ThrowIfDisposed();
-        _program.Reset();
+        // Reset execution context, not the loaded Program definition. A Reset
+        // must remove runtime evidence while leaving the operator's selected
+        // Program available for the next explicit Production session.
         _production.Reset();
         _lastProductionReport=null;
         _pendingReleaseManifest=null;
