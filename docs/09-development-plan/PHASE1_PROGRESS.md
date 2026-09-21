@@ -3752,3 +3752,11 @@ Next executable stage: **51,501**
 - 73,766–73,768: closed Recovery → re-execution isolation. Recovery preserves the loaded Program/session definition, clears current Quality/Replay/Release authority, and a subsequent Production → Quality finalization creates fresh report/replay evidence and a new History entry without mutating prior History authority.
 - 73,769–73,771: added strict 10×100 simulation acceptance coverage for Recovery → re-execution → History → Results → Unified Projection, including current Replay binding, immutable prior History, Results Quality/Replay/Release display, bounded selection rejection, and projection agreement.
 - 73,772: re-audited the modified sources: balanced braces, no TODO/NotImplementedException, 10 strict groups and 10 actual Check call sites in the new smoke. Build/Test/CI execution is not claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,763–73,772 — 2026-09-21
+
+- 73,763–73,765: closed the real Reset → Recovery → Re-execution seam. Client Reset now preserves the loaded Production session definition so a completed, cancelled, or failed execution can be explicitly reset and run again without destroying the selected Program/session contract.
+- 73,766–73,768: added deterministic recovery re-execution smoke coverage: 10 groups × 100 rounds, 10 actual Check call sites. It verifies authority is cleared before rerun, prior History survives, the new ordinal is appended, current Quality/Replay authority binds to the current History entry, and Results/Unified Projection expose the recovered run.
+- 73,769–73,770: aligned Workflow authority with the actual execution gate. Cancelled/Failed Production no longer advertises an actionable Run workflow; the authoritative message now requires session reset before retry.
+- 73,771–73,772: static structural audit of changed client/runtime/smoke files completed: balanced braces, no TODO, no NotImplementedException. Build/Test/CI execution is not claimed for this interval.
