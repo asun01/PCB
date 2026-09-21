@@ -9,27 +9,7 @@ public sealed record ClientWorkspaceContentSurface(
     ClientQualitySurface Quality,
     ClientResultsSurface Results)
 {
-    public ClientInspectionWorkflowSnapshot Workflow { get; init; }=
-        ClientInspectionWorkflowRuntime.Evaluate(
-            new ClientInspectionWorkspaceSnapshot(
-                new ClientWorkspaceSnapshot(
-                    ClientExecutionStatus.Ready,
-                    null,
-                    null,
-                    null,
-                    0,
-                    0,
-                    0,
-                    null,
-                    null),
-                null,
-                null,
-                null,
-                new ClientProductionRunHistorySnapshot(
-                    20,
-                    1,
-                    0,
-                    Array.Empty<ClientProductionRunHistoryEntry>())));
+    public ClientInspectionWorkflowSnapshot Workflow { get; init; }=null!;
 };
 
 public static class ClientWorkspaceContentSurfaceRuntime
