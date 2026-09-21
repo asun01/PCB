@@ -523,7 +523,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private void PublishChanged()
     {
         ProductionChanged?.Invoke(_production.Snapshot);
-        Changed?.Invoke(Capture());
+        _changed?.Invoke(Capture());
     }
 
     private void ThrowIfDisposed() =>
