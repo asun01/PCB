@@ -15,12 +15,15 @@ public static class ClientWorkspaceClientSnapshotRuntime
         ClientWorkspaceCommandRouting routing,
         ClientInspectionWorkspaceSnapshot inspection)
     {
-        var errors=ClientInspectionWorkflowIntegrityRuntime.Validate(inspection);
-        if(errors.Count>0)
-            throw new InvalidOperationException(
-                string.Join(" ",errors));
+        var content=ClientWorkspaceContentSurfaceRuntime.CreateValidated(
+            selection,
+            routing,
+            inspection);
 
-        return Create(selection,routing,inspection);
+        return new ClientWorkspaceClientSnapshot(
+            selection,
+            routing,
+            content);
     }
 
     public static ClientWorkspaceClientSnapshot Create(
