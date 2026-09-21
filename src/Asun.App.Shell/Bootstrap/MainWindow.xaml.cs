@@ -132,6 +132,7 @@ public partial class MainWindow : System.Windows.Window
     {
         AcquisitionStatus.Text=inspection.Presentation.AcquisitionText;
         AcquisitionPreviewStatus.Text=inspection.Presentation.AcquisitionPreviewText;
+        RenderPreview(inspection.AcquisitionPreview);
     }
 
     private void ApplyResultsProjection(
@@ -208,9 +209,6 @@ public partial class MainWindow : System.Windows.Window
                     ClientInspectionExecutionSurfaceRuntime.Create(
                         snapshot,
                         routing));
-            RenderPreview(preview);
-            AcquisitionStatus.Text=
-                $"Acquisition: {preview.PixelFormat} · {preview.Width}×{preview.Height} · Frame {preview.Sequence.Value}.";
             RefreshDiagnosticStatus();
         }
         catch(OperationCanceledException)
