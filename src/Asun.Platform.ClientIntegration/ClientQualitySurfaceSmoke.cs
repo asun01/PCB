@@ -35,8 +35,9 @@ public static class ClientQualitySurfaceSmoke
     private static void SelectionIsExplicit()
     {
         var surface=CreateSurface();
-        Check(surface.Snapshot.SelectedFindingId is null,
-            "Unbound Quality selection must remain null.");
+        Check(surface.Snapshot.SelectedFindingId is null &&
+              surface.SelectedFinding is null,
+            "Unbound Quality selection and finding detail must remain null.");
     }
 
     private static void QualityAuthorityIsReused()
