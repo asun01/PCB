@@ -44,6 +44,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private readonly ClientQualityProviderCatalog _qualityProviderCatalog;
 
     private ProductionSessionReport? _lastProductionReport;
+    private ReleaseManifest? _pendingReleaseManifest;
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
     private long? _selectedHistoryOrdinal;
@@ -241,6 +242,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
             // Acquisition source, Quality result, Replay, Release, ROI state,
             // or selected history entry from the previous Program is stale.
             _lastProductionReport=null;
+            _pendingReleaseManifest=null;
             _quality.Clear();
             _acquisition.Unbind();
             _replay=null;
@@ -255,6 +257,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         else
         {
             _lastProductionReport=null;
+            _pendingReleaseManifest=null;
             _quality.Clear();
             _acquisition.Unbind();
             _replay=null;
@@ -403,14 +406,30 @@ public sealed class ClientInspectionWorkspace : IDisposable
             ?? throw new InvalidOperationException(
                 "A completed Production report is required before Quality evaluation.");
 
+        var releaseManifest=_pendingReleaseManifest
+            ?? throw new InvalidOperationException(
+                "A Release manifest must be retained from the completed client execution before Quality can finalize Replay and Release.");
+
         if(_production.Snapshot.Status!=ClientExecutionStatus.Completed)
             throw new InvalidOperationException(
                 "Quality evaluation requires a completed Production session.");
 
         var run=provider.Create(report);
         _quality.Bind(run,provider.Descriptor);
+        var quality=_quality.Capture();
+
+        _replay=ClientProductionReplaySnapshotRuntime.Create(
+            _production.Snapshot,
+            report,
+            quality);
+        _release=ClientReleaseProjectionRuntime.Create(
+            _replay,
+            releaseManifest);
+
+        var historyEntry=_history.Append(_replay,_release);
+        _selectedHistoryOrdinal=historyEntry.Ordinal;
         PublishChanged();
-        return _quality.Capture();
+        return quality;
     }
 
     public bool SelectQualityFinding(string findingId)
@@ -434,6 +453,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _lastProductionReport=null;
+        _pendingReleaseManifest=null;
         _quality.Clear();
         _acquisition.Unbind();
         _replay=null;
@@ -456,6 +476,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _release=null;
         _quality.Clear();
         _selectedHistoryOrdinal=null;
+        _pendingReleaseManifest=releaseManifest;
 
         var report=await _production.StartAsync(source,cancellationToken);
 
@@ -470,15 +491,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
                 (float)production.LastFrameWidth,
                 (float)production.LastFrameHeight));
         }
-        _replay=ClientProductionReplaySnapshotRuntime.Create(
-            _production.Snapshot,
-            report);
-        _release=ClientReleaseProjectionRuntime.Create(
-            _replay,
-            releaseManifest);
-
-        var historyEntry=_history.Append(_replay,_release);
-        _selectedHistoryOrdinal=historyEntry.Ordinal;
+        // Production completion is intentionally a Quality-pending state.
+        // Replay and Release become authoritative only after Quality evaluation.
         PublishChanged();
         return report;
     }
@@ -589,6 +603,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _program.Reset();
         _production.Reset();
         _lastProductionReport=null;
+        _pendingReleaseManifest=null;
         _roi.Reset();
         _quality.Clear();
         _acquisition.Unbind();
