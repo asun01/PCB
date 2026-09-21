@@ -10,7 +10,7 @@ public sealed record ClientInspectionResultDisplay(
     bool ReleaseReady)
 {
     public string QualityFingerprint { get; init; }="";
-};
+}
 
 public static class ClientResultsPresentationRuntime
 {
@@ -52,7 +52,10 @@ public static class ClientResultsPresentationRuntime
                 : release.ReleaseReady
                     ? $"Ready · {release.ArtifactPath}"
                     : "Not Ready",
-            release?.ReleaseReady==true);
+            release?.ReleaseReady==true)
+        {
+            QualityFingerprint=snapshot.Quality.Fingerprint ?? ""
+        };
     }
 
     private static bool IsValidFingerprint(string value)=>
