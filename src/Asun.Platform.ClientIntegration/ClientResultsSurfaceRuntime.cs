@@ -4,7 +4,8 @@ public sealed record ClientResultsSurface(
     ClientInspectionResultDisplay Current,
     IReadOnlyList<ClientRunHistoryDisplayItem> History,
     long? SelectedOrdinal,
-    string SelectionText);
+    string SelectionText,
+    ClientRunHistoryDisplayItem? SelectedHistoryItem);
 
 public static class ClientResultsSurfaceRuntime
 {
@@ -17,16 +18,24 @@ public static class ClientResultsSurfaceRuntime
         var current=ClientResultsPresentationRuntime.CreateCurrent(snapshot);
         var history=ClientResultsPresentationRuntime.CreateHistory(snapshot,maxHistoryItems);
         var selected=snapshot.SelectedHistoryOrdinal;
-        var selectionText=selected is null
-            ? "No historical run selected."
-            : history.Any(item=>item.Ordinal==selected.Value)
-                ? $"Selected Run {selected.Value}"
-                : $"Selected Run {selected.Value} is outside the visible history window.";
+        var selectedEntry=selected is null
+            ? null
+            : snapshot.History.Entries.FirstOrDefault(entry=>entry.Ordinal==selected.Value);
+        var selectedHistoryItem=selectedEntry is null
+            ? null
+            : ClientRunHistoryPresentationRuntime.CreateItem(selectedEntry);
+
+        var selectionText=selectedHistoryItem is not null
+            ? $"Selected Run {selectedHistoryItem.Ordinal}"
+            : selected is null
+                ? "No historical run selected."
+                : $"Selected Run {selected.Value} is outside the available history window.";
 
         return new ClientResultsSurface(
             current,
             history,
             selected,
-            selectionText);
+            selectionText,
+            selectedHistoryItem);
     }
 }
