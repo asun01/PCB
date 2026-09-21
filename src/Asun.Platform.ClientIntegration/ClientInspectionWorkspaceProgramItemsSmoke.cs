@@ -43,6 +43,15 @@ public static class ClientInspectionWorkspaceProgramItemsSmoke
     {
         using var workspace=CreateWorkspace();
         workspace.LoadProgram(
+            CreateValidProgram(),
+            EmptyPipeline(),
+            Guid.NewGuid(),
+            1);
+        workspace.BindAcquisition(
+            new DeterministicSource(),
+            new ClientAcquisitionDescriptor("source","Deterministic",true));
+
+        workspace.LoadProgram(
             new InspectionProgram(
                 Guid.NewGuid(),
                 "",
@@ -52,9 +61,15 @@ public static class ClientInspectionWorkspaceProgramItemsSmoke
             Guid.NewGuid(),
             1);
 
-        Check(workspace.Capture().ProgramItems.Count==0,
-            "Invalid Program state must preserve an empty ProgramItems projection.");
-    }
+        var snapshot=workspace.Capture();
+        Check(snapshot.ProgramItems.Count==0 &&
+              snapshot.Program?.Status==ClientProgramLoadStatus.Invalid &&
+              snapshot.Production.Status==ClientExecutionStatus.Idle &&
+              snapshot.Acquisition.State==ClientAcquisitionState.Unbound &&
+              snapshot.Quality.IsBound==false &&
+              snapshot.Replay is null &&
+              snapshot.Release is null,
+            "Invalid Program load must clear dependent Production, Acquisition, Quality, Replay, and Release state.");
 
     private static void InvalidProgramStatusIsPreserved()
     {
@@ -149,6 +164,13 @@ public static class ClientInspectionWorkspaceProgramItemsSmoke
             "Client Program",
             new Version(3,2),
             new[] { step });
+    }
+
+    private sealed class DeterministicSource : IFrameSource
+    {
+        public ValueTask<CapturedFrame?> CaptureAsync(
+            CancellationToken cancellationToken=default) =>
+            ValueTask.FromResult<CapturedFrame?>(null);
     }
 
     private static PipelineDefinition<CapturedFrame> EmptyPipeline() =>
