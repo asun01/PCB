@@ -3275,3 +3275,14 @@ Next executable stage: **51,501**
 - Added `ClientInspectionExecutionCommandRuntime.LoadProgram(...)`, delegating to the existing Program/Production preparation authority only after the active Inspection surface exposes the Load command.
 - Inspection command Smoke now verifies Program Load and Production Run are both rejected before downstream argument validation when the active command routing does not permit them.
 - Static source checks remain within the 10×100 acceptance contract; no authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73530 — 2026-09-21
+
+- Completed boundary: **73,530**
+- Next executable stage: **73,531**
+- 73529–73530: **Inspection Surface command availability -> Acquisition Ready gate**.
+- `CanPreviewAcquisition` and `CanRunInspection` now require both existing routing permission and a Ready Acquisition state.
+- Corrected the earlier potential UI drift where stale routing could advertise Preview/Run against an Unbound/Faulted Acquisition.
+- Inspection command Smoke was tightened to verify the gate is unavailable before binding and available after a Ready source is bound.
+- Static source audit remains within the required 10×100 Smoke structure; no authoritative build/test/CI execution is claimed.
