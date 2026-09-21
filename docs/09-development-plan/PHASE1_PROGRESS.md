@@ -3422,3 +3422,15 @@ Next executable stage: **51,501**
 - Added `ProjectionSequence` to unified client snapshots and advanced it for each emitted projection snapshot.
 - Registered `ClientWorkspaceClientProjectionSmoke`; final static audit is 10×100 with 10 actual `Check(...)` call sites, balanced braces, and no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73570 — 2026-09-21
+
+- Completed boundary: **73,570**
+- Next executable stage: **73,571**
+- 73565–73570: **Client Snapshot latest-wins fence -> structured Results Replay/Release binding -> filter-aware Quality selection**.
+- Added `ClientWorkspaceClientSnapshotFence` for monotonically sequenced latest-wins client snapshot acceptance.
+- Bound structured `ClientReleaseReplaySurface` into `ClientResultsSurface` so Results uses one structured Replay/Release model instead of parallel bindings.
+- Added filter-aware Quality finding selection that reuses the canonical Outcome/Severity filter before mutating the authoritative Quality workspace selection.
+- Extended Quality Command Smoke with a real validated domain Quality Run; static audit was repaired after a missing method delimiter and revalidated at 10 loop groups / 10 actual `Check(...)` sites.
+- No authoritative build/test/CI execution is claimed.
