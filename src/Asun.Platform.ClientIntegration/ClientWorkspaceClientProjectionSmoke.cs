@@ -103,6 +103,7 @@ public static class ClientWorkspaceClientProjectionSmoke
               productionEvents>0 &&
               productionLatest is not null,
             "Projection must bridge both full client snapshots and high-frequency Production state.");
+    }
 
     private static void RoutingFactoryDrivesSnapshot()
     {
