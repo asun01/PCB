@@ -88,9 +88,10 @@ public static class ClientWorkspaceClientSnapshotSmoke
     private static void NoAuthorityIsCreated()
     {
         var snapshot=Create(new ClientWorkspaceSelection(ClientWorkspaceKind.Home,5));
-        Check(snapshot.Content.Inspection.ResultsEquivalentToEmpty() &&
+        Check(snapshot.Content.Inspection.ResultDisplay.ReplayText=="Replay not available" &&
               snapshot.Content.Quality.Snapshot.IsBound==false &&
-              snapshot.Content.Results.Current.ReplayText=="Replay not available",
+              snapshot.Content.Results.Current.ReplayText=="Replay not available" &&
+              snapshot.Content.Results.Current.ReleaseText=="Release not evaluated",
             "Unified client snapshot must not create Quality, Replay, or Release authority.");
     }
 
