@@ -8,6 +8,7 @@ public sealed record ClientRunHistoryDisplayItem(
     string ReplayText,
     bool ReleaseReady)
 {
+    public string QualityFingerprint { get; init; }="";
     public Guid ProductionSessionId { get; init; }
 };
 
@@ -28,7 +29,8 @@ public static class ClientRunHistoryPresentationRuntime
             $"Replay {entry.ReplayFingerprint[..12]}...",
             entry.ReleaseReady)
         {
-            ProductionSessionId=entry.ProductionSessionId
+            ProductionSessionId=entry.ProductionSessionId,
+            QualityFingerprint=entry.QualityFingerprint
         };
     }
 
