@@ -13,6 +13,25 @@ public sealed record ClientRunHistoryDisplayItem(
 
 public static class ClientRunHistoryPresentationRuntime
 {
+    public static ClientRunHistoryDisplayItem CreateItem(
+        ClientProductionRunHistoryEntry entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        return new ClientRunHistoryDisplayItem(
+            entry.Ordinal,
+            $"Session {entry.ProductionSessionId}",
+            $"{entry.FrameCount} frame(s)",
+            entry.ReleaseReady
+                ? $"Release Ready · {entry.ArtifactPath}"
+                : "Release Not Ready",
+            $"Replay {entry.ReplayFingerprint[..12]}...",
+            entry.ReleaseReady)
+        {
+            ProductionSessionId=entry.ProductionSessionId
+        };
+    }
+
     public static IReadOnlyList<ClientRunHistoryDisplayItem> CreateItems(
         ClientProductionRunHistorySnapshot snapshot,
         int maxItems=5)
@@ -24,18 +43,7 @@ public static class ClientRunHistoryPresentationRuntime
         return snapshot.Entries
             .OrderByDescending(entry=>entry.Ordinal)
             .Take(maxItems)
-            .Select(entry=>new ClientRunHistoryDisplayItem(
-                entry.Ordinal,
-                $"Session {entry.ProductionSessionId}",
-                $"{entry.FrameCount} frame(s)",
-                entry.ReleaseReady
-                    ? $"Release Ready · {entry.ArtifactPath}"
-                    : "Release Not Ready",
-                $"Replay {entry.ReplayFingerprint[..12]}...",
-                entry.ReleaseReady)
-            {
-                ProductionSessionId=entry.ProductionSessionId
-            })
+            .Select(CreateItem)
             .ToArray();
     }
 
