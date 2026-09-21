@@ -3243,3 +3243,14 @@ Next executable stage: **51,501**
 - Added and registered `ClientInspectionWorkspaceChangedSmoke` with ten exact-100-round matrices.
 - Static source audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73524 — 2026-09-21
+
+- Completed boundary: **73,524**
+- Next executable stage: **73,525**
+- 73523–73524: **Full Inspection Snapshot Change Stream -> Lifecycle Hardening**.
+- Added managed subscription accessors for `ClientInspectionWorkspace.Changed`; subscriptions are rejected after disposal and retained callbacks are cleared during `Dispose()`.
+- Extended the existing ten-matrix change-stream Smoke to cover both authority isolation and post-disposal subscription rejection without violating the 10×100 acceptance contract.
+- Static audit remains clean: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
