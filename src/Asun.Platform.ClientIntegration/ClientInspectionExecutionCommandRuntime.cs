@@ -78,6 +78,20 @@ public static class ClientInspectionExecutionCommandRuntime
         workspace.ResetCurrentSession();
     }
 
+    public static bool SetRoiMode(
+        ClientInspectionWorkspace workspace,
+        ClientInspectionExecutionSurface surface,
+        RoiEditorMode mode)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(surface);
+
+        if(!surface.CanEditRoi)
+            return false;
+
+        return workspace.SetRoiMode(mode);
+    }
+
     public static bool UndoRoi(
         ClientInspectionWorkspace workspace,
         ClientInspectionExecutionSurface surface)
