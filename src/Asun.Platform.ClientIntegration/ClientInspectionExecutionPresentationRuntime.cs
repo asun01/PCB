@@ -1,5 +1,17 @@
 namespace Asun.Platform.ClientIntegration;
 
+public enum ClientRunReadinessState
+{
+    LoadProgram,
+    BindAcquisition,
+    Ready,
+    Running,
+    ReadyForNextSession,
+    BindAcquisitionForNextSession,
+    ReadyAfterCancellation,
+    ReadyAfterFailure
+}
+
 public sealed record ClientInspectionExecutionPresentation(
     string ProgramSummary,
     string ExecutionStatus,
@@ -8,7 +20,10 @@ public sealed record ClientInspectionExecutionPresentation(
     string AcquisitionText,
     string AcquisitionPreviewText,
     string ResultText,
-    string RunReadinessText);
+    string RunReadinessText)
+{
+    public ClientRunReadinessState RunReadinessState { get; init; }
+}
 
 public static class ClientInspectionExecutionPresentationRuntime
 {
@@ -46,19 +61,32 @@ public static class ClientInspectionExecutionPresentationRuntime
             ? $"Result — {snapshot.Production.LastFrameCount} frames"
             : "Result — pending";
 
-        var runReadiness=snapshot.Program?.Status!=ClientProgramLoadStatus.Ready
-            ? "Run — load a program"
+        var runReadinessState=snapshot.Program?.Status!=ClientProgramLoadStatus.Ready
+            ? ClientRunReadinessState.LoadProgram
             : snapshot.Production.Status switch
             {
-                ClientExecutionStatus.Running => "Run — execution in progress",
-                ClientExecutionStatus.Ready when snapshot.Acquisition.CanCapture => "Run — ready",
-                ClientExecutionStatus.Ready => "Run — bind an acquisition source",
-                ClientExecutionStatus.Completed when snapshot.Acquisition.CanCapture => "Run — ready for next session",
-                ClientExecutionStatus.Completed => "Run — bind an acquisition source for the next session",
-                ClientExecutionStatus.Cancelled when snapshot.Acquisition.CanCapture => "Run — ready after cancellation",
-                ClientExecutionStatus.Failed when snapshot.Acquisition.CanCapture => "Run — ready after failure",
-                _ => "Run — load a program and bind an acquisition source"
+                ClientExecutionStatus.Running => ClientRunReadinessState.Running,
+                ClientExecutionStatus.Ready when snapshot.Acquisition.CanCapture => ClientRunReadinessState.Ready,
+                ClientExecutionStatus.Ready => ClientRunReadinessState.BindAcquisition,
+                ClientExecutionStatus.Completed when snapshot.Acquisition.CanCapture => ClientRunReadinessState.ReadyForNextSession,
+                ClientExecutionStatus.Completed => ClientRunReadinessState.BindAcquisitionForNextSession,
+                ClientExecutionStatus.Cancelled when snapshot.Acquisition.CanCapture => ClientRunReadinessState.ReadyAfterCancellation,
+                ClientExecutionStatus.Failed when snapshot.Acquisition.CanCapture => ClientRunReadinessState.ReadyAfterFailure,
+                _ => ClientRunReadinessState.BindAcquisition
             };
+
+        var runReadiness=runReadinessState switch
+        {
+            ClientRunReadinessState.LoadProgram => "Run — load a program",
+            ClientRunReadinessState.BindAcquisition => "Run — bind an acquisition source",
+            ClientRunReadinessState.Ready => "Run — ready",
+            ClientRunReadinessState.Running => "Run — execution in progress",
+            ClientRunReadinessState.ReadyForNextSession => "Run — ready for next session",
+            ClientRunReadinessState.BindAcquisitionForNextSession => "Run — bind an acquisition source for the next session",
+            ClientRunReadinessState.ReadyAfterCancellation => "Run — ready after cancellation",
+            ClientRunReadinessState.ReadyAfterFailure => "Run — ready after failure",
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         return new ClientInspectionExecutionPresentation(
             programSummary,
@@ -68,6 +96,9 @@ public static class ClientInspectionExecutionPresentationRuntime
             acquisition,
             preview,
             result,
-            runReadiness);
+            runReadiness)
+        {
+            RunReadinessState=runReadinessState
+        };
     }
 }
