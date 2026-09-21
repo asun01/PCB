@@ -30,7 +30,8 @@ public static class ClientRunHistoryPresentationRuntime
             entry.ReleaseReady)
         {
             ProductionSessionId=entry.ProductionSessionId,
-            QualityFingerprint=entry.QualityFingerprint
+            QualityFingerprint=entry.QualityFingerprint,
+            QualityText=$"Quality {entry.QualityFingerprint[..12]}..."
         };
     }
 
