@@ -3,7 +3,8 @@ namespace Asun.Platform.ClientIntegration;
 public sealed record ClientQualitySurface(
     ClientQualityWorkspaceSnapshot Snapshot,
     bool HasFindings,
-    string SelectionText);
+    string SelectionText,
+    ClientQualityFindingDisplayItem? SelectedFinding);
 
 public static class ClientQualitySurfaceRuntime
 {
@@ -14,16 +15,18 @@ public static class ClientQualitySurfaceRuntime
 
         var quality=snapshot.Quality;
         var selected=quality.SelectedFindingId;
-        var hasSelection=selected is not null &&
-                         quality.Findings.Any(item=>item.FindingId==selected);
+        var selectedFinding=selected is null
+            ? null
+            : quality.Findings.FirstOrDefault(item=>item.FindingId==selected);
 
-        var selectionText=hasSelection
-            ? $"Selected finding {selected}"
+        var selectionText=selectedFinding is not null
+            ? $"Selected finding {selectedFinding.FindingId}"
             : "No finding selected.";
 
         return new ClientQualitySurface(
             quality,
             quality.Findings.Count>0,
-            selectionText);
+            selectionText,
+            selectedFinding);
     }
 }
