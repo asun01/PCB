@@ -3787,3 +3787,10 @@ Next executable stage: **51,501**
 - 73,792: strengthened the shell binding validator with explicit Results authority binding requirements.
 - 73,793–73,794: added strict 10×100 Results/History authority acceptance coverage for Quality, Replay, Release, selection stability, Unified Projection agreement, and History immutability after Recovery.
 - Verification status: source/static structural inspection only. The new smoke has 10 strict stage groups and 10 actual Check call sites; the textual Check count also includes the Check method declaration. Build/Test/CI execution is not claimed for this interval.
+
+### Rolling real-client continuation — stages 73,795–73,804 — 2026-09-22
+
+- 73,795–73,797: closed the WPF Results selection synchronization seam. ApplyResultsProjection now reconciles the shell's transient ClientRunHistorySelection with the authoritative Results projection, preventing stale local selection text from surviving a reset or projection refresh.
+- 73,798: removed an accidental duplicate RunHistoryAuthorityStatus declaration in the WPF XAML; the existing shell validator's duplicate x:Name contract now protects this boundary.
+- 73,799–73,803: added ClientResultsSelectionRecoverySmoke with strict 10×100 acceptance groups covering selected History projection binding, Quality/Replay/Release authority propagation, Reset selection clearing, non-finalized Results after Reset, fresh current authority after re-execution, immutable historical authority, and Unified Projection consistency.
+- 73,804: re-audited the changed shell/runtime/smoke sources for structural integrity. No authoritative Build/Test/CI execution is claimed for this interval.
