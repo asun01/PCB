@@ -3286,3 +3286,14 @@ Next executable stage: **51,501**
 - Corrected the earlier potential UI drift where stale routing could advertise Preview/Run against an Unbound/Faulted Acquisition.
 - Inspection command Smoke was tightened to verify the gate is unavailable before binding and available after a Ready source is bound.
 - Static source audit remains within the required 10×100 Smoke structure; no authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73532 — 2026-09-21
+
+- Completed boundary: **73,532**
+- Next executable stage: **73,533**
+- 73531–73532: **Inspection Program/Production context reset ordering**.
+- Corrected `LoadProgram(...)` so Quality/Replay/Release context is cleared before the Production Load event can publish a client snapshot.
+- Corrected `Load(ProductionSessionDefinition)` so prior report/Quality/Acquisition/Replay/Release state is cleared before Production publishes its Load event.
+- This prevents mixed snapshots where a new Program/Production session is momentarily paired with stale result context.
+- No authoritative build/test/CI execution is claimed.
