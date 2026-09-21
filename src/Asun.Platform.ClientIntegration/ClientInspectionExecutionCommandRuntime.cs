@@ -58,6 +58,32 @@ public static class ClientInspectionExecutionCommandRuntime
         workspace.ResetCurrentSession();
     }
 
+    public static bool UndoRoi(
+        ClientInspectionWorkspace workspace,
+        ClientInspectionExecutionSurface surface)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(surface);
+
+        if(!surface.CanUndoRoiCommand)
+            return false;
+
+        return workspace.UndoRoi();
+    }
+
+    public static bool RedoRoi(
+        ClientInspectionWorkspace workspace,
+        ClientInspectionExecutionSurface surface)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(surface);
+
+        if(!surface.CanRedoRoiCommand)
+            return false;
+
+        return workspace.RedoRoi();
+    }
+
     public static bool SubmitRoiInput(
         ClientInspectionWorkspace workspace,
         ClientInspectionExecutionSurface surface,
