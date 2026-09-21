@@ -82,6 +82,7 @@ public static class ClientWorkspaceClientSnapshotFenceSmoke
               fence.Current?.ProjectionSequence==4 &&
               fence.LastAcceptedSequence==4,
             "Fence reset must clear visible state while retaining the stale-snapshot ordering boundary.");
+    }
 
     private static void FenceDoesNotMutateSnapshot()
     {
