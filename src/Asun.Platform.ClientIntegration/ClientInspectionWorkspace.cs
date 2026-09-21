@@ -614,7 +614,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         // Reset execution context, not the loaded Program definition. A Reset
         // must remove runtime evidence while leaving the operator's selected
         // Program available for the next explicit Production session.
-        _production.Reset();
+        _production.ResetForRecovery();
         _lastProductionReport=null;
         _pendingReleaseManifest=null;
         _roi.Reset();
