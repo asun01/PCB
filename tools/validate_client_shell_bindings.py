@@ -31,6 +31,11 @@ FORBIDDEN_LEGACY_SUBSCRIPTIONS = (
     re.compile(r"_workspaceRuntime\.Changed\s*\+="),
 )
 
+REQUIRED_SHELL_ROUTING_GATES = (
+    "BindAcquisitionButton.IsEnabled=routing.CanBindAcquisition",
+    "if(!routing.CanBindAcquisition)",
+)
+
 REQUIRED_COMMAND_FACADES = (
     "ClientInspectionExecutionCommandRuntime.",
     "ClientInspectionAcquisitionCommandRuntime.",
@@ -101,6 +106,10 @@ def main() -> int:
         if subscription.search(code):
             errors.append(f"legacy direct subscription must not exist: {subscription.pattern}")
 
+    for gate in REQUIRED_SHELL_ROUTING_GATES:
+        if gate not in code:
+            errors.append(f"missing required shell routing gate: {gate}")
+
     for facade in REQUIRED_COMMAND_FACADES:
         if facade not in code:
             errors.append(f"missing command facade usage: {facade}")
@@ -126,6 +135,7 @@ def main() -> int:
         f"handlers={len(set(handlers))} "
         f"projection_subscriptions={sum(item.search(code) is not None for item in REQUIRED_PROJECTION_SUBSCRIPTIONS)} "
         f"legacy_subscriptions={sum(item.search(code) is not None for item in FORBIDDEN_LEGACY_SUBSCRIPTIONS)} "
+        f"routing_gates={sum(item in code for item in REQUIRED_SHELL_ROUTING_GATES)} "
         f"commands={sum(item in code for item in REQUIRED_COMMAND_FACADES)}"
     )
 
