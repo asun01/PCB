@@ -840,106 +840,33 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshAcquisitionStatus()
     {
-        var acquisition=_client.Acquisition;
-        AcquisitionStatus.Text=acquisition.State switch
-        {
-            ClientAcquisitionState.Unbound=>"Acquisition: unbound.",
-            ClientAcquisitionState.Ready =>
-                $"Acquisition: {acquisition.Descriptor?.DisplayName}" +
-                (acquisition.Descriptor?.IsSimulation==true ? " · Simulation" : " · External source"),
-            ClientAcquisitionState.Faulted =>
-                $"Acquisition: Faulted · {acquisition.LastError}",
-            _=>"Acquisition: unknown."
-        };
+        AcquisitionStatus.Text=
+            _clientProjection.Snapshot.Content.Inspection.Presentation.AcquisitionText;
     }
 
     private void RefreshProgramStatus()
     {
-        var snapshot=_client.Program;
-        if(snapshot.Status!=ClientProgramLoadStatus.Ready || _client.CurrentProgram is null)
-        {
-            ProgramStatus.Text="Program: none loaded.";
-            return;
-        }
+        var program=_clientProjection.Snapshot.Content.Program;
+        var snapshot=program.Snapshot;
 
-        var items=ClientProgramPresentationRuntime.CreateItems(_client.CurrentProgram);
+        ProgramStatus.Text=snapshot.Status==ClientProgramLoadStatus.Ready
+            ? $"Program: {snapshot.Name} · v{snapshot.Version} · {program.Items.Count} step(s)."
+            : snapshot.Status==ClientProgramLoadStatus.Invalid
+                ? "Program: invalid."
+                : "Program: none loaded.";
 
         _isSynchronizingClientControls=true;
         try
         {
-            ProgramStepList.ItemsSource=items;
-
-            if(snapshot.SelectedStepId is Guid selected)
-            {
-                var selectedItem=items.FirstOrDefault(item=>item.StepId==selected);
-                ProgramStepList.SelectedItem=selectedItem;
-            }
+            ProgramStepList.ItemsSource=program.Items;
+            ProgramStepList.SelectedItem=program.SelectedItem;
         }
         finally
         {
             _isSynchronizingClientControls=false;
         }
 
-        ProgramStatus.Text=$"Program: {snapshot.Name} · v{snapshot.Version} · {items.Count} step(s).";
-    }
-
-    private void RefreshResultStatus()
-    {
-        var snapshot=_client.Capture();
-        var result=ClientResultsPresentationRuntime.CreateCurrent(snapshot);
-
-        ResultStatus.Text=$"Status: {result.Status}";
-        ResultSession.Text=$"{result.SessionText} · {result.FrameCount} frame(s)";
-        ResultReplay.Text=result.ReplayText;
-        ResultRelease.Text=result.ReleaseText;
-        RefreshQualityStatus();
-    }
-
-    private void RefreshQualityStatus()
-    {
-        var qualitySurface=_clientProjection.Snapshot.Content.Quality;
-        var quality=qualitySurface.Snapshot;
-
-        if(!quality.IsBound)
-        {
-            QualityStatus.Text=
-                "Quality Run: not attached. Quality facts remain outside this client projection until an authoritative Quality run is available.";
-            QualityFindingList.ItemsSource=Array.Empty<ClientQualityFindingDisplayItem>();
-            QualityFindingSelectionStatus.Text=_qualityFindingSelection.StatusText;
-            QualityFindingDetails.Text="No Quality finding selected.";
-            return;
-        }
-
-        QualityStatus.Text=
-            $"Quality Run {quality.RunId} · {quality.Provider?.DisplayName} · Results {quality.ResultCount} · Findings {quality.FindingCount} · Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount} · Evidence links {quality.EvidenceLinkCount}.";
-
-        _isSynchronizingClientControls=true;
-        try
-        {
-            QualityFindingList.ItemsSource=qualitySurface.VisibleFindings;
-
-            if(quality.SelectedFindingId is string selected)
-                QualityFindingList.SelectedItem=qualitySurface.VisibleFindings
-                    .FirstOrDefault(item=>item.FindingId==selected);
-        }
-        finally
-        {
-            _isSynchronizingClientControls=false;
-        }
-    }
-
-    private void RefreshDiagnosticStatus(
-        ClientInspectionDiagnosticSnapshot? diagnostic=null)
-    {
-        if(diagnostic is null)
-        {
-            DiagnosticStatus.Text="Diagnostic: not evaluated.";
-            return;
-        }
-
-        DiagnosticStatus.Text=diagnostic.IsCoherent
-            ? $"Diagnostic: Coherent · {diagnostic.Fingerprint[..12]}..."
-            : $"Diagnostic: {diagnostic.Errors.Count} error(s).";
+        ProgramStepDetails.Text=program.SelectionText;
     }
 
     private void RefreshRunHistoryStatus()
