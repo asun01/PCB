@@ -44,17 +44,37 @@ public static class ClientResultsSurfaceSmoke
         var workspace=CreateWorkspace();
         var snapshot=workspace.Capture() with { SelectedHistoryOrdinal=42 };
         var surface=ClientResultsSurfaceRuntime.Create(snapshot);
-        Check(surface.SelectedOrdinal==42,
-            "Results surface must project the authoritative selected history ordinal.");
+        Check(surface.SelectedOrdinal==42 &&
+              surface.SelectedHistoryItem is null,
+            "Results surface must preserve an unavailable selected ordinal without fabricating history detail.");
     }
 
     private static void MissingSelectionWindowIsExplicit()
     {
         var workspace=CreateWorkspace();
-        var snapshot=workspace.Capture() with { SelectedHistoryOrdinal=42 };
+        var snapshot=workspace.Capture() with
+        {
+            SelectedHistoryOrdinal=42,
+            History=new ClientProductionRunHistorySnapshot(
+                20,
+                43,
+                0,
+                new[]
+                {
+                    new ClientProductionRunHistoryEntry(
+                        42,
+                        Guid.NewGuid(),
+                        Guid.NewGuid(),
+                        3,
+                        new string('a',64),
+                        true,
+                        "artifact.bin")
+                })
+        };
         var surface=ClientResultsSurfaceRuntime.Create(snapshot,1);
-        Check(surface.SelectionText.Contains("outside the visible history window",StringComparison.Ordinal),
-            "Results surface must distinguish a selection outside the visible history window.");
+        Check(surface.SelectedHistoryItem?.Ordinal==42 &&
+              surface.SelectionText=="Selected Run 42",
+            "Results surface must expose selected history detail independently of the visible list limit.");
     }
 
     private static void ReplayIsNotFabricated()
