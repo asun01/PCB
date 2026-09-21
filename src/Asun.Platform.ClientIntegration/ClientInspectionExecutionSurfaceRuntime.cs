@@ -11,6 +11,8 @@ public sealed record ClientInspectionExecutionSurface(
     public ClientInspectionResultDisplay ResultDisplay { get; init; } =
         new("Idle",0,"Session not loaded","Replay not available","Release not evaluated",false);
 
+    public ClientAcquisitionPreviewSnapshot? AcquisitionPreview { get; init; }
+
     public bool HasAcquisitionPreview { get; init; }
 
     public string AcquisitionPreviewText { get; init; }="Acquisition Preview — unavailable";
@@ -42,6 +44,7 @@ public static class ClientInspectionExecutionSurfaceRuntime
             snapshot.Roi is not null)
         {
             ResultDisplay=resultDisplay,
+            AcquisitionPreview=preview,
             HasAcquisitionPreview=preview is not null,
             AcquisitionPreviewText=preview is null
                 ? "Acquisition Preview — unavailable"
