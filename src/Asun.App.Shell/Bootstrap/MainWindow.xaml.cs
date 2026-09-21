@@ -27,10 +27,7 @@ public partial class MainWindow : System.Windows.Window
             new Vector2(1,1),
             historyCapacity:20);
 
-        _client.ProductionChanged+=OnClientProductionChanged;
-
         _workspaceRuntime=new ClientWorkspaceRuntime();
-        _workspaceRuntime.Changed+=OnWorkspaceChanged;
         _clientProjection=new ClientWorkspaceClientProjection(
             _workspaceRuntime,
             _client,
@@ -67,18 +64,9 @@ public partial class MainWindow : System.Windows.Window
         _clientProjection.ExecutionChanged-=OnClientExecutionChanged;
         _clientProjection.RoiPulseChanged-=OnClientRoiPulseChanged;
         _clientProjection.Dispose();
-        _workspaceRuntime.Changed-=OnWorkspaceChanged;
         _workspaceRuntime.Dispose();
         _client.Dispose();
     }
-
-    private void OnWorkspaceChanged(ClientWorkspaceSelection selection)
-    {
-        WorkspaceNavigationStatus.Text=$"Workspace: {selection.Workspace}";
-        ApplyWorkspaceView(selection.Workspace);
-        RefreshCommandAvailability();
-    }
-
 
     private void OnClientProjectionChanged(
         ClientWorkspaceClientSnapshot snapshot)
@@ -207,10 +195,8 @@ public partial class MainWindow : System.Windows.Window
 
         QualityFindingSelectionStatus.Text=_qualityFindingSelection.StatusText;
         QualityFindingDetails.Text=
-            $"{item.RuleCode} · {item.Outcome} · {item.Severity}
-" +
-            $"Evidence links: {item.EvidenceCount}
-{item.Message}";
+            $"{item.RuleCode} · {item.Outcome} · {item.Severity}\n" +
+            $"Evidence links: {item.EvidenceCount}\n{item.Message}";
     }
 
     private void QualityFilter_SelectionChanged(
@@ -257,22 +243,6 @@ public partial class MainWindow : System.Windows.Window
             RefreshHomeStatus();
             RefreshDiagnosticStatus();
             RefreshCommandAvailability();
-        }
-    }
-
-    private void QualityFindingList_SelectionChanged(
-        object sender,
-        System.Windows.Controls.SelectionChangedEventArgs e)
-    {
-        if(e.AddedItems.Count==0)
-            return;
-
-        if(e.AddedItems[0] is ClientQualityFindingDisplayItem item &&
-           _client.SelectQualityFinding(item.FindingId))
-        {
-            QualityFindingDetails.Text=
-                $"{item.RuleCode} · {item.Outcome} · {item.Severity}\n" +
-                $"Evidence links: {item.EvidenceCount}\n{item.Message}";
         }
     }
 
