@@ -111,6 +111,11 @@
                     Margin="0,6,0,0"
                     AutomationProperties.AutomationId="Shell.AcquisitionStatus"
                     Text="Acquisition: unbound." />
+                <TextBlock
+                    x:Name="AcquisitionPreviewStatus"
+                    Margin="0,4,0,0"
+                    AutomationProperties.AutomationId="Shell.AcquisitionPreviewStatus"
+                    Text="Preview — not captured" />
                 <StackPanel
                     Margin="0,6,0,0"
                     Orientation="Horizontal">
