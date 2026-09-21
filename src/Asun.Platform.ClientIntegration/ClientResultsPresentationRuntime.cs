@@ -4,6 +4,7 @@ public sealed record ClientInspectionResultDisplay(
     string Status,
     int FrameCount,
     string SessionText,
+    string QualityText,
     string ReplayText,
     string ReleaseText,
     bool ReleaseReady);
@@ -35,6 +36,9 @@ public static class ClientResultsPresentationRuntime
             production.ActiveSessionId is Guid session
                 ? $"Session {session}"
                 : "Session not loaded",
+            snapshot.Quality.IsBound
+                ? $"Quality {snapshot.Quality.Fingerprint?[..12]}..."
+                : "Quality pending",
             replay is null
                 ? "Replay not available"
                 : IsValidFingerprint(replay.ReplayFingerprint)
