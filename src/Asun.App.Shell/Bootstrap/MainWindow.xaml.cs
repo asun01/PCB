@@ -129,8 +129,7 @@ public partial class MainWindow : System.Windows.Window
                     _client,
                     ClientInspectionExecutionSurfaceRuntime.Create(
                         _client.Capture(),
-                        CreateRouting(ClientWorkspaceKind.Inspection)),
-                    CreateCancellationToken());
+                        CreateRouting(ClientWorkspaceKind.Inspection)));
             RenderPreview(preview);
             AcquisitionStatus.Text=
                 $"Acquisition: {preview.PixelFormat} · {preview.Width}×{preview.Height} · Frame {preview.Sequence.Value}.";
@@ -272,9 +271,6 @@ public partial class MainWindow : System.Windows.Window
                     : $"Parameters: {item.ParameterSummary}");
         }
     }
-
-    private static CancellationToken CreateCancellationToken() =>
-        CancellationToken.None;
 
     private ClientWorkspaceCommandRouting CreateRouting(
         ClientWorkspaceSelection selection)
