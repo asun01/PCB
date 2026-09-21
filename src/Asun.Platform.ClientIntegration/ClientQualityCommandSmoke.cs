@@ -59,6 +59,7 @@ public static class ClientQualityCommandSmoke
               !hidden &&
               workspace.Quality.SelectedFindingId=="finding-1",
             "Filter-aware Quality selection must select visible findings and reject hidden findings.");
+    }
 
     private static void WrongWorkspaceClearRejected()
     {
