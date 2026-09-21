@@ -3770,3 +3770,11 @@ Next executable stage: **51,501**
 - 73,775–73,778: retained Results/History selection as projection state, including bounded selection rejection without changing the current selection and current Results authority after re-execution.
 - 73,779–73,782: re-audited Unified Projection → Results → WPF binding path. Current Results, selected History item, Replay and Release are exposed through the Content Surface; WPF Results consumes the projected Results surface.
 - Verification status: source/static structural inspection only. Build/Test/CI execution is not claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,783–73,786 — 2026-09-21
+
+- 73,783–73,784: tightened Results/History presentation so authoritative Quality fingerprint is carried into history display items instead of disappearing at the presentation boundary.
+- 73,785: tightened current Results projection to expose the current authoritative Quality fingerprint alongside Quality/Replay/Release display state.
+- 73,786: re-audited the Results Surface and History Selection boundary; selection remains snapshot-bound and out-of-window ordinals cannot become active Result context.
+- Verification status: source/static structural audit only. Build/Test/CI execution is not claimed for this interval.
