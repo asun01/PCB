@@ -3481,3 +3481,12 @@ Next executable stage: **51,501**
 - Added `docs/00-baseline/INTEGRATION-CHECKPOINT-73600.md` as the formal 73,600 implementation checkpoint.
 - Static Smoke audits across the current interval remain at the required 10×100 structure with 10 actual `Check(...)` sites, balanced braces, and no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+## Live execution synchronization — Stage 73604 — 2026-09-21
+
+- Completed boundary: **73,604**
+- Next executable stage: **73,605**
+- 73601–73604: **Cross-module Inspection workflow integrity gate -> validated unified client snapshot publish**.
+- Added `ClientInspectionWorkflowIntegrityRuntime` to reject incoherent Program/Acquisition/Production/Quality/History/Replay/Release combinations.
+- Unified Client Snapshot now has a validated creation path; the subscribed Client Projection uses that path before publishing full UI snapshots.
+- Integrity Smoke and Client Snapshot Smoke remain within the 10×100 acceptance contract; no authoritative Build/Test/CI execution is claimed.
