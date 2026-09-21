@@ -23,6 +23,7 @@
 | ClientInspectionWorkspaceProgramItemsSmoke.Run100Stages | Asun.Platform.ClientIntegration | ProgramItems integration through Inspection Capture, including Invalid/Ready Program behavior | Source registered; execution not claimed |
 | ClientProgramCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Program step selection command facade and authoritative Selection/Surface event propagation | Source registered; execution not claimed |
 | ClientInspectionWorkflowIntegritySmoke.Run100Stages | Asun.Platform.ClientIntegration | Cross-module client-state integrity: Program/Acquisition/Production/ROI/Quality/Results/Replay/Release coherence | Source registered; execution not claimed |
+| ClientInspectionSnapshotValidationSmoke.Run100Stages | Asun.Platform.ClientIntegration | Validated full Inspection snapshot boundary across Program/Acquisition/Preview/Selection/Reset states | Source registered; execution not claimed |
 | ClientQualityCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Quality finding selection/clear command facade over existing Quality workspace authority | Source registered; execution not claimed |
 | ClientQualitySurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Quality result/finding/selection projection over existing validated Quality authority | Source registered; execution not claimed |
 
