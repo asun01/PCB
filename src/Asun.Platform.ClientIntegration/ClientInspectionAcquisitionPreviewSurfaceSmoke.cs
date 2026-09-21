@@ -90,9 +90,9 @@ public static class ClientInspectionAcquisitionPreviewSurfaceSmoke
     private static void FaultRemovesSurfacePreview()
     {
         using var workspace=CreateWorkspace();
-        workspace.BindAcquisition(new DeterministicSource(),Descriptor());
+        workspace.BindAcquisition(new FailingAfterFirstPreviewSource(),Descriptor());
         workspace.PreviewAcquisitionAsync().AsTask().GetAwaiter().GetResult();
-        workspace.Acquisition.SetFault("camera fault");
+        TryPreviewFailure(workspace);
         var surface=ClientInspectionExecutionSurfaceRuntime.Create(workspace.Capture());
         Check(!surface.HasAcquisitionPreview &&
               surface.AcquisitionPreview is null,
@@ -105,6 +105,17 @@ public static class ClientInspectionAcquisitionPreviewSurfaceSmoke
         workspace.BindAcquisition(new DeterministicSource(),Descriptor());
         workspace.PreviewAcquisitionAsync().AsTask().GetAwaiter().GetResult();
         return ClientInspectionExecutionSurfaceRuntime.Create(workspace.Capture());
+    }
+
+    private static void TryPreviewFailure(ClientInspectionWorkspace workspace)
+    {
+        try
+        {
+            workspace.PreviewAcquisitionAsync().AsTask().GetAwaiter().GetResult();
+        }
+        catch(InvalidOperationException)
+        {
+        }
     }
 
     private static ClientInspectionWorkspace CreateWorkspace() =>
@@ -122,16 +133,36 @@ public static class ClientInspectionAcquisitionPreviewSurfaceSmoke
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var metadata=new FrameCaptureMetadata(
-                FrameSequence.Create(1),
-                16,
-                12,
-                "Gray8",
-                DateTimeOffset.UtcNow);
-
             return ValueTask.FromResult<CapturedFrame?>(
-                CapturedFrame.Create(metadata,new byte[16*12]));
+                CreateFrame());
         }
+    }
+
+    private sealed class FailingAfterFirstPreviewSource : IFrameSource
+    {
+        private int _captureCount;
+
+        public ValueTask<CapturedFrame?> CaptureAsync(
+            CancellationToken cancellationToken=default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if(Interlocked.Increment(ref _captureCount)>1)
+                throw new InvalidOperationException("deterministic camera fault");
+
+            return ValueTask.FromResult<CapturedFrame?>(CreateFrame());
+        }
+    }
+
+    private static CapturedFrame CreateFrame()
+    {
+        var metadata=new FrameCaptureMetadata(
+            FrameSequence.Create(1),
+            16,
+            12,
+            "Gray8",
+            DateTimeOffset.UtcNow);
+
+        return CapturedFrame.Create(metadata,new byte[16*12]);
     }
 
     private static void Check(bool condition,string message)
