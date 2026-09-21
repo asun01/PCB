@@ -92,7 +92,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Ready,true,true);
         var routing=ClientWorkspaceCommandRoutingRuntime.Create(
-            new ClientWorkspaceSelection(ClientWorkspaceKind.Inspection),
+            new ClientWorkspaceSelection(ClientWorkspaceKind.Inspection,1),
             new ClientCommandAvailability(true,true,false,true,false,false,false,false)
             {
                 CanBindAcquisition=true,
@@ -126,10 +126,12 @@ public static class ClientInspectionRunReadinessSmoke
             Program=programLoaded
                 ? new ClientProgramWorkspaceSnapshot(
                     ClientProgramLoadStatus.Ready,
+                    Guid.Parse("00000000-0000-0000-0000-000000000001"),
                     "Smoke Program",
-                    "1.0",
+                    new Version(1,0),
                     1,
-                    null)
+                    "smoke-plan",
+                    Array.Empty<string>())
                 : null,
             Acquisition=captured.Acquisition with
             {
