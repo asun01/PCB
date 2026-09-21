@@ -3696,3 +3696,11 @@ Next executable stage: **51,501**
 - 73,716–73,720: the WPF simulation path was reordered to Production → Quality → Replay → Release; Results now renders Quality authority explicitly. A simulation-layer 10×100 authority smoke covers deferral, finalization, fingerprint linkage, history finalization, workflow integrity, and complete reset recovery.
 - Reset/reload semantics continue to clear pending Release manifests and all downstream evidence, preventing stale Quality/Replay/Release state from surviving a new client execution context.
 - Verification remains source/static implementation unless an actual Build/Test/CI execution is separately recorded; no such execution is claimed by this batch.
+
+
+### Rolling real-client continuation — stages 73,721–73,730 — 2026-09-21
+
+- 73,721–73,725: pending Release manifest ownership was hardened. The manifest is retained only between Production completion and Quality finalization, then consumed and cleared after Replay/Release/History finalization.
+- 73,726–73,730: WPF Results gained an explicit Quality authority line; the simulation flow now refuses to present Replay/Release as final until Quality evaluation has actually finalized them. Unified Home/Results refresh paths were tightened to consume projected presentation state.
+- Static audits on the modified C#/XAML files report balanced braces and no TODO/NotImplementedException tokens. Acceptance smokes retain the required 10×100 structure with 10 actual Check call sites.
+- No Build/Test/CI execution is claimed in this batch.
