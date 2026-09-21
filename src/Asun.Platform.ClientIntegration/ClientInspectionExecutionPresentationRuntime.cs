@@ -26,9 +26,15 @@ public static class ClientInspectionExecutionPresentationRuntime
             ? "ROI — unavailable until Production completes"
             : "ROI — available";
 
-        var acquisition=snapshot.Acquisition.State==ClientAcquisitionState.Bound
-            ? $"Acquisition — {snapshot.Acquisition.Descriptor?.DisplayName ?? snapshot.Acquisition.Descriptor?.Id ?? "bound"}"
-            : "Acquisition — unbound";
+        var acquisition=snapshot.Acquisition.State switch
+        {
+            ClientAcquisitionState.Ready =>
+                $"Acquisition — {snapshot.Acquisition.Descriptor?.DisplayName ?? snapshot.Acquisition.Descriptor?.SourceId ?? "ready"}",
+            ClientAcquisitionState.Faulted =>
+                $"Acquisition — faulted: {snapshot.Acquisition.LastError ?? "unknown fault"}",
+            _ =>
+                "Acquisition — unbound"
+        };
 
         var result=snapshot.Production.Status==ClientExecutionStatus.Completed
             ? $"Result — {snapshot.Production.LastFrameCount} frames"
