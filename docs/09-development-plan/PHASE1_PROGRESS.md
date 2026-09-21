@@ -3794,3 +3794,5 @@ Next executable stage: **51,501**
 - 73,798: removed an accidental duplicate RunHistoryAuthorityStatus declaration in the WPF XAML; the existing shell validator's duplicate x:Name contract now protects this boundary.
 - 73,799–73,803: added ClientResultsSelectionRecoverySmoke with strict 10×100 acceptance groups covering selected History projection binding, Quality/Replay/Release authority propagation, Reset selection clearing, non-finalized Results after Reset, fresh current authority after re-execution, immutable historical authority, and Unified Projection consistency.
 - 73,804: re-audited the changed shell/runtime/smoke sources for structural integrity. No authoritative Build/Test/CI execution is claimed for this interval.
+
+- 73,805: tightened the new Results selection/recovery smoke to exactly 10 actual Check call sites (the Check method declaration is the only additional textual occurrence), preserving the strict 10×100 acceptance structure.
