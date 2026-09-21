@@ -1,5 +1,12 @@
 namespace Asun.Platform.ClientIntegration;
 
+public sealed record ClientWorkspaceClientExecutionPulse(
+    long Sequence,
+    ClientWorkspaceSelection Selection,
+    ClientWorkspaceCommandRouting Routing,
+    ClientExecutionStatus Status,
+    ClientProductionProgressPresentation Progress);
+
 public sealed class ClientWorkspaceClientProjection : IDisposable
 {
     private readonly ClientWorkspaceRuntime _navigation;
@@ -7,6 +14,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     private readonly Func<ClientWorkspaceSelection,ClientWorkspaceCommandRouting> _routingFactory;
     private ClientWorkspaceClientSnapshot? _snapshot;
     private long _projectionSequence;
+    private long _executionPulseSequence;
     private int _disposed;
 
     public ClientWorkspaceClientProjection(
@@ -34,6 +42,8 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     public event Action<ClientWorkspaceClientSnapshot>? Changed;
 
     public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
+
+    public event Action<ClientWorkspaceClientExecutionPulse>? ExecutionChanged;
 
     public event Action<RoiViewportSnapshot>? RoiChanged;
 
@@ -67,6 +77,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         _inspection.RoiPulseChanged-=OnRoiPulseChanged;
         Changed=null;
         ProductionChanged=null;
+        ExecutionChanged=null;
         RoiChanged=null;
         RoiPulseChanged=null;
     }
@@ -90,8 +101,20 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     private void OnInspectionChanged(ClientInspectionWorkspaceSnapshot snapshot) =>
         Publish();
 
-    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot) =>
+    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot)
+    {
         ProductionChanged?.Invoke(snapshot);
+
+        var selection=_navigation.Current;
+        var routing=_routingFactory(selection);
+        var pulse=new ClientWorkspaceClientExecutionPulse(
+            Interlocked.Increment(ref _executionPulseSequence),
+            selection,
+            routing,
+            snapshot.Status,
+            ClientProductionProgressPresentationRuntime.Create(snapshot));
+        ExecutionChanged?.Invoke(pulse);
+    }
 
     private void OnRoiChanged(RoiViewportSnapshot snapshot) =>
         RoiChanged?.Invoke(snapshot);
