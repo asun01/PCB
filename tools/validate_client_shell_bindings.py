@@ -60,10 +60,10 @@ REQUIRED_COMMAND_FACADES = (
 
 FORBIDDEN_DIRECT_WORKSPACE_READS = (
     "_client.Production.",
-    "_client.Quality",
+    "_client.Quality.",
     "_client.History",
     "_client.SelectedHistoryOrdinal",
-    "_client.Acquisition",
+    "_client.Acquisition.",
     "_client.Program",
     "_client.CurrentProgram",
 )
