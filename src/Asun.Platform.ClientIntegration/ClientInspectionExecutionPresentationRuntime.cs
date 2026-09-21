@@ -7,7 +7,8 @@ public sealed record ClientInspectionExecutionPresentation(
     string RoiText,
     string AcquisitionText,
     string AcquisitionPreviewText,
-    string ResultText);
+    string ResultText,
+    string RunReadinessText);
 
 public static class ClientInspectionExecutionPresentationRuntime
 {
@@ -45,6 +46,19 @@ public static class ClientInspectionExecutionPresentationRuntime
             ? $"Result — {snapshot.Production.LastFrameCount} frames"
             : "Result — pending";
 
+        var runReadiness=snapshot.Production.Status switch
+        {
+            ClientExecutionStatus.Running => "Run — execution in progress",
+            ClientExecutionStatus.Ready when snapshot.Acquisition.CanCapture => "Run — ready",
+            ClientExecutionStatus.Ready => "Run — bind an acquisition source",
+            ClientExecutionStatus.Completed when snapshot.Acquisition.CanCapture => "Run — ready for next session",
+            ClientExecutionStatus.Completed => "Run — bind an acquisition source for the next session",
+            ClientExecutionStatus.Cancelled when snapshot.Acquisition.CanCapture => "Run — ready after cancellation",
+            ClientExecutionStatus.Failed when snapshot.Acquisition.CanCapture => "Run — ready after failure",
+            _ when snapshot.Program is null => "Run — load a program",
+            _ => "Run — load a program and bind an acquisition source"
+        };
+
         return new ClientInspectionExecutionPresentation(
             programSummary,
             progress.StatusText,
@@ -52,6 +66,7 @@ public static class ClientInspectionExecutionPresentationRuntime
             roi,
             acquisition,
             preview,
-            result);
+            result,
+            runReadiness);
     }
 }
