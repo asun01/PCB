@@ -19,6 +19,7 @@
 | ClientWorkspaceClientProjectionSmoke.Run100Stages | Asun.Platform.ClientIntegration | Subscribed client projection reacting to workspace navigation and Inspection state changes with lifecycle-safe snapshots | Source registered; execution not claimed |
 | ClientWorkspaceClientSnapshotFenceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Latest-wins client snapshot fence rejecting stale/equal projection sequences | Source registered; execution not claimed |
 | ClientInspectionRoiPulseSmoke.Run100Stages | Asun.Platform.ClientIntegration | Dedicated high-frequency ROI pulse stream, lifecycle safety, and unified client projection bridge | Source registered; execution not claimed |
+| ClientProgramSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Program snapshot/step/selection presentation over canonical Program presentation authority | Source registered; execution not claimed |
 | ClientQualityCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Quality finding selection/clear command facade over existing Quality workspace authority | Source registered; execution not claimed |
 | ClientQualitySurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Unified Quality result/finding/selection projection over existing validated Quality authority | Source registered; execution not claimed |
 
