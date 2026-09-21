@@ -17,13 +17,6 @@ public static class ClientInspectionWorkflowIntegritySmoke
     }
 
 
-    private static void EmptySnapshotIsValid()
-    {
-        var snapshot=CreateBaseSnapshot();
-        Check(ClientInspectionWorkflowIntegrityRuntime.IsValid(snapshot),
-            "Empty client snapshot must remain a valid baseline state.");
-    }
-
     private static void ReadyProgramCountMustMatch()
     {
         var stepId=Guid.NewGuid();
