@@ -228,6 +228,12 @@ public sealed class ClientProductionWorkspace
             return;
         }
 
+        _definition=new ProductionSessionDefinition(
+            Guid.NewGuid(),
+            _definition.ProgramPlan,
+            _definition.Pipeline,
+            _definition.FrameCount);
+
         _snapshot=new ClientWorkspaceSnapshot(
             _definition.ProgramPlan.ProgramId,
             _definition.ProgramPlan.Version,
