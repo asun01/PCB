@@ -903,8 +903,7 @@ public partial class MainWindow : System.Windows.Window
     {
         var snapshot=_clientProjection.Snapshot;
         var home=snapshot.Content.Home;
-        var workflow=ClientInspectionWorkflowRuntime.Evaluate(
-            _client.Capture());
+        var workflow=snapshot.Content.Workflow;
 
         HomeProgramStatus.Text=$"Program: {home.ProgramStatus}";
         HomeAcquisitionStatus.Text=$"Acquisition: {home.AcquisitionStatus}";
