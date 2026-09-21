@@ -78,10 +78,21 @@ public static class ClientQualityReplayReleaseAuthoritySmoke
     private static void HistoryIsCreatedOnlyAfterFinalization()
     {
         using var workspace=FinalizeQuality();
+        var duplicateRejected=false;
+        try
+        {
+            workspace.EvaluateQualityProvider("simulation-quality");
+        }
+        catch(InvalidOperationException)
+        {
+            duplicateRejected=true;
+        }
+
         var snapshot=workspace.Capture();
         Check(snapshot.History.Entries.Count==1 &&
-              snapshot.SelectedHistoryOrdinal==snapshot.History.Entries[0].Ordinal,
-            "Run History must be appended only after Quality, Replay, and Release finalization.");
+              snapshot.SelectedHistoryOrdinal==snapshot.History.Entries[0].Ordinal &&
+              duplicateRejected,
+            "Run History must be appended only after finalization, and the consumed Release manifest must prevent duplicate finalization.");
     }
 
     private static void FinalizedWorkflowIsValid()
