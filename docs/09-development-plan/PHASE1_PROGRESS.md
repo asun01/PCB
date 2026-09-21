@@ -3626,3 +3626,12 @@ Next executable stage: **51,501**
 - 73,646: the WPF shell binding validator now requires the concrete `RunReadinessStatus` control in XAML, preventing the projection binding from silently targeting a removed/renamed surface.
 - 73,647: the Run Readiness chain is now statically fenced at both sides of the UI boundary: projected C# binding and concrete WPF control identity.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI or external vendor/hardware execution is claimed.
+
+### Rolling real-client continuation — stages 73,648–73,655 — 2026-09-21
+
+- 73,648: Run Readiness was promoted from display-only text to the machine-readable `ClientRunReadinessState` contract.
+- 73,649: the Inspection Execution Surface now exposes the authoritative `RunReadinessState` alongside the human-readable presentation.
+- 73,650–73,653: acceptance coverage now verifies the state/text pairing for program-load, acquisition-bind, Ready, Running, Completed-next-session, cancellation recovery, and failure recovery paths.
+- 73,654: readiness evaluation now prioritizes an invalid/missing Program state before Production/Acquisition status, preventing a stale Ready production state from being presented as executable.
+- 73,655: the Inspection client chain now has both machine-readable command readiness and human-readable WPF projection at the same authoritative boundary.
+- This is still a pre-production implementation boundary. No runtime Build/Test/CI, DevExpress, HALCON, hardware SDK, HIL, installer, or final release success is claimed.
