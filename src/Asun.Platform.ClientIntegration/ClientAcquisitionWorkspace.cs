@@ -114,7 +114,7 @@ public sealed class ClientAcquisitionWorkspace
 
     public bool TryGetSource(out IFrameSource source)
     {
-        if(_source is null)
+        if(_source is null || _lastError is not null)
         {
             source=null!;
             return false;
