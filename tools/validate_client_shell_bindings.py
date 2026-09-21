@@ -42,6 +42,10 @@ REQUIRED_INSPECTION_PROJECTION_BINDINGS = (
     "RenderPreview(inspection.AcquisitionPreview);",
 )
 
+REQUIRED_SHELL_NAMES = (
+    'x:Name="RunReadinessStatus"',
+)
+
 FORBIDDEN_LOCAL_PREVIEW_RENDERING = (
     "RenderPreview(preview);",
 )
@@ -123,6 +127,10 @@ def main() -> int:
     for binding in REQUIRED_INSPECTION_PROJECTION_BINDINGS:
         if binding not in code:
             errors.append(f"missing Inspection projection binding: {binding}")
+
+    for shell_name in REQUIRED_SHELL_NAMES:
+        if shell_name not in xaml:
+            errors.append(f"missing required WPF shell control: {shell_name}")
 
     for local_render in FORBIDDEN_LOCAL_PREVIEW_RENDERING:
         if local_render in code:
