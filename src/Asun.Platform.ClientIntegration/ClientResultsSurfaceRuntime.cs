@@ -16,6 +16,7 @@ public static class ClientResultsSurfaceRuntime
         ArgumentNullException.ThrowIfNull(snapshot);
 
         var current=ClientResultsPresentationRuntime.CreateCurrent(snapshot);
+        var releaseReplay=ClientReleaseReplaySurfaceRuntime.Create(snapshot);
         var history=ClientResultsPresentationRuntime.CreateHistory(snapshot,maxHistoryItems);
         var selected=snapshot.SelectedHistoryOrdinal;
         var selectedEntry=selected is null
@@ -36,6 +37,9 @@ public static class ClientResultsSurfaceRuntime
             history,
             selected,
             selectionText,
-            selectedHistoryItem);
+            selectedHistoryItem)
+        {
+            ReleaseReplay=releaseReplay
+        };
     }
 }
