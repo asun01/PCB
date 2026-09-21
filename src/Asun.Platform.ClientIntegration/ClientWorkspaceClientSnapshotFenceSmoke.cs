@@ -75,10 +75,13 @@ public static class ClientWorkspaceClientSnapshotFenceSmoke
         var fence=new ClientWorkspaceClientSnapshotFence();
         fence.TryApply(CreateSnapshot(3));
         fence.Reset();
-        var accepted=fence.TryApply(CreateSnapshot(1));
-        Check(accepted && fence.Current?.ProjectionSequence==1,
-            "Fence reset must establish a new ordering epoch.");
-    }
+        var staleAccepted=fence.TryApply(CreateSnapshot(1));
+        var nextAccepted=fence.TryApply(CreateSnapshot(4));
+        Check(!staleAccepted &&
+              nextAccepted &&
+              fence.Current?.ProjectionSequence==4 &&
+              fence.LastAcceptedSequence==4,
+            "Fence reset must clear visible state while retaining the stale-snapshot ordering boundary.");
 
     private static void FenceDoesNotMutateSnapshot()
     {
@@ -112,7 +115,9 @@ public static class ClientWorkspaceClientSnapshotFenceSmoke
         var fence=new ClientWorkspaceClientSnapshotFence();
         fence.TryApply(newerContent);
         var accepted=fence.TryApply(olderContent);
-        Check(!accepted && fence.Current==newerContent,
+        Check(!accepted &&
+              fence.Current==newerContent &&
+              fence.LastAcceptedSequence==11,
             "Fence ordering must follow ProjectionSequence, not incidental content equality.");
     }
 
