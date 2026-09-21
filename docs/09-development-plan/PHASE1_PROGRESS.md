@@ -3744,3 +3744,11 @@ Next executable stage: **51,501**
 - 73,759–73,760: corrected the Unified Client Content Surface so authoritative Workflow state is actually carried by the projection rather than being recomputed by WPF.
 - 73,761–73,762: re-audited WPF MainWindow direct workspace reads; only Acquisition/Quality catalogs, command-input Capture, disposal, and ROI command operations remain. No direct Production/Quality/History/Program/CurrentProgram presentation reads remain.
 - Verification status: source/static structural audit only. Build/Test/CI execution is not claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,763–73,772 — 2026-09-21
+
+- 73,763–73,765: routed History selection through the bounded ClientRunHistorySelectionRuntime and made selection sequencing explicit in the Inspection workspace; invalid ordinals no longer alter the authoritative selection.
+- 73,766–73,768: closed Recovery → re-execution isolation. Recovery preserves the loaded Program/session definition, clears current Quality/Replay/Release authority, and a subsequent Production → Quality finalization creates fresh report/replay evidence and a new History entry without mutating prior History authority.
+- 73,769–73,771: added strict 10×100 simulation acceptance coverage for Recovery → re-execution → History → Results → Unified Projection, including current Replay binding, immutable prior History, Results Quality/Replay/Release display, bounded selection rejection, and projection agreement.
+- 73,772: re-audited the modified sources: balanced braces, no TODO/NotImplementedException, 10 strict groups and 10 actual Check call sites in the new smoke. Build/Test/CI execution is not claimed for this interval.
