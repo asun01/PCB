@@ -116,6 +116,11 @@
                     Margin="0,4,0,0"
                     AutomationProperties.AutomationId="Shell.AcquisitionPreviewStatus"
                     Text="Preview — not captured" />
+                <TextBlock
+                    x:Name="RunReadinessStatus"
+                    Margin="0,4,0,0"
+                    AutomationProperties.AutomationId="Shell.RunReadinessStatus"
+                    Text="Run — load a program" />
                 <StackPanel
                     Margin="0,6,0,0"
                     Orientation="Horizontal">
