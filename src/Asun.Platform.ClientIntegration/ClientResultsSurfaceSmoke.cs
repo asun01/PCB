@@ -80,7 +80,8 @@ public static class ClientResultsSurfaceSmoke
     private static void ReplayIsNotFabricated()
     {
         var surface=CreateSurface();
-        Check(surface.Current.ReplayText=="Replay not available",
+        Check(surface.Current.ReplayText=="Replay not available" &&
+              !surface.ReleaseReplay.ReplayAvailable,
             "Results surface must not fabricate Replay.");
     }
 
@@ -88,7 +89,9 @@ public static class ClientResultsSurfaceSmoke
     {
         var surface=CreateSurface();
         Check(surface.Current.ReleaseText=="Release not evaluated" &&
-              !surface.Current.ReleaseReady,
+              !surface.Current.ReleaseReady &&
+              !surface.ReleaseReplay.ReleaseAvailable &&
+              !surface.ReleaseReplay.ReleaseReady,
             "Results surface must not fabricate Release readiness.");
     }
 
