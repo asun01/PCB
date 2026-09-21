@@ -3704,3 +3704,8 @@ Next executable stage: **51,501**
 - 73,726–73,730: WPF Results gained an explicit Quality authority line; the simulation flow now refuses to present Replay/Release as final until Quality evaluation has actually finalized them. Unified Home/Results refresh paths were tightened to consume projected presentation state.
 - Static audits on the modified C#/XAML files report balanced braces and no TODO/NotImplementedException tokens. Acceptance smokes retain the required 10×100 structure with 10 actual Check call sites.
 - No Build/Test/CI execution is claimed in this batch.
+
+
+### Rolling real-client continuation — stages 73,731–73,735 — 2026-09-21
+
+- 73,731–73,735: final authority validation was cleaned up and re-audited. Release now directly rejects missing/malformed Quality fingerprints; the simulation authority smoke remains 10×100 with 10 actual Check call sites. GitHub workflow-run lookup for the latest hardening commit returned no associated workflow run, so no CI result is reported.
