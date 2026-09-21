@@ -40,6 +40,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private ClientProductionReplaySnapshot? _replay;
     private ClientReleaseProjection? _release;
     private long? _selectedHistoryOrdinal;
+    private Action<ClientInspectionWorkspaceSnapshot>? _changed;
     private int _disposed;
 
     public ClientInspectionWorkspace(
@@ -80,7 +81,20 @@ public sealed class ClientInspectionWorkspace : IDisposable
         }
     }
 
-    public event Action<ClientInspectionWorkspaceSnapshot>? Changed;
+    public event Action<ClientInspectionWorkspaceSnapshot>? Changed
+    {
+        add
+        {
+            ThrowIfDisposed();
+            _changed+=value;
+        }
+        remove
+        {
+            if(Volatile.Read(ref _disposed)!=0)
+                return;
+            _changed-=value;
+        }
+    }
 
     public ClientWorkspaceSnapshot Production
     {
@@ -496,13 +510,14 @@ public sealed class ClientInspectionWorkspace : IDisposable
             return;
 
         _production.Changed-=OnProductionChanged;
+        _changed=null;
         _roi.Dispose();
     }
 
     private void OnProductionChanged(ClientWorkspaceSnapshot snapshot)
     {
         ProductionChanged?.Invoke(snapshot);
-        Changed?.Invoke(Capture());
+        _changed?.Invoke(Capture());
     }
 
     private void PublishChanged()
