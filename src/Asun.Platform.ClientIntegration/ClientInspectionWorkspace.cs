@@ -186,6 +186,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
             var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
             _production.Load(definition);
+            PublishChanged();
         }
 
         return snapshot;
@@ -352,6 +353,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _replay=null;
         _release=null;
         _production.Load(definition);
+        PublishChanged();
     }
 
     public async ValueTask<ProductionSessionReport> ExecuteAsync(
@@ -495,6 +497,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _replay=null;
         _release=null;
         _selectedHistoryOrdinal=null;
+        PublishChanged();
     }
 
     public void ResetHistory()
@@ -515,11 +518,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _roi.Dispose();
     }
 
-    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot)
-    {
+    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot) =>
         ProductionChanged?.Invoke(snapshot);
-        _changed?.Invoke(Capture());
-    }
 
     private void PublishChanged()
     {
