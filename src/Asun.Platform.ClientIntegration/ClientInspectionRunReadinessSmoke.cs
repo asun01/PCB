@@ -20,7 +20,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Idle,false,false);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — load a program",
+        Check(presentation.RunReadinessText=="Run — load a program" && presentation.RunReadinessState==ClientRunReadinessState.LoadProgram,
             "Idle without a loaded program must report the program prerequisite.");
     }
 
@@ -36,7 +36,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Ready,true,false);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — bind an acquisition source",
+        Check(presentation.RunReadinessText=="Run — bind an acquisition source" && presentation.RunReadinessState==ClientRunReadinessState.BindAcquisition,
             "Ready execution without a capturable source must expose the acquisition prerequisite.");
     }
 
@@ -44,7 +44,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Ready,true,true);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — ready",
+        Check(presentation.RunReadinessText=="Run — ready" && presentation.RunReadinessState==ClientRunReadinessState.Ready,
             "Ready execution with a capturable source must expose run readiness.");
     }
 
@@ -52,7 +52,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Running,true,true);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — execution in progress",
+        Check(presentation.RunReadinessText=="Run — execution in progress" && presentation.RunReadinessState==ClientRunReadinessState.Running,
             "Running execution must not expose a new-run readiness state.");
     }
 
@@ -60,7 +60,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Completed,true,true);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — ready for next session",
+        Check(presentation.RunReadinessText=="Run — ready for next session" && presentation.RunReadinessState==ClientRunReadinessState.ReadyForNextSession,
             "Completed execution with a capturable source must expose next-session readiness.");
     }
 
@@ -68,7 +68,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Completed,true,false);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — bind an acquisition source for the next session",
+        Check(presentation.RunReadinessText=="Run — bind an acquisition source for the next session" && presentation.RunReadinessState==ClientRunReadinessState.BindAcquisitionForNextSession,
             "Completed execution without a source must state the next-session prerequisite.");
     }
 
@@ -76,7 +76,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Cancelled,true,true);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — ready after cancellation",
+        Check(presentation.RunReadinessText=="Run — ready after cancellation" && presentation.RunReadinessState==ClientRunReadinessState.ReadyAfterCancellation,
             "Cancelled execution with a capturable source must expose recovery readiness.");
     }
 
@@ -84,7 +84,7 @@ public static class ClientInspectionRunReadinessSmoke
     {
         var snapshot=Create(ClientExecutionStatus.Failed,true,true);
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
-        Check(presentation.RunReadinessText=="Run — ready after failure",
+        Check(presentation.RunReadinessText=="Run — ready after failure" && presentation.RunReadinessState==ClientRunReadinessState.ReadyAfterFailure,
             "Failed execution with a capturable source must expose recovery readiness.");
     }
 
