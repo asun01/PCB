@@ -6,6 +6,7 @@ public sealed record ClientInspectionExecutionPresentation(
     string ProgressText,
     string RoiText,
     string AcquisitionText,
+    string AcquisitionPreviewText,
     string ResultText);
 
 public static class ClientInspectionExecutionPresentationRuntime
@@ -36,6 +37,10 @@ public static class ClientInspectionExecutionPresentationRuntime
                 "Acquisition — unbound"
         };
 
+        var preview=snapshot.Acquisition.Preview is null
+            ? "Preview — not captured"
+            : $"Preview — {snapshot.Acquisition.Preview.Width}×{snapshot.Acquisition.Preview.Height} · {snapshot.Acquisition.Preview.PixelFormat} · Frame {snapshot.Acquisition.Preview.Sequence.Value}";
+
         var result=snapshot.Production.Status==ClientExecutionStatus.Completed
             ? $"Result — {snapshot.Production.LastFrameCount} frames"
             : "Result — pending";
@@ -46,6 +51,7 @@ public static class ClientInspectionExecutionPresentationRuntime
             progress.ProgressText,
             roi,
             acquisition,
+            preview,
             result);
     }
 }
