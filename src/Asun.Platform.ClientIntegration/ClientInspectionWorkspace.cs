@@ -232,6 +232,17 @@ public sealed class ClientInspectionWorkspace : IDisposable
             _production.Load(definition);
             PublishChanged();
         }
+        else
+        {
+            _lastProductionReport=null;
+            _quality.Clear();
+            _acquisition.Unbind();
+            _replay=null;
+            _release=null;
+            _selectedHistoryOrdinal=null;
+            _production.Reset();
+            PublishChanged();
+        }
 
         return snapshot;
     }
