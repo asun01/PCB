@@ -3208,3 +3208,14 @@ Next executable stage: **51,501**
 - Added `ClientInspectionAcquisitionBindingEventSmoke` to verify event publication, Ready state, descriptor identity, authority isolation, rebinding, Inspection-surface visibility, and preservation of the existing Production command boundary.
 - Static source audit: the new Smoke has 10 loop groups, explicit `round==100`, 10 actual `Check(...)` invocation sites, balanced braces, and no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73516 — 2026-09-21
+
+- Completed boundary: **73,516**
+- Next executable stage: **73,517**
+- 73515–73516: **Inspection Execution Surface -> Existing Results/Replay/Release projection reuse**.
+- `ClientInspectionExecutionSurfaceRuntime` now reuses `ClientResultsPresentationRuntime.CreateCurrent(...)` so the Inspection surface exposes the same Result/Replay/Release projection as the dedicated Results workspace.
+- Updated Inspection surface Smoke to verify Completed result status/frame count and to prevent fabricated Replay/Release presentation while Production is still Running.
+- Static source audit remains clean for the modified Smoke: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
