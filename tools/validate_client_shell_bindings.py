@@ -37,6 +37,14 @@ REQUIRED_SHELL_ROUTING_GATES = (
     "if(!routing.CanPreviewAcquisition)",
 )
 
+REQUIRED_INSPECTION_PROJECTION_BINDINGS = (
+    "RenderPreview(inspection.AcquisitionPreview);",
+)
+
+FORBIDDEN_LOCAL_PREVIEW_RENDERING = (
+    "RenderPreview(preview);",
+)
+
 REQUIRED_COMMAND_FACADES = (
     "ClientInspectionExecutionCommandRuntime.",
     "ClientInspectionAcquisitionCommandRuntime.",
@@ -111,6 +119,14 @@ def main() -> int:
         if gate not in code:
             errors.append(f"missing required shell routing gate: {gate}")
 
+    for binding in REQUIRED_INSPECTION_PROJECTION_BINDINGS:
+        if binding not in code:
+            errors.append(f"missing Inspection projection binding: {binding}")
+
+    for local_render in FORBIDDEN_LOCAL_PREVIEW_RENDERING:
+        if local_render in code:
+            errors.append(f"preview image must be rendered from the unified Inspection projection: {local_render}")
+
     for facade in REQUIRED_COMMAND_FACADES:
         if facade not in code:
             errors.append(f"missing command facade usage: {facade}")
@@ -137,6 +153,7 @@ def main() -> int:
         f"projection_subscriptions={sum(item.search(code) is not None for item in REQUIRED_PROJECTION_SUBSCRIPTIONS)} "
         f"legacy_subscriptions={sum(item.search(code) is not None for item in FORBIDDEN_LEGACY_SUBSCRIPTIONS)} "
         f"routing_gates={sum(item in code for item in REQUIRED_SHELL_ROUTING_GATES)} "
+        f"projection_bindings={sum(item in code for item in REQUIRED_INSPECTION_PROJECTION_BINDINGS)} "
         f"commands={sum(item in code for item in REQUIRED_COMMAND_FACADES)}"
     )
 
