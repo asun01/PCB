@@ -18,10 +18,45 @@ public static class ClientResultsSurfaceSmoke
 
     private static void CurrentResultIsProjected()
     {
-        var surface=CreateSurface();
-        Check(surface.Current.Status=="Idle" &&
-              surface.Current.FrameCount==0,
-            "Results surface must reuse the current Results projection.");
+        using var workspace=CreateWorkspace();
+        var programId=Guid.NewGuid();
+        var sessionId=Guid.NewGuid();
+        var replayFingerprint=new string('a',64);
+        var snapshot=workspace.Capture() with
+        {
+            Production=workspace.Production with
+            {
+                ProgramId=programId,
+                ProgramVersion=new Version(1,0),
+                ActiveSessionId=sessionId,
+                Status=ClientExecutionStatus.Completed,
+                LastFrameCount=3
+            },
+            Replay=new ClientProductionReplaySnapshot(
+                programId,
+                new Version(1,0),
+                sessionId,
+                ClientExecutionStatus.Completed,
+                3,
+                new string('b',64),
+                replayFingerprint),
+            Release=new ClientReleaseProjection(
+                programId,
+                sessionId,
+                replayFingerprint,
+                true,
+                "artifact.bin",
+                new string('c',64),
+                new string('d',64))
+        };
+        var surface=ClientResultsSurfaceRuntime.Create(snapshot);
+
+        Check(surface.Current.Status=="Completed" &&
+              surface.Current.FrameCount==3 &&
+              surface.ReleaseReplay.ReplayAvailable &&
+              surface.ReleaseReplay.ReleaseReady &&
+              surface.ReleaseReplay.ReplayFingerprint==replayFingerprint,
+            "Results surface must reuse the structured current Replay/Release projections.");
     }
 
     private static void HistoryStartsEmpty()
