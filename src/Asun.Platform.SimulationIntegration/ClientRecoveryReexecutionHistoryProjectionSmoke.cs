@@ -6,7 +6,7 @@ public static class ClientRecoveryReexecutionHistoryProjectionSmoke
 {
     public static void Run100Stages()
     {
-        for(var round=1;round<=100;round++) if(round==100) RecoveryReturnsToExecutableSession();
+        for(var round=1;round<=100;round++) if(round==100) RecoveryCreatesFreshExecutableSession();
         for(var round=1;round<=100;round++) if(round==100) RecoveryClearsCurrentAuthority();
         for(var round=1;round<=100;round++) if(round==100) ReexecutionCreatesFreshReportEvidence();
         for(var round=1;round<=100;round++) if(round==100) ReexecutionCreatesNewHistoryEntry();
@@ -18,14 +18,15 @@ public static class ClientRecoveryReexecutionHistoryProjectionSmoke
         for(var round=1;round<=100;round++) if(round==100) UnifiedProjectionCarriesCurrentWorkflow();
     }
 
-    private static void RecoveryReturnsToExecutableSession()
+    private static void RecoveryCreatesFreshExecutableSession()
     {
         using var workspace=CreateFinalizedWorkspace();
-        var session=workspace.Production.ActiveSessionId;
+        var previousSession=workspace.Production.ActiveSessionId;
         workspace.ResetCurrentSession();
         Check(workspace.Production.Status==ClientExecutionStatus.Ready &&
-              workspace.Production.ActiveSessionId==session,
-            "Recovery must reopen the retained Production session as Ready.");
+              workspace.Production.ActiveSessionId is Guid currentSession &&
+              currentSession!=previousSession,
+            "Recovery must create a fresh Production session while retaining the loaded Program definition.");
     }
 
     private static void RecoveryClearsCurrentAuthority()
@@ -44,11 +45,14 @@ public static class ClientRecoveryReexecutionHistoryProjectionSmoke
     {
         using var workspace=CreateFinalizedWorkspace();
         var oldFingerprint=workspace.LastProductionReport!.Fingerprint;
+        var oldSession=workspace.Production.ActiveSessionId;
         workspace.ResetCurrentSession();
         Execute(workspace);
         Check(workspace.LastProductionReport is not null &&
+              workspace.Production.ActiveSessionId is Guid currentSession &&
+              currentSession!=oldSession &&
               workspace.LastProductionReport.Fingerprint!=oldFingerprint,
-            "A recovered execution must publish fresh Production report evidence.");
+            "A recovered execution must publish fresh Production report evidence under a fresh session.");
     }
 
     private static void ReexecutionCreatesNewHistoryEntry()
