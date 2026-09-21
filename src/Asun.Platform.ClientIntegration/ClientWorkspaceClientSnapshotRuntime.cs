@@ -10,6 +10,19 @@ public sealed record ClientWorkspaceClientSnapshot(
 
 public static class ClientWorkspaceClientSnapshotRuntime
 {
+    public static ClientWorkspaceClientSnapshot CreateValidated(
+        ClientWorkspaceSelection selection,
+        ClientWorkspaceCommandRouting routing,
+        ClientInspectionWorkspaceSnapshot inspection)
+    {
+        var errors=ClientInspectionWorkflowIntegrityRuntime.Validate(inspection);
+        if(errors.Count>0)
+            throw new InvalidOperationException(
+                string.Join(" ",errors));
+
+        return Create(selection,routing,inspection);
+    }
+
     public static ClientWorkspaceClientSnapshot Create(
         ClientWorkspaceSelection selection,
         ClientWorkspaceCommandRouting routing,
