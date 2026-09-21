@@ -34,6 +34,7 @@ FORBIDDEN_LEGACY_SUBSCRIPTIONS = (
 REQUIRED_SHELL_ROUTING_GATES = (
     "BindAcquisitionButton.IsEnabled=routing.CanBindAcquisition",
     "if(!routing.CanBindAcquisition)",
+    "if(!routing.CanPreviewAcquisition)",
 )
 
 REQUIRED_COMMAND_FACADES = (
