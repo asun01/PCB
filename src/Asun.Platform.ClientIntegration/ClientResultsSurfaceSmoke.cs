@@ -22,8 +22,15 @@ public static class ClientResultsSurfaceSmoke
         var programId=Guid.NewGuid();
         var sessionId=Guid.NewGuid();
         var replayFingerprint=new string('a',64);
+        var qualityFingerprint=new string('e',64);
         var snapshot=workspace.Capture() with
         {
+            Quality=workspace.Quality with
+            {
+                IsBound=true,
+                RunId=Guid.NewGuid(),
+                Fingerprint=qualityFingerprint
+            },
             Production=workspace.Production with
             {
                 ProgramId=programId,
@@ -39,7 +46,10 @@ public static class ClientResultsSurfaceSmoke
                 ClientExecutionStatus.Completed,
                 3,
                 new string('b',64),
-                replayFingerprint),
+                replayFingerprint)
+            {
+                QualityFingerprint=qualityFingerprint
+            },
             Release=new ClientReleaseProjection(
                 programId,
                 sessionId,
@@ -48,6 +58,9 @@ public static class ClientResultsSurfaceSmoke
                 "artifact.bin",
                 new string('c',64),
                 new string('d',64))
+            {
+                QualityFingerprint=qualityFingerprint
+            }
         };
         var surface=ClientResultsSurfaceRuntime.Create(snapshot);
 
@@ -126,6 +139,9 @@ public static class ClientResultsSurfaceSmoke
                 1,
                 new string('a',64),
                 "short")
+            {
+                QualityFingerprint=new string('e',64)
+            }
         };
         var malformedDisplay=ClientResultsPresentationRuntime.CreateCurrent(malformed);
         var malformedCharacters=malformed with
@@ -138,6 +154,9 @@ public static class ClientResultsSurfaceSmoke
                 malformed.Replay.FrameCount,
                 malformed.Replay.ProductionReportFingerprint,
                 new string('z',64))
+            {
+                QualityFingerprint=malformed.Replay.QualityFingerprint
+            }
         };
         var malformedCharacterDisplay=ClientResultsPresentationRuntime.CreateCurrent(malformedCharacters);
         Check(surface.Current.ReplayText=="Replay not available" &&
