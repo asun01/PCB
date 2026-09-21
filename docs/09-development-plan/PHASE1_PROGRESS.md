@@ -3580,3 +3580,12 @@ Next executable stage: **51,501**
 - 73,627: added two 100-round smoke groups covering the non-invented preview state and observed width/height/pixel-format/sequence projection.
 - 73,628: WPF Inspection surface now displays the projected preview state through a dedicated AcquisitionPreviewStatus control; no second preview authority was introduced.
 - Verification remains source/static implementation only; authoritative Build/Test/CI and external device/vendor gates remain open.
+
+
+### Rolling real-client continuation — stages 73,629–73,631 — 2026-09-21
+
+- 73,629: WPF Acquisition Preview now applies the same authoritative `CanPreviewAcquisition` routing gate used by client command availability before invoking the preview command.
+- 73,630: the Inspection execution command facade now requires `surface.CommandRouting.CanPreviewAcquisition` explicitly, closing the remaining gap where a caller could present an otherwise-valid surface without the current preview capability.
+- 73,631: the WPF shell binding validator now statically requires the Preview routing guard in addition to the existing Bind routing guard and command-facade checks.
+- The Acquisition chain remains: authoritative source state → command availability → workspace routing → command facade → observed preview metadata → unified client projection → WPF surface.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI execution, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
