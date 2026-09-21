@@ -10,6 +10,7 @@ public sealed record ClientWorkspaceCommandRouting(
     bool CanReviewQuality,
     bool CanReviewResults)
 {
+    public bool CanBindAcquisition { get; init; }
     public bool CanPreviewAcquisition { get; init; }
     public bool CanEvaluateSimulationQuality { get; init; }
 };
@@ -78,6 +79,9 @@ public static class ClientWorkspaceCommandRoutingRuntime
 
         return result with
         {
+            CanBindAcquisition=
+                workspace.Workspace==ClientWorkspaceKind.Inspection &&
+                availability.CanBindAcquisition,
             CanPreviewAcquisition=
                 workspace.Workspace==ClientWorkspaceKind.Inspection &&
                 availability.CanPreviewAcquisition,
