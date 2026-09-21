@@ -37,7 +37,7 @@ public static class ClientResultsPresentationRuntime
                 : "Session not loaded",
             replay is null
                 ? "Replay not available"
-                : replay.ReplayFingerprint.Length>=12
+                : IsValidFingerprint(replay.ReplayFingerprint)
                     ? $"Replay {replay.ReplayFingerprint[..12]}..."
                     : "Replay fingerprint invalid",
             release is null
@@ -47,6 +47,11 @@ public static class ClientResultsPresentationRuntime
                     : "Not Ready",
             release?.ReleaseReady==true);
     }
+
+    private static bool IsValidFingerprint(string value)=>
+        value.Length==64 &&
+        value.All(character=>Uri.IsHexDigit(character) &&
+                              char.ToLowerInvariant(character)==character);
 
     public static IReadOnlyList<ClientRunHistoryDisplayItem> CreateHistory(
         ClientInspectionWorkspaceSnapshot snapshot,
