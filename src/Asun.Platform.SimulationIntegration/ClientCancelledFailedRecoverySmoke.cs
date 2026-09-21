@@ -10,8 +10,8 @@ public static class ClientCancelledFailedRecoverySmoke
     {
         for(var round=1;round<=100;round++) if(round==100) CancelledSessionCannotRestart();
         for(var round=1;round<=100;round++) if(round==100) FailedSessionCannotRestart();
-        for(var round=1;round<=100;round++) if(round==100) CancelledRecoveryPreservesSessionIdentity();
-        for(var round=1;round<=100;round++) if(round==100) FailedRecoveryPreservesSessionIdentity();
+        for(var round=1;round<=100;round++) if(round==100) CancelledRecoveryCreatesFreshSessionIdentity();
+        for(var round=1;round<=100;round++) if(round==100) FailedRecoveryCreatesFreshSessionIdentity();
         for(var round=1;round<=100;round++) if(round==100) RecoveryClearsReportFingerprint();
         for(var round=1;round<=100;round++) if(round==100) RecoveryReturnsReadyState();
         for(var round=1;round<=100;round++) if(round==100) RecoveryClearsFrameProgress();
@@ -39,7 +39,7 @@ public static class ClientCancelledFailedRecoverySmoke
             CheckStartRejected(workspace);
         }
 
-    private static void CancelledRecoveryPreservesSessionIdentity()
+    private static void CancelledRecoveryCreatesFreshSessionIdentity()
         {
             var workspace=Create(new CancellationRunner());
             var id=workspace.Snapshot.ActiveSessionId;
@@ -47,11 +47,11 @@ public static class ClientCancelledFailedRecoverySmoke
             RunExpectingCancellation(workspace);
             workspace.ResetForRecovery();
             Check(workspace.Snapshot.Status==ClientExecutionStatus.Ready &&
-              workspace.Snapshot.ActiveSessionId==id,
-            "Cancelled recovery must preserve the loaded session identity.");
+              workspace.Snapshot.ActiveSessionId is Guid current && current!=id,
+            "Cancelled recovery must create a fresh Production session identity.");
         }
 
-    private static void FailedRecoveryPreservesSessionIdentity()
+    private static void FailedRecoveryCreatesFreshSessionIdentity()
         {
             var workspace=Create(new FailureRunner());
             var id=workspace.Snapshot.ActiveSessionId;
@@ -59,7 +59,7 @@ public static class ClientCancelledFailedRecoverySmoke
             workspace.ResetForRecovery();
             Check(workspace.Snapshot.Status==ClientExecutionStatus.Ready &&
               workspace.Snapshot.ActiveSessionId==id,
-            "Failed recovery must preserve the loaded session identity.");
+            "Failed recovery must create a fresh Production session identity.");
         }
 
     private static void RecoveryClearsReportFingerprint()
