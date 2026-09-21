@@ -9,6 +9,7 @@
 | ClientInspectionExecutionCommandSmoke.Run100Stages | Asun.Platform.ClientIntegration | Inspection preview/run/cancel/reset/ROI command facade over existing workspace authority | Source registered; execution not claimed |
 | ClientAcquisitionPreviewFaultSmoke.Run100Stages | Asun.Platform.ClientIntegration | Acquisition preview lifecycle, stale-preview invalidation, fault/recovery, metadata/fingerprint | Source registered; execution not claimed |
 | ClientInspectionAcquisitionBindingEventSmoke.Run100Stages | Asun.Platform.ClientIntegration | Direct Acquisition binding event propagation and authority isolation | Source registered; execution not claimed |
+| ClientInspectionAcquisitionPreviewSurfaceSmoke.Run100Stages | Asun.Platform.ClientIntegration | Inspection Surface raw Acquisition preview payload/metadata projection and stale-preview protection | Source registered; execution not claimed |
 
 ## Structural contract
 
