@@ -14,6 +14,7 @@ public sealed record ClientInspectionWorkspaceSnapshot(
 {
     public bool CanUndoRoi { get; init; }
     public bool CanRedoRoi { get; init; }
+    public long? SelectedHistoryOrdinal { get; init; }
     public ClientProgramWorkspaceSnapshot? Program { get; init; }
     public ClientQualityWorkspaceSnapshot Quality { get; init; }=new(
         null,0,0,0,0,0,0,null,false,
@@ -164,6 +165,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         {
             CanUndoRoi=_roi.Document.CanUndo,
             CanRedoRoi=_roi.Document.CanRedo,
+            SelectedHistoryOrdinal=_selectedHistoryOrdinal,
             Program=_program.Snapshot,
             Quality=_quality.Capture(),
             Acquisition=_acquisition.Snapshot
