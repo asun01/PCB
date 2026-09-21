@@ -70,6 +70,7 @@ public static class ClientInspectionWorkspaceProgramItemsSmoke
               snapshot.Replay is null &&
               snapshot.Release is null,
             "Invalid Program load must clear dependent Production, Acquisition, Quality, Replay, and Release state.");
+    }
 
     private static void InvalidProgramStatusIsPreserved()
     {
