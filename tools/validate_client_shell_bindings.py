@@ -38,6 +38,7 @@ REQUIRED_SHELL_ROUTING_GATES = (
 )
 
 REQUIRED_INSPECTION_PROJECTION_BINDINGS = (
+    "RunReadinessStatus.Text=inspection.RunReadinessText;",
     "RenderPreview(inspection.AcquisitionPreview);",
 )
 
