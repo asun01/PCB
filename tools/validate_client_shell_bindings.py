@@ -21,14 +21,14 @@ METHOD_PATTERN = re.compile(
 )
 
 REQUIRED_PROJECTION_SUBSCRIPTIONS = (
-    "_clientProjection.Changed +=",
-    "_clientProjection.ExecutionChanged +=",
-    "_clientProjection.RoiPulseChanged +=",
+    re.compile(r"_clientProjection\.Changed\s*\+="),
+    re.compile(r"_clientProjection\.ExecutionChanged\s*\+="),
+    re.compile(r"_clientProjection\.RoiPulseChanged\s*\+="),
 )
 
 FORBIDDEN_LEGACY_SUBSCRIPTIONS = (
-    "_client.ProductionChanged +=",
-    "_workspaceRuntime.Changed +=",
+    re.compile(r"_client\.ProductionChanged\s*\+="),
+    re.compile(r"_workspaceRuntime\.Changed\s*\+="),
 )
 
 REQUIRED_COMMAND_FACADES = (
@@ -78,12 +78,12 @@ def main() -> int:
             )
 
     for subscription in REQUIRED_PROJECTION_SUBSCRIPTIONS:
-        if subscription not in code:
-            errors.append(f"missing required projection subscription: {subscription}")
+        if not subscription.search(code):
+            errors.append(f"missing required projection subscription: {subscription.pattern}")
 
     for subscription in FORBIDDEN_LEGACY_SUBSCRIPTIONS:
-        if subscription in code:
-            errors.append(f"legacy direct subscription must not exist: {subscription}")
+        if subscription.search(code):
+            errors.append(f"legacy direct subscription must not exist: {subscription.pattern}")
 
     for facade in REQUIRED_COMMAND_FACADES:
         if facade not in code:
@@ -104,8 +104,8 @@ def main() -> int:
     print(
         f"names={len(names)} "
         f"handlers={len(set(handlers))} "
-        f"projection_subscriptions={sum(item in code for item in REQUIRED_PROJECTION_SUBSCRIPTIONS)} "
-        f"legacy_subscriptions={sum(item in code for item in FORBIDDEN_LEGACY_SUBSCRIPTIONS)} "
+        f"projection_subscriptions={sum(item.search(code) is not None for item in REQUIRED_PROJECTION_SUBSCRIPTIONS)} "
+        f"legacy_subscriptions={sum(item.search(code) is not None for item in FORBIDDEN_LEGACY_SUBSCRIPTIONS)} "
         f"commands={sum(item in code for item in REQUIRED_COMMAND_FACADES)}"
     )
 
