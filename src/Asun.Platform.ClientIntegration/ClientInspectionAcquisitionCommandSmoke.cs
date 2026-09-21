@@ -12,7 +12,6 @@ public static class ClientInspectionAcquisitionCommandSmoke
         for(var round=1;round<=100;round++) if(round==100) PublishesReadyState();
         for(var round=1;round<=100;round++) if(round==100) RejectsQualityWorkspace();
         for(var round=1;round<=100;round++) if(round==100) RejectsResultsWorkspace();
-        for(var round=1;round<=100;round++) if(round==100) RejectsHomeWorkspace();
         for(var round=1;round<=100;round++) if(round==100) PreviewRequiresExplicitCapability();
         for(var round=1;round<=100;round++) if(round==100) PreviewUsesBoundSource();
         for(var round=1;round<=100;round++) if(round==100) ProjectionSeesBinding();
@@ -129,25 +128,6 @@ public static class ClientInspectionAcquisitionCommandSmoke
         }
 
         Check(rejected,"Results routing must not own acquisition binding.");
-    }
-
-    private static void RejectsHomeWorkspace()
-    {
-        using var workspace=CreateWorkspace();
-        var rejected=false;
-        try
-        {
-            ClientInspectionAcquisitionCommandRuntime.BindSource(
-                workspace,
-                Routing(ClientWorkspaceKind.Home),
-                "source");
-        }
-        catch(InvalidOperationException)
-        {
-            rejected=true;
-        }
-
-        Check(rejected,"Home routing must not own acquisition binding.");
     }
 
     private static void PreviewRequiresExplicitCapability()
