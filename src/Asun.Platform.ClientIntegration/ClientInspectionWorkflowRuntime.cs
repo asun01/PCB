@@ -43,13 +43,23 @@ public static class ClientInspectionWorkflowRuntime
             canAct=true;
             message="Bind a ready Acquisition source.";
         }
-        else if(snapshot.Production.Status is ClientExecutionStatus.Ready or ClientExecutionStatus.Cancelled or ClientExecutionStatus.Failed)
+        else if(snapshot.Production.Status==ClientExecutionStatus.Ready)
         {
             step=ClientWorkflowStep.RunInspection;
             canAct=true;
-            message=snapshot.Production.Status==ClientExecutionStatus.Failed
-                ? "Production execution failed; rebind or retry the Acquisition source."
-                : "Run the inspection session.";
+            message="Run the inspection session.";
+        }
+        else if(snapshot.Production.Status==ClientExecutionStatus.Cancelled)
+        {
+            step=ClientWorkflowStep.RunInspection;
+            canAct=false;
+            message="Production was cancelled; reset the session before starting another execution.";
+        }
+        else if(snapshot.Production.Status==ClientExecutionStatus.Failed)
+        {
+            step=ClientWorkflowStep.RunInspection;
+            canAct=false;
+            message="Production failed; reset the session before retrying execution.";
         }
         else if(snapshot.Production.Status==ClientExecutionStatus.Running)
         {
