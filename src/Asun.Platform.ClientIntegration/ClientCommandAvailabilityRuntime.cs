@@ -10,6 +10,7 @@ public sealed record ClientCommandAvailability(
     bool CanUndoRoi,
     bool CanRedoRoi)
 {
+    public bool CanBindAcquisition { get; init; }
     public bool CanPreviewAcquisition { get; init; }
     public bool CanEvaluateSimulationQuality { get; init; }
 };
@@ -47,6 +48,8 @@ public static class ClientCommandAvailabilityRuntime
 
         return result with
         {
+            CanBindAcquisition=
+                snapshot.Production.Status!=ClientExecutionStatus.Running,
             CanPreviewAcquisition=
                 snapshot.Acquisition.State==ClientAcquisitionState.Ready &&
                 snapshot.Acquisition.CanCapture,
