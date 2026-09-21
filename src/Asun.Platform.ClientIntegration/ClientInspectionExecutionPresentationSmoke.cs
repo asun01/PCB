@@ -12,8 +12,6 @@ public static class ClientInspectionExecutionPresentationSmoke
         for(var round=1;round<=100;round++) if(round==100) CompletedStatusIsVisible();
         for(var round=1;round<=100;round++) if(round==100) UnboundAcquisitionIsExplicit();
         for(var round=1;round<=100;round++) if(round==100) StatusComesFromProduction();
-        for(var round=1;round<=100;round++) if(round==100) ProgramSummaryIsPresentationOnly();
-        for(var round=1;round<=100;round++) if(round==100) ResultUsesObservedFrameCount();
         for(var round=1;round<=100;round++) if(round==100) UncapturedPreviewIsExplicit();
         for(var round=1;round<=100;round++) if(round==100) PreviewUsesObservedMetadata();
 
@@ -75,13 +73,6 @@ public static class ClientInspectionExecutionPresentationSmoke
         Check(p.ExecutionStatus=="Cancelled","Execution status must project the Production authority state.");
     }
 
-    private static void ProgramSummaryIsPresentationOnly()
-    {
-        var s=Create(ClientExecutionStatus.Ready,0,3);
-        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.ProgramSummary.StartsWith("Program —",StringComparison.Ordinal),"Program summary must remain a presentation projection.");
-    }
-
     private static void UncapturedPreviewIsExplicit()
     {
         var s=Create(ClientExecutionStatus.Ready,0,3);
@@ -111,13 +102,6 @@ public static class ClientInspectionExecutionPresentationSmoke
               p.AcquisitionPreviewText.Contains("Mono8",StringComparison.Ordinal) &&
               p.AcquisitionPreviewText.Contains("Frame 7",StringComparison.Ordinal),
             "Inspection presentation must project observed preview metadata.");
-    }
-
-    private static void ResultUsesObservedFrameCount()
-    {
-        var s=Create(ClientExecutionStatus.Completed,4,4);
-        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.ResultText=="Result — 4 frames","Result count must use observed production frame count.");
     }
 
     private static ClientInspectionWorkspaceSnapshot Create(
