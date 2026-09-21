@@ -11,6 +11,20 @@ public sealed record ClientWorkspaceContentSurface(
 
 public static class ClientWorkspaceContentSurfaceRuntime
 {
+    public static ClientWorkspaceContentSurface CreateValidated(
+        ClientWorkspaceSelection selection,
+        ClientWorkspaceCommandRouting routing,
+        ClientInspectionWorkspaceSnapshot snapshot)
+    {
+        ArgumentNullException.ThrowIfNull(snapshot);
+
+        var errors=ClientInspectionWorkflowIntegrityRuntime.Validate(snapshot);
+        if(errors.Count>0)
+            throw new InvalidOperationException(string.Join(" ",errors));
+
+        return Create(selection,routing,snapshot);
+    }
+
     public static ClientWorkspaceContentSurface Create(
         ClientWorkspaceSelection selection,
         ClientWorkspaceCommandRouting routing,
