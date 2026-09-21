@@ -58,6 +58,16 @@ REQUIRED_COMMAND_FACADES = (
     "ClientResultsCommandRuntime.",
 )
 
+FORBIDDEN_DIRECT_WORKSPACE_READS = (
+    "_client.Production.",
+    "_client.Quality",
+    "_client.History",
+    "_client.SelectedHistoryOrdinal",
+    "_client.Acquisition",
+    "_client.Program",
+    "_client.CurrentProgram",
+)
+
 FORBIDDEN_DIRECT_WORKSPACE_MUTATIONS = (
     "_client.BindAcquisitionSource(",
     "_client.LoadProgram(",
@@ -139,6 +149,10 @@ def main() -> int:
     for facade in REQUIRED_COMMAND_FACADES:
         if facade not in code:
             errors.append(f"missing command facade usage: {facade}")
+
+    for read in FORBIDDEN_DIRECT_WORKSPACE_READS:
+        if read in code:
+            errors.append(f"direct workspace read must not exist in shell: {read}")
 
     for mutation in FORBIDDEN_DIRECT_WORKSPACE_MUTATIONS:
         if mutation in code:
