@@ -3219,3 +3219,15 @@ Next executable stage: **51,501**
 - Updated Inspection surface Smoke to verify Completed result status/frame count and to prevent fabricated Replay/Release presentation while Production is still Running.
 - Static source audit remains clean for the modified Smoke: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73520 — 2026-09-21
+
+- Completed boundary: **73,520**
+- Next executable stage: **73,521**
+- 73517–73520: **Raw Acquisition Preview -> Inspection Surface payload binding -> Acquisition Fault -> Production source gate**.
+- `ClientInspectionExecutionSurface` now carries the existing `ClientAcquisitionPreviewSnapshot`, allowing the client rendering layer to consume the captured payload and metadata directly.
+- Corrected a real Production gate defect: a Faulted Acquisition previously retained an underlying source that `TryGetSource(...)` could expose. Source access is now restricted to Ready state only.
+- Updated the Production execution error text to reflect the Ready Acquisition contract.
+- Acquisition Preview/Fault Smoke now verifies stale-preview removal and that Faulted Acquisition blocks Production source access until successful recovery.
+- Static source audit remains clean for the modified Smoke files; no authoritative build/test/CI execution is claimed.
