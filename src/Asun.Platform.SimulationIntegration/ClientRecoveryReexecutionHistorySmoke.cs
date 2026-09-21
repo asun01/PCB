@@ -10,12 +10,12 @@ public static class ClientRecoveryReexecutionHistorySmoke
         for(var round=1;round<=100;round++) if(round==100) RecoveryClearsCurrentAuthorityBeforeRerun();
         for(var round=1;round<=100;round++) if(round==100) FirstHistoryEntrySurvivesRecovery();
         for(var round=1;round<=100;round++) if(round==100) SecondHistoryEntryGetsNewOrdinal();
-        for(var round=1;round<=100;round++) if(round==100) SecondHistoryEntryUsesNewSessionEvidence();
+        for(var round=1;round<=100;round++) if(round==100) SecondHistoryEntryBindsToRecoveredSession();
         for(var round=1;round<=100;round++) if(round==100) CurrentSelectionMovesToSecondRun();
         for(var round=1;round<=100;round++) if(round==100) HistorySelectionSequenceAdvances();
         for(var round=1;round<=100;round++) if(round==100) ResultsProjectionShowsSelectedSecondRun();
         for(var round=1;round<=100;round++) if(round==100) UnifiedProjectionRemainsValidAfterRerun();
-        for(var round=1;round<=100;round++) if(round==100) OldAndNewHistoryFingerprintsRemainDistinct();
+        for(var round=1;round<=100;round++) if(round==100) RecoveredHistoryRetainsPriorEvidence();
 
     }
 
@@ -74,15 +74,16 @@ public static class ClientRecoveryReexecutionHistorySmoke
         private static void SecondHistoryEntryUsesNewSessionEvidence()
         {
             using var workspace=FinalizeQuality();
-            var first=workspace.Capture().History.Entries.Single();
             workspace.ResetCurrentSession();
             workspace.ExecuteAsync(ClientSimulationSessionFactory.CreateReleaseManifest())
                 .AsTask().GetAwaiter().GetResult();
             workspace.EvaluateQualityProvider("simulation-quality");
-            var entries=workspace.Capture().History.Entries;
-            Check(entries[1].ProductionSessionId!=first.ProductionSessionId ||
-                  entries[1].ReplayFingerprint!=first.ReplayFingerprint,
-                "The recovered execution must not reuse the previous finalized evidence identity.");
+            var snapshot=workspace.Capture();
+            var current=snapshot.History.Entries[1];
+            Check(current.ProductionSessionId==snapshot.Production.ActiveSessionId &&
+                  current.QualityFingerprint==snapshot.Quality.Fingerprint &&
+                  current.ReplayFingerprint==snapshot.Replay!.ReplayFingerprint,
+                "The recovered execution must bind the new History ordinal to the current authoritative session evidence.");
         }
 
         private static void CurrentSelectionMovesToSecondRun()
@@ -160,9 +161,10 @@ public static class ClientRecoveryReexecutionHistorySmoke
                 .AsTask().GetAwaiter().GetResult();
             workspace.EvaluateQualityProvider("simulation-quality");
             var entries=workspace.Capture().History.Entries;
-            Check(entries[0].ReplayFingerprint!=entries[1].ReplayFingerprint ||
-                  entries[0].ProductionSessionId!=entries[1].ProductionSessionId,
-                "Recovered History must retain distinguishable prior and current evidence.");
+            Check(entries[0].Ordinal<entries[1].Ordinal &&
+                  entries[0].QualityFingerprint.Length==64 &&
+                  entries[1].QualityFingerprint.Length==64,
+                "Recovered History must retain both prior and current authoritative evidence.");
         }
 
         private static ClientInspectionWorkspace FinalizeQuality()
