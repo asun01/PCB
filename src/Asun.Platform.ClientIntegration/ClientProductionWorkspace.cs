@@ -134,6 +134,10 @@ public sealed class ClientProductionWorkspace
             throw new InvalidOperationException("A production session must be loaded before start.");
         if(_snapshot.Status==ClientExecutionStatus.Running)
             throw new InvalidOperationException("A client production session is already running.");
+        if(_snapshot.Status==ClientExecutionStatus.Completed)
+            throw new InvalidOperationException("A completed production session must be reset or explicitly reloaded before another start.");
+        if(_snapshot.Status==ClientExecutionStatus.Cancelled || _snapshot.Status==ClientExecutionStatus.Failed)
+            throw new InvalidOperationException("A cancelled or failed production session must be reset or explicitly reloaded before another start.");
 
         using var linked=CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         _activeCancellation=linked;
