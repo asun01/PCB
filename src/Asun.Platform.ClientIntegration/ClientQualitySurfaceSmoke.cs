@@ -34,10 +34,33 @@ public static class ClientQualitySurfaceSmoke
 
     private static void SelectionIsExplicit()
     {
-        var surface=CreateSurface();
-        Check(surface.Snapshot.SelectedFindingId is null &&
-              surface.SelectedFinding is null,
-            "Unbound Quality selection and finding detail must remain null.");
+        using var workspace=CreateWorkspace();
+        var finding=new ClientQualityFindingDisplayItem(
+            "finding-1",
+            "RULE-1",
+            "Fail",
+            "High",
+            "Deterministic finding",
+            2);
+        var quality=workspace.Quality with
+        {
+            RunId=Guid.NewGuid(),
+            ResultCount=1,
+            FindingCount=1,
+            FailCount=1,
+            EvidenceLinkCount=2,
+            Fingerprint="fingerprint",
+            IsBound=true,
+            Findings=new[] { finding },
+            SelectedFindingId="finding-1"
+        };
+        var surface=ClientQualitySurfaceRuntime.Create(
+            workspace.Capture() with { Quality=quality });
+
+        Check(surface.SelectedFinding?.FindingId=="finding-1" &&
+              surface.SelectedFinding.RuleCode=="RULE-1" &&
+              surface.SelectedFinding.EvidenceCount==2,
+            "Quality surface must project selected finding detail without recomputing it.");
     }
 
     private static void QualityAuthorityIsReused()
