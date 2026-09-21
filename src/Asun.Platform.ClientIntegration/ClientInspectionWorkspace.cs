@@ -42,6 +42,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private ClientReleaseProjection? _release;
     private long? _selectedHistoryOrdinal;
     private Action<ClientInspectionWorkspaceSnapshot>? _changed;
+    private Action<RoiViewportSnapshot>? _roiChanged;
     private int _disposed;
 
     public ClientInspectionWorkspace(
@@ -94,6 +95,21 @@ public sealed class ClientInspectionWorkspace : IDisposable
             if(Volatile.Read(ref _disposed)!=0)
                 return;
             _changed-=value;
+        }
+    }
+
+    public event Action<RoiViewportSnapshot>? RoiChanged
+    {
+        add
+        {
+            ThrowIfDisposed();
+            _roiChanged+=value;
+        }
+        remove
+        {
+            if(Volatile.Read(ref _disposed)!=0)
+                return;
+            _roiChanged-=value;
         }
     }
 
@@ -444,25 +460,33 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public bool UndoRoi()
     {
         ThrowIfDisposed();
-        return _roi.Document.Undo();
+        var changed=_roi.Document.Undo();
+        if(changed)
+            PublishRoiChanged();
+        return changed;
     }
 
     public bool RedoRoi()
     {
         ThrowIfDisposed();
-        return _roi.Document.Redo();
+        var changed=_roi.Document.Redo();
+        if(changed)
+            PublishRoiChanged();
+        return changed;
     }
 
     public void SetRoiMode(RoiEditorMode mode)
     {
         ThrowIfDisposed();
         _roi.Mode=mode;
+        PublishRoiChanged();
     }
 
     public void ResizeRoiViewport(Vector2 viewportSize)
     {
         ThrowIfDisposed();
         _roi.ResizeViewport(viewportSize);
+        PublishRoiChanged();
     }
 
     public bool SubmitRoiInput(
@@ -472,7 +496,10 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ViewportMouseButton button=ViewportMouseButton.Left)
     {
         ThrowIfDisposed();
-        return _roi.Submit(kind,viewportPoint,wheelDelta,button);
+        var accepted=_roi.Submit(kind,viewportPoint,wheelDelta,button);
+        if(accepted)
+            PublishRoiChanged();
+        return accepted;
     }
 
     public RoiViewportSnapshot CaptureRoiViewport()
@@ -485,6 +512,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _roi.StopInteraction();
+        PublishRoiChanged();
     }
 
     public void ResetCurrentSession()
@@ -517,6 +545,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
         _production.Changed-=OnProductionChanged;
         _changed=null;
+        _roiChanged=null;
         _roi.Dispose();
     }
 
@@ -528,6 +557,9 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ProductionChanged?.Invoke(_production.Snapshot);
         _changed?.Invoke(Capture());
     }
+
+    private void PublishRoiChanged() =>
+        _roiChanged?.Invoke(_roi.CaptureViewportSnapshot());
 
     private void ThrowIfDisposed() =>
         ObjectDisposedException.ThrowIf(_disposed!=0,this);
