@@ -3686,3 +3686,13 @@ Next executable stage: **51,501**
 - 73,696–73,700: Results projection now accepts Replay evidence only when the fingerprint is exactly 64 lowercase hexadecimal characters; Results smoke covers both short and malformed-character fingerprints.
 - This keeps malformed Replay evidence visible as invalid instead of allowing presentation code to manufacture a plausible Replay identity.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,701–73,720 — 2026-09-21
+
+- 73,701–73,705: Quality became an explicit authority boundary. A completed Production session is now intentionally Quality-pending; Replay and Release are not fabricated at Production completion.
+- 73,706–73,710: Replay creation now requires a valid bound Quality snapshot and carries the exact Quality fingerprint. The fail-closed legacy Replay creation/validation entry points remain compile-compatible but cannot create a Replay without Quality authority.
+- 73,711–73,715: Release projection now carries the Quality fingerprint inherited from Replay and validates that the Release evidence remains bound to the same Quality authority. Results presentation exposes Quality state before Replay/Release state.
+- 73,716–73,720: the WPF simulation path was reordered to Production → Quality → Replay → Release; Results now renders Quality authority explicitly. A simulation-layer 10×100 authority smoke covers deferral, finalization, fingerprint linkage, history finalization, workflow integrity, and complete reset recovery.
+- Reset/reload semantics continue to clear pending Release manifests and all downstream evidence, preventing stale Quality/Replay/Release state from surviving a new client execution context.
+- Verification remains source/static implementation unless an actual Build/Test/CI execution is separately recorded; no such execution is claimed by this batch.
