@@ -13,7 +13,8 @@ public static class ClientInspectionAcquisitionCommandSmoke
         for(var round=1;round<=100;round++) if(round==100) RejectsQualityWorkspace();
         for(var round=1;round<=100;round++) if(round==100) RejectsResultsWorkspace();
         for(var round=1;round<=100;round++) if(round==100) RejectsHomeWorkspace();
-        for(var round=1;round<=100;round++) if(round==100) UsesExistingAuthority();
+        for(var round=1;round<=100;round++) if(round==100) PreviewRequiresExplicitCapability();
+        for(var round=1;round<=100;round++) if(round==100) PreviewUsesBoundSource();
         for(var round=1;round<=100;round++) if(round==100) DoesNotCreateSourceAuthority();
         for(var round=1;round<=100;round++) if(round==100) ProjectionSeesBinding();
     }
@@ -150,6 +151,65 @@ public static class ClientInspectionAcquisitionCommandSmoke
         Check(rejected,"Home routing must not own acquisition binding.");
     }
 
+    private static void PreviewRequiresExplicitCapability()
+    {
+        using var workspace=CreateWorkspace();
+        workspace.AcquisitionCatalog.Register(
+            Asun.Platform.SimulationIntegration.ClientSimulationSessionFactory.CreateSourceDefinition());
+
+        ClientInspectionAcquisitionCommandRuntime.BindSource(
+            workspace,
+            Routing(ClientWorkspaceKind.Inspection),
+            "simulation");
+
+        var rejected=false;
+        try
+        {
+            ClientInspectionAcquisitionCommandRuntime.Preview(
+                workspace,
+                ClientInspectionExecutionSurfaceRuntime.Create(
+                    workspace.Capture(),
+                    Routing(ClientWorkspaceKind.Inspection)))
+                .AsTask().GetAwaiter().GetResult();
+        }
+        catch(InvalidOperationException)
+        {
+            rejected=true;
+        }
+
+        Check(rejected,
+            "Acquisition preview must require an explicit routing capability.");
+    }
+
+    private static void PreviewUsesBoundSource()
+    {
+        using var workspace=CreateWorkspace();
+        workspace.AcquisitionCatalog.Register(
+            Asun.Platform.SimulationIntegration.ClientSimulationSessionFactory.CreateSourceDefinition());
+
+        var routing=Routing(ClientWorkspaceKind.Inspection) with
+        {
+            CanPreviewAcquisition=true
+        };
+
+        ClientInspectionAcquisitionCommandRuntime.BindSource(
+            workspace,
+            routing,
+            "simulation");
+
+        var preview=ClientInspectionAcquisitionCommandRuntime.Preview(
+            workspace,
+            ClientInspectionExecutionSurfaceRuntime.Create(
+                workspace.Capture(),
+                routing))
+            .AsTask().GetAwaiter().GetResult();
+
+        Check(preview.Width>0 &&
+              preview.Height>0 &&
+              !string.IsNullOrWhiteSpace(preview.PixelFormat),
+            "Acquisition preview must return observed frame metadata from the bound source.");
+    }
+
     private static void UsesExistingAuthority()
     {
         using var workspace=CreateWorkspace();
@@ -225,7 +285,10 @@ public static class ClientInspectionAcquisitionCommandSmoke
             true,
             false,
             selection.Workspace==ClientWorkspaceKind.Quality,
-            selection.Workspace==ClientWorkspaceKind.Results);
+            selection.Workspace==ClientWorkspaceKind.Results)
+        {
+            CanPreviewAcquisition=false
+        };
 
     private sealed class DeterministicSource : IFrameSource
     {
