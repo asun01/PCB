@@ -3319,3 +3319,15 @@ Next executable stage: **51,501**
 - Added and registered `ClientResultsCommandSmoke` with ten exact-100-round matrices.
 - Results selection remains presentation/client context only; it does not create Replay, Release, Quality, or Production facts.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73539 — 2026-09-21
+
+- Completed boundary: **73,539**
+- Next executable stage: **73,540**
+- 73537–73539: **Results snapshot -> selected history context -> unified Results surface**.
+- Added `SelectedHistoryOrdinal` to `ClientInspectionWorkspaceSnapshot`, closing the Results selection-state projection gap.
+- Added `ClientResultsSurfaceRuntime` to combine current Result/Replay/Release facts, bounded Run History display, and selected-history context without creating new authority.
+- Added and registered `ClientResultsSurfaceSmoke` with ten exact-100-round matrices.
+- Static source audit: the new Smoke has 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, and no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
