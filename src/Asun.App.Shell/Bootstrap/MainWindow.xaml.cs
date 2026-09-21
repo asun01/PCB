@@ -142,6 +142,7 @@ public partial class MainWindow : System.Windows.Window
     {
         ResultStatus.Text=$"Status: {results.Current.Status}";
         ResultSession.Text=$"{results.Current.SessionText} · {results.Current.FrameCount} frame(s)";
+        ResultQuality.Text=results.Current.QualityText;
         ResultReplay.Text=results.Current.ReplayText;
         ResultRelease.Text=results.Current.ReleaseText;
 
@@ -577,12 +578,22 @@ public partial class MainWindow : System.Windows.Window
             RefreshCommandAvailability();
             var report=await execution;
 
+            if(QualityProviderComboBox.SelectedItem is not ClientQualityProviderDefinition qualityDefinition)
+                throw new InvalidOperationException("No Quality provider is selected for the completed simulation.");
+
+            ClientQualityCommandRuntime.EvaluateProvider(
+                _client,
+                CreateRouting(ClientWorkspaceKind.Quality),
+                qualityDefinition.Descriptor.ProviderId);
+
             var snapshot=_client.Capture();
             var diagnostic=ClientInspectionDiagnosticsRuntime.Analyze(snapshot);
-            var replay=snapshot.Replay!;
-            var release=snapshot.Release!;
+            var replay=snapshot.Replay
+                ?? throw new InvalidOperationException("Quality evaluation did not finalize Replay evidence.");
+            var release=snapshot.Release
+                ?? throw new InvalidOperationException("Quality evaluation did not finalize Release evidence.");
 
-            SimulationStatus.Text=$"Completed · {report.FrameCount} frames · replay {replay.ReplayFingerprint[..12]}...";
+            SimulationStatus.Text=$"Completed · {report.FrameCount} frames · Quality {snapshot.Quality.Fingerprint![..12]}... · replay {replay.ReplayFingerprint[..12]}...";
             ReleaseStatus.Text=release.ReleaseReady
                 ? $"Release: Ready · {release.ArtifactPath}"
                 : "Release: Not ready.";
