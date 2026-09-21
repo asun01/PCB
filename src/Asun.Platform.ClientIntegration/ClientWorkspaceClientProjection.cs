@@ -6,6 +6,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     private readonly ClientInspectionWorkspace _inspection;
     private readonly Func<ClientWorkspaceSelection,ClientWorkspaceCommandRouting> _routingFactory;
     private ClientWorkspaceClientSnapshot? _snapshot;
+    private long _projectionSequence;
     private int _disposed;
 
     public ClientWorkspaceClientProjection(
@@ -24,7 +25,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         _navigation.Changed+=OnNavigationChanged;
         _inspection.Changed+=OnInspectionChanged;
 
-        _snapshot=CreateSnapshot();
+        _snapshot=CreateSnapshot(++_projectionSequence);
     }
 
     public event Action<ClientWorkspaceClientSnapshot>? Changed;
@@ -55,14 +56,17 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         Changed=null;
     }
 
-    private ClientWorkspaceClientSnapshot CreateSnapshot()
+    private ClientWorkspaceClientSnapshot CreateSnapshot(long sequence)
     {
         var selection=_navigation.Current;
         var routing=_routingFactory(selection);
         return ClientWorkspaceClientSnapshotRuntime.Create(
             selection,
             routing,
-            _inspection.Capture());
+            _inspection.Capture()) with
+        {
+            ProjectionSequence=sequence
+        };
     }
 
     private void OnNavigationChanged(ClientWorkspaceSelection selection) =>
@@ -76,7 +80,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         if(Volatile.Read(ref _disposed)!=0)
             return;
 
-        _snapshot=CreateSnapshot();
+        _snapshot=CreateSnapshot(++_projectionSequence);
         Changed?.Invoke(_snapshot);
     }
 
