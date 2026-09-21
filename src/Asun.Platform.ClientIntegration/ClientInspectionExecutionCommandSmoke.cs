@@ -95,13 +95,8 @@ public static class ClientInspectionExecutionCommandSmoke
     {
         using var workspace=CreateWorkspace();
         var surface=CreateSurface(workspace,canPreview:true);
-        var rejected=ExpectInvalidOperation(
-            () => ClientInspectionExecutionCommandRuntime
-                .PreviewAcquisitionAsync(workspace,surface)
-                .AsTask()
-                .GetAwaiter()
-                .GetResult());
-        Check(rejected,"Preview command may pass routing but must still enforce Acquisition binding in the workspace.");
+        Check(!surface.CanPreviewAcquisition,
+            "Preview command must remain unavailable until Acquisition is Ready.");
     }
 
     private static void CancelRoutesToWorkspace()
@@ -126,17 +121,23 @@ public static class ClientInspectionExecutionCommandSmoke
     private static void SurfaceExposesPreviewGate()
     {
         using var workspace=CreateWorkspace();
+        workspace.BindAcquisition(
+            new DeterministicSource(),
+            new ClientAcquisitionDescriptor("source","Deterministic",true));
         var surface=CreateSurface(workspace,canPreview:true);
         Check(surface.CanPreviewAcquisition,
-            "Inspection surface must expose the existing preview command gate.");
+            "Inspection surface must expose the preview command gate when Acquisition is Ready.");
     }
 
     private static void SurfaceExposesRunGate()
     {
         using var workspace=CreateWorkspace();
+        workspace.BindAcquisition(
+            new DeterministicSource(),
+            new ClientAcquisitionDescriptor("source","Deterministic",true));
         var surface=CreateSurface(workspace,canRun:true);
         Check(surface.CanRunInspection,
-            "Inspection surface must expose the existing run command gate.");
+            "Inspection surface must expose the run command gate when Acquisition is Ready.");
     }
 
     private static ClientInspectionExecutionSurface CreateSurface(
