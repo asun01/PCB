@@ -92,6 +92,7 @@ public static class ClientInspectionRoiPulseSmoke
               latestPulse?.Snapshot.ViewportSize.X==1024 &&
               latestPulse.Sequence==2,
             "Repeated ROI pulses must expose the latest viewport state with a monotonic sequence.");
+    }
 
     private static void DisposeDetachesRoiPulse()
     {
