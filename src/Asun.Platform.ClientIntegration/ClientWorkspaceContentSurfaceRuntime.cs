@@ -7,7 +7,30 @@ public sealed record ClientWorkspaceContentSurface(
     ClientProgramSurface Program,
     ClientInspectionExecutionSurface Inspection,
     ClientQualitySurface Quality,
-    ClientResultsSurface Results);
+    ClientResultsSurface Results)
+{
+    public ClientInspectionWorkflowSnapshot Workflow { get; init; }=
+        ClientInspectionWorkflowRuntime.Evaluate(
+            new ClientInspectionWorkspaceSnapshot(
+                new ClientWorkspaceSnapshot(
+                    ClientExecutionStatus.Ready,
+                    null,
+                    null,
+                    null,
+                    0,
+                    0,
+                    0,
+                    null,
+                    null),
+                null,
+                null,
+                null,
+                new ClientProductionRunHistorySnapshot(
+                    20,
+                    1,
+                    0,
+                    Array.Empty<ClientProductionRunHistoryEntry>())));
+};
 
 public static class ClientWorkspaceContentSurfaceRuntime
 {
@@ -44,6 +67,9 @@ public static class ClientWorkspaceContentSurfaceRuntime
             ClientProgramSurfaceRuntime.Create(snapshot),
             ClientInspectionExecutionSurfaceRuntime.Create(snapshot,routing),
             ClientQualitySurfaceRuntime.Create(snapshot),
-            ClientResultsSurfaceRuntime.Create(snapshot));
+            ClientResultsSurfaceRuntime.Create(snapshot))
+        {
+            Workflow=ClientInspectionWorkflowRuntime.Evaluate(snapshot)
+        };
     }
 }
