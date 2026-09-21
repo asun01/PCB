@@ -95,9 +95,25 @@ public static class ClientProgramCommandSmoke
             Routing(ClientWorkspaceKind.Program),
             stepId);
         var surface=ClientProgramSurfaceRuntime.Create(workspace.Capture());
+        using var navigation=new ClientWorkspaceRuntime();
+        using var projection=new ClientWorkspaceClientProjection(
+            navigation,
+            workspace,
+            selection=>new ClientWorkspaceCommandRouting(
+                selection.Workspace,
+                true,false,false,true,false,false,false));
+
+        ClientWorkspaceClientSnapshot? latest=null;
+        projection.Changed+=value=>latest=value;
+        ClientProgramCommandRuntime.SelectStep(
+            workspace,
+            Routing(ClientWorkspaceKind.Program),
+            stepId);
+
         Check(surface.SelectedItem?.StepId==stepId &&
-              surface.SelectionText.Contains("Selected step",StringComparison.Ordinal),
-            "Program surface must reflect the authoritative selected step.");
+              surface.SelectionText.Contains("Selected step",StringComparison.Ordinal) &&
+              latest?.Content.Program.SelectedItem?.StepId==stepId,
+            "Program step selection must flow into the unified client Projection.");
     }
 
     private static void RepeatedSelectionIsDeterministic()
