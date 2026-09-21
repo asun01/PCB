@@ -85,6 +85,7 @@ public static class ClientWorkspaceClientProjectionSmoke
 
         ClientWorkspaceClientSnapshot? latest=null;
         ClientWorkspaceSnapshot? productionLatest=null;
+        ClientWorkspaceClientExecutionPulse? executionLatest=null;
         var productionEvents=0;
         projection.Changed+=value=>latest=value;
         projection.ProductionChanged+=value =>
@@ -92,6 +93,7 @@ public static class ClientWorkspaceClientProjectionSmoke
             productionLatest=value;
             productionEvents++;
         };
+        projection.ExecutionChanged+=value=>executionLatest=value;
         var initial=projection.Snapshot.ProjectionSequence;
         navigation.TryNavigate(ClientWorkspaceKind.Quality);
         inspection.BindAcquisition(
@@ -101,8 +103,13 @@ public static class ClientWorkspaceClientProjectionSmoke
         Check(latest?.Selection.Workspace==ClientWorkspaceKind.Quality &&
               latest.ProjectionSequence>initial &&
               productionEvents>0 &&
-              productionLatest is not null,
-            "Projection must bridge both full client snapshots and high-frequency Production state.");
+              productionLatest is not null &&
+              executionLatest?.Selection.Workspace==ClientWorkspaceKind.Quality &&
+              executionLatest.Sequence>0 &&
+              executionLatest.Progress.StatusText==productionLatest is not null
+                ? ClientProductionProgressPresentationRuntime.Create(productionLatest).StatusText
+                : string.Empty,
+            "Projection must bridge full snapshots, raw Production state, and lightweight execution pulses.");
     }
 
     private static void RoutingFactoryDrivesSnapshot()
