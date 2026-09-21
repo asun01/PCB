@@ -3524,3 +3524,14 @@ Next executable stage: **51,501**
 - Expanded the WPF Shell static validator to forbid direct workspace mutation calls for Acquisition, Program, Production execution, Quality, Results, ROI, Cancel, and Reset.
 - Static source audits: modified Smoke remains 10×100 with 10 actual `Check(...)` call sites; MainWindow braces balanced; no TODO/NotImplementedException; no direct command-authority calls remain in Shell.
 - No authoritative Build/Test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73617 — 2026-09-21
+
+- Completed boundary: **73,617**
+- Next executable stage: **73,618**
+- 73615–73617: **WPF Inspection Acquisition authority closure -> Shell mutation fence**.
+- Acquisition Preview in the real WPF Shell now routes through ClientInspectionAcquisitionCommandRuntime, matching Acquisition BindSource ownership.
+- The Shell binding validator now requires the Acquisition command facade and rejects direct `_client` authority mutation calls for Acquisition, Program, Production execution, Quality, Results, ROI, Cancel, Reset, and related selection operations.
+- Static source audit of MainWindow.xaml.cs: all direct workspace mutation patterns are absent; braces are balanced; no TODO/NotImplementedException.
+- No authoritative Build/Test/CI execution is claimed.
