@@ -24,7 +24,6 @@ public static class ClientCancelledFailedRecoverySmoke
     private static void CancelledSessionCannotRestart()
         {
             var workspace=Create(new CancellationRunner());
-            workspace.Cancel();
             RunExpectingCancellation(workspace);
             Check(workspace.Snapshot.Status==ClientExecutionStatus.Cancelled,
             "Cancelled execution must remain Cancelled until explicit recovery.");
@@ -132,18 +131,19 @@ public static class ClientCancelledFailedRecoverySmoke
         }
 
     private static void RunExpectingCancellation(ClientProductionWorkspace workspace)
+    {
+        try
         {
-            try
-            {
-            workspace.StartAsync(
-                ClientSimulationSessionFactory.CreateSource())
-                .AsTask().GetAwaiter().GetResult();
+            var task=workspace.StartAsync(
+                ClientSimulationSessionFactory.CreateSource()).AsTask();
+            workspace.Cancel();
+            task.GetAwaiter().GetResult();
             throw new InvalidOperationException("Expected cancellation was not raised.");
-            }
-            catch(OperationCanceledException)
-            {
-            }
         }
+        catch(OperationCanceledException)
+        {
+        }
+    }
 
     private static void RunExpectingFailure(ClientProductionWorkspace workspace)
         {
