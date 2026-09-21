@@ -3598,3 +3598,12 @@ Next executable stage: **51,501**
 - 73,634: the resulting chain is now statically closed at the Preview command boundary: Inspection routing capability → Preview facade authorization → Acquisition workspace capture → observed frame metadata → unified projection/WPF presentation.
 - Static audit evidence for the modified smoke: 10 loop groups, 10 actual Check call sites, balanced braces, no TODO/NotImplementedException.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI, vendor runtime, hardware/HIL, installer, or final customer-release result is claimed.
+
+
+### Rolling real-client continuation — stages 73,635–73,638 — 2026-09-21
+
+- 73,635: WPF Acquisition Preview image rendering was moved from the button handler into the authoritative Inspection Projection application path; the preview command result is no longer a second UI-state authority.
+- 73,636: the projected preview renderer now accepts an absent preview and clears the displayed bitmap, and it accepts both `Gray8` and `Mono8` byte-identical grayscale payloads already represented by the observed frame metadata.
+- 73,637: the WPF shell static validator now requires `RenderPreview(inspection.AcquisitionPreview)` and rejects handler-local `RenderPreview(preview)`, making the unified Projection boundary mechanically auditable.
+- 73,638: the acquisition preview chain is therefore closed through observed source state → command facade → workspace snapshot → Inspection Surface → Unified Client Projection → WPF image surface, including explicit clearing when preview state disappears.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI execution, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
