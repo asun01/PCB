@@ -100,15 +100,17 @@ public static class ClientWorkspaceClientProjectionSmoke
             new DeterministicSource(),
             new ClientAcquisitionDescriptor("source","Deterministic",true));
 
+        var expectedProgressText=productionLatest is null
+            ? string.Empty
+            : ClientProductionProgressPresentationRuntime.Create(productionLatest).StatusText;
+
         Check(latest?.Selection.Workspace==ClientWorkspaceKind.Quality &&
               latest.ProjectionSequence>initial &&
               productionEvents>0 &&
               productionLatest is not null &&
               executionLatest?.Selection.Workspace==ClientWorkspaceKind.Quality &&
               executionLatest.Sequence>0 &&
-              executionLatest.Progress.StatusText==productionLatest is not null
-                ? ClientProductionProgressPresentationRuntime.Create(productionLatest).StatusText
-                : string.Empty,
+              executionLatest.Progress.StatusText==expectedProgressText,
             "Projection must bridge full snapshots, raw Production state, and lightweight execution pulses.");
     }
 
