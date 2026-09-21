@@ -5,6 +5,10 @@ using Asun.Production.Runtime;
 
 namespace Asun.Platform.ClientIntegration;
 
+public sealed record ClientInspectionRoiPulse(
+    long Sequence,
+    RoiViewportSnapshot Snapshot);
+
 public sealed record ClientInspectionWorkspaceSnapshot(
     ClientWorkspaceSnapshot Production,
     ClientRoiInteractionSnapshot? Roi,
@@ -43,6 +47,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
     private long? _selectedHistoryOrdinal;
     private Action<ClientInspectionWorkspaceSnapshot>? _changed;
     private Action<RoiViewportSnapshot>? _roiChanged;
+    private Action<ClientInspectionRoiPulse>? _roiPulseChanged;
+    private long _roiPulseSequence;
     private int _disposed;
 
     public ClientInspectionWorkspace(
@@ -110,6 +116,21 @@ public sealed class ClientInspectionWorkspace : IDisposable
             if(Volatile.Read(ref _disposed)!=0)
                 return;
             _roiChanged-=value;
+        }
+    }
+
+    public event Action<ClientInspectionRoiPulse>? RoiPulseChanged
+    {
+        add
+        {
+            ThrowIfDisposed();
+            _roiPulseChanged+=value;
+        }
+        remove
+        {
+            if(Volatile.Read(ref _disposed)!=0)
+                return;
+            _roiPulseChanged-=value;
         }
     }
 
@@ -546,6 +567,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _production.Changed-=OnProductionChanged;
         _changed=null;
         _roiChanged=null;
+        _roiPulseChanged=null;
         _roi.Dispose();
     }
 
@@ -558,8 +580,15 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _changed?.Invoke(Capture());
     }
 
-    private void PublishRoiChanged() =>
-        _roiChanged?.Invoke(_roi.CaptureViewportSnapshot());
+    private void PublishRoiChanged()
+    {
+        var snapshot=_roi.CaptureViewportSnapshot();
+        var pulse=new ClientInspectionRoiPulse(
+            Interlocked.Increment(ref _roiPulseSequence),
+            snapshot);
+        _roiChanged?.Invoke(snapshot);
+        _roiPulseChanged?.Invoke(pulse);
+    }
 
     private void ThrowIfDisposed() =>
         ObjectDisposedException.ThrowIf(_disposed!=0,this);
