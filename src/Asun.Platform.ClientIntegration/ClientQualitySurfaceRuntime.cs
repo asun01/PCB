@@ -4,17 +4,25 @@ public sealed record ClientQualitySurface(
     ClientQualityWorkspaceSnapshot Snapshot,
     bool HasFindings,
     string SelectionText,
-    ClientQualityFindingDisplayItem? SelectedFinding);
+    ClientQualityFindingDisplayItem? SelectedFinding)
+{
+    public ClientQualityFilter Filter { get; init; }=ClientQualityFilter.All;
+    public IReadOnlyList<ClientQualityFindingDisplayItem> VisibleFindings { get; init; }=
+        Array.Empty<ClientQualityFindingDisplayItem>();
+};
 
 public static class ClientQualitySurfaceRuntime
 {
     public static ClientQualitySurface Create(
-        ClientInspectionWorkspaceSnapshot snapshot)
+        ClientInspectionWorkspaceSnapshot snapshot,
+        ClientQualityFilter? filter=null)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
 
         var quality=snapshot.Quality;
+        var activeFilter=filter ?? ClientQualityFilter.All;
         var selected=quality.SelectedFindingId;
+        var visibleFindings=ClientQualityFilterRuntime.Apply(quality,activeFilter);
         var selectedFinding=selected is null
             ? null
             : quality.Findings.FirstOrDefault(item=>item.FindingId==selected);
@@ -27,6 +35,10 @@ public static class ClientQualitySurfaceRuntime
             quality,
             quality.Findings.Count>0,
             selectionText,
-            selectedFinding);
+            selectedFinding)
+        {
+            Filter=activeFilter,
+            VisibleFindings=visibleFindings
+        };
     }
 }
