@@ -3197,3 +3197,14 @@ Next executable stage: **51,501**
 - Added and registered `ClientInspectionExecutionCommandSmoke` and `ClientAcquisitionPreviewFaultSmoke`.
 - Static source audit: new Smoke files each contain 10 loop groups, explicit `round==100`, 10 actual `Check(...)` invocation sites (11 textual matches including the Check method declaration), balanced braces, and no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73514 — 2026-09-21
+
+- Completed boundary: **73,514**
+- Next executable stage: **73,515**
+- 73513–73514: **Direct Acquisition Binding -> Client Event Stream -> Inspection Surface**.
+- Corrected `ClientInspectionWorkspace.BindAcquisition(...)` so direct source binding publishes the existing `ProductionChanged` client event, matching the source-catalog binding path.
+- Added `ClientInspectionAcquisitionBindingEventSmoke` to verify event publication, Ready state, descriptor identity, authority isolation, rebinding, Inspection-surface visibility, and preservation of the existing Production command boundary.
+- Static source audit: the new Smoke has 10 loop groups, explicit `round==100`, 10 actual `Check(...)` invocation sites, balanced braces, and no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
