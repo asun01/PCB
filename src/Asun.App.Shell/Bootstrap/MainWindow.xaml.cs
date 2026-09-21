@@ -222,11 +222,19 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
+        var routing=CreateRouting(ClientWorkspaceKind.Inspection);
+        if(!routing.CanBindAcquisition)
+        {
+            AcquisitionStatus.Text="Acquisition: binding unavailable in the current client state.";
+            RefreshCommandAvailability();
+            return;
+        }
+
         if(AcquisitionSourceComboBox.SelectedItem
             is ClientAcquisitionSourceDefinition definition &&
            ClientInspectionAcquisitionCommandRuntime.BindSource(
                _client,
-               CreateRouting(ClientWorkspaceKind.Inspection),
+               routing,
                definition.Descriptor.SourceId))
         {
             AcquisitionStatus.Text=$"Acquisition: {definition.Descriptor.DisplayName}" +
@@ -809,6 +817,7 @@ public partial class MainWindow : System.Windows.Window
         CreateRoiButton.IsEnabled=routing.CanEditRoi && availability.CanCreateRoi;
         UndoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanUndoRoi;
         RedoRoiButton.IsEnabled=routing.CanEditRoi && availability.CanRedoRoi;
+        BindAcquisitionButton.IsEnabled=routing.CanBindAcquisition;
         PreviewAcquisitionButton.IsEnabled=routing.CanPreviewAcquisition;
         RunQualityButton.IsEnabled=routing.CanEvaluateSimulationQuality;
     }
