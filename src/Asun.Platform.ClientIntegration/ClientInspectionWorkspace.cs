@@ -179,11 +179,17 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public bool SelectHistory(long ordinal)
     {
         ThrowIfDisposed();
-        var entry=_history.Capture().Entries.FirstOrDefault(item=>item.Ordinal==ordinal);
-        if(entry is null)
+
+        var history=_history.Capture();
+        var selection=ClientRunHistorySelectionRuntime.Select(
+            history,
+            ordinal,
+            _selectedHistoryOrdinal is null ? 0 : 1);
+
+        if(selection.SelectedOrdinal is null)
             return false;
 
-        _selectedHistoryOrdinal=ordinal;
+        _selectedHistoryOrdinal=selection.SelectedOrdinal;
         PublishChanged();
         return true;
     }
