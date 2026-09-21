@@ -20,6 +20,8 @@ public sealed record ClientInspectionWorkspaceSnapshot(
     public bool CanRedoRoi { get; init; }
     public long? SelectedHistoryOrdinal { get; init; }
     public ClientProgramWorkspaceSnapshot? Program { get; init; }
+    public IReadOnlyList<ClientProgramDisplayItem> ProgramItems { get; init; }=
+        Array.Empty<ClientProgramDisplayItem>();
     public ClientQualityWorkspaceSnapshot Quality { get; init; }=new(
         null,0,0,0,0,0,0,null,false,
         Array.Empty<ClientQualityFindingDisplayItem>());
@@ -204,6 +206,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
             CanRedoRoi=_roi.Document.CanRedo,
             SelectedHistoryOrdinal=_selectedHistoryOrdinal,
             Program=_program.Snapshot,
+            ProgramItems=ClientProgramPresentationRuntime.CreateItems(_program.CurrentProgram),
             Quality=_quality.Capture(),
             Acquisition=_acquisition.Snapshot
         };
