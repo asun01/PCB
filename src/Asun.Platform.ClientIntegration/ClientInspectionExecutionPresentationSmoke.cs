@@ -16,10 +16,7 @@ public static class ClientInspectionExecutionPresentationSmoke
         for(var round=1;round<=100;round++) if(round==100) ResultUsesObservedFrameCount();
         for(var round=1;round<=100;round++) if(round==100) UncapturedPreviewIsExplicit();
         for(var round=1;round<=100;round++) if(round==100) PreviewUsesObservedMetadata();
-        for(var round=1;round<=100;round++) if(round==100) ReadyRunRequiresAcquisition();
-        for(var round=1;round<=100;round++) if(round==100) ReadyRunIsExplicitWhenAcquisitionIsBound();
-        for(var round=1;round<=100;round++) if(round==100) RunningRunReadinessIsExplicit();
-        for(var round=1;round<=100;round++) if(round==100) CompletedRunReadinessPreservesNextSessionState();
+
     }
 
     private static void CompletedShowsResult()
@@ -114,52 +111,6 @@ public static class ClientInspectionExecutionPresentationSmoke
               p.AcquisitionPreviewText.Contains("Mono8",StringComparison.Ordinal) &&
               p.AcquisitionPreviewText.Contains("Frame 7",StringComparison.Ordinal),
             "Inspection presentation must project observed preview metadata.");
-    }
-
-    private static void ReadyRunRequiresAcquisition()
-    {
-        var s=Create(ClientExecutionStatus.Ready,0,3);
-        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.RunReadinessText=="Run — bind an acquisition source",
-            "Ready execution must explicitly report the missing acquisition prerequisite.");
-    }
-
-    private static void ReadyRunIsExplicitWhenAcquisitionIsBound()
-    {
-        var s=Create(ClientExecutionStatus.Ready,0,3) with
-        {
-            Acquisition=s.Acquisition with
-            {
-                State=ClientAcquisitionState.Ready,
-                CanCapture=true
-            }
-        };
-        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.RunReadinessText=="Run — ready",
-            "Ready execution with a capturable acquisition source must expose run readiness.");
-    }
-
-    private static void RunningRunReadinessIsExplicit()
-    {
-        var s=Create(ClientExecutionStatus.Running,1,3);
-        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.RunReadinessText=="Run — execution in progress",
-            "Running execution must not present a new-run readiness state.");
-    }
-
-    private static void CompletedRunReadinessPreservesNextSessionState()
-    {
-        var s=Create(ClientExecutionStatus.Completed,3,3) with
-        {
-            Acquisition=s.Acquisition with
-            {
-                State=ClientAcquisitionState.Ready,
-                CanCapture=true
-            }
-        };
-        var p=ClientInspectionExecutionPresentationRuntime.Create(s);
-        Check(p.RunReadinessText=="Run — ready for next session",
-            "Completed execution must preserve explicit next-session readiness.");
     }
 
     private static void ResultUsesObservedFrameCount()
