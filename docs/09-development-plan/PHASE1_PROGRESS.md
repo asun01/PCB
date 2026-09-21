@@ -3374,3 +3374,16 @@ Next executable stage: **51,501**
 - Quality Command Smoke now proves evaluation cannot bypass that routing gate.
 - Static audit remains clean at 10 loop groups / 10 actual `Check(...)` sites for the modified Smoke.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73553 — 2026-09-21
+
+- Completed boundary: **73,553**
+- Next executable stage: **73,554**
+- 73550–73553: **Results history detail -> Release/Replay review surface**.
+- Added reusable per-entry Run History presentation through `ClientRunHistoryPresentationRuntime.CreateItem(...)`.
+- Results Surface now exposes the authoritative selected history entry independently of the bounded visible-list window.
+- Added `ClientReleaseReplaySurfaceRuntime` for Replay Program/session identity, frame count, Replay fingerprint, Release readiness, artifact path, and Release manifest fingerprint.
+- Added and registered `ClientReleaseReplaySurfaceSmoke`; Results Surface Smoke was tightened to verify selected-history detail.
+- Static audits remain clean: modified Smoke files have 10 loop groups, explicit `round==100`, 10 actual `Check(...)` sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
