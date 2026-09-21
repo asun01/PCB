@@ -8,6 +8,9 @@ public sealed record ClientInspectionExecutionSurface(
 {
     public ClientWorkspaceCommandRouting? CommandRouting { get; init; }
 
+    public ClientInspectionResultDisplay ResultDisplay { get; init; } =
+        new("Idle",0,"Session not loaded","Replay not available","Release not evaluated",false);
+
     public bool HasAcquisitionPreview { get; init; }
 
     public string AcquisitionPreviewText { get; init; }="Acquisition Preview — unavailable";
@@ -29,6 +32,7 @@ public static class ClientInspectionExecutionSurfaceRuntime
         ArgumentNullException.ThrowIfNull(snapshot);
 
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
+        var resultDisplay=ClientResultsPresentationRuntime.CreateCurrent(snapshot);
         var preview=snapshot.Acquisition.Preview;
 
         return new ClientInspectionExecutionSurface(
@@ -37,6 +41,7 @@ public static class ClientInspectionExecutionSurfaceRuntime
             snapshot.Production.Status==ClientExecutionStatus.Completed,
             snapshot.Roi is not null)
         {
+            ResultDisplay=resultDisplay,
             HasAcquisitionPreview=preview is not null,
             AcquisitionPreviewText=preview is null
                 ? "Acquisition Preview — unavailable"
