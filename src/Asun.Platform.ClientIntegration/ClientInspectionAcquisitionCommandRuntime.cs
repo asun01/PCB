@@ -14,6 +14,10 @@ public static class ClientInspectionAcquisitionCommandRuntime
             throw new InvalidOperationException(
                 "Acquisition source binding is not available in the current workspace.");
 
+        if(!routing.CanBindAcquisition)
+            throw new InvalidOperationException(
+                "Acquisition source binding is not available under the current Inspection command routing.");
+
         if(string.IsNullOrWhiteSpace(sourceId))
             throw new ArgumentException(
                 "Acquisition source id cannot be blank.",
