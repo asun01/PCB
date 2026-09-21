@@ -728,9 +728,16 @@ public partial class MainWindow : System.Windows.Window
         }
     }
 
-    private void RenderPreview(ClientAcquisitionPreviewSnapshot preview)
+    private void RenderPreview(ClientAcquisitionPreviewSnapshot? preview)
     {
-        if(preview.PixelFormat.Equals("Gray8",StringComparison.OrdinalIgnoreCase) &&
+        if(preview is null)
+        {
+            FramePreviewImage.Source=null;
+            return;
+        }
+
+        if((preview.PixelFormat.Equals("Gray8",StringComparison.OrdinalIgnoreCase) ||
+            preview.PixelFormat.Equals("Mono8",StringComparison.OrdinalIgnoreCase)) &&
            preview.Width>0 &&
            preview.Height>0 &&
            preview.Width<=int.MaxValue &&
