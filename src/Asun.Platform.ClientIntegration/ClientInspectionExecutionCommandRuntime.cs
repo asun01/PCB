@@ -2,6 +2,26 @@ namespace Asun.Platform.ClientIntegration;
 
 public static class ClientInspectionExecutionCommandRuntime
 {
+    public static ClientProgramWorkspaceSnapshot LoadProgram(
+        ClientInspectionWorkspace workspace,
+        ClientInspectionExecutionSurface surface,
+        Asun.Program.Core.InspectionProgram program,
+        Asun.Platform.Pipeline.PipelineDefinition<Asun.Device.Contracts.CapturedFrame> pipeline,
+        Guid sessionId,
+        int frameCount)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(surface);
+
+        if(surface.CommandRouting?.CanLoadProgram!=true)
+            throw new InvalidOperationException("Program load command is not available in the current Inspection surface.");
+
+        ArgumentNullException.ThrowIfNull(program);
+        ArgumentNullException.ThrowIfNull(pipeline);
+
+        return workspace.LoadProgram(program,pipeline,sessionId,frameCount);
+    }
+
     public static ValueTask<ClientAcquisitionPreviewSnapshot> PreviewAcquisitionAsync(
         ClientInspectionWorkspace workspace,
         ClientInspectionExecutionSurface surface,
