@@ -124,7 +124,13 @@ public partial class MainWindow : System.Windows.Window
     {
         try
         {
-            var preview=await _client.PreviewAcquisitionAsync();
+            var preview=await ClientInspectionExecutionCommandRuntime
+                .PreviewAcquisitionAsync(
+                    _client,
+                    ClientInspectionExecutionSurfaceRuntime.Create(
+                        _client.Capture(),
+                        CreateRouting(ClientWorkspaceKind.Inspection)),
+                    CreateCancellationToken());
             RenderPreview(preview);
             AcquisitionStatus.Text=
                 $"Acquisition: {preview.PixelFormat} · {preview.Width}×{preview.Height} · Frame {preview.Sequence.Value}.";
@@ -267,6 +273,9 @@ public partial class MainWindow : System.Windows.Window
         }
     }
 
+    private static CancellationToken CreateCancellationToken() =>
+        CancellationToken.None;
+
     private ClientWorkspaceCommandRouting CreateRouting(
         ClientWorkspaceSelection selection)
     {
@@ -337,8 +346,13 @@ public partial class MainWindow : System.Windows.Window
     {
         try
         {
+            _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Inspection);
             var definition=ClientSimulationSessionFactory.CreateDefinition();
-            _client.LoadProgram(
+            ClientInspectionExecutionCommandRuntime.LoadProgram(
+                _client,
+                ClientInspectionExecutionSurfaceRuntime.Create(
+                    _client.Capture(),
+                    CreateRouting(ClientWorkspaceKind.Inspection)),
                 ClientSimulationSessionFactory.CreateProgram(),
                 ClientSimulationSessionFactory.CreatePipeline(),
                 definition.SessionId,
@@ -426,17 +440,27 @@ public partial class MainWindow : System.Windows.Window
 
         try
         {
+            _workspaceRuntime.TryNavigate(ClientWorkspaceKind.Inspection);
             var definition=ClientSimulationSessionFactory.CreateDefinition();
-            _client.LoadProgram(
+            ClientInspectionExecutionCommandRuntime.LoadProgram(
+                _client,
+                ClientInspectionExecutionSurfaceRuntime.Create(
+                    _client.Capture(),
+                    CreateRouting(ClientWorkspaceKind.Inspection)),
                 ClientSimulationSessionFactory.CreateProgram(),
                 ClientSimulationSessionFactory.CreatePipeline(),
                 definition.SessionId,
                 definition.FrameCount);
+            _client.BindAcquisitionSource("simulation");
             RefreshWorkspaceStatus();
             RefreshProgramStatus();
             RefreshCommandAvailability();
 
-            var execution=_client.ExecuteAsync(
+            var execution=ClientInspectionExecutionCommandRuntime.ExecuteAsync(
+                _client,
+                ClientInspectionExecutionSurfaceRuntime.Create(
+                    _client.Capture(),
+                    CreateRouting(ClientWorkspaceKind.Inspection)),
                 ClientSimulationSessionFactory.CreateReleaseManifest());
 
             RefreshWorkspaceStatus();
