@@ -237,9 +237,16 @@ public sealed class ClientInspectionWorkspace : IDisposable
         var snapshot=_program.Load(program);
         if(snapshot.Status==ClientProgramLoadStatus.Ready)
         {
+            // Loading a new Program starts a new client execution context. Any
+            // Acquisition source, Quality result, Replay, Release, ROI state,
+            // or selected history entry from the previous Program is stale.
+            _lastProductionReport=null;
             _quality.Clear();
+            _acquisition.Unbind();
             _replay=null;
             _release=null;
+            _selectedHistoryOrdinal=null;
+            _roi.Reset();
 
             var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
             _production.Load(definition);
