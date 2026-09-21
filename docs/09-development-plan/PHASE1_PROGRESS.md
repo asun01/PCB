@@ -3778,3 +3778,12 @@ Next executable stage: **51,501**
 - 73,785: tightened current Results projection to expose the current authoritative Quality fingerprint alongside Quality/Replay/Release display state.
 - 73,786: re-audited the Results Surface and History Selection boundary; selection remains snapshot-bound and out-of-window ordinals cannot become active Result context.
 - Verification status: source/static structural audit only. Build/Test/CI execution is not claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,787–73,794 — 2026-09-21
+
+- 73,787–73,789: tightened the Results/History presentation boundary so each finalized History item carries explicit Quality authority text in addition to its Quality fingerprint, Replay fingerprint, and Release state.
+- 73,790–73,791: closed the WPF Results display seam by projecting selected History Quality/Replay/Release authority into a dedicated History authority status instead of reconstructing it from workspace state.
+- 73,792: strengthened the shell binding validator with explicit Results authority binding requirements.
+- 73,793–73,794: added strict 10×100 Results/History authority acceptance coverage for Quality, Replay, Release, selection stability, Unified Projection agreement, and History immutability after Recovery.
+- Verification status: source/static structural inspection only. The new smoke has 10 strict stage groups and 10 actual Check call sites; the textual Check count also includes the Check method declaration. Build/Test/CI execution is not claimed for this interval.
