@@ -224,7 +224,10 @@ public partial class MainWindow : System.Windows.Window
     {
         if(AcquisitionSourceComboBox.SelectedItem
             is ClientAcquisitionSourceDefinition definition &&
-           _client.BindAcquisitionSource(definition.Descriptor.SourceId))
+           ClientInspectionAcquisitionCommandRuntime.BindSource(
+               _client,
+               CreateRouting(ClientWorkspaceKind.Inspection),
+               definition.Descriptor.SourceId))
         {
             AcquisitionStatus.Text=$"Acquisition: {definition.Descriptor.DisplayName}" +
                 (definition.Descriptor.IsSimulation ? " · Simulation" : " · External source");
