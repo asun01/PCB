@@ -199,5 +199,4 @@ public static class ClientRecoveryReexecutionHistorySmoke
                 throw new InvalidOperationException(
                     "Recovery re-execution History smoke failed: "+message);
         }
-    }
-}
+ }
