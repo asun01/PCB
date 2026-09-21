@@ -40,18 +40,18 @@ REQUIRED_COMMAND_FACADES = (
 )
 
 FORBIDDEN_DIRECT_WORKSPACE_MUTATIONS = (
-    ".BindAcquisitionSource(",
-    ".LoadProgram(",
-    ".ExecuteAsync(",
-    ".CancelExecution(",
-    ".ResetCurrentSession(",
-    ".SetRoiMode(",
-    ".UndoRoi(",
-    ".RedoRoi(",
-    ".SubmitRoiInput(",
-    ".SelectProgramStep(",
-    ".SelectQualityFinding(",
-    ".SelectHistory(",
+    "_client.BindAcquisitionSource(",
+    "_client.LoadProgram(",
+    "_client.ExecuteAsync(",
+    "_client.CancelExecution(",
+    "_client.ResetCurrentSession(",
+    "_client.SetRoiMode(",
+    "_client.UndoRoi(",
+    "_client.RedoRoi(",
+    "_client.SubmitRoiInput(",
+    "_client.SelectProgramStep(",
+    "_client.SelectQualityFinding(",
+    "_client.SelectHistory(",
 )
 
 
