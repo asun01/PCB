@@ -46,8 +46,8 @@ public static class ClientInspectionExecutionCommandRuntime
         ArgumentNullException.ThrowIfNull(surface);
         ArgumentNullException.ThrowIfNull(releaseManifest);
 
-        if(!surface.CanRunInspection)
-            throw new InvalidOperationException("Inspection execution command is not available in the current Inspection surface.");
+        if(surface.RunReadinessState!=ClientRunReadinessState.Ready || !surface.CanRunInspection)
+            throw new InvalidOperationException("Inspection execution requires an authoritative Ready Inspection surface.");
 
         return workspace.ExecuteAsync(releaseManifest,cancellationToken);
     }
