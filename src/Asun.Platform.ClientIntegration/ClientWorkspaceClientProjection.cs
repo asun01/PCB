@@ -25,6 +25,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         _navigation.Changed+=OnNavigationChanged;
         _inspection.Changed+=OnInspectionChanged;
         _inspection.ProductionChanged+=OnProductionChanged;
+        _inspection.RoiChanged+=OnRoiChanged;
 
         _snapshot=CreateSnapshot(++_projectionSequence);
     }
@@ -32,6 +33,8 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     public event Action<ClientWorkspaceClientSnapshot>? Changed;
 
     public event Action<ClientWorkspaceSnapshot>? ProductionChanged;
+
+    public event Action<RoiViewportSnapshot>? RoiChanged;
 
     public ClientWorkspaceClientSnapshot Snapshot
     {
@@ -57,8 +60,10 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
         _navigation.Changed-=OnNavigationChanged;
         _inspection.Changed-=OnInspectionChanged;
         _inspection.ProductionChanged-=OnProductionChanged;
+        _inspection.RoiChanged-=OnRoiChanged;
         Changed=null;
         ProductionChanged=null;
+        RoiChanged=null;
     }
 
     private ClientWorkspaceClientSnapshot CreateSnapshot(long sequence)
@@ -82,6 +87,9 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
 
     private void OnProductionChanged(ClientWorkspaceSnapshot snapshot) =>
         ProductionChanged?.Invoke(snapshot);
+
+    private void OnRoiChanged(RoiViewportSnapshot snapshot) =>
+        RoiChanged?.Invoke(snapshot);
 
     private void Publish()
     {
