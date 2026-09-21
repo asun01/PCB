@@ -3662,3 +3662,11 @@ Next executable stage: **51,501**
 - This closes the Inspection → Production hand-off and prevents a stale Production session from becoming an accidental second execution.
 - The chain remains vendor-neutral and does not bypass HALCON, DevExpress, hardware, or external test gates.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,671–73,680 — 2026-09-21
+
+- 73,671–73,675: Program reload semantics were hardened at the Inspection boundary. Loading a new Program now invalidates the previous Acquisition binding, Quality projection, Replay/Release evidence, selected history entry, last Production report reference, and ROI editing state before establishing the new Production session.
+- 73,676–73,680: added \`ClientProgramReloadBoundarySmoke\` with 10 explicit 100-round acceptance groups covering downstream invalidation, fresh Production identity, new Program identity, and post-reload workflow integrity.
+- This closes a concrete stale-context path: a new Program can no longer inherit execution evidence or an Acquisition source from the previous Program.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI execution is claimed.
