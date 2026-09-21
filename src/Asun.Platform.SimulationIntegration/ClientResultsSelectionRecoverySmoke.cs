@@ -60,10 +60,10 @@ public static class ClientResultsSelectionRecoverySmoke
     private static void ResetClearsSelectedHistory()
     {
         using var workspace=CreateFinalizedWorkspace();
-        Check(workspace.SelectedHistory is not null,
-            "Finalized execution must expose its History selection before reset.");
+        var hadSelection=workspace.SelectedHistory is not null;
         workspace.ResetCurrentSession();
-        Check(workspace.SelectedHistory is null &&
+        Check(hadSelection &&
+              workspace.SelectedHistory is null &&
               workspace.Capture().SelectedHistoryOrdinal is null,
             "Reset must clear the selected History authority.");
     }
