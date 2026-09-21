@@ -17,7 +17,9 @@ public static class ClientRecoveryReexecutionHistorySmoke
         for(var round=1;round<=100;round++) if(round==100) UnifiedProjectionRemainsValidAfterRerun();
         for(var round=1;round<=100;round++) if(round==100) OldAndNewHistoryFingerprintsRemainDistinct();
 
-        private static void ResetReexecutionCompletesAgain()
+    }
+
+    private static void ResetReexecutionCompletesAgain()
         {
             using var workspace=FinalizeQuality();
             workspace.ResetCurrentSession();
