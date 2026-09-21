@@ -3709,3 +3709,12 @@ Next executable stage: **51,501**
 ### Rolling real-client continuation — stages 73,731–73,735 — 2026-09-21
 
 - 73,731–73,735: final authority validation was cleaned up and re-audited. Release now directly rejects missing/malformed Quality fingerprints; the simulation authority smoke remains 10×100 with 10 actual Check call sites. GitHub workflow-run lookup for the latest hardening commit returned no associated workflow run, so no CI result is reported.
+
+
+### Rolling real-client continuation — stages 73,736–73,740 — 2026-09-21
+
+- 73,736: Workflow Integrity now rejects a Release projection that exists without an authoritative Replay context, closing the asymmetric Release-without-Replay state that was not covered by the previous integrity branch.
+- 73,737–73,738: ClientInspectionWorkflowIntegritySmoke was realigned with the current Quality-authority contract: Completed Production with Quality pending is valid, while Replay/Release evidence before Quality is invalid; the acceptance matrix remains exactly 10×100 with 10 actual Check call sites.
+- 73,739: the coherent finalized smoke fixture now carries the same Quality fingerprint through Quality → Replay → Release, so the smoke models the current authority contract instead of the pre-authority fixture shape.
+- 73,740: validate_client_shell_bindings.py now uses property-boundary-aware regular expressions for forbidden workspace-state reads, avoiding false positives on legitimate _client.QualityProviderCatalog and _client.AcquisitionCatalog access while continuing to reject direct presentation-state reads.
+- Verification status: source/static implementation and structural audit only. No authoritative Build/Test/CI execution is claimed for this interval.
