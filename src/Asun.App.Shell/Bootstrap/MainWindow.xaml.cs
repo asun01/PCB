@@ -939,6 +939,14 @@ public partial class MainWindow : System.Windows.Window
         RefreshResultStatus();
     }
 
+    private void RefreshResultStatus()
+    {
+        var snapshot=_clientProjection.Snapshot;
+        ApplyResultsProjection(
+            snapshot.Content.Results,
+            snapshot.Content.Results.History);
+    }
+
     private void RefreshWorkspaceStatus()
     {
         var inspection=_clientProjection.Snapshot.Content.Inspection;
