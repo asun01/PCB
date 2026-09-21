@@ -3607,3 +3607,16 @@ Next executable stage: **51,501**
 - 73,637: the WPF shell static validator now requires `RenderPreview(inspection.AcquisitionPreview)` and rejects handler-local `RenderPreview(preview)`, making the unified Projection boundary mechanically auditable.
 - 73,638: the acquisition preview chain is therefore closed through observed source state → command facade → workspace snapshot → Inspection Surface → Unified Client Projection → WPF image surface, including explicit clearing when preview state disappears.
 - Verification remains source/static implementation only; no authoritative Build/Test/CI execution, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
+
+### Rolling real-client continuation — stages 73,639–73,645 — 2026-09-21
+
+- 73,639: Inspection presentation now exposes an explicit Run Readiness projection derived from Program/Production/Acquisition state rather than from a Shell-local boolean.
+- 73,640: Run readiness distinguishes missing program, missing acquisition, Ready, Running, Completed-next-session, Cancelled recovery, and Failed recovery states without inventing execution success.
+- 73,641: Inspection Execution Surface now requires a loaded Ready Program in addition to Acquisition and routed run capability before exposing `CanRunInspection`.
+- 73,642: added `ClientInspectionRunReadinessSmoke` as a dedicated strict 10×100 acceptance matrix covering the full readiness state family and Surface propagation.
+- 73,643: WPF Inspection surface now displays `RunReadinessStatus` from the Unified Inspection Projection; no handler-local readiness authority was introduced.
+- 73,644: the WPF shell static validator now requires the Run Readiness projection binding alongside the existing acquisition preview projection and routing gates.
+- 73,645: normalized `ClientInspectionExecutionPresentationSmoke` back to the required strict 10×100 structure after the new readiness coverage was separated into its own acceptance smoke.
+- Static audit after this interval: both modified Inspection presentation/readiness Smoke files have 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, and no TODO/`NotImplementedException` in the C# smoke sources.
+- The real client chain is now: Program state + Acquisition state + Production state → command availability/routing → Inspection Execution Surface → Run Readiness projection → Unified Client Projection → WPF Shell.
+- Verification remains source/static implementation only. No authoritative Build/Test/CI execution, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
