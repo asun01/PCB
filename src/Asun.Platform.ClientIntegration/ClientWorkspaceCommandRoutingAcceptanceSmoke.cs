@@ -18,72 +18,63 @@ public static class ClientWorkspaceCommandRoutingAcceptanceSmoke
 
     private static void InspectionAllowsAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Inspection);
+        var routing=CreateRouting(ClientWorkspaceKind.Inspection,ReadyAvailability());
         Check(routing.CanBindAcquisition,
             "Inspection routing must expose acquisition binding when the execution state permits it.");
     }
 
     private static void HomeBlocksAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Home);
+        var routing=CreateRouting(ClientWorkspaceKind.Home,ReadyAvailability());
         Check(!routing.CanBindAcquisition,
             "Home routing must not expose acquisition binding.");
     }
 
     private static void ProgramBlocksAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Program);
+        var routing=CreateRouting(ClientWorkspaceKind.Program,ReadyAvailability());
         Check(!routing.CanBindAcquisition,
             "Program routing must not expose acquisition binding.");
     }
 
     private static void QualityBlocksAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Quality);
+        var routing=CreateRouting(ClientWorkspaceKind.Quality,ReadyAvailability());
         Check(!routing.CanBindAcquisition,
             "Quality routing must not expose acquisition binding.");
     }
 
     private static void ResultsBlocksAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Results);
+        var routing=CreateRouting(ClientWorkspaceKind.Results,ReadyAvailability());
         Check(!routing.CanBindAcquisition,
             "Results routing must not expose acquisition binding.");
     }
 
     private static void RunningBlocksAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Running);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Inspection);
+        var routing=CreateRouting(ClientWorkspaceKind.Inspection,RunningAvailability());
         Check(!routing.CanBindAcquisition,
             "Running execution must block acquisition source rebinding.");
     }
 
     private static void ReadyAllowsAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var availability=ClientCommandAvailabilityRuntime.Create(workspace.Capture());
+        var availability=ReadyAvailability();
         Check(availability.CanBindAcquisition,
             "Ready execution must advertise acquisition binding availability.");
     }
 
     private static void CompletedAllowsAcquisitionBinding()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Completed);
-        var availability=ClientCommandAvailabilityRuntime.Create(workspace.Capture());
+        var availability=CompletedAvailability();
         Check(availability.CanBindAcquisition,
             "Completed execution must preserve explicit acquisition binding availability for the next session.");
     }
 
     private static void RoutingPreservesExistingInspectionCommands()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Ready);
-        var routing=CreateRouting(workspace,ClientWorkspaceKind.Inspection);
+        var routing=CreateRouting(ClientWorkspaceKind.Inspection,ReadyAvailability());
         Check(routing.CanLoadProgram &&
               routing.CanResetSession &&
               !routing.CanRunInspection,
@@ -92,8 +83,7 @@ public static class ClientWorkspaceCommandRoutingAcceptanceSmoke
 
     private static void AvailabilityIsExplicit()
     {
-        using var workspace=CreateWorkspace(ClientExecutionStatus.Running);
-        var availability=ClientCommandAvailabilityRuntime.Create(workspace.Capture());
+        var availability=RunningAvailability();
         Check(!availability.CanBindAcquisition &&
               availability.CanCancel &&
               !availability.CanRun,
@@ -101,26 +91,33 @@ public static class ClientWorkspaceCommandRoutingAcceptanceSmoke
     }
 
     private static ClientWorkspaceCommandRouting CreateRouting(
-        ClientInspectionWorkspace workspace,
-        ClientWorkspaceKind kind)
+        ClientWorkspaceKind kind,
+        ClientCommandAvailability availability)
     {
         using var navigation=new ClientWorkspaceRuntime();
         navigation.TryNavigate(kind);
-        var availability=ClientCommandAvailabilityRuntime.Create(workspace.Capture());
         return ClientWorkspaceCommandRoutingRuntime.Create(
             navigation.Current,
             availability);
     }
 
-    private static ClientInspectionWorkspace CreateWorkspace(
-        ClientExecutionStatus status)
-    {
-        var workspace=new ClientInspectionWorkspace(
-            new System.Numerics.Vector2(640,480),
-            new System.Numerics.Vector2(640,480));
+    private static ClientCommandAvailability ReadyAvailability() =>
+        new(true,false,false,true,false,false,false,false)
+        {
+            CanBindAcquisition=true
+        };
 
-        return workspace;
-    }
+    private static ClientCommandAvailability RunningAvailability() =>
+        new(false,false,true,false,false,false,false,false)
+        {
+            CanBindAcquisition=false
+        };
+
+    private static ClientCommandAvailability CompletedAvailability() =>
+        new(true,false,false,true,true,true,true,true)
+        {
+            CanBindAcquisition=true
+        };
 
     private static void Check(bool condition,string message)
     {
