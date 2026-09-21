@@ -1,3 +1,5 @@
+using Asun.Device.Contracts;
+
 namespace Asun.Platform.ClientIntegration;
 
 public static class ClientInspectionExecutionCommandSmoke
@@ -168,6 +170,13 @@ public static class ClientInspectionExecutionCommandSmoke
         new(
             new System.Numerics.Vector2(640,480),
             new System.Numerics.Vector2(640,480));
+
+    private sealed class DeterministicSource : IFrameSource
+    {
+        public ValueTask<CapturedFrame?> CaptureAsync(
+            CancellationToken cancellationToken=default) =>
+            ValueTask.FromResult<CapturedFrame?>(null);
+    }
 
     private static bool ExpectInvalidOperation(Action action)
     {
