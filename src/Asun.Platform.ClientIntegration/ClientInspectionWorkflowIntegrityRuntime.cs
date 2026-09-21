@@ -36,18 +36,30 @@ public static class ClientInspectionWorkflowIntegrityRuntime
             errors.Add("Invalid Program cannot expose ProgramItems.");
         }
 
-        if(snapshot.Production.Status==ClientExecutionStatus.Completed)
+        if(snapshot.Production.Status==ClientExecutionStatus.Completed &&
+           !snapshot.Quality.IsBound &&
+           (snapshot.Replay is not null || snapshot.Release is not null))
+        {
+            errors.Add("Quality-pending Production cannot expose Replay or Release evidence.");
+        }
+
+        if(snapshot.Production.Status==ClientExecutionStatus.Completed &&
+           snapshot.Quality.IsBound)
         {
             if(snapshot.Replay is null)
-                errors.Add("Completed Production must have Replay context.");
+                errors.Add("Bound Quality must finalize Replay context.");
             if(snapshot.Release is null)
-                errors.Add("Completed Production must have Release projection.");
+                errors.Add("Bound Quality must finalize Release projection.");
         }
 
         if(snapshot.Replay is not null)
         {
+            if(!snapshot.Quality.IsBound)
+                errors.Add("Replay context requires an authoritative Quality result.");
             if(snapshot.Replay.Status!=ClientExecutionStatus.Completed)
                 errors.Add("Replay context must represent completed execution.");
+            if(snapshot.Replay.QualityFingerprint!=snapshot.Quality.Fingerprint)
+                errors.Add("Replay Quality fingerprint must match the authoritative Quality result.");
 
             if(snapshot.Release is not null)
             {
@@ -57,6 +69,8 @@ public static class ClientInspectionWorkflowIntegrityRuntime
                     errors.Add("Replay and Release session identities must match.");
                 if(snapshot.Replay.ReplayFingerprint!=snapshot.Release.ReplayFingerprint)
                     errors.Add("Replay and Release fingerprints must match.");
+                if(snapshot.Replay.QualityFingerprint!=snapshot.Release.QualityFingerprint)
+                    errors.Add("Replay and Release Quality fingerprints must match.");
             }
         }
 
