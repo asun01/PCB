@@ -3387,3 +3387,14 @@ Next executable stage: **51,501**
 - Added and registered `ClientReleaseReplaySurfaceSmoke`; Results Surface Smoke was tightened to verify selected-history detail.
 - Static audits remain clean: modified Smoke files have 10 loop groups, explicit `round==100`, 10 actual `Check(...)` sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73555 — 2026-09-21
+
+- Completed boundary: **73,555**
+- Next executable stage: **73,556**
+- 73554–73555: **Quality selected Finding -> active filter visibility**.
+- Quality Surface now distinguishes authoritative selected-finding detail from current filtered visibility and explicitly reports when a selected finding is hidden by Outcome/Severity filtering.
+- Quality Surface Smoke verifies both visible and filtered-out selected-finding cases using existing Quality snapshot facts only.
+- Static audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
