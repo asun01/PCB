@@ -14,6 +14,7 @@ public static class ClientInspectionAcquisitionCommandSmoke
         for(var round=1;round<=100;round++) if(round==100) RejectsResultsWorkspace();
         for(var round=1;round<=100;round++) if(round==100) PreviewRequiresExplicitCapability();
         for(var round=1;round<=100;round++) if(round==100) PreviewUsesBoundSource();
+        for(var round=1;round<=100;round++) if(round==100) UsesExistingAuthority();
         for(var round=1;round<=100;round++) if(round==100) ProjectionSeesBinding();
     }
 
