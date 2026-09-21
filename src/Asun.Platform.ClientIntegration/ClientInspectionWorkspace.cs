@@ -180,11 +180,12 @@ public sealed class ClientInspectionWorkspace : IDisposable
         var snapshot=_program.Load(program);
         if(snapshot.Status==ClientProgramLoadStatus.Ready)
         {
-            var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
-            _production.Load(definition);
             _quality.Clear();
             _replay=null;
             _release=null;
+
+            var definition=_program.CreateSessionDefinition(sessionId,pipeline,frameCount);
+            _production.Load(definition);
         }
 
         return snapshot;
@@ -345,12 +346,12 @@ public sealed class ClientInspectionWorkspace : IDisposable
     public void Load(ProductionSessionDefinition definition)
     {
         ThrowIfDisposed();
-        _production.Load(definition);
         _lastProductionReport=null;
         _quality.Clear();
         _acquisition.Unbind();
         _replay=null;
         _release=null;
+        _production.Load(definition);
     }
 
     public async ValueTask<ProductionSessionReport> ExecuteAsync(
