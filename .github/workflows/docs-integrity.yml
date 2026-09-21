@@ -14,6 +14,8 @@ jobs:
         run: python3 tools/validate_docs.py
       - name: Validate solution layout
         run: python3 tools/validate_solution_layout.py
+      - name: Validate WPF client shell bindings
+        run: python3 tools/validate_client_shell_bindings.py
       - name: Build convenience master
         run: python3 tools/build_master.py
       - name: Audit historical technology references
