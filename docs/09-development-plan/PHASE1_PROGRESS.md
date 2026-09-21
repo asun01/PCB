@@ -3501,3 +3501,13 @@ Next executable stage: **51,501**
 - Program/Quality/Results ListBox projection refreshes are protected against SelectionChanged feedback loops.
 - Page-level structural audit: all XAML event handlers have exactly one C# handler, no missing handlers, no duplicates, three Unified Projection subscriptions, no legacy direct Production/Navigation subscriptions, balanced braces, no TODO/NotImplementedException.
 - No authoritative Build/Test/CI execution is claimed.
+    
+## Live execution synchronization — Stage 73612 — 2026-09-21
+
+- Completed boundary: **73,612**
+- Next executable stage: **73,613**
+- 73612: **Inspection Acquisition command boundary**.
+- Added `ClientInspectionAcquisitionCommandRuntime.BindSource(...)` so WPF Acquisition binding enters ClientIntegration through an explicit Inspection command boundary instead of directly mutating the workspace from the Shell.
+- Added `ClientInspectionAcquisitionCommandSmoke` covering workspace routing, blank-source rejection, existing catalog/state authority reuse, Ready-state publication, and unified Projection visibility.
+- Static audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative Build/Test/CI execution is claimed.
