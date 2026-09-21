@@ -3352,3 +3352,14 @@ Next executable stage: **51,501**
 - `ClientQualitySurfaceRuntime` now reuses the existing selected Finding display item, including RuleCode, Outcome, Severity, Message, and EvidenceCount.
 - Quality surface Smoke now verifies both unbound selection absence and selected-finding detail projection using only existing snapshot facts.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73547 — 2026-09-21
+
+- Completed boundary: **73,547**
+- Next executable stage: **73,548**
+- 73546–73547: **Quality Surface -> Canonical Outcome/Severity Filter**.
+- Reused the existing `ClientQualityFilterRuntime` for Quality Surface visible-finding projection.
+- Added filter coverage to the existing Quality Surface Smoke while keeping the strict 10×100 acceptance structure.
+- A static audit defect in that Smoke (one missing method delimiter) was detected and repaired before closure; final audit is 10 loops, 10 actual `Check(...)` sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
