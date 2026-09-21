@@ -99,8 +99,9 @@ public static class ClientWorkspaceContentSurfaceSmoke
         Check(snapshot.Replay is null &&
               snapshot.Release is null &&
               snapshot.Quality.IsBound==false &&
+              surface.Home.ProgramStatus=="Program not loaded" &&
               surface.Results.Current.ReplayText=="Replay not available",
-            "Unified client surface must not fabricate Replay, Release, or Quality authority.");
+            "Unified client surface must expose Home while not fabricating Replay, Release, or Quality authority.");
     }
 
     private static ClientWorkspaceContentSurface Create(
