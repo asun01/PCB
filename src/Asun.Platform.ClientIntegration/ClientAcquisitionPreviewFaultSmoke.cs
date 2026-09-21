@@ -52,9 +52,11 @@ public static class ClientAcquisitionPreviewFaultSmoke
         var workspace=CreateWorkspace();
         workspace.Bind(new DeterministicSource(),Descriptor());
         workspace.SetFault("camera fault");
+        var sourceAvailable=workspace.TryGetSource(out _);
         Check(workspace.Snapshot.State==ClientAcquisitionState.Faulted &&
-              !workspace.Snapshot.CanCapture,
-            "Faulted Acquisition must not advertise capture readiness.");
+              !workspace.Snapshot.CanCapture &&
+              !sourceAvailable,
+            "Faulted Acquisition must not advertise capture or expose a Production source.");
     }
 
     private static void RecoveryClearsFault()
@@ -63,9 +65,11 @@ public static class ClientAcquisitionPreviewFaultSmoke
         workspace.Bind(new DeterministicSource(),Descriptor());
         workspace.SetFault("camera fault");
         workspace.PreviewAsync().AsTask().GetAwaiter().GetResult();
+        var sourceAvailable=workspace.TryGetSource(out _);
         Check(workspace.Snapshot.State==ClientAcquisitionState.Ready &&
-              workspace.Snapshot.LastError is null,
-            "A successful preview must recover the Acquisition state.");
+              workspace.Snapshot.LastError is null &&
+              sourceAvailable,
+            "A successful preview must recover the Acquisition state and expose the source again.");
     }
 
     private static void PreviewMetadataSurvivesCapture()
