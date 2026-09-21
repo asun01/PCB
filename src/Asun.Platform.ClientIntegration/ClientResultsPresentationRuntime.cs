@@ -7,7 +7,10 @@ public sealed record ClientInspectionResultDisplay(
     string QualityText,
     string ReplayText,
     string ReleaseText,
-    bool ReleaseReady);
+    bool ReleaseReady)
+{
+    public string QualityFingerprint { get; init; }="";
+};
 
 public static class ClientResultsPresentationRuntime
 {
