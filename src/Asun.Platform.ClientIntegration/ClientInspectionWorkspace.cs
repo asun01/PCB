@@ -80,6 +80,8 @@ public sealed class ClientInspectionWorkspace : IDisposable
         }
     }
 
+    public event Action<ClientInspectionWorkspaceSnapshot>? Changed;
+
     public ClientWorkspaceSnapshot Production
     {
         get
@@ -127,7 +129,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
             return false;
 
         _selectedHistoryOrdinal=ordinal;
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
         return true;
     }
 
@@ -233,7 +235,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         var preview=await _acquisition.PreviewAsync(cancellationToken);
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
         return preview;
     }
 
@@ -257,7 +259,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
             return false;
 
         _acquisition.Bind(source,descriptor);
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
         return true;
     }
 
@@ -267,14 +269,14 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _acquisition.Bind(source,descriptor);
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
     }
 
     public void BindQualityRun(Asun.Domain.Quality.QualityInspectionRun run)
     {
         ThrowIfDisposed();
         _quality.Bind(run);
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
     }
 
     public ClientQualityWorkspaceSnapshot EvaluateQualityProvider(
@@ -305,7 +307,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
         var run=provider.Create(report);
         _quality.Bind(run,provider.Descriptor);
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
         return _quality.Capture();
     }
 
@@ -314,7 +316,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ThrowIfDisposed();
         var selected=_quality.SelectFinding(findingId);
         if(selected)
-            ProductionChanged?.Invoke(_production.Snapshot);
+            PublishChanged();
 
         return selected;
     }
@@ -323,7 +325,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
     {
         ThrowIfDisposed();
         _quality.Clear();
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
     }
 
     public void Load(ProductionSessionDefinition definition)
@@ -374,7 +376,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
         var historyEntry=_history.Append(_replay,_release);
         _selectedHistoryOrdinal=historyEntry.Ordinal;
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
         return report;
     }
 
@@ -485,7 +487,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ThrowIfDisposed();
         _history.Reset();
         _selectedHistoryOrdinal=null;
-        ProductionChanged?.Invoke(_production.Snapshot);
+        PublishChanged();
     }
 
     public void Dispose()
@@ -497,8 +499,17 @@ public sealed class ClientInspectionWorkspace : IDisposable
         _roi.Dispose();
     }
 
-    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot) =>
+    private void OnProductionChanged(ClientWorkspaceSnapshot snapshot)
+    {
         ProductionChanged?.Invoke(snapshot);
+        Changed?.Invoke(Capture());
+    }
+
+    private void PublishChanged()
+    {
+        ProductionChanged?.Invoke(_production.Snapshot);
+        Changed?.Invoke(Capture());
+    }
 
     private void ThrowIfDisposed() =>
         ObjectDisposedException.ThrowIf(_disposed!=0,this);
