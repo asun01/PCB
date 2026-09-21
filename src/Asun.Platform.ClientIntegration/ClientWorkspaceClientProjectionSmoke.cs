@@ -85,10 +85,12 @@ public static class ClientWorkspaceClientProjectionSmoke
 
         ClientWorkspaceClientSnapshot? latest=null;
         projection.Changed+=value=>latest=value;
+        var initial=projection.Snapshot.ProjectionSequence;
         navigation.TryNavigate(ClientWorkspaceKind.Quality);
 
-        Check(latest?.Selection.Workspace==ClientWorkspaceKind.Quality,
-            "Projection Changed event must carry the latest navigation snapshot.");
+        Check(latest?.Selection.Workspace==ClientWorkspaceKind.Quality &&
+              latest.ProjectionSequence>initial,
+            "Projection Changed event must carry the latest navigation snapshot with a newer sequence.");
     }
 
     private static void RoutingFactoryDrivesSnapshot()
