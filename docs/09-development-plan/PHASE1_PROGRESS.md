@@ -3620,3 +3620,9 @@ Next executable stage: **51,501**
 - Static audit after this interval: both modified Inspection presentation/readiness Smoke files have 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, and no TODO/`NotImplementedException` in the C# smoke sources.
 - The real client chain is now: Program state + Acquisition state + Production state → command availability/routing → Inspection Execution Surface → Run Readiness projection → Unified Client Projection → WPF Shell.
 - Verification remains source/static implementation only. No authoritative Build/Test/CI execution, DevExpress runtime validation, HALCON runtime validation, hardware SDK validation, HIL, installer, or final customer-release claim is made.
+
+### Rolling real-client continuation — stages 73,646–73,647 — 2026-09-21
+
+- 73,646: the WPF shell binding validator now requires the concrete `RunReadinessStatus` control in XAML, preventing the projection binding from silently targeting a removed/renamed surface.
+- 73,647: the Run Readiness chain is now statically fenced at both sides of the UI boundary: projected C# binding and concrete WPF control identity.
+- Verification remains source/static implementation only; no authoritative Build/Test/CI or external vendor/hardware execution is claimed.
