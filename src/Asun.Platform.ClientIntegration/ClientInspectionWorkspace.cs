@@ -428,6 +428,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
 
         var historyEntry=_history.Append(_replay,_release);
         _selectedHistoryOrdinal=historyEntry.Ordinal;
+        _pendingReleaseManifest=null;
         PublishChanged();
         return quality;
     }
