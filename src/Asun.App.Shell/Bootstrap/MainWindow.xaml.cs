@@ -17,6 +17,7 @@ public partial class MainWindow : System.Windows.Window
     private ClientQualityFindingSelection _qualityFindingSelection=
         ClientQualityFindingSelectionRuntime.CreateInitial();
     private WpfRoiInputAdapter _roiInputAdapter;
+    private bool _isSynchronizingClientControls;
 
     public MainWindow()
     {
@@ -174,7 +175,8 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if(e.AddedItems.Count==0 ||
+        if(_isSynchronizingClientControls ||
+           e.AddedItems.Count==0 ||
            e.AddedItems[0] is not ClientQualityFindingDisplayItem item)
             return;
 
@@ -255,7 +257,8 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if(e.AddedItems.Count==0)
+        if(_isSynchronizingClientControls ||
+           e.AddedItems.Count==0)
             return;
 
         if(e.AddedItems[0] is ClientProgramDisplayItem item)
@@ -731,12 +734,21 @@ public partial class MainWindow : System.Windows.Window
         }
 
         var items=ClientProgramPresentationRuntime.CreateItems(_client.CurrentProgram);
-        ProgramStepList.ItemsSource=items;
 
-        if(snapshot.SelectedStepId is Guid selected)
+        _isSynchronizingClientControls=true;
+        try
         {
-            var selectedItem=items.FirstOrDefault(item=>item.StepId==selected);
-            ProgramStepList.SelectedItem=selectedItem;
+            ProgramStepList.ItemsSource=items;
+
+            if(snapshot.SelectedStepId is Guid selected)
+            {
+                var selectedItem=items.FirstOrDefault(item=>item.StepId==selected);
+                ProgramStepList.SelectedItem=selectedItem;
+            }
+        }
+        finally
+        {
+            _isSynchronizingClientControls=false;
         }
 
         ProgramStatus.Text=$"Program: {snapshot.Name} · v{snapshot.Version} · {items.Count} step(s).";
@@ -770,11 +782,20 @@ public partial class MainWindow : System.Windows.Window
 
         QualityStatus.Text=
             $"Quality Run {quality.RunId} · {quality.Provider?.DisplayName} · Results {quality.ResultCount} · Findings {quality.FindingCount} · Pass {quality.PassCount} · Fail {quality.FailCount} · Review {quality.ReviewCount} · Evidence links {quality.EvidenceLinkCount}.";
-        QualityFindingList.ItemsSource=quality.Findings;
 
-        if(quality.SelectedFindingId is string selected)
-            QualityFindingList.SelectedItem=quality.Findings
-                .FirstOrDefault(item=>item.FindingId==selected);
+        _isSynchronizingClientControls=true;
+        try
+        {
+            QualityFindingList.ItemsSource=quality.Findings;
+
+            if(quality.SelectedFindingId is string selected)
+                QualityFindingList.SelectedItem=quality.Findings
+                    .FirstOrDefault(item=>item.FindingId==selected);
+        }
+        finally
+        {
+            _isSynchronizingClientControls=false;
+        }
     }
 
     private void RefreshDiagnosticStatus(
@@ -796,10 +817,19 @@ public partial class MainWindow : System.Windows.Window
         var history=_client.History;
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
         var items=ClientRunHistoryPresentationRuntime.CreateItems(history,5);
-        RunHistoryList.ItemsSource=items;
 
-        if(_client.SelectedHistoryOrdinal is long selected)
-            RunHistoryList.SelectedItem=items.FirstOrDefault(item=>item.Ordinal==selected);
+        _isSynchronizingClientControls=true;
+        try
+        {
+            RunHistoryList.ItemsSource=items;
+
+            if(_client.SelectedHistoryOrdinal is long selected)
+                RunHistoryList.SelectedItem=items.FirstOrDefault(item=>item.Ordinal==selected);
+        }
+        finally
+        {
+            _isSynchronizingClientControls=false;
+        }
     }
 
     private void RefreshHomeStatus()
@@ -822,7 +852,8 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        if(RunHistoryList.SelectedItem is not ClientRunHistoryDisplayItem item)
+        if(_isSynchronizingClientControls ||
+           RunHistoryList.SelectedItem is not ClientRunHistoryDisplayItem item)
             return;
 
         if(!ClientResultsCommandRuntime.SelectHistory(
