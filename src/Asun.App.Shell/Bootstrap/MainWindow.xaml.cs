@@ -80,14 +80,77 @@ public partial class MainWindow : System.Windows.Window
 
         WorkspaceNavigationStatus.Text=$"Workspace: {snapshot.Selection.Workspace}";
         ApplyWorkspaceView(snapshot.Selection.Workspace);
-        RefreshWorkspaceStatus();
-        RefreshAcquisitionStatus();
-        RefreshHomeStatus();
-        RefreshProgramStatus();
+        ApplyHomeProjection(snapshot.Content.Home);
+        ApplyProgramProjection(snapshot.Content.Program);
+        ApplyInspectionProjection(snapshot.Content.Inspection);
+        ApplyResultsProjection(snapshot.Content.Results);
         RefreshQualityStatus();
-        RefreshResultStatus();
+        RefreshWorkspaceStatus();
         RefreshRunHistoryStatus();
         RefreshCommandAvailability();
+    }
+
+    private void ApplyHomeProjection(ClientHomePresentationSnapshot home)
+    {
+        HomeProgramStatus.Text=$"Program: {home.ProgramStatus}";
+        HomeAcquisitionStatus.Text=$"Acquisition: {home.AcquisitionStatus}";
+        HomeProductionStatus.Text=$"Production: {home.ProductionStatus}";
+        HomeQualityStatus.Text=$"Quality: {home.QualityStatus}";
+        HomeResultsStatus.Text=$"Results: {home.ResultsStatus}";
+        HomeFingerprint.Text=$"Overview: {home.Fingerprint[..12]}...";
+    }
+
+    private void ApplyProgramProjection(ClientProgramSurface program)
+    {
+        _isSynchronizingClientControls=true;
+        try
+        {
+            ProgramStepList.ItemsSource=program.Items;
+            ProgramStepList.SelectedItem=program.SelectedItem;
+        }
+        finally
+        {
+            _isSynchronizingClientControls=false;
+        }
+
+        ProgramStatus.Text=program.Snapshot.Status==ClientProgramLoadStatus.Ready
+            ? $"Program: {program.Snapshot.Name} · v{program.Snapshot.Version} · {program.Items.Count} step(s)."
+            : program.Snapshot.Status==ClientProgramLoadStatus.Invalid
+                ? "Program: invalid."
+                : "Program: none loaded.";
+
+        ProgramStepDetails.Text=program.SelectedItem is null
+            ? program.SelectionText
+            : $"Step {program.SelectedItem.Order} · {program.SelectedItem.Name} · {program.SelectedItem.Kind}\n" +
+              (string.IsNullOrWhiteSpace(program.SelectedItem.ParameterSummary)
+                  ? "Parameters: none"
+                  : $"Parameters: {program.SelectedItem.ParameterSummary}");
+    }
+
+    private void ApplyInspectionProjection(ClientInspectionExecutionSurface inspection)
+    {
+        AcquisitionStatus.Text=inspection.Presentation.AcquisitionText;
+    }
+
+    private void ApplyResultsProjection(ClientResultsSurface results)
+    {
+        ResultStatus.Text=$"Status: {results.Current.Status}";
+        ResultSession.Text=$"{results.Current.SessionText} · {results.Current.FrameCount} frame(s)";
+        ResultReplay.Text=results.Current.ReplayText;
+        ResultRelease.Text=results.Current.ReleaseText;
+
+        _isSynchronizingClientControls=true;
+        try
+        {
+            RunHistoryList.ItemsSource=results.History;
+            RunHistoryList.SelectedItem=results.SelectedHistoryItem;
+        }
+        finally
+        {
+            _isSynchronizingClientControls=false;
+        }
+
+        RunHistorySelectionStatus.Text=results.SelectionText;
     }
 
     private void OnClientExecutionChanged(
