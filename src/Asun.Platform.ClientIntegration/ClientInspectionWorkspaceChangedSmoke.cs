@@ -16,7 +16,6 @@ public static class ClientInspectionWorkspaceChangedSmoke
         for(var round=1;round<=100;round++) if(round==100) SessionResetPublishesFullSnapshot();
         for(var round=1;round<=100;round++) if(round==100) RebindingPublishesFullSnapshot();
         for(var round=1;round<=100;round++) if(round==100) ChangeStreamDoesNotCreateAuthorities();
-        for(var round=1;round<=100;round++) if(round==100) DisposedWorkspaceRejectsNewSubscription();
     }
 
     private static void BindPublishesFullSnapshot()
@@ -113,17 +112,12 @@ public static class ClientInspectionWorkspaceChangedSmoke
         ClientInspectionWorkspaceSnapshot? snapshot=null;
         workspace.Changed+=value=>snapshot=value;
         workspace.BindAcquisition(new DeterministicSource(),Descriptor());
-        Check(snapshot?.Replay is null &&
-              snapshot?.Release is null &&
-              snapshot?.Quality.IsBound==false,
-            "Full change stream must project existing state without creating Replay, Release, or Quality authority.");
-    }
 
-    private static void DisposedWorkspaceRejectsNewSubscription()
-    {
-        var workspace=CreateWorkspace();
+        var noAuthorities=snapshot?.Replay is null &&
+                          snapshot?.Release is null &&
+                          snapshot?.Quality.IsBound==false;
+
         workspace.Dispose();
-
         var rejected=false;
         try
         {
@@ -134,8 +128,8 @@ public static class ClientInspectionWorkspaceChangedSmoke
             rejected=true;
         }
 
-        Check(rejected,
-            "Disposed Inspection workspace must reject new full-snapshot subscriptions.");
+        Check(noAuthorities && rejected,
+            "Full change stream must preserve authority isolation and reject subscriptions after Dispose.");
     }
 
     private static ClientInspectionWorkspace CreateWorkspace() =>
