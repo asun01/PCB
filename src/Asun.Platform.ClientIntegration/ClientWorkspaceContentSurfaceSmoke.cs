@@ -63,8 +63,9 @@ public static class ClientWorkspaceContentSurfaceSmoke
     private static void ProgramWorkspaceCanBeSelected()
     {
         var surface=Create(new ClientWorkspaceSelection(ClientWorkspaceKind.Program,2));
-        Check(surface.Selection.Workspace==ClientWorkspaceKind.Program,
-            "Program workspace selection must remain available through the unified surface.");
+        Check(surface.Selection.Workspace==ClientWorkspaceKind.Program &&
+              surface.Program.Snapshot.Status==ClientProgramLoadStatus.Empty,
+            "Program workspace selection must expose the unified Program surface.");
     }
 
     private static void QualityWorkspaceCanBeSelected()
