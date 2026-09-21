@@ -30,6 +30,7 @@ public sealed record ClientInspectionExecutionSurface(
     public bool CanPreviewAcquisition => HasAcquisition && CommandRouting?.CanPreviewAcquisition==true;
 
     public bool CanRunInspection =>
+        RunReadinessState==ClientRunReadinessState.Ready &&
         HasLoadedProgram &&
         HasAcquisition &&
         CommandRouting?.CanRunInspection==true;
