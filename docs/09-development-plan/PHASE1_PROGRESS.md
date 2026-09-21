@@ -3342,3 +3342,13 @@ Next executable stage: **51,501**
 - Added `ClientQualitySurfaceRuntime` that reuses the validated Quality snapshot and exposes only existing finding/selection state.
 - Added and registered `ClientQualityCommandSmoke` and `ClientQualitySurfaceSmoke`.
 - Both new Smoke matrices satisfy the 10×100 contract; no authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73545 — 2026-09-21
+
+- Completed boundary: **73,545**
+- Next executable stage: **73,546**
+- 73544–73545: **Quality selected Finding detail -> client surface binding**.
+- `ClientQualitySurfaceRuntime` now reuses the existing selected Finding display item, including RuleCode, Outcome, Severity, Message, and EvidenceCount.
+- Quality surface Smoke now verifies both unbound selection absence and selected-finding detail projection using only existing snapshot facts.
+- No authoritative build/test/CI execution is claimed.
