@@ -130,8 +130,13 @@ public static class ClientRecoveryReexecutionHistoryProjectionSmoke
         Execute(workspace);
         workspace.EvaluateQualityProvider("simulation-quality");
         var snapshot=workspace.Capture();
-        var selection=ClientWorkspaceSelectionRuntime.CreateDefault();
-        var routing=ClientWorkspaceCommandRoutingRuntime.Create(snapshot);
+        using var navigation=new ClientWorkspaceRuntime();
+        navigation.TryNavigate(ClientWorkspaceKind.Results);
+        var selection=navigation.Current;
+        var routing=ClientWorkspaceCommandRoutingRuntime.Create(
+            selection,
+            new ClientCommandAvailability(
+                false,false,false,true,false,false,false,true));
         var projection=ClientWorkspaceContentSurfaceRuntime.CreateValidated(
             selection,
             routing,
