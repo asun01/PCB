@@ -283,6 +283,11 @@
                         Margin="0,2,0,0"
                         AutomationProperties.AutomationId="Shell.RunHistoryAuthorityStatus"
                         Text="History authority: none." />
+                    <TextBlock
+                        x:Name="RunHistoryAuthorityStatus"
+                        Margin="0,2,0,0"
+                        AutomationProperties.AutomationId="Shell.RunHistoryAuthorityStatus"
+                        Text="History authority: none." />
                 </StackPanel>
             </StackPanel>
         </Border>
