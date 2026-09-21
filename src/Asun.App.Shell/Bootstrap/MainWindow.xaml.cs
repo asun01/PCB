@@ -131,6 +131,7 @@ public partial class MainWindow : System.Windows.Window
     private void ApplyInspectionProjection(ClientInspectionExecutionSurface inspection)
     {
         AcquisitionStatus.Text=inspection.Presentation.AcquisitionText;
+        AcquisitionPreviewStatus.Text=inspection.Presentation.AcquisitionPreviewText;
     }
 
     private void ApplyResultsProjection(
