@@ -49,6 +49,7 @@ public static class ClientQualitySurfaceSmoke
         Check(surface.VisibleFindings.Count==1 &&
               surface.VisibleFindings[0].FindingId=="finding-fail",
             "Quality surface must reuse the existing Outcome/Severity filter projection.");
+    }
 
     private static void SelectionIsExplicit()
     {
