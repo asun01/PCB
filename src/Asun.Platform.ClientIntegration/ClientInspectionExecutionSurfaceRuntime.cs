@@ -25,6 +25,8 @@ public sealed record ClientInspectionExecutionSurface(
 
     public string RunReadinessText => Presentation.RunReadinessText;
 
+    public ClientRunReadinessState RunReadinessState => Presentation.RunReadinessState;
+
     public bool CanPreviewAcquisition => HasAcquisition && CommandRouting?.CanPreviewAcquisition==true;
 
     public bool CanRunInspection =>
