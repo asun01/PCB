@@ -7,6 +7,18 @@ public sealed record ClientInspectionExecutionSurface(
     bool CanInteractWithRoi)
 {
     public ClientWorkspaceCommandRouting? CommandRouting { get; init; }
+
+    public bool HasAcquisitionPreview { get; init; }
+
+    public string AcquisitionPreviewText { get; init; }="Acquisition Preview — unavailable";
+
+    public bool CanPreviewAcquisition => CommandRouting?.CanPreviewAcquisition==true;
+
+    public bool CanRunInspection => CommandRouting?.CanRunInspection==true;
+
+    public bool CanCancelInspection => CommandRouting?.CanCancelInspection==true;
+
+    public bool CanEditRoi => CanInteractWithRoi && CommandRouting?.CanEditRoi==true;
 }
 
 public static class ClientInspectionExecutionSurfaceRuntime
@@ -17,12 +29,19 @@ public static class ClientInspectionExecutionSurfaceRuntime
         ArgumentNullException.ThrowIfNull(snapshot);
 
         var presentation=ClientInspectionExecutionPresentationRuntime.Create(snapshot);
+        var preview=snapshot.Acquisition.Preview;
 
         return new ClientInspectionExecutionSurface(
             presentation,
             snapshot.Acquisition.State==ClientAcquisitionState.Bound,
             snapshot.Production.Status==ClientExecutionStatus.Completed,
-            snapshot.Roi is not null);
+            snapshot.Roi is not null)
+        {
+            HasAcquisitionPreview=preview is not null,
+            AcquisitionPreviewText=preview is null
+                ? "Acquisition Preview — unavailable"
+                : $"Acquisition Preview — {preview.Width}×{preview.Height} · {preview.PixelFormat} · {preview.Sequence}"
+        };
     }
 
     public static ClientInspectionExecutionSurface Create(
