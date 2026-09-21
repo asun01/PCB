@@ -192,8 +192,8 @@ public partial class MainWindow : System.Windows.Window
     {
         try
         {
-            var preview=await ClientInspectionExecutionCommandRuntime
-                .PreviewAcquisitionAsync(
+            var preview=await ClientInspectionAcquisitionCommandRuntime
+                .Preview(
                     _client,
                     ClientInspectionExecutionSurfaceRuntime.Create(
                         _client.Capture(),
