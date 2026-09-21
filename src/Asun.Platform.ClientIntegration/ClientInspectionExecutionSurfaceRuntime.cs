@@ -13,6 +13,10 @@ public sealed record ClientInspectionExecutionSurface(
 
     public ClientAcquisitionPreviewSnapshot? AcquisitionPreview { get; init; }
 
+    public bool CanUndoRoi { get; init; }
+
+    public bool CanRedoRoi { get; init; }
+
     public bool HasAcquisitionPreview { get; init; }
 
     public string AcquisitionPreviewText { get; init; }="Acquisition Preview — unavailable";
@@ -24,6 +28,12 @@ public sealed record ClientInspectionExecutionSurface(
     public bool CanCancelInspection => CommandRouting?.CanCancelInspection==true;
 
     public bool CanEditRoi => CanInteractWithRoi && CommandRouting?.CanEditRoi==true;
+
+    public bool CanUndoRoiCommand =>
+        CanEditRoi && CanUndoRoi;
+
+    public bool CanRedoRoiCommand =>
+        CanEditRoi && CanRedoRoi;
 }
 
 public static class ClientInspectionExecutionSurfaceRuntime
@@ -45,6 +55,8 @@ public static class ClientInspectionExecutionSurfaceRuntime
         {
             ResultDisplay=resultDisplay,
             AcquisitionPreview=preview,
+            CanUndoRoi=snapshot.CanUndoRoi,
+            CanRedoRoi=snapshot.CanRedoRoi,
             HasAcquisitionPreview=preview is not null,
             AcquisitionPreviewText=preview is null
                 ? "Acquisition Preview — unavailable"
