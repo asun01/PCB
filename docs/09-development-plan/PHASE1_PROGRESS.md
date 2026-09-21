@@ -3410,3 +3410,15 @@ Next executable stage: **51,501**
 - Added and registered `ClientWorkspaceContentSurfaceSmoke` and `ClientWorkspaceClientSnapshotSmoke`.
 - Static audits: both new Smoke files have 10 loop groups, explicit `round==100`, 10 actual `Check(...)` sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73564 — 2026-09-21
+
+- Completed boundary: **73,564**
+- Next executable stage: **73,565**
+- 73561–73564: **Unified Client Snapshot -> subscribed client projection -> monotonic projection sequencing**.
+- Added `ClientWorkspaceClientProjection` to subscribe to Workspace navigation and full Inspection snapshot changes and publish one unified client snapshot stream.
+- Added a verified routing overload to `ClientWorkspaceClientSnapshotRuntime`, avoiding unconfirmed `ClientCommandAvailability` construction in acceptance code.
+- Added `ProjectionSequence` to unified client snapshots and advanced it for each emitted projection snapshot.
+- Registered `ClientWorkspaceClientProjectionSmoke`; final static audit is 10×100 with 10 actual `Check(...)` call sites, balanced braces, and no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
