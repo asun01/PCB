@@ -157,9 +157,16 @@ public partial class MainWindow : System.Windows.Window
             _isSynchronizingClientControls=false;
         }
 
+        _runHistorySelection=results.SelectedHistoryItem is { } selected
+            ? new ClientRunHistorySelection(
+                selected.Ordinal,
+                _runHistorySelection.SelectionSequence,
+                results.SelectionText)
+            : ClientRunHistorySelectionRuntime.CreateInitial();
+
         RunHistorySelectionStatus.Text=results.SelectionText;
-        RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selected
-            ? $"History authority: {selected.QualityText} · {selected.ReplayText} · {(selected.ReleaseReady ? "Release Ready" : "Release Not Ready")}."
+        RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selectedAuthority
+            ? $"History authority: {selectedAuthority.QualityText} · {selectedAuthority.ReplayText} · {(selectedAuthority.ReleaseReady ? "Release Ready" : "Release Not Ready")}."
             : "History authority: none.";
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
     }
