@@ -901,9 +901,10 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshHomeStatus()
     {
-        var snapshot=_client.Capture();
-        var home=ClientHomePresentationRuntime.Create(snapshot);
-        var workflow=ClientInspectionWorkflowRuntime.Evaluate(snapshot);
+        var snapshot=_clientProjection.Snapshot;
+        var home=snapshot.Content.Home;
+        var workflow=ClientInspectionWorkflowRuntime.Evaluate(
+            _client.Capture());
 
         HomeProgramStatus.Text=$"Program: {home.ProgramStatus}";
         HomeAcquisitionStatus.Text=$"Acquisition: {home.AcquisitionStatus}";
