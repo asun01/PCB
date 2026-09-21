@@ -88,11 +88,34 @@ public static class ClientWorkspaceClientSnapshotSmoke
     private static void NoAuthorityIsCreated()
     {
         var snapshot=Create(new ClientWorkspaceSelection(ClientWorkspaceKind.Home,5));
+        var rejected=false;
+        try
+        {
+            _=ClientWorkspaceClientSnapshotRuntime.CreateValidated(
+                new ClientWorkspaceSelection(ClientWorkspaceKind.Home,7),
+                Routing(ClientWorkspaceKind.Home),
+                snapshot with
+                {
+                    Production=snapshot.Production with
+                    {
+                        Status=ClientExecutionStatus.Completed,
+                        ActiveSessionId=Guid.NewGuid(),
+                        LastFrameCount=3,
+                        LastReportFingerprint=new string('a',64)
+                    }
+                });
+        }
+        catch(InvalidOperationException)
+        {
+            rejected=true;
+        }
+
         Check(snapshot.Content.Inspection.ResultDisplay.ReplayText=="Replay not available" &&
               snapshot.Content.Quality.Snapshot.IsBound==false &&
               snapshot.Content.Results.Current.ReplayText=="Replay not available" &&
-              snapshot.Content.Results.Current.ReleaseText=="Release not evaluated",
-            "Unified client snapshot must not create Quality, Replay, or Release authority.");
+              snapshot.Content.Results.Current.ReleaseText=="Release not evaluated" &&
+              rejected,
+            "Unified client snapshot must not create unsupported authorities and must reject incoherent completed state.");
     }
 
     private static void CallerRoutingIsRetained()
