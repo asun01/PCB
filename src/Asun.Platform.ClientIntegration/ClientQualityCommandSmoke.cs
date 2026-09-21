@@ -41,12 +41,24 @@ public static class ClientQualityCommandSmoke
     private static void MissingFindingReturnsFalse()
     {
         using var workspace=CreateWorkspace();
-        var selected=ClientQualityCommandRuntime.SelectFinding(
+        workspace.BindQualityRun(CreateQualityRun());
+
+        var visible=ClientQualityCommandRuntime.SelectVisibleFinding(
             workspace,
             Routing(ClientWorkspaceKind.Quality,true,true),
-            "missing");
-        Check(!selected,"Quality selection must return false for an unknown finding.");
-    }
+            new ClientQualityFilter("Fail","Critical"),
+            "finding-1");
+
+        var hidden=ClientQualityCommandRuntime.SelectVisibleFinding(
+            workspace,
+            Routing(ClientWorkspaceKind.Quality,true,true),
+            new ClientQualityFilter("Pass","Information"),
+            "finding-1");
+
+        Check(visible &&
+              !hidden &&
+              workspace.Quality.SelectedFindingId=="finding-1",
+            "Filter-aware Quality selection must select visible findings and reject hidden findings.");
 
     private static void WrongWorkspaceClearRejected()
     {
@@ -132,6 +144,30 @@ public static class ClientQualityCommandSmoke
         new(
             new System.Numerics.Vector2(640,480),
             new System.Numerics.Vector2(640,480));
+
+    private static Asun.Domain.Quality.QualityInspectionRun CreateQualityRun()
+    {
+        var finding=new Asun.Domain.Quality.QualityFinding(
+            Asun.Domain.Quality.QualityFindingId.Create("finding-1"),
+            "RULE-1",
+            Asun.Domain.Quality.QualityOutcome.Fail,
+            Asun.Domain.Quality.QualitySeverity.Critical,
+            "Deterministic quality finding");
+
+        var snapshot=new Asun.Domain.Quality.QualityInspectionSnapshot(
+            Guid.NewGuid(),
+            1,
+            new Asun.Domain.Quality.QualityFindingSet(new[] { finding }),
+            new Asun.Domain.Quality.QualityFindingEvidenceSet(Array.Empty<Asun.Domain.Quality.QualityFindingEvidenceLink>()));
+
+        var result=new Asun.Domain.Quality.QualityInspectionResult(
+            Guid.NewGuid(),
+            snapshot);
+
+        return new Asun.Domain.Quality.QualityInspectionRun(
+            Guid.NewGuid(),
+            new[] { result });
+    }
 
     private static ClientWorkspaceCommandRouting Routing(
         ClientWorkspaceKind workspace,
