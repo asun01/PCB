@@ -406,6 +406,7 @@
                         <TextBlock FontWeight="SemiBold" Text="Inspection result" />
                         <TextBlock x:Name="ResultStatus" Margin="0,8,0,0" Text="Idle" />
                         <TextBlock x:Name="ResultSession" Margin="0,4,0,0" Text="Session not loaded" TextWrapping="Wrap" />
+                        <TextBlock x:Name="ResultQuality" Margin="0,4,0,0" Text="Quality pending" />
                         <TextBlock x:Name="ResultReplay" Margin="0,4,0,0" Text="Replay not available" />
                         <TextBlock x:Name="ResultRelease" Margin="0,4,0,0" Text="Release not evaluated" TextWrapping="Wrap" />
                         <Separator Margin="0,12,0,8" />
