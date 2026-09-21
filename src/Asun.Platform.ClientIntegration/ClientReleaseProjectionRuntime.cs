@@ -69,8 +69,8 @@ public static class ClientReleaseProjectionRuntime
             errors.Add("Client Program identity cannot be empty.");
         if(replaySnapshot.ProductionSessionId==Guid.Empty)
             errors.Add("Client Production session identity cannot be empty.");
-        if(!replaySnapshot.QualityFingerprint.HasValue() ||
-           !IsLowerHex(replaySnapshot.QualityFingerprint!))
+        if(string.IsNullOrWhiteSpace(replaySnapshot.QualityFingerprint) ||
+           !IsLowerHex(replaySnapshot.QualityFingerprint))
             errors.Add("Client release projection requires authoritative Quality evidence.");
         if(!IsLowerHex(replaySnapshot.ReplayFingerprint))
             errors.Add("Client replay fingerprint is malformed.");
@@ -96,10 +96,6 @@ public static class ClientReleaseProjectionRuntime
         value is not null &&
         value.Length==64 &&
         value.All(c=>Uri.IsHexDigit(c) && char.ToLowerInvariant(c)==c);
-
-
-    private static bool HasValue(this string? value)=>
-        !string.IsNullOrWhiteSpace(value);
 
     private static string Hash(string value)=>
         Convert.ToHexString(
