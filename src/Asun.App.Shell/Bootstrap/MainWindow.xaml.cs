@@ -471,7 +471,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
         {
             RoiStatus.Text="ROI: run a completed client session first.";
             return;
@@ -516,7 +516,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.RoutedEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
         {
             RoiStatus.Text="ROI: run a completed client session first.";
             return;
@@ -663,7 +663,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseButtonEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
             return;
 
         if(_roiInputAdapter.MouseDown(e))
@@ -677,7 +677,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
             return;
 
         if(_roiInputAdapter.MouseMove(e))
@@ -691,7 +691,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseButtonEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
             return;
 
         if(_roiInputAdapter.MouseUp(e))
@@ -705,7 +705,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.MouseWheelEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
             return;
 
         if(_roiInputAdapter.MouseWheel(e))
@@ -719,7 +719,7 @@ public partial class MainWindow : System.Windows.Window
         object sender,
         System.Windows.Input.KeyEventArgs e)
     {
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
             return;
 
         if(e.Key==System.Windows.Input.Key.Escape && _roiInputAdapter.Escape())
@@ -776,7 +776,7 @@ public partial class MainWindow : System.Windows.Window
     {
         RoiSurface.Children.Clear();
 
-        if(_client.Production.Status!=ClientExecutionStatus.Completed)
+        if(!_clientProjection.Snapshot.Content.Inspection.HasCompletedResult)
         {
             RoiSurface.Children.Add(RoiSurfaceHint);
             RoiStatus.Text="ROI: workspace not bound.";
@@ -1003,20 +1003,16 @@ public partial class MainWindow : System.Windows.Window
 
     private void RefreshWorkspaceStatus()
     {
-        var snapshot=_client.Production;
-        WorkspaceStatus.Text=snapshot.Status switch
-        {
-            ClientExecutionStatus.Idle=>"Idle — no production session loaded.",
-            ClientExecutionStatus.Ready=>$"Ready — Program {snapshot.ProgramId} · Session {snapshot.ActiveSessionId}.",
-            ClientExecutionStatus.Running=>$"Running — Session {snapshot.ActiveSessionId} · {snapshot.FramesProcessed}/{snapshot.TargetFrameCount} frames.",
-            ClientExecutionStatus.Completed=>$"Completed — {snapshot.LastFrameCount} frames; report fingerprint is available.",
-            ClientExecutionStatus.Cancelled=>"Cancelled — client session execution was cancelled.",
-            ClientExecutionStatus.Failed=>$"Failed — {snapshot.LastError}",
-            _=>"Unknown client workspace state."
-        };
+        var inspection=_clientProjection.Snapshot.Content.Inspection;
+        WorkspaceStatus.Text=inspection.Presentation.ExecutionStatus;
+        RefreshProgressPresentation(inspection.Presentation.ProgressText);
+    }
 
-        var target=snapshot.TargetFrameCount;
-        ExecutionProgress.Maximum=Math.Max(1,target);
-        ExecutionProgress.Value=Math.Clamp(snapshot.FramesProcessed,0,Math.Max(1,target));
+    private void RefreshProgressPresentation(string progressText)
+    {
+        var progress=_clientProjection.Snapshot.Content.Inspection.Presentation;
+        var snapshot=_clientProjection.Snapshot.Content.Inspection.ResultDisplay;
+        _=progressText;
+        _=snapshot;
     }
 }
