@@ -3434,3 +3434,14 @@ Next executable stage: **51,501**
 - Added filter-aware Quality finding selection that reuses the canonical Outcome/Severity filter before mutating the authoritative Quality workspace selection.
 - Extended Quality Command Smoke with a real validated domain Quality Run; static audit was repaired after a missing method delimiter and revalidated at 10 loop groups / 10 actual `Check(...)` sites.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73572 — 2026-09-21
+
+- Completed boundary: **73,572**
+- Next executable stage: **73,573**
+- 73571–73572: **Unified Client Projection -> Production Pulse bridge**.
+- `ClientWorkspaceClientProjection` now exposes a separate `ProductionChanged` stream for high-frequency Production state while retaining full `Changed` snapshots for discrete client-state transitions.
+- Projection lifecycle now detaches from both navigation and Production/Inspection event sources on Dispose.
+- Client projection Smoke verifies full snapshot refresh and Production pulse bridging, with final static audit at 10 loop groups / 10 actual `Check(...)` sites / balanced braces / no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
