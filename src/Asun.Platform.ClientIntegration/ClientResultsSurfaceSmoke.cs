@@ -128,10 +128,23 @@ public static class ClientResultsSurfaceSmoke
                 "short")
         };
         var malformedDisplay=ClientResultsPresentationRuntime.CreateCurrent(malformed);
+        var malformedCharacters=malformed with
+        {
+            Replay=new ClientProductionReplaySnapshot(
+                malformed.Replay!.ProgramId,
+                malformed.Replay.ProgramVersion,
+                malformed.Replay.ProductionSessionId,
+                malformed.Replay.Status,
+                malformed.Replay.FrameCount,
+                malformed.Replay.ProductionReportFingerprint,
+                new string('z',64))
+        };
+        var malformedCharacterDisplay=ClientResultsPresentationRuntime.CreateCurrent(malformedCharacters);
         Check(surface.Current.ReplayText=="Replay not available" &&
               !surface.ReleaseReplay.ReplayAvailable &&
-              malformedDisplay.ReplayText=="Replay fingerprint invalid",
-            "Results surface must not fabricate Replay and must not throw on malformed replay evidence.");
+              malformedDisplay.ReplayText=="Replay fingerprint invalid" &&
+              malformedCharacterDisplay.ReplayText=="Replay fingerprint invalid",
+            "Results surface must not fabricate Replay and must not accept malformed replay fingerprints.");
     }
 
     private static void ReleaseIsNotFabricated()
