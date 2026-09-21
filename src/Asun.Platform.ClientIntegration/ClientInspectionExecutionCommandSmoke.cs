@@ -72,7 +72,14 @@ public static class ClientInspectionExecutionCommandSmoke
             surface,
             ViewportInputEventKind.MouseDown,
             new System.Numerics.Vector2(10,10));
-        Check(!accepted,"ROI input must remain blocked until the surface has completed ROI authority.");
+        var undo=ClientInspectionExecutionCommandRuntime.UndoRoi(workspace,surface);
+        var redo=ClientInspectionExecutionCommandRuntime.RedoRoi(workspace,surface);
+        Check(!accepted &&
+              !undo &&
+              !redo &&
+              !surface.CanUndoRoiCommand &&
+              !surface.CanRedoRoiCommand,
+            "ROI input, Undo, and Redo must remain blocked until the surface has completed ROI authority.");
     }
 
     private static void PreviewStillRequiresBoundSource()
