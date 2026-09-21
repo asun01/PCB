@@ -34,3 +34,12 @@ New/modified Smoke sources in the 73,501–73,600 interval were statically check
 This checkpoint records repository implementation and static source-structure evidence only. It does not claim authoritative local Build/Test/CI execution, DevExpress environment success, HALCON runtime/operator verification, camera/lighting/motion SDK verification, HIL, installer, or final customer release.
 
 Open external/contract gates remain governed by docs/00-baseline/OPEN-GATES.md.
+
+## Post-checkpoint continuation — 73,618–73,619
+
+The implementation after the 73,600 checkpoint continued into the real WPF client shell:
+
+- Acquisition Bind now requires explicit `CanBindAcquisition` permission in addition to Inspection workspace routing.
+- WPF Shell binding validation now enforces the command-facade-only mutation boundary and checks duplicate XAML names.
+- The Unified Client Projection remains the state source for Full Snapshot, Execution Pulse, and ROI Pulse presentation.
+- These are implementation/static-audit results only; they do not replace the open DevExpress/HALCON/hardware/build/test gates.
