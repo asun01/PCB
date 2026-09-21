@@ -3445,3 +3445,13 @@ Next executable stage: **51,501**
 - Projection lifecycle now detaches from both navigation and Production/Inspection event sources on Dispose.
 - Client projection Smoke verifies full snapshot refresh and Production pulse bridging, with final static audit at 10 loop groups / 10 actual `Check(...)` sites / balanced braces / no TODO/NotImplementedException.
 - No authoritative build/test/CI execution is claimed.
+
+
+## Live execution synchronization — Stage 73574 — 2026-09-21
+
+- Completed boundary: **73,574**
+- Next executable stage: **73,575**
+- 73573–73574: **Latest-wins Snapshot Fence -> stale asynchronous epoch protection**.
+- `ClientWorkspaceClientSnapshotFence` now retains the highest accepted `ProjectionSequence` across Reset, so stale snapshots from the prior visible-state epoch cannot be accepted after reset.
+- Fence Smoke was updated and repaired to the strict 10×100 structure; final audit is 10 loop groups, 10 actual `Check(...)` sites, balanced braces, no TODO/NotImplementedException.
+- No authoritative build/test/CI execution is claimed.
