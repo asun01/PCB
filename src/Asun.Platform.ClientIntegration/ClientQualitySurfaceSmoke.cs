@@ -26,11 +26,29 @@ public static class ClientQualitySurfaceSmoke
 
     private static void NoFindingsIsExplicit()
     {
-        var surface=CreateSurface();
-        Check(surface.Snapshot.FindingCount==0 &&
-              surface.SelectionText=="No finding selected.",
-            "Unbound Quality surface must not expose finding selection.");
-    }
+        using var workspace=CreateWorkspace();
+        var first=new ClientQualityFindingDisplayItem(
+            "finding-pass","RULE-PASS","Pass","Low","Pass finding",0);
+        var second=new ClientQualityFindingDisplayItem(
+            "finding-fail","RULE-FAIL","Fail","High","Fail finding",1);
+        var quality=workspace.Quality with
+        {
+            RunId=Guid.NewGuid(),
+            ResultCount=2,
+            FindingCount=2,
+            PassCount=1,
+            FailCount=1,
+            EvidenceLinkCount=1,
+            Fingerprint="fingerprint",
+            IsBound=true,
+            Findings=new[] { first,second }
+        };
+        var surface=ClientQualitySurfaceRuntime.Create(
+            workspace.Capture() with { Quality=quality },
+            new ClientQualityFilter("Fail","High"));
+        Check(surface.VisibleFindings.Count==1 &&
+              surface.VisibleFindings[0].FindingId=="finding-fail",
+            "Quality surface must reuse the existing Outcome/Severity filter projection.");
 
     private static void SelectionIsExplicit()
     {
