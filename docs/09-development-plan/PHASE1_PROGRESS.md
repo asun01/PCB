@@ -3760,3 +3760,13 @@ Next executable stage: **51,501**
 - 73,766–73,768: added deterministic recovery re-execution smoke coverage: 10 groups × 100 rounds, 10 actual Check call sites. It verifies authority is cleared before rerun, prior History survives, the new ordinal is appended, current Quality/Replay authority binds to the current History entry, and Results/Unified Projection expose the recovered run.
 - 73,769–73,770: aligned Workflow authority with the actual execution gate. Cancelled/Failed Production no longer advertises an actionable Run workflow; the authoritative message now requires session reset before retry.
 - 73,771–73,772: static structural audit of changed client/runtime/smoke files completed: balanced braces, no TODO, no NotImplementedException. Build/Test/CI execution is not claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,763–73,782 — 2026-09-21
+
+- 73,763–73,766: closed recovery re-execution as a new Production run boundary. Recovery retains the loaded Program definition but allocates a fresh Production SessionId, preventing a second execution from inheriting the previous run's audit identity.
+- 73,767–73,770: aligned Cancelled/Failed recovery smoke coverage with the fresh-session contract and verified the re-execution History path expects a distinct session plus distinct Production report evidence.
+- 73,771–73,774: retained History immutability across recovery/re-execution; prior finalized Quality/Replay/Release authority remains attached to the prior run while the recovered run starts with cleared current authority.
+- 73,775–73,778: retained Results/History selection as projection state, including bounded selection rejection without changing the current selection and current Results authority after re-execution.
+- 73,779–73,782: re-audited Unified Projection → Results → WPF binding path. Current Results, selected History item, Replay and Release are exposed through the Content Surface; WPF Results consumes the projected Results surface.
+- Verification status: source/static structural inspection only. Build/Test/CI execution is not claimed for this interval.
