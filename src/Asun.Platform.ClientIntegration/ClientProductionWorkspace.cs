@@ -217,6 +217,36 @@ public sealed class ClientProductionWorkspace
     public void Cancel()=>
         _activeCancellation?.Cancel();
 
+    public void ResetForRecovery()
+    {
+        _activeCancellation?.Cancel();
+        _activeCancellation=null;
+
+        if(_definition is null)
+        {
+            Reset();
+            return;
+        }
+
+        _snapshot=new ClientWorkspaceSnapshot(
+            _definition.ProgramPlan.ProgramId,
+            _definition.ProgramPlan.Version,
+            _definition.SessionId,
+            ClientExecutionStatus.Ready,
+            0,
+            null,
+            null)
+        {
+            TargetFrameCount=_definition.FrameCount,
+            FramesProcessed=0,
+            LastSequence=null,
+            LastFrameWidth=0,
+            LastFrameHeight=0,
+            LastPixelFormat=""
+        };
+        Publish();
+    }
+
     public void Reset()
     {
         _activeCancellation?.Cancel();
