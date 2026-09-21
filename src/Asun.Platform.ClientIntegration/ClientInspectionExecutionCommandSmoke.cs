@@ -20,20 +20,20 @@ public static class ClientInspectionExecutionCommandSmoke
     {
         using var workspace=CreateWorkspace();
         var surface=CreateSurface(workspace,canPreview:false);
-        ExpectInvalidOperation(
+        var rejected=ExpectInvalidOperation(
             () => ClientInspectionExecutionCommandRuntime
                 .PreviewAcquisitionAsync(workspace,surface)
                 .AsTask()
                 .GetAwaiter()
-                .GetResult(),
-            "Preview must be blocked by the client command gate.");
+                .GetResult());
+        Check(rejected,"Preview must be blocked by the client command gate.");
     }
 
     private static void RunRequiresRouting()
     {
         using var workspace=CreateWorkspace();
         var surface=CreateSurface(workspace,canRun:false);
-        ExpectInvalidOperation(
+        var rejected=ExpectInvalidOperation(
             () => ClientInspectionExecutionCommandRuntime
                 .ExecuteAsync(
                     workspace,
@@ -41,17 +41,17 @@ public static class ClientInspectionExecutionCommandSmoke
                     null!)
                 .AsTask()
                 .GetAwaiter()
-                .GetResult(),
-            "Run must be blocked before ReleaseManifest validation when command routing is unavailable.");
+                .GetResult());
+        Check(rejected,"Run must be blocked before ReleaseManifest validation when command routing is unavailable.");
     }
 
     private static void CancelRequiresRouting()
     {
         using var workspace=CreateWorkspace();
         var surface=CreateSurface(workspace,canCancel:false);
-        ExpectInvalidOperation(
-            () => ClientInspectionExecutionCommandRuntime.Cancel(workspace,surface),
-            "Cancel must be blocked by the client command gate.");
+        var rejected=ExpectInvalidOperation(
+            () => ClientInspectionExecutionCommandRuntime.Cancel(workspace,surface));
+        Check(rejected,"Cancel must be blocked by the client command gate.");
     }
 
     private static void ResetUsesExistingWorkspace()
@@ -79,13 +79,13 @@ public static class ClientInspectionExecutionCommandSmoke
     {
         using var workspace=CreateWorkspace();
         var surface=CreateSurface(workspace,canPreview:true);
-        ExpectInvalidOperation(
+        var rejected=ExpectInvalidOperation(
             () => ClientInspectionExecutionCommandRuntime
                 .PreviewAcquisitionAsync(workspace,surface)
                 .AsTask()
                 .GetAwaiter()
-                .GetResult(),
-            "Preview command may pass routing but must still enforce Acquisition binding in the workspace.");
+                .GetResult());
+        Check(rejected,"Preview command may pass routing but must still enforce Acquisition binding in the workspace.");
     }
 
     private static void CancelRoutesToWorkspace()
@@ -152,9 +152,7 @@ public static class ClientInspectionExecutionCommandSmoke
             new System.Numerics.Vector2(640,480),
             new System.Numerics.Vector2(640,480));
 
-    private static void ExpectInvalidOperation(
-        Action action,
-        string message)
+    private static bool ExpectInvalidOperation(Action action)
     {
         try
         {
@@ -162,11 +160,10 @@ public static class ClientInspectionExecutionCommandSmoke
         }
         catch(InvalidOperationException)
         {
-            return;
+            return true;
         }
 
-        throw new InvalidOperationException(
-            "Inspection execution command smoke failed: "+message);
+        return false;
     }
 
     private static void Check(bool condition,string message)
