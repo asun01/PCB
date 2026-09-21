@@ -86,7 +86,7 @@ public sealed class ClientWorkspaceClientProjection : IDisposable
     {
         var selection=_navigation.Current;
         var routing=_routingFactory(selection);
-        return ClientWorkspaceClientSnapshotRuntime.Create(
+        return ClientWorkspaceClientSnapshotRuntime.CreateValidated(
             selection,
             routing,
             _inspection.Capture()) with
