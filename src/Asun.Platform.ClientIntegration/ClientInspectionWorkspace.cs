@@ -345,7 +345,7 @@ public sealed class ClientInspectionWorkspace : IDisposable
         ArgumentNullException.ThrowIfNull(releaseManifest);
 
         if(!_acquisition.TryGetSource(out var source))
-            throw new InvalidOperationException("An Acquisition source must be bound before Production execution.");
+            throw new InvalidOperationException("A Ready Acquisition source must be bound before Production execution.");
 
         _replay=null;
         _release=null;
