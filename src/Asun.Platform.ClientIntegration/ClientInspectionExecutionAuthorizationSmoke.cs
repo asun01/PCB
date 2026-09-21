@@ -14,6 +14,7 @@ public static class ClientInspectionExecutionAuthorizationSmoke
         for(var round=1;round<=100;round++) if(round==100) RoutingDenialBlocksExecution();
         for(var round=1;round<=100;round++) if(round==100) NonInspectionRoutingBlocksExecution();
         for(var round=1;round<=100;round++) if(round==100) SurfaceReadinessAndCapabilityAgree();
+        for(var round=1;round<=100;round++) if(round==100) StaleCapabilityCannotBypassReadiness();
     }
 
     private static void MissingProgramBlocksExecution() =>
@@ -57,6 +58,13 @@ public static class ClientInspectionExecutionAuthorizationSmoke
         var surface=Create(ClientExecutionStatus.Ready,true,true,true);
         Check(surface.RunReadinessState==ClientRunReadinessState.Ready && surface.CanRunInspection,
             "Machine-readable readiness and execution capability must agree at the authorization boundary.");
+    }
+
+    private static void StaleCapabilityCannotBypassReadiness()
+    {
+        var surface=Create(ClientExecutionStatus.Completed,true,true,true);
+        Check(surface.RunReadinessState!=ClientRunReadinessState.Ready && surface.CanRunInspection==false,
+            "A stale routed capability must not bypass the authoritative readiness state.");
     }
 
     private static ClientInspectionExecutionSurface Create(
