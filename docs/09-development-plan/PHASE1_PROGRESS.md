@@ -3511,3 +3511,16 @@ Next executable stage: **51,501**
 - Added `ClientInspectionAcquisitionCommandSmoke` covering workspace routing, blank-source rejection, existing catalog/state authority reuse, Ready-state publication, and unified Projection visibility.
 - Static audit: 10 loop groups, explicit `round==100`, 10 actual `Check(...)` call sites, balanced braces, no TODO/NotImplementedException.
 - No authoritative Build/Test/CI execution is claimed.
+
+    
+## Live execution synchronization — Stage 73614 — 2026-09-21
+
+- Completed boundary: **73,614**
+- Next executable stage: **73,615**
+- 73613–73614: **Inspection ROI/Session command facade -> WPF authority closure**.
+- Extended `ClientInspectionExecutionCommandRuntime` with ROI mode selection while preserving the existing `ClientInspectionWorkspace` ROI authority.
+- WPF Select/Create ROI, Undo/Redo, Cancel, and Reset actions now enter through the Inspection command facade rather than directly mutating the workspace.
+- Simulation acquisition binding now also enters through `ClientInspectionAcquisitionCommandRuntime`; the Shell no longer has a direct Acquisition binding call.
+- Expanded the WPF Shell static validator to forbid direct workspace mutation calls for Acquisition, Program, Production execution, Quality, Results, ROI, Cancel, and Reset.
+- Static source audits: modified Smoke remains 10×100 with 10 actual `Check(...)` call sites; MainWindow braces balanced; no TODO/NotImplementedException; no direct command-authority calls remain in Shell.
+- No authoritative Build/Test/CI execution is claimed.
