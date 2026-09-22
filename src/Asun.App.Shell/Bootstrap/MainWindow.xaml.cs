@@ -179,9 +179,7 @@ public partial class MainWindow : System.Windows.Window
             : ClientRunHistorySelectionRuntime.CreateInitial();
 
         RunHistorySelectionStatus.Text=results.SelectionText;
-        RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selectedAuthority
-            ? $"History authority: {selectedAuthority.QualityText} · {selectedAuthority.ReplayText} · {(selectedAuthority.ReleaseReady ? "Release Ready" : "Release Not Ready")}."
-            : "History authority: none.";
+        RunHistoryAuthorityStatus.Text=results.SelectionAuthorityText;
         RunHistoryStatus.Text=$"History: {history.Entries.Count} runs · dropped {history.DroppedCount}.";
     }
 
