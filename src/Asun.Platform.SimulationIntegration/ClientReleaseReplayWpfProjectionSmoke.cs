@@ -16,7 +16,6 @@ public static class ClientReleaseReplayWpfProjectionSmoke
         for(var round=1;round<=100;round++) if(round==100) ResetLeavesNoReplayOrRelease();
         for(var round=1;round<=100;round++) if(round==100) RecoveryCreatesFreshReleaseReplayAuthority();
         for(var round=1;round<=100;round++) if(round==100) UnifiedProjectionPreservesReleaseReplayAuthority();
-        for(var round=1;round<=100;round++) if(round==100) CurrentAuthorityRemainsDistinctFromHistory();
     }
 
     private static void QualityAuthorityIsProjected()
@@ -71,10 +70,13 @@ public static class ClientReleaseReplayWpfProjectionSmoke
         using var workspace=CreateFinalizedWorkspace();
         var snapshot=workspace.Capture();
         var surface=ClientResultsSurfaceRuntime.Create(snapshot);
+        var history=surface.History.Single();
         Check(surface.ReleaseReplay.ReleaseManifestFingerprint==
               snapshot.Release!.ReleaseManifestFingerprint &&
-              surface.ReleaseReplay.ReleaseArtifactPath==snapshot.Release.ArtifactPath,
-            "ReleaseReplay Release identity must remain bound to current Release evidence.");
+              surface.ReleaseReplay.ReleaseArtifactPath==snapshot.Release.ArtifactPath &&
+              history.ProductionSessionId==snapshot.Production.ActiveSessionId &&
+              history.QualityFingerprint==surface.ReleaseReplay.QualityFingerprint,
+            "ReleaseReplay Release identity and historical authority must remain bound to the same finalized run.");
     }
 
     private static void ResetClearsReleaseReplayAuthority()
@@ -129,18 +131,6 @@ public static class ClientReleaseReplayWpfProjectionSmoke
     }
 
     
-    private static void CurrentAuthorityRemainsDistinctFromHistory()
-    {
-        using var workspace=CreateFinalizedWorkspace();
-        var snapshot=workspace.Capture();
-        var surface=ClientResultsSurfaceRuntime.Create(snapshot);
-        var history=surface.History.Single();
-        Check(surface.ReleaseReplay.QualityFingerprint==snapshot.Quality.Fingerprint &&
-              history.QualityFingerprint==snapshot.Quality.Fingerprint &&
-              history.ProductionSessionId==snapshot.Production.ActiveSessionId,
-            "Current ReleaseReplay authority and historical authority must share identity only when they represent the same finalized run.");
-    }
-
     private static ClientInspectionWorkspace CreateFinalizedWorkspace()
     {
         var workspace=new ClientInspectionWorkspace(
