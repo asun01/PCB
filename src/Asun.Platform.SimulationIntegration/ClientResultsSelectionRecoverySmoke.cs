@@ -120,10 +120,14 @@ public static class ClientResultsSelectionRecoverySmoke
             .AsTask().GetAwaiter().GetResult();
         workspace.EvaluateQualityProvider("simulation-quality");
         var second=workspace.Capture();
+        workspace.SelectHistory(first.History.Entries[0].Ordinal);
+        var historicalProjection=CreateResultsProjection(workspace.Capture());
         Check(second.History.Entries.Count==2 &&
               second.History.Entries[0].QualityFingerprint==first.Quality.Fingerprint &&
               second.History.Entries[0].ReplayFingerprint==first.Replay!.ReplayFingerprint &&
-              second.Quality.Fingerprint!=second.History.Entries[0].QualityFingerprint,
+              second.Quality.Fingerprint!=second.History.Entries[0].QualityFingerprint &&
+              !historicalProjection.Content.Results.SelectedHistoryIsCurrent &&
+              historicalProjection.Content.Results.SelectionAuthorityText=="Selected history: historical authority.",
             "Current Results must remain distinct from immutable historical authority.");
     }
 
