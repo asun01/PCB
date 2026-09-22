@@ -52,6 +52,10 @@ REQUIRED_RESULTS_PROJECTION_BINDINGS = (
     "RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selected",
     "selected.QualityText",
     "selected.ReplayText",
+    "var releaseReplay=results.ReleaseReplay;",
+    "ResultReleaseReplayQuality.Text=releaseReplay.QualityFingerprint.Length==64",
+    "ResultReleaseReplayReplay.Text=releaseReplay.ReplayAvailable",
+    "ResultReleaseReplayRelease.Text=releaseReplay.ReleaseAvailable",
 )
 
 REQUIRED_SHELL_NAMES = (
