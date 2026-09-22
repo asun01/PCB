@@ -68,8 +68,9 @@ public static class ClientResultsSurfaceSmoke
               surface.Current.FrameCount==3 &&
               surface.ReleaseReplay.ReplayAvailable &&
               surface.ReleaseReplay.ReleaseReady &&
-              surface.ReleaseReplay.ReplayFingerprint==replayFingerprint,
-            "Results surface must reuse the structured current Replay/Release projections.");
+              surface.ReleaseReplay.ReplayFingerprint==replayFingerprint &&
+              surface.ReleaseReplay.QualityFingerprint==qualityFingerprint,
+            "Results surface must reuse the structured current Replay/Release/Quality authority projections.");
     }
 
     private static void HistoryStartsEmpty()
