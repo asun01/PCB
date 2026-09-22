@@ -49,7 +49,7 @@ REQUIRED_HOME_PROJECTION_BINDINGS = (
 )
 
 REQUIRED_RESULTS_PROJECTION_BINDINGS = (
-    "RunHistoryAuthorityStatus.Text=results.SelectedHistoryItem is { } selected",
+    "RunHistoryAuthorityStatus.Text=results.SelectionAuthorityText;",
     "selected.QualityText",
     "selected.ReplayText",
     "var releaseReplay=results.ReleaseReplay;",
