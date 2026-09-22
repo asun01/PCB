@@ -71,14 +71,24 @@ public static class ClientReleaseReplayWpfProjectionSmoke
         var snapshot=workspace.Capture();
         var surface=ClientResultsSurfaceRuntime.Create(snapshot);
         var history=surface.History.Single();
+        var invalid=snapshot with
+        {
+            Release=snapshot.Release! with
+            {
+                QualityFingerprint=new string('f',64)
+            }
+        };
+        var invalidSurface=ClientResultsSurfaceRuntime.Create(invalid);
         Check(surface.ReleaseReplay.ReleaseManifestFingerprint==
               snapshot.Release!.ReleaseManifestFingerprint &&
               surface.ReleaseReplay.ReleaseArtifactPath==snapshot.Release.ArtifactPath &&
               history.ProductionSessionId==snapshot.Production.ActiveSessionId &&
               history.QualityFingerprint==surface.ReleaseReplay.QualityFingerprint &&
               surface.CurrentAuthorityBound &&
-              surface.CurrentAuthorityText=="Current authority: Quality → Replay → Release bound.",
-            "ReleaseReplay Release identity and historical authority must remain bound to the same finalized run.");
+              surface.CurrentAuthorityText=="Current authority: Quality → Replay → Release bound." &&
+              !invalidSurface.CurrentAuthorityBound &&
+              invalidSurface.CurrentAuthorityText=="Current authority: incomplete.",
+            "ReleaseReplay Release identity and current authority must remain bound to an integrity-valid finalized run.");
     }
 
     private static void ResetClearsReleaseReplayAuthority()
