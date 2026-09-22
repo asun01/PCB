@@ -56,6 +56,7 @@ REQUIRED_RESULTS_PROJECTION_BINDINGS = (
     "ResultReleaseReplayQuality.Text=releaseReplay.QualityFingerprint.Length==64",
     "ResultReleaseReplayReplay.Text=releaseReplay.ReplayAvailable",
     "ResultReleaseReplayRelease.Text=releaseReplay.ReleaseAvailable",
+    "ResultCurrentAuthorityStatus.Text=results.Current.QualityFingerprint.Length==64",
 )
 
 REQUIRED_SHELL_NAMES = (
