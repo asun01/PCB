@@ -3824,3 +3824,12 @@ Next executable stage: **51,501**
 - 73,828: shell static validation now requires the explicit current-authority projection binding.
 - 73,829–73,830: ReleaseReplay smoke keeps strict 10×100 execution groups while extending the Release identity check to verify its historical entry represents the same finalized production session and Quality authority.
 - 73,831: static closure audit: smoke has exactly 10 actual `Check` calls, brace delta 0; WPF XAML/code-behind brace deltas are 0. No authoritative Build/Test/CI execution is claimed for this interval.
+
+### Rolling real-client continuation — stages 73,832–73,841 — 2026-09-22
+
+- 73,832–73,834: the Results projection now owns the current execution authority decision instead of requiring WPF code-behind to reconstruct Quality → Replay → Release state from multiple fields.
+- 73,835–73,837: `ClientResultsSurface` exposes `CurrentAuthorityBound` and `CurrentAuthorityText`; the bound decision requires the finalized evidence chain plus workflow-integrity validation.
+- 73,838: WPF Results binds `ResultCurrentAuthorityStatus` directly to the projected authority text, removing presentation-level authority reconstruction.
+- 73,839: shell static validation now requires the dedicated projected current-authority binding.
+- 73,840: ReleaseReplay WPF smoke keeps exactly ten 100-stage acceptance groups and folds current-authority bound/incomplete assertions into the existing Release/Reset/Recovery groups.
+- 73,841: static closure audit completed after the projection change; no authoritative Build/Test/CI execution is claimed for this interval.
