@@ -3803,3 +3803,7 @@ Next executable stage: **51,501**
 - 73,806–73,807: extended the Release/Replay presentation surface with the authoritative Quality fingerprint, preserving the existing Replay/Release facts while closing the Quality → Replay/Release projection boundary.
 - 73,808: extended ReleaseReplay surface acceptance coverage so the Quality fingerprint is verified together with the release manifest fingerprint; the Results Surface acceptance now also requires the current ReleaseReplay Quality authority to match the current Quality authority.
 - 73,809: source-level closure review completed for the changed projection/smoke files. Build/Test/CI execution is not claimed for this interval.
+
+
+- 73,810: structural closure found and corrected in the Results Surface declaration: the existing ReleaseReplay object initializer is now backed by an explicit WPF-facing `ReleaseReplay` projection property, eliminating a presentation-surface declaration gap.
+- 73,811: re-inspected Results/ReleaseReplay/History projection seams after the correction; no Build/Test/CI execution is claimed.
