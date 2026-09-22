@@ -3833,3 +3833,8 @@ Next executable stage: **51,501**
 - 73,839: shell static validation now requires the dedicated projected current-authority binding.
 - 73,840: ReleaseReplay WPF smoke keeps exactly ten 100-stage acceptance groups and folds current-authority bound/incomplete assertions into the existing Release/Reset/Recovery groups.
 - 73,841: static closure audit completed after the projection change; no authoritative Build/Test/CI execution is claimed for this interval.
+
+### Rolling real-client continuation — stages 73,842–73,845 — 2026-09-22
+
+- 73,842–73,844: corrected the WPF code-behind binding to consume `results.CurrentAuthorityText` exactly as required by the projection-only Results boundary; the previous multi-field reconstruction is removed.
+- 73,845: final static closure confirms the branch head is the corrected implementation; no authoritative Build/Test/CI execution is claimed.
