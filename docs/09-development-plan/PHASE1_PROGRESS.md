@@ -3815,3 +3815,12 @@ Next executable stage: **51,501**
 - 73,815: the shell binding validator now requires the ReleaseReplay Quality/Replay/Release projection bindings, protecting the new presentation seam from future direct-state regressions.
 - 73,816–73,820: added `ClientReleaseReplayWpfProjectionSmoke` with strict 10×100 acceptance groups covering Quality authority, Replay identity, Release identity/readiness, Reset clearing, Recovery re-execution freshness, and Unified Projection preservation.
 - 73,821: static closure audit confirms the new smoke has balanced braces, no TODO/NotImplementedException tokens, and exactly 10 actual `Check` call sites (the method declaration is the only additional textual occurrence). No authoritative Build/Test/CI execution is claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,822–73,831 — 2026-09-22
+
+- 73,822–73,824: Results now explicitly distinguishes the **current execution authority** from the selected historical-run authority. The current status is derived solely from the projected Results/ReleaseReplay surfaces.
+- 73,825–73,827: WPF Results exposes the current Quality → Replay → Release binding state and keeps the existing ReleaseReplay detail projection intact.
+- 73,828: shell static validation now requires the explicit current-authority projection binding.
+- 73,829–73,830: ReleaseReplay smoke keeps strict 10×100 execution groups while extending the Release identity check to verify its historical entry represents the same finalized production session and Quality authority.
+- 73,831: static closure audit: smoke has exactly 10 actual `Check` calls, brace delta 0; WPF XAML/code-behind brace deltas are 0. No authoritative Build/Test/CI execution is claimed for this interval.
