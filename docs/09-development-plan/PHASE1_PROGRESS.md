@@ -3807,3 +3807,11 @@ Next executable stage: **51,501**
 
 - 73,810: structural closure found and corrected in the Results Surface declaration: the existing ReleaseReplay object initializer is now backed by an explicit WPF-facing `ReleaseReplay` projection property, eliminating a presentation-surface declaration gap.
 - 73,811: re-inspected Results/ReleaseReplay/History projection seams after the correction; no Build/Test/CI execution is claimed.
+
+
+### Rolling real-client continuation — stages 73,812–73,821 — 2026-09-22
+
+- 73,812–73,814: the WPF Results shell now projects the existing authoritative `ReleaseReplay` surface directly, exposing Quality, Replay, and Release authority without reconstructing evidence from workspace state.
+- 73,815: the shell binding validator now requires the ReleaseReplay Quality/Replay/Release projection bindings, protecting the new presentation seam from future direct-state regressions.
+- 73,816–73,820: added `ClientReleaseReplayWpfProjectionSmoke` with strict 10×100 acceptance groups covering Quality authority, Replay identity, Release identity/readiness, Reset clearing, Recovery re-execution freshness, and Unified Projection preservation.
+- 73,821: static closure audit confirms the new smoke has balanced braces, no TODO/NotImplementedException tokens, and exactly 10 actual `Check` call sites (the method declaration is the only additional textual occurrence). No authoritative Build/Test/CI execution is claimed for this interval.
