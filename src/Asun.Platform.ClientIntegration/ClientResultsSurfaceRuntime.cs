@@ -5,7 +5,10 @@ public sealed record ClientResultsSurface(
     IReadOnlyList<ClientRunHistoryDisplayItem> History,
     long? SelectedOrdinal,
     string SelectionText,
-    ClientRunHistoryDisplayItem? SelectedHistoryItem);
+    ClientRunHistoryDisplayItem? SelectedHistoryItem)
+{
+    public ClientReleaseReplaySurface ReleaseReplay { get; init; }=null!;
+};
 
 public static class ClientResultsSurfaceRuntime
 {
