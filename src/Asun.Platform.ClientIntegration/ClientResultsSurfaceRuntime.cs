@@ -10,6 +10,8 @@ public sealed record ClientResultsSurface(
     public ClientReleaseReplaySurface ReleaseReplay { get; init; }=null!;
     public bool CurrentAuthorityBound { get; init; }
     public string CurrentAuthorityText { get; init; }="Current authority: incomplete.";
+    public bool SelectedHistoryIsCurrent { get; init; }
+    public string SelectionAuthorityText { get; init; }="No historical run selected.";
 };
 
 public static class ClientResultsSurfaceRuntime
@@ -39,6 +41,12 @@ public static class ClientResultsSurfaceRuntime
             releaseReplay.QualityFingerprint==current.QualityFingerprint &&
             ClientInspectionWorkflowIntegrityRuntime.IsValid(snapshot);
 
+        var selectedHistoryIsCurrent=selectedHistoryItem is not null &&
+            snapshot.Replay is not null &&
+            selectedHistoryItem.ProductionSessionId==snapshot.Replay.ProductionSessionId &&
+            selectedHistoryItem.QualityFingerprint==snapshot.Quality.Fingerprint &&
+            ClientInspectionWorkflowIntegrityRuntime.IsValid(snapshot);
+
         var selectionText=selectedHistoryItem is not null
             ? $"Selected Run {selectedHistoryItem.Ordinal}"
             : selected is null
@@ -56,7 +64,13 @@ public static class ClientResultsSurfaceRuntime
             CurrentAuthorityBound=currentAuthorityBound,
             CurrentAuthorityText=currentAuthorityBound
                 ? "Current authority: Quality → Replay → Release bound."
-                : "Current authority: incomplete."
+                : "Current authority: incomplete.",
+            SelectedHistoryIsCurrent=selectedHistoryIsCurrent,
+            SelectionAuthorityText=selectedHistoryItem is null
+                ? "No historical run selected."
+                : selectedHistoryIsCurrent
+                    ? "Selected history: current authority."
+                    : "Selected history: historical authority."
         };
     }
 }
