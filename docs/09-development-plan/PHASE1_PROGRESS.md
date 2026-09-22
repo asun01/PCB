@@ -3796,3 +3796,10 @@ Next executable stage: **51,501**
 - 73,804: re-audited the changed shell/runtime/smoke sources for structural integrity. No authoritative Build/Test/CI execution is claimed for this interval.
 
 - 73,805: tightened the new Results selection/recovery smoke to exactly 10 actual Check call sites (the Check method declaration is the only additional textual occurrence), preserving the strict 10×100 acceptance structure.
+
+
+### Rolling real-client continuation — stages 73,806–73,809 — 2026-09-22
+
+- 73,806–73,807: extended the Release/Replay presentation surface with the authoritative Quality fingerprint, preserving the existing Replay/Release facts while closing the Quality → Replay/Release projection boundary.
+- 73,808: extended ReleaseReplay surface acceptance coverage so the Quality fingerprint is verified together with the release manifest fingerprint; the Results Surface acceptance now also requires the current ReleaseReplay Quality authority to match the current Quality authority.
+- 73,809: source-level closure review completed for the changed projection/smoke files. Build/Test/CI execution is not claimed for this interval.
