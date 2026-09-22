@@ -88,8 +88,9 @@ public static class ClientReleaseReplaySurfaceSmoke
     {
         var fingerprint=new string('b',64);
         var surface=CreateSurface(releaseManifestFingerprint:fingerprint);
-        Check(surface.ReleaseManifestFingerprint==fingerprint,
-            "Release manifest fingerprint must be projected unchanged.");
+        Check(surface.ReleaseManifestFingerprint==fingerprint &&
+              surface.QualityFingerprint==new string('e',64),
+            "Release manifest and Quality authority fingerprints must be projected unchanged.");
     }
 
     private static ClientReleaseReplaySurface CreateSurface(
