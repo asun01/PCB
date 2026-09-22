@@ -319,6 +319,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
         ThrowIfDisposed();
         _lifecycle.Reset();
         _continuous.Reset();
+        _backpressure.Reset();
         _pipeline.Reset();
     }
 
@@ -371,6 +372,7 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
         _continuous.PresentationQueue.Dispose();
         _continuous.PresentationBuffers.Dispose();
         _continuous.Surface.Dispose();
+        _backpressure.Dispose();
         _lifecycle.Dispose();
     }
 
