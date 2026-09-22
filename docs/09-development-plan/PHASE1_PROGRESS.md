@@ -3838,3 +3838,9 @@ Next executable stage: **51,501**
 
 - 73,842–73,844: corrected the WPF code-behind binding to consume `results.CurrentAuthorityText` exactly as required by the projection-only Results boundary; the previous multi-field reconstruction is removed.
 - 73,845: final static closure confirms the branch head is the corrected implementation; no authoritative Build/Test/CI execution is claimed.
+
+### Rolling real-client continuation — stages 73,846–73,850 — 2026-09-22
+
+- 73,846–73,848: reviewed the Results/History/Unified Projection boundary after moving current authority calculation into `ClientResultsSurface`; current authority remains distinct from selected historical-run authority.
+- 73,849: extended the existing ReleaseReplay WPF authority smoke without increasing its acceptance-check count: a deliberately mismatched Release Quality fingerprint must project as `Current authority: incomplete.`.
+- 73,850: static closure confirms the authority-boundary smoke remains at exactly ten actual checks; no Build/Test/CI result is asserted because no workflow run is associated with the current commit.
