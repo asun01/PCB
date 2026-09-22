@@ -145,6 +145,19 @@ public partial class MainWindow : System.Windows.Window
         ResultQuality.Text=results.Current.QualityText;
         ResultReplay.Text=results.Current.ReplayText;
         ResultRelease.Text=results.Current.ReleaseText;
+        var releaseReplay=results.ReleaseReplay;
+        ResultReleaseReplayQuality.Text=releaseReplay.QualityFingerprint.Length==64
+            ? $"Quality authority: {releaseReplay.QualityFingerprint[..12]}..."
+            : "Quality authority: pending";
+        ResultReleaseReplayReplay.Text=releaseReplay.ReplayAvailable &&
+            releaseReplay.ReplayFingerprint.Length==64
+            ? $"Replay authority: {releaseReplay.ReplayFingerprint[..12]}..."
+            : "Replay authority: unavailable";
+        ResultReleaseReplayRelease.Text=releaseReplay.ReleaseAvailable
+            ? releaseReplay.ReleaseReady
+                ? $"Release authority: Ready · {releaseReplay.ReleaseArtifactPath}"
+                : "Release authority: Not Ready"
+            : "Release authority: unavailable";
 
         _isSynchronizingClientControls=true;
         try
