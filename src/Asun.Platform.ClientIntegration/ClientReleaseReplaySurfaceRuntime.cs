@@ -9,7 +9,10 @@ public sealed record ClientReleaseReplaySurface(
     bool ReleaseAvailable,
     bool ReleaseReady,
     string ReleaseArtifactPath,
-    string ReleaseManifestFingerprint);
+    string ReleaseManifestFingerprint)
+{
+    public string QualityFingerprint { get; init; }="";
+}
 
 public static class ClientReleaseReplaySurfaceRuntime
 {
@@ -30,6 +33,9 @@ public static class ClientReleaseReplaySurfaceRuntime
             release is not null,
             release?.ReleaseReady==true,
             release?.ArtifactPath ?? string.Empty,
-            release?.ReleaseManifestFingerprint ?? string.Empty);
+            release?.ReleaseManifestFingerprint ?? string.Empty)
+        {
+            QualityFingerprint=snapshot.Quality.Fingerprint ?? string.Empty
+        };
     }
 }
