@@ -3844,3 +3844,11 @@ Next executable stage: **51,501**
 - 73,846–73,848: reviewed the Results/History/Unified Projection boundary after moving current authority calculation into `ClientResultsSurface`; current authority remains distinct from selected historical-run authority.
 - 73,849: extended the existing ReleaseReplay WPF authority smoke without increasing its acceptance-check count: a deliberately mismatched Release Quality fingerprint must project as `Current authority: incomplete.`.
 - 73,850: static closure confirms the authority-boundary smoke remains at exactly ten actual checks; no Build/Test/CI result is asserted because no workflow run is associated with the current commit.
+
+### Rolling real-client continuation — stages 73,846–73,854 — 2026-09-22
+
+- 73,846–73,848: Results projection now distinguishes the current execution authority from a selected historical-run authority through `SelectedHistoryIsCurrent`.
+- 73,849–73,851: added `SelectionAuthorityText` as the authoritative presentation value for Results history selection; WPF no longer reconstructs selected-history authority from individual fields.
+- 73,852: Shell binding validation now requires the projected history-authority text binding.
+- 73,853: recovery/selection smoke preserves the ten-check structure while covering current selection, reset-empty selection, and explicit historical selection after re-execution.
+- 73,854: static closure audit completed; no authoritative Build/Test/CI result is claimed for this interval.
