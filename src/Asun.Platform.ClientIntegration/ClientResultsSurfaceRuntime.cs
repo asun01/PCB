@@ -8,6 +8,8 @@ public sealed record ClientResultsSurface(
     ClientRunHistoryDisplayItem? SelectedHistoryItem)
 {
     public ClientReleaseReplaySurface ReleaseReplay { get; init; }=null!;
+    public bool CurrentAuthorityBound { get; init; }
+    public string CurrentAuthorityText { get; init; }="Current authority: incomplete.";
 };
 
 public static class ClientResultsSurfaceRuntime
@@ -29,6 +31,14 @@ public static class ClientResultsSurfaceRuntime
             ? null
             : ClientRunHistoryPresentationRuntime.CreateItem(selectedEntry);
 
+        var currentAuthorityBound=snapshot.Quality.IsBound &&
+            snapshot.Replay is not null &&
+            snapshot.Release is not null &&
+            releaseReplay.ReplayAvailable &&
+            releaseReplay.ReleaseAvailable &&
+            releaseReplay.QualityFingerprint==current.QualityFingerprint &&
+            ClientInspectionWorkflowIntegrityRuntime.IsValid(snapshot);
+
         var selectionText=selectedHistoryItem is not null
             ? $"Selected Run {selectedHistoryItem.Ordinal}"
             : selected is null
@@ -42,7 +52,11 @@ public static class ClientResultsSurfaceRuntime
             selectionText,
             selectedHistoryItem)
         {
-            ReleaseReplay=releaseReplay
+            ReleaseReplay=releaseReplay,
+            CurrentAuthorityBound=currentAuthorityBound,
+            CurrentAuthorityText=currentAuthorityBound
+                ? "Current authority: Quality → Replay → Release bound."
+                : "Current authority: incomplete."
         };
     }
 }
