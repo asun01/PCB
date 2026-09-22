@@ -141,11 +141,7 @@ public partial class MainWindow : System.Windows.Window
         ClientProductionRunHistorySnapshot history)
     {
         ResultStatus.Text=$"Status: {results.Current.Status}";
-        ResultCurrentAuthorityStatus.Text=results.Current.QualityFingerprint.Length==64 &&
-            results.ReleaseReplay.ReplayAvailable &&
-            results.ReleaseReplay.ReleaseAvailable
-            ? "Current authority: Quality → Replay → Release bound."
-            : "Current authority: incomplete.";
+        ResultCurrentAuthorityStatus.Text=results.CurrentAuthorityText;
         ResultSession.Text=$"{results.Current.SessionText} · {results.Current.FrameCount} frame(s)";
         ResultQuality.Text=results.Current.QualityText;
         ResultReplay.Text=results.Current.ReplayText;
