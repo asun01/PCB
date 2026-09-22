@@ -24,7 +24,9 @@ public static class ClientResultsSelectionRecoverySmoke
         var snapshot=workspace.Capture();
         var projection=CreateResultsProjection(snapshot);
         Check(projection.Content.Results.SelectedOrdinal==snapshot.SelectedHistoryOrdinal &&
-              projection.Content.Results.SelectedHistoryItem?.Ordinal==snapshot.SelectedHistoryOrdinal,
+              projection.Content.Results.SelectedHistoryItem?.Ordinal==snapshot.SelectedHistoryOrdinal &&
+              projection.Content.Results.SelectedHistoryIsCurrent &&
+              projection.Content.Results.SelectionAuthorityText=="Selected history: current authority.",
             "Selected Results projection must bind the workspace selected History ordinal.");
     }
 
@@ -75,7 +77,9 @@ public static class ClientResultsSelectionRecoverySmoke
         var projection=CreateResultsProjection(workspace.Capture());
         Check(projection.Content.Results.SelectedOrdinal is null &&
               projection.Content.Results.SelectedHistoryItem is null &&
-              projection.Content.Results.SelectionText=="No historical run selected.",
+              projection.Content.Results.SelectionText=="No historical run selected." &&
+              !projection.Content.Results.SelectedHistoryIsCurrent &&
+              projection.Content.Results.SelectionAuthorityText=="No historical run selected.",
             "Reset must project an empty History selection to the WPF-facing Results surface.");
     }
 
