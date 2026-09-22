@@ -75,7 +75,9 @@ public static class ClientReleaseReplayWpfProjectionSmoke
               snapshot.Release!.ReleaseManifestFingerprint &&
               surface.ReleaseReplay.ReleaseArtifactPath==snapshot.Release.ArtifactPath &&
               history.ProductionSessionId==snapshot.Production.ActiveSessionId &&
-              history.QualityFingerprint==surface.ReleaseReplay.QualityFingerprint,
+              history.QualityFingerprint==surface.ReleaseReplay.QualityFingerprint &&
+              surface.CurrentAuthorityBound &&
+              surface.CurrentAuthorityText=="Current authority: Quality → Replay → Release bound.",
             "ReleaseReplay Release identity and historical authority must remain bound to the same finalized run.");
     }
 
@@ -86,7 +88,9 @@ public static class ClientReleaseReplayWpfProjectionSmoke
         var surface=ClientResultsSurfaceRuntime.Create(workspace.Capture());
         Check(!surface.ReleaseReplay.ReplayAvailable &&
               !surface.ReleaseReplay.ReleaseAvailable &&
-              surface.ReleaseReplay.QualityFingerprint==string.Empty,
+              surface.ReleaseReplay.QualityFingerprint==string.Empty &&
+              !surface.CurrentAuthorityBound &&
+              surface.CurrentAuthorityText=="Current authority: incomplete.",
             "Reset must clear ReleaseReplay authority from the Results projection.");
     }
 
@@ -111,7 +115,9 @@ public static class ClientReleaseReplayWpfProjectionSmoke
         var second=ClientResultsSurfaceRuntime.Create(secondSnapshot);
         Check(second.ReleaseReplay.QualityFingerprint==secondSnapshot.Quality.Fingerprint &&
               second.ReleaseReplay.ReplayFingerprint!=first.ReleaseReplay.ReplayFingerprint &&
-              second.ReleaseReplay.ReleaseManifestFingerprint==secondSnapshot.Release!.ReleaseManifestFingerprint,
+              second.ReleaseReplay.ReleaseManifestFingerprint==secondSnapshot.Release!.ReleaseManifestFingerprint &&
+              second.CurrentAuthorityBound &&
+              second.CurrentAuthorityText=="Current authority: Quality → Replay → Release bound.",
             "Recovery re-execution must publish a fresh ReleaseReplay authority chain.");
     }
 
