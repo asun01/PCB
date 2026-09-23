@@ -6,6 +6,8 @@ public static class ViewportPresentationFacadeSmoke
 {
     public static async ValueTask RunAsync(Action<bool, string> assert)
     {
+        RunBackpressurePolicySmoke(assert);
+
         for (var i = 0; i < 500; i++)
         {
             using var presentation = new ViewportPresentationRuntime<string>(
@@ -152,6 +154,57 @@ public static class ViewportPresentationFacadeSmoke
                     new Vector2(12, 18)),
                 $"Presentation facade {i + 1} should accept backpressure input again after reset.");
         }
+    }
+
+
+    private static void RunBackpressurePolicySmoke(Action<bool, string> assert)
+    {
+        using var dropNewestInput = new ViewportInputSubmissionRuntime();
+        using var dropNewest = new ViewportInputBackpressureRuntime(2, ViewportInputDropPolicy.DropNewest);
+
+        assert(dropNewest.TrySubmit(dropNewestInput, ViewportInputEventKind.PointerDown, new Vector2(1, 1)),
+            "DropNewest should accept the first event.");
+        assert(dropNewest.TrySubmit(dropNewestInput, ViewportInputEventKind.PointerDown, new Vector2(2, 2)),
+            "DropNewest should accept events up to capacity.");
+        assert(!dropNewest.TrySubmit(dropNewestInput, ViewportInputEventKind.PointerDown, new Vector2(3, 3)),
+            "DropNewest should reject an event when capacity is full.");
+        assert(dropNewest.Capture(dropNewestInput) is { Pending: 2, Dropped: 1 },
+            "DropNewest should preserve the bounded queue and count the rejected event.");
+
+        using var dropOldestInput = new ViewportInputSubmissionRuntime();
+        using var dropOldest = new ViewportInputBackpressureRuntime(2, ViewportInputDropPolicy.DropOldest);
+        dropOldest.TrySubmit(dropOldestInput, ViewportInputEventKind.PointerDown, new Vector2(1, 1));
+        dropOldest.TrySubmit(dropOldestInput, ViewportInputEventKind.PointerDown, new Vector2(2, 2));
+        assert(dropOldest.TrySubmit(dropOldestInput, ViewportInputEventKind.PointerDown, new Vector2(3, 3)),
+            "DropOldest should accept a new event after evicting the oldest event.");
+        var oldest = dropOldestInput.Drain(2);
+        assert(oldest.Count == 2 &&
+               oldest[0].Position == new Vector2(2, 2) &&
+               oldest[1].Position == new Vector2(3, 3),
+            "DropOldest should evict only the oldest pending event.");
+
+        using var coalesceInput = new ViewportInputSubmissionRuntime();
+        using var coalesce = new ViewportInputBackpressureRuntime(2, ViewportInputDropPolicy.CoalesceMoves);
+        coalesce.TrySubmit(coalesceInput, ViewportInputEventKind.PointerDown, new Vector2(1, 1));
+        coalesce.TrySubmit(coalesceInput, ViewportInputEventKind.PointerMove, new Vector2(2, 2));
+        assert(coalesce.TrySubmit(coalesceInput, ViewportInputEventKind.PointerMove, new Vector2(8, 9)),
+            "CoalesceMoves should replace the latest move when capacity is full.");
+        var coalesced = coalesceInput.Drain(2);
+        assert(coalesced.Count == 2 &&
+               coalesced[1].Position == new Vector2(8, 9) &&
+               coalesce.Capture(coalesceInput).Coalesced == 1,
+            "CoalesceMoves should retain the queue and expose the replacement count.");
+
+        using var completionInput = new ViewportInputSubmissionRuntime();
+        using var completion = new ViewportInputBackpressureRuntime(4);
+        completion.TrySubmit(completionInput, ViewportInputEventKind.PointerDown, new Vector2(1, 1));
+        completion.TrySubmit(completionInput, ViewportInputEventKind.PointerDown, new Vector2(2, 2));
+        completion.Complete(completionInput, cancelPending: true);
+        assert(completion.IsCompleted &&
+               completionInput.IsCompleted &&
+               completionInput.PendingCount == 0 &&
+               completion.Capture(completionInput).Dropped == 2,
+            "Coupled completion should clear all pending input and count every discarded event.");
     }
 
     private sealed class LocalTileSource : ITileSource<string>
