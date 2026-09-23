@@ -205,6 +205,18 @@ public static class ViewportPresentationFacadeSmoke
                completionInput.PendingCount == 0 &&
                completion.Capture(completionInput).Dropped == 2,
             "Coupled completion should clear all pending input and count every discarded event.");
+
+        using var cancellationInput = new ViewportInputSubmissionRuntime();
+        using var cancellation = new ViewportInputBackpressureRuntime(4);
+        cancellation.TrySubmit(cancellationInput, ViewportInputEventKind.PointerDown, new Vector2(4, 4));
+        cancellation.TrySubmit(cancellationInput, ViewportInputEventKind.PointerDown, new Vector2(5, 5));
+        cancellation.Cancel(cancellationInput);
+        assert(cancellation.IsCancelled &&
+               cancellationInput.IsCancelled &&
+               cancellationInput.IsCompleted &&
+               cancellationInput.PendingCount == 0 &&
+               cancellation.Capture(cancellationInput).Dropped == 2,
+            "Coupled cancellation should clear pending input and account for every discarded event.");
     }
 
     private sealed class LocalTileSource : ITileSource<string>
