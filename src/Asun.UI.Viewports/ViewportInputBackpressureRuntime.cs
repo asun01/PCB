@@ -134,10 +134,26 @@ public sealed class ViewportInputBackpressureRuntime : IDisposable
         }
     }
 
+    public void Complete(
+        ViewportInputSubmissionRuntime input,
+        bool cancelPending = false)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        Complete(cancelPending);
+        input.Complete(cancelPending);
+    }
+
     public void Cancel()
     {
         if (Interlocked.Exchange(ref _cancelled, 1) == 0)
             Volatile.Write(ref _completed, 1);
+    }
+
+    public void Cancel(ViewportInputSubmissionRuntime input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        Cancel();
+        input.Cancel();
     }
 
     public void Reset()
@@ -148,6 +164,13 @@ public sealed class ViewportInputBackpressureRuntime : IDisposable
             Volatile.Write(ref _completed, 0);
             Volatile.Write(ref _cancelled, 0);
         }
+    }
+
+    public void Reset(ViewportInputSubmissionRuntime input)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        Reset();
+        input.ResetLifecycle();
     }
 
     public void Dispose()
