@@ -122,14 +122,16 @@ public static class ViewportPresentationFacadeSmoke
                 continuousSink.EndCount >= 1,
                 $"Presentation facade {i + 1} should retry a failed delivery and complete the continuous render lifecycle.");
 
-            presentation.Backpressure.Cancel();
+            presentation.CancelInput();
 
             assert(
                 !presentation.TrySubmitWithBackpressure(
                     ViewportInputEventKind.PointerMove,
                     new Vector2(8, 9)) &&
-                presentation.Backpressure.IsCancelled,
-                $"Presentation facade {i + 1} should reject backpressure input after cancellation.");
+                presentation.Backpressure.IsCancelled &&
+                presentation.Input.IsCancelled &&
+                presentation.Input.IsCompleted,
+                $"Presentation facade {i + 1} should cancel both backpressure and submission lifecycles together.");
 
             presentation.Reset();
 
