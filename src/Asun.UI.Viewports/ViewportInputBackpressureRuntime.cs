@@ -139,7 +139,18 @@ public sealed class ViewportInputBackpressureRuntime : IDisposable
         bool cancelPending = false)
     {
         ArgumentNullException.ThrowIfNull(input);
-        Complete(cancelPending);
+
+        var pending = cancelPending ? input.PendingCount : 0;
+        Complete(false);
+
+        if (pending != 0)
+        {
+            lock (_sync)
+            {
+                _dropped += pending;
+            }
+        }
+
         input.Complete(cancelPending);
     }
 
