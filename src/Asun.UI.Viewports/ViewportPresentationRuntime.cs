@@ -319,14 +319,14 @@ public sealed class ViewportPresentationRuntime<TTile> : IDisposable, IAsyncDisp
         ThrowIfDisposed();
         _lifecycle.Reset();
         _continuous.Reset();
-        _backpressure.Reset();
+        _backpressure.Reset(_input);
         _pipeline.Reset();
     }
 
     public void CancelInput()
     {
         ThrowIfDisposed();
-        _input.Cancel();
+        _backpressure.Cancel(_input);
     }
 
     public async ValueTask DisposeAsync()
