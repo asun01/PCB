@@ -185,6 +185,9 @@ public sealed class ViewportInputBackpressureRuntime : IDisposable
             ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
             Volatile.Write(ref _completed, 0);
             Volatile.Write(ref _cancelled, 0);
+            _accepted = 0;
+            _dropped = 0;
+            _coalesced = 0;
         }
     }
 
