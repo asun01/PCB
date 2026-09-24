@@ -137,16 +137,21 @@ public static class ViewportPresentationFacadeSmoke
 
             presentation.Reset();
 
+            var resetBackpressure = presentation.Backpressure.Capture(presentation.Input);
+
             assert(
                 !presentation.Input.HasPending &&
                 !presentation.Input.IsCancelled &&
                 !presentation.Input.IsCompleted &&
                 !presentation.Backpressure.IsCancelled &&
                 !presentation.Backpressure.IsCompleted &&
+                resetBackpressure.Accepted == 0 &&
+                resetBackpressure.Dropped == 0 &&
+                resetBackpressure.Coalesced == 0 &&
                 presentation.Pipeline.Scheduler.PendingFlags == ViewportDirtyFlags.None &&
                 presentation.PresentationExecution.Statistics.Executed == 0 &&
                 presentation.State == ViewportPresentationState.Created,
-                $"Presentation facade {i + 1} reset should clear runtime state and restore input lifecycle.");
+                $"Presentation facade {i + 1} reset should clear runtime state, counters, and restore input lifecycle.");
 
             assert(
                 presentation.TrySubmitWithBackpressure(
