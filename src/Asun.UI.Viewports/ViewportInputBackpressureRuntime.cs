@@ -43,6 +43,8 @@ public sealed class ViewportInputBackpressureRuntime : IDisposable
 
     public bool IsCompleted => Volatile.Read(ref _completed) != 0;
     public bool IsCancelled => Volatile.Read(ref _cancelled) != 0;
+    public int Capacity => _capacity;
+    public ViewportInputDropPolicy DropPolicy => _dropPolicy;
 
     public ViewportInputBackpressureSnapshot Capture(ViewportInputSubmissionRuntime input)
     {
