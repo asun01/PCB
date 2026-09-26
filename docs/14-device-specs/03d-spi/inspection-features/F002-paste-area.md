@@ -14,6 +14,9 @@ Measure the projected area of an accepted solder-paste deposit within the featur
 ## Measurement semantics
 A numeric value is authoritative only when the input, calibration and algorithm are valid. Invalid/indeterminate measurements must not be serialized as plausible zero values.
 
+## Decision semantics
+The measurement is not a production verdict by itself. PASS/FAIL/REVIEW/INCONCLUSIVE/NOT_EVALUATED semantics are supplied by the authoritative Result/Quality contract. An invalid measurement must remain non-evaluable rather than becoming a passing numeric value.
+
 ## Parameters
 Segmentation, inclusion/exclusion geometry and any filtering parameters are recipe/algorithm parameters. Each production-affecting value requires an identified source and revision. No numeric defaults or acceptance limits are invented.
 
