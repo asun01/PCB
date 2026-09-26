@@ -14,6 +14,9 @@ Characterize the relative height relationship of the accepted paste deposit agai
 ## Semantic boundary
 Coplanarity must not be conflated with PasteHeight. The former describes a relative height relationship across a region/reference; the latter is a deposit height measurement under its own reference semantics.
 
+## Decision semantics
+The measurement is not a production verdict by itself. PASS/FAIL/REVIEW/INCONCLUSIVE/NOT_EVALUATED semantics are supplied by the authoritative Result/Quality contract. An invalid measurement must remain non-evaluable rather than becoming a passing numeric value.
+
 ## Parameters
 Reference selection, sampling, filtering and decision parameters require explicit authority and revision. Numeric acceptance values are not invented.
 
