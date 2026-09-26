@@ -51,8 +51,8 @@ public partial class MainWindow : System.Windows.Window
         RefreshWorkspaceStatus();
         RefreshProgramStatus();
         RefreshResultStatus();
-        RefreshQualityStatus();
-        RefreshRunHistoryStatus();
+        ApplyQualityProjection(_clientProjection.Snapshot.Content.Quality);
+        RefreshRunHistoryStatus;
         ApplyWorkspaceView(_workspaceRuntime.Current.Workspace);
         RefreshCommandAvailability();
     }
@@ -86,7 +86,7 @@ public partial class MainWindow : System.Windows.Window
         ApplyResultsProjection(
             snapshot.Content.Results,
             snapshot.History);
-        RefreshQualityStatus();
+        ApplyQualityProjection(snapshot.Content.Quality);
         RefreshWorkspaceStatus();
         RefreshCommandAvailability(snapshot);
     }
@@ -310,10 +310,7 @@ public partial class MainWindow : System.Windows.Window
             item.FindingId,
             _qualityFindingSelection.SelectionSequence);
 
-        QualityFindingSelectionStatus.Text=_qualityFindingSelection.StatusText;
-        QualityFindingDetails.Text=
-            $"{item.RuleCode} · {item.Outcome} · {item.Severity}\n" +
-            $"Evidence links: {item.EvidenceCount}\n{item.Message}";
+        ApplyQualityProjection(_clientProjection.Snapshot.Content.Quality);
     }
 
     private void QualityFilter_SelectionChanged(
@@ -323,7 +320,7 @@ public partial class MainWindow : System.Windows.Window
         if(!IsInitialized)
             return;
 
-        RefreshQualityStatus();
+        ApplyQualityProjection(_clientProjection.Snapshot.Content.Quality);
     }
 
     private static string ReadComboValue(
@@ -349,7 +346,7 @@ public partial class MainWindow : System.Windows.Window
                 _client,
                 CreateRouting(ClientWorkspaceKind.Quality),
                 definition.Descriptor.ProviderId);
-            RefreshQualityStatus();
+            ApplyQualityProjection(_clientProjection.Snapshot.Content.Quality);
             RefreshHomeStatus();
             RefreshDiagnosticStatus();
             RefreshCommandAvailability();
@@ -869,6 +866,32 @@ public partial class MainWindow : System.Windows.Window
         BindAcquisitionButton.IsEnabled=routing.CanBindAcquisition;
         PreviewAcquisitionButton.IsEnabled=routing.CanPreviewAcquisition;
         RunQualityButton.IsEnabled=routing.CanEvaluateSimulationQuality;
+    }
+
+    private void ApplyQualityProjection(ClientQualitySurface quality)
+    {
+        var filter=new ClientQualityFilter(
+            ReadComboValue(QualityOutcomeFilter),
+            ReadComboValue(QualitySeverityFilter));
+        var projected=ClientQualitySurfaceRuntime.Create(quality.Snapshot,filter);
+
+        QualityStatus.Text=$"{projected.AuthorityText} {projected.SummaryText} {projected.ProviderText}";
+        _isSynchronizingClientControls=true;
+        try
+        {
+            QualityFindingList.ItemsSource=projected.VisibleFindings;
+            QualityFindingList.SelectedItem=projected.SelectedFinding;
+        }
+        finally
+        {
+            _isSynchronizingClientControls=false;
+        }
+
+        QualityFindingSelectionStatus.Text=projected.SelectionText;
+        QualityFindingDetails.Text=projected.SelectedFinding is { } selected
+            ? $"{selected.RuleCode} · {selected.Outcome} · {selected.Severity}\\n" +
+              $"Evidence links: {selected.EvidenceCount}\\n{selected.Message}"
+            : projected.SelectionText;
     }
 
     private void RefreshAcquisitionStatus()
