@@ -3875,3 +3875,14 @@ Verification status: source/static structural inspection only. Current audit: WP
 - Explicitly kept vendor SDKs, hardware timing/safety, unverified accuracy, defect thresholds, and production acceptance semantics behind authority/qualification gates.
 - Device documentation is a specification foundation; it is not evidence of hardware qualification or production readiness.
 - Added deterministic device specification catalog validation tooling in tools/validate_device_spec_catalog.py; execution result is not claimed unless actually run.
+
+
+### Golden 3D SPI device specification expansion — 2026-09-26
+
+- Expanded 3D SPI from family-level catalog into eight detailed feature specifications: Presence, Area, Height, Volume, Offset, Shape, Coplanarity, and BridgingRisk.
+- Added a feature execution contract covering Device input → Feature context → ROI/Region → Coordinate/Calibration → Pre-processing → Algorithm → Measurement/Finding → Result → Quality → Evidence → Replay → Release.
+- Added feature traceability, parameter authority, and qualification-gate documents.
+- Tightened 3D SPI device boundary, coordinate/reference semantics, Program/Recipe traceability, recovery behavior, measurement provenance, Quality/Evidence/Replay/Release authority, and WPF unified-projection expectations.
+- Extended the device-spec catalog validator so 3D SPI feature IDs require exactly one detailed specification and all required execution/authority sections.
+- Performed repository-grounded structural audit through GitHub file reads: 8/8 feature specifications present; 8/8 required feature sections present; all four golden-spec cross-cutting surfaces present.
+- Validator source was syntax-checked independently. Repository-local Build/Test/CI execution remains unavailable in the current environment; no build/test/CI success is claimed.
