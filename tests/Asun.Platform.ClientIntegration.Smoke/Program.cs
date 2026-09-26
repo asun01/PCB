@@ -232,6 +232,7 @@ await ClientQualityFilter2HundredStageSmoke.RunAsync(Check);
 await ClientQualityFilter3HundredStageSmoke.RunAsync(Check);
 await ClientQualityFilter4HundredStageSmoke.RunAsync(Check);
 await ClientQualityFilter5HundredStageSmoke.RunAsync(Check);
+await ClientQualityAuthorityProjection1HundredStageSmoke.RunAsync(Check);
 
 if(failures.Count>0)
 {
