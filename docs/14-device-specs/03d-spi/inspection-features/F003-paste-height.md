@@ -14,6 +14,9 @@ Measure solder-paste deposit height relative to the authoritative reference surf
 ## Reference semantics
 “Height” is not a universal raw-sensor value. The specification must identify the reference plane/geometry and calibration source before a production result can be authoritative.
 
+## Decision semantics
+The measurement is not a production verdict by itself. PASS/FAIL/REVIEW/INCONCLUSIVE/NOT_EVALUATED semantics are supplied by the authoritative Result/Quality contract. An invalid measurement must remain non-evaluable rather than becoming a passing numeric value.
+
 ## Parameters
 Reference selection, surface filtering, segmentation and acceptance parameters are externalized by ID/revision. Numeric limits are not defined without authority.
 
