@@ -52,7 +52,7 @@ public partial class MainWindow : System.Windows.Window
         RefreshProgramStatus();
         RefreshResultStatus();
         ApplyQualityProjection(_clientProjection.Snapshot.Content.Quality);
-        RefreshRunHistoryStatus;
+        RefreshRunHistoryStatus();
         ApplyWorkspaceView(_workspaceRuntime.Current.Workspace);
         RefreshCommandAvailability();
     }
