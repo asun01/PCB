@@ -20,7 +20,9 @@ public static class ClientQualitySurfaceSmoke
     {
         var surface=CreateSurface();
         Check(!surface.Snapshot.IsBound &&
-              !surface.HasFindings,
+              !surface.HasFindings &&
+              surface.AuthorityText=="Quality authority: not bound." &&
+              surface.ProviderText=="Provider: none.",
             "Quality surface must remain explicit when no authoritative Quality Run is bound.");
     }
 
@@ -47,8 +49,11 @@ public static class ClientQualitySurfaceSmoke
             workspace.Capture() with { Quality=quality },
             new ClientQualityFilter("Fail","High"));
         Check(surface.VisibleFindings.Count==1 &&
-              surface.VisibleFindings[0].FindingId=="finding-fail",
-            "Quality surface must reuse the existing Outcome/Severity filter projection.");
+              surface.VisibleFindings[0].FindingId=="finding-fail" &&
+              surface.AuthorityText=="Quality authority: Bound · fingerprint..." &&
+              surface.SummaryText.Contains("2 result(s)",StringComparison.Ordinal) &&
+              surface.SummaryText.Contains("Pass 1",StringComparison.Ordinal),
+            "Quality surface must reuse the existing Outcome/Severity filter projection and expose authoritative summary state.");
     }
 
     private static void SelectionIsExplicit()
