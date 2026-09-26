@@ -3863,3 +3863,15 @@ Next executable stage: **51,501**
 - 73,866: added and registered `ClientQualityAuthorityProjection1HundredStageSmoke` with strict 10×100 acceptance groups covering bound/unbound authority, provider identity, result summary, filtering, selected-finding visibility, fingerprint validity, snapshot identity, and projection preservation.
 
 Verification status: source/static structural inspection only. Current audit: WPF code-behind braces 148/148; WPF XAML braces 15/15; new Quality acceptance smoke braces 18/18; new smoke contains 10 actual `Check(` call sites. No authoritative Build/Test/CI success is claimed for this interval.
+
+
+### Device inspection specification hierarchy — 2026-09-26
+
+- Established docs/14-device-specs as the dedicated device-oriented specification layer beneath platform architecture and alongside generic FunctionSpecs.
+- Added independent subdirectories for 2D AOI, 3D AOI, 3D SPI, 2D X-Ray, 3D AXI/CT, Optical/Laser Metrology, ICT, FCT, and Bare-Board PCB Inspection.
+- Added a normalized device capability matrix and a reusable device specification template.
+- Added per-device scope/specification documents and capability/feature/measurement/quality/UI/vendor-adapter surfaces.
+- Defined the device-to-platform chain as Device Type → Capability → Inspection Feature → Algorithm/Measurement → Result → Quality → Evidence → Replay → Release.
+- Explicitly kept vendor SDKs, hardware timing/safety, unverified accuracy, defect thresholds, and production acceptance semantics behind authority/qualification gates.
+- Device documentation is a specification foundation; it is not evidence of hardware qualification or production readiness.
+- Added deterministic device specification catalog validation tooling in tools/validate_device_spec_catalog.py; execution result is not claimed unless actually run.
