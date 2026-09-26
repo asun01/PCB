@@ -14,6 +14,9 @@ Measure the volume of the accepted solder-paste deposit associated with the insp
 ## Measurement semantics
 Volume is invalid when its surface, reference or calibration is invalid. A missing surface cannot be converted into a zero-volume pass.
 
+## Decision semantics
+The measurement is not a production verdict by itself. PASS/FAIL/REVIEW/INCONCLUSIVE/NOT_EVALUATED semantics are supplied by the authoritative Result/Quality contract. An invalid measurement must remain non-evaluable rather than becoming a passing numeric value.
+
 ## Parameters
 Segmentation, reference, filtering, integration and acceptance parameters are identified by ID/revision and authority source. No production numeric thresholds are assumed.
 
