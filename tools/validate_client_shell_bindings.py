@@ -48,6 +48,13 @@ REQUIRED_HOME_PROJECTION_BINDINGS = (
     "HomeWorkflowMessage.Text=workflow.Message;",
 )
 
+REQUIRED_QUALITY_PROJECTION_BINDINGS = (
+    "ApplyQualityProjection(snapshot.Content.Quality);",
+    "QualityStatus.Text=$\"{projected.AuthorityText}",
+    "QualityFindingList.ItemsSource=projected.VisibleFindings;",
+    "QualityFindingSelectionStatus.Text=projected.SelectionText;",
+)
+
 REQUIRED_RESULTS_PROJECTION_BINDINGS = (
     "RunHistoryAuthorityStatus.Text=results.SelectionAuthorityText;",
     "selected.QualityText",
@@ -159,6 +166,10 @@ def main() -> int:
         if binding not in code:
             errors.append(f"missing Home projection binding: {binding}")
 
+    for binding in REQUIRED_QUALITY_PROJECTION_BINDINGS:
+        if binding not in code:
+            errors.append(f"missing Quality projection binding: {binding}")
+
     for binding in REQUIRED_RESULTS_PROJECTION_BINDINGS:
         if binding not in code:
             errors.append(f"missing Results projection binding: {binding}")
@@ -203,6 +214,7 @@ def main() -> int:
         f"routing_gates={sum(item in code for item in REQUIRED_SHELL_ROUTING_GATES)} "
         f"projection_bindings={sum(item in code for item in REQUIRED_INSPECTION_PROJECTION_BINDINGS)} "
         f"home_projection_bindings={sum(item in code for item in REQUIRED_HOME_PROJECTION_BINDINGS)} "
+        f"quality_projection_bindings={sum(item in code for item in REQUIRED_QUALITY_PROJECTION_BINDINGS)} "
         f"results_projection_bindings={sum(item in code for item in REQUIRED_RESULTS_PROJECTION_BINDINGS)} "
 
         f"commands={sum(item in code for item in REQUIRED_COMMAND_FACADES)}"

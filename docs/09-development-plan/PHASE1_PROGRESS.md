@@ -3852,3 +3852,14 @@ Next executable stage: **51,501**
 - 73,852: Shell binding validation now requires the projected history-authority text binding.
 - 73,853: recovery/selection smoke preserves the ten-check structure while covering current selection, reset-empty selection, and explicit historical selection after re-execution.
 - 73,854: static closure audit completed; no authoritative Build/Test/CI result is claimed for this interval.
+
+
+### Rolling real-client continuation — stages 73,855–73,866 — 2026-09-26
+
+- 73,855–73,858: closed the WPF Quality presentation seam by introducing `ApplyQualityProjection`, which consumes the unified projected Quality surface for authority, summary, provider, finding list, selection text, and finding details instead of reconstructing Quality state from the workspace.
+- 73,859–73,861: extended `ClientQualitySurface` with deterministic `AuthorityText`, `SummaryText`, and `ProviderText`; the surface runtime now supports direct projection from the authoritative Quality snapshot while preserving the existing filter/selection semantics.
+- 73,862–73,864: corrected the concrete WPF shell defect where `RefreshQualityStatus()` was referenced without an implementation; all Quality refresh paths now use the projection-owned presentation boundary.
+- 73,865: strengthened the shell validator with explicit Quality projection binding requirements and retained the existing prohibition on direct workspace presentation reads.
+- 73,866: added and registered `ClientQualityAuthorityProjection1HundredStageSmoke` with strict 10×100 acceptance groups covering bound/unbound authority, provider identity, result summary, filtering, selected-finding visibility, fingerprint validity, snapshot identity, and projection preservation.
+
+Verification status: source/static structural inspection only. Current audit: WPF code-behind braces 148/148; WPF XAML braces 15/15; new Quality acceptance smoke braces 18/18; new smoke contains 10 actual `Check(` call sites. No authoritative Build/Test/CI success is claimed for this interval.
