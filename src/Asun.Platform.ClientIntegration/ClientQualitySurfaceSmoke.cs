@@ -41,7 +41,7 @@ public static class ClientQualitySurfaceSmoke
             PassCount=1,
             FailCount=1,
             EvidenceLinkCount=1,
-            Fingerprint="fingerprint",
+            Fingerprint=new string('a',64),
             IsBound=true,
             Findings=new[] { first,second }
         };
@@ -50,7 +50,7 @@ public static class ClientQualitySurfaceSmoke
             new ClientQualityFilter("Fail","High"));
         Check(surface.VisibleFindings.Count==1 &&
               surface.VisibleFindings[0].FindingId=="finding-fail" &&
-              surface.AuthorityText=="Quality authority: Bound · fingerprint..." &&
+              surface.AuthorityText=="Quality authority: Bound · aaaaaaaaaaaa..." &&
               surface.SummaryText.Contains("2 result(s)",StringComparison.Ordinal) &&
               surface.SummaryText.Contains("Pass 1",StringComparison.Ordinal),
             "Quality surface must reuse the existing Outcome/Severity filter projection and expose authoritative summary state.");
