@@ -3,7 +3,7 @@
 **Canonical branch:** `main`  
 **Canonical repository:** `asun01/PCB`  
 **Development branch:** `codex/phase1-nonblocked-automation-20260919`  
-**Current main HEAD:** `824d1bc69116059c442e5672877dffb37d35794f`  
+**Current main HEAD:** `3153dc929c94428e73795271cdfd619c41927119`  
 **Migration target:** `16318948605231/Asun-PCB`
 
 ## Current state
@@ -89,3 +89,12 @@ The source repository has an existing target repository:
 `https://github.com/16318948605231/Asun-PCB`
 
 The target repository currently exists but the connected GitHub account has read-only access to it. A full push/copy therefore requires write permission to the target repository. Do not claim the migration is complete until the target `main` has been verified against the source canonical state.
+
+
+## Canonicalization record
+
+- 2026-09-27: PR #12 was merged into `main` as `824d1bc69116059c442e5672877dffb37d35794f`.
+- 2026-09-27: `PROJECT_ENTRY.md` and this `PROJECT_PROGRESS.md` were created directly on `main`.
+- The long-lived development branch is now exactly 3 commits behind `main`; its prior 26 development commits are already represented in the canonical main history.
+- Legacy/bootstrap branches remain as historical refs. They diverge from current main by thousands of commits and are not blindly merged, because doing so would import obsolete histories rather than preserve the current project state.
+- Target repository permission check: `16318948605231/Asun-PCB` exists, but the connected GitHub identity has `pull=true` and `push=false`. Therefore a full repository copy cannot be truthfully completed from this connection until write permission is granted on the target repository.
