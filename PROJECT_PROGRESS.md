@@ -3,7 +3,7 @@
 **Canonical branch:** `main`  
 **Canonical repository:** `asun01/PCB`  
 **Development branch:** `codex/phase1-nonblocked-automation-20260919`  
-**Current main HEAD:** `3153dc929c94428e73795271cdfd619c41927119`  
+**Current main HEAD:** `8b2395502b24a43f8f156929a4d22440fa4ccd6c`  
 **Migration target:** `16318948605231/Asun-PCB`
 
 ## Current state
@@ -98,3 +98,11 @@ The target repository currently exists but the connected GitHub account has read
 - The long-lived development branch is now exactly 3 commits behind `main`; its prior 26 development commits are already represented in the canonical main history.
 - Legacy/bootstrap branches remain as historical refs. They diverge from current main by thousands of commits and are not blindly merged, because doing so would import obsolete histories rather than preserve the current project state.
 - Target repository permission check: `16318948605231/Asun-PCB` exists, but the connected GitHub identity has `pull=true` and `push=false`. Therefore a full repository copy cannot be truthfully completed from this connection until write permission is granted on the target repository.
+
+
+## Automation verification — 2026-09-27
+
+- Latest canonical `main` commit observed: `8b2395502b24a43f8f156929a4d22440fa4ccd6c`.
+- PR #12 has been merged into `main`; the remaining open PR observed in this run is historical bootstrap PR #2.
+- The latest canonical commit has no reported combined status entries and no workflow runs exposed through the connected GitHub interface.
+- This is repository/CI evidence only; it does not establish hardware qualification, production thresholds, vendor SDK behavior, or acceptance semantics.
