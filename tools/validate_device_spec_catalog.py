@@ -6,7 +6,6 @@ algorithms, measurement accuracy, or vendor SDK behavior.
 """
 from pathlib import Path
 import re
-import sys
 
 ROOT = Path(__file__).resolve().parents[1] / "docs" / "14-device-specs"
 DEVICE_DIRS = (
@@ -68,11 +67,24 @@ for slug in DEVICE_DIRS:
         detail_dir = directory / "inspection-features"
         if not detail_dir.is_dir():
             fail("03d-spi missing inspection-features directory")
+        registered_numbers = set(ids)
+        detail_files = sorted(detail_dir.glob("F[0-9][0-9][0-9]-*.md"))
+        for path in detail_files:
+            match = re.match(r"F(\d{3})-", path.name)
+            if not match:
+                continue
+            number = match.group(1)
+            if number not in registered_numbers:
+                fail(
+                    f"unregistered 03D-SPI detailed specification: {path.name}"
+                )
+
         for number in ids:
             feature_id = f"03D-SPI-F{number}"
             matches = [
-                path for path in detail_dir.glob(f"F{number}-*.md")
-                if feature_id in path.read_text(encoding="utf-8")
+                path for path in detail_files
+                if path.name.startswith(f"F{number}-")
+                and feature_id in path.read_text(encoding="utf-8")
             ]
             if len(matches) != 1:
                 fail(
