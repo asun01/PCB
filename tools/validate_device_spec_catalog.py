@@ -106,9 +106,39 @@ for slug in DEVICE_DIRS:
             if not path.is_file() or not path.read_text(encoding="utf-8").strip():
                 fail(f"03d-spi missing required golden-spec surface: {name}")
 
+MATRIX_DEVICES = (
+    "2D AOI", "3D AOI", "3D SPI", "2D X-Ray", "3D AXI/CT",
+    "Metrology", "ICT", "FCT", "Bare PCB",
+)
+
+def validate_capability_matrix(path: Path) -> None:
+    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    header_index = next((i for i, line in enumerate(lines) if line.startswith("| Capability |")), None)
+    if header_index is None or header_index + 1 >= len(lines):
+        fail("CAPABILITY_MATRIX.md missing the canonical table header")
+    header = [cell.strip() for cell in lines[header_index].strip("|").split("|")]
+    expected = ["Capability", *MATRIX_DEVICES]
+    if header != expected:
+        fail("CAPABILITY_MATRIX.md has an unexpected device column set or order")
+    separator = [cell.strip() for cell in lines[header_index + 1].strip("|").split("|")]
+    if len(separator) != len(expected) or any(not re.fullmatch(r":?-{3,}:?", cell) for cell in separator):
+        fail("CAPABILITY_MATRIX.md has an invalid Markdown separator row")
+    rows = lines[header_index + 2:]
+    if not rows:
+        fail("CAPABILITY_MATRIX.md has no capability rows")
+    for row in rows:
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        if len(cells) != len(expected):
+            fail("CAPABILITY_MATRIX.md contains a row with the wrong column count")
+        if not cells[0]:
+            fail("CAPABILITY_MATRIX.md contains an empty capability name")
+        if any(value not in {"Candidate", "-"} for value in cells[1:]):
+            fail("CAPABILITY_MATRIX.md contains a non-structural qualification value")
+
 root_matrix = ROOT / "CAPABILITY_MATRIX.md"
 if not root_matrix.is_file():
     fail("missing CAPABILITY_MATRIX.md")
+validate_capability_matrix(root_matrix)
 
 template = ROOT / "DEVICE_SPEC_TEMPLATE.md"
 if not template.is_file():
