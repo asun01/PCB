@@ -132,6 +132,15 @@ def validate_capability_matrix(path: Path) -> None:
             fail("CAPABILITY_MATRIX.md contains a row with the wrong column count")
         if not cells[0]:
             fail("CAPABILITY_MATRIX.md contains an empty capability name")
+        capability_names = [
+            cell[0] for cell in [
+                [existing.strip() for existing in existing_row.strip("|").split("|")]
+                for existing in rows[:rows.index(row)]
+            ]
+            if cell
+        ]
+        if cells[0] in capability_names:
+            fail(f"CAPABILITY_MATRIX.md contains a duplicate capability name: {cells[0]}")
         if any(value not in {"Candidate", "-"} for value in cells[1:]):
             fail("CAPABILITY_MATRIX.md contains a non-structural qualification value")
 
