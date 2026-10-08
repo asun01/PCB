@@ -126,21 +126,20 @@ def validate_capability_matrix(path: Path) -> None:
     rows = lines[header_index + 2:]
     if not rows:
         fail("CAPABILITY_MATRIX.md has no capability rows")
+    seen_capabilities = set()
     for row in rows:
         cells = [cell.strip() for cell in row.strip("|").split("|")]
         if len(cells) != len(expected):
             fail("CAPABILITY_MATRIX.md contains a row with the wrong column count")
         if not cells[0]:
             fail("CAPABILITY_MATRIX.md contains an empty capability name")
-        capability_names = [
-            cell[0] for cell in [
-                [existing.strip() for existing in existing_row.strip("|").split("|")]
-                for existing in rows[:rows.index(row)]
-            ]
-            if cell
-        ]
-        if cells[0] in capability_names:
-            fail(f"CAPABILITY_MATRIX.md contains a duplicate capability name: {cells[0]}")
+        capability_name = cells[0]
+        if capability_name in seen_capabilities:
+            fail(
+                f"CAPABILITY_MATRIX.md contains a duplicate capability name: "
+                f"{capability_name}"
+            )
+        seen_capabilities.add(capability_name)
         if any(value not in {"Candidate", "-"} for value in cells[1:]):
             fail("CAPABILITY_MATRIX.md contains a non-structural qualification value")
 
